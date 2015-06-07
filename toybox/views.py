@@ -1,11 +1,16 @@
-#from django.shortcuts import render
+from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Member
 
 def home(request):
-    return HttpResponse("<h1>Welcome to Megs Toy Box</h1> ToyBox home search")
+    return render(request, 'toybox/landing_page.html', {})
 
-def member(request, member_id):
-    response = "Member details for member: %s\n"
-    return HttpResponse(response % member_id)
+def member_search(request):
+    possible_member_names = Member.objects.filter(member_name__startswith=request.GET.get('member_name_frag', ''))
+    context = { 'member_names': possible_member_names }
+    return render(request, 'toybox/member_search.html', context)
+
+def member_loan(request, member_id):
+    return render(request, 'toybox/member_loan.html', { 'member_id': member_id })
 
 # Create your views here.
