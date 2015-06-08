@@ -23,14 +23,14 @@ class Member(models.Model):
     address             = models.CharField(max_length=300)
     phone_number1       = models.CharField(max_length=12)
     phone_number2       = models.CharField(max_length=12, blank=True)
-    email_address       = models.EmailField(unique=True, blank=True)
+    email_address       = models.EmailField(blank=True)
     volunteer           = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member    = models.BooleanField('Current committee member', default=False)
     aniversary_date     = models.DateField('Membership due')
     balance             = models.DecimalField('Balance owing', decimal_places=2, max_digits=6, default=0)
     active              = models.BooleanField(default=True)
-    type                = models.OneToOneField(MemberType)
+    type                = models.ForeignKey(MemberType)
 
     def __unicode__(self):
         return self.member_name

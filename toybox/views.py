@@ -5,8 +5,14 @@ from .models import Member
 def home(request):
     return render(request, 'toybox/landing_page.html', {})
 
+def fragment_search(fragment):
+    if fragment != '':
+        return Member.objects.filter(member_name__contains=fragment) 
+    else:
+        return []
+
 def member_search(request):
-    possible_member_names = Member.objects.filter(member_name__startswith=request.GET.get('member_name_frag', ''))
+    possible_member_names = fragment_search(request.GET.get('member_name_frag', '')) 
     context = { 'member_names': possible_member_names }
     return render(request, 'toybox/member_search.html', context)
 
