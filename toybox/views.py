@@ -20,3 +20,14 @@ def member_loan(request, member_id):
     return render(request, 'toybox/member_loan.html', { 'member_id': member_id })
 
 # Create your views here.
+def loans(request):
+    return render(request, 'toybox/loans.html')
+
+def returns(request):
+    return render(request, 'toybox/returns.html', {})
+
+def membership_admin(request):
+    return render(request, 'toybox/membership_admin.html')
+
+def end_of_day(request):
+    return render(request, 'toybox/end_of_day.html')

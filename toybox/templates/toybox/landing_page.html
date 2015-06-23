@@ -1,11 +1,22 @@
-<h1>Welcome to Megs Toy Box</h1>
-<h2><i>the fun starts now</i></h2>
+<head>
+    <link rel="stylesheet" href="/static/toybox/tc.css" />
+    <link href='http://fonts.googleapis.com/css?family=Playfair+Display:700' rel='stylesheet' type='text/css'/>
+</head>
 
-What would you like to do today?
-<ul>
-<li>Add a new member</li>
-<li>Renew a membership</li>
-<li><a href={% url 'member_search' %}>Loan a toy</a></li>
-<li>Add a new toy</li>
-</ul>
+<div id="header">
+meg's toy box
+</div>
 
+What would you like to do today?<br/>
+
+<a href={% url 'toybox:returns' %}>
+<img src="/static/toybox/returns.png" width="300" height="100" border="0"></a>
+
+<a href={% url 'toybox:loans' %}>
+<img src="/static/toybox/loans.png" width="250" height="100" border="0"></a><br/>
+
+<a href={% url 'toybox:membership_admin' %}>
+<img src="/static/toybox/membership.png" width="450" height="150" border="0"></a>
+
+<a href={% url 'toybox:end_of_day' %}>
+<img src="/static/toybox/eod.png" width="480" height="100" border="0"></a><br/>
