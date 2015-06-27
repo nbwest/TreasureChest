@@ -1,17 +1,15 @@
-<h1>Search for Member</h1>
-
-<form action="{% url 'toybox:member_search' %}" method='get' >
+<form action="." method='get' >
 Member name:<br>
  <input type="text" name="member_name_frag" />
  <input type="submit" value="Search"/>
 </form>
 
 {% if member_names %}
-    <ul>
+    <select name="mid">
     {% for member in member_names %}
-        <li>{{ member.member_name }}</li>
+        <option value={{ member.member_id }}> {{ member.member_name }}</option>
     {% endfor %}
-    </ul>
+    </select>
 {% else %}
 <i>No matching members</i>
 {% endif %}
