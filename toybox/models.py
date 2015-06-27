@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
+
 class MemberType(models.Model):
     YEARLY = 0
     BIANNUALLY = 2
@@ -54,7 +55,7 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    anniversary_date = models.DateField('Membership due',null=True)
+    # anniversary_date = models.DateField('Membership due',null=True)
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
@@ -76,7 +77,7 @@ class Member(models.Model):
 
 class Children(models.Model):
     name = models.CharField(max_length=100)
-    date_of_birth = models.DateField('Membership due')
+    date_of_birth = models.DateField()
     parent_member = models.ForeignKey(Member)
 
     def __unicode__(self):
@@ -84,7 +85,6 @@ class Children(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class ToyBrand(models.Model):
@@ -106,6 +106,7 @@ class ToyCategory(models.Model):
     def __str__(self):
         return self.name
 
+
 class ToyPackaging(models.Model):
     name = models.CharField(max_length=50)
 
@@ -115,11 +116,12 @@ class ToyPackaging(models.Model):
     def __str__(self):
         return self.name
 
+
 class Toy(models.Model):
     AT_TOY_LIBRARY = 0
     BORROWED = 1
     NOT_IN_SERVICE = 2
-    
+
     AVAILABLE = 0
     MAJOR_NOTABLE_ISSUE = 1
     BEING_REPAIRED = 2
@@ -133,9 +135,9 @@ class Toy(models.Model):
     TOY_STATE_CHOICES = (
         (AT_TOY_LIBRARY, 'At Toy Library'),
         (BORROWED, 'Borrowed'),
-        (NOT_IN_SERVICE,'Not Available')
+        (NOT_IN_SERVICE, 'Not Available')
     )
-    
+
     TOY_NOT_IN_SERVICE_STATE_CHOICES = (
         (AVAILABLE, 'Available'),
         (MAJOR_NOTABLE_ISSUE, 'Major Notable Issue'),
@@ -143,6 +145,10 @@ class Toy(models.Model):
         (MISSING, 'Missing'),
         (RETIRED, 'Retired'),
     )
+
+    # def file(self, filename):
+    #     url = "./%d.JPG" % (self.id,)
+    #     return url
 
     code = models.CharField(max_length=10, blank=False, unique=True)
     name = models.CharField(max_length=60, blank=False, unique=True)
@@ -158,7 +164,7 @@ class Toy(models.Model):
     storage_location = models.CharField(max_length=50)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
     availability_state = models.IntegerField(choices=TOY_NOT_IN_SERVICE_STATE_CHOICES, default=AVAILABLE)
-    image = models.ImageField( null=True) #need Pillow (pip install Pillow)
+    image = models.ImageField(upload_to="./", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
@@ -172,6 +178,11 @@ class Toy(models.Model):
     def admin_image(self):
         return '<img src="%s"/>' % self.image
     admin_image.allow_tags = True
+
+
+    # def admin_image(self):
+    #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
+    #     image_.allow_tags = True
 
 
 class IssuesResister(models.Model):
@@ -192,6 +203,7 @@ class IssuesResister(models.Model):
         (RETURNED_MISSING_PIECE, 'Returned missing piece'),
         (REPAIRED, 'Repaired'),
     )
+
     toy = models.ForeignKey(Toy)
     date_time = models.DateField('Issue reported date and time', auto_now_add=True)
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES)
@@ -248,8 +260,7 @@ class TransactionRegister(models.Model):
     balance = models.DecimalField('Current Balance', decimal_places=2, max_digits=6, default=0)
 
     def __unicode__(self):
-       return self.get_transaction_type_display()#????
-
+        return self.get_transaction_type_display()  # ????
 
     def __str__(self):
         return self.get_transaction_type_display()
