@@ -7,13 +7,18 @@ def home(request):
 
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(member_name__contains=fragment) 
+        return Member.objects.filter(member_name__contains=fragment).order_by('member_name')
     else:
         return []
 
 def get_memsearch_context(request):
-    possible_member_names = fragment_search(request.GET.get('member_name_frag', '')) 
-    context = { 'member_names': possible_member_names }
+    possible_members = fragment_search(request.GET.get('member_name_frag', '')) 
+    context = { 'members': possible_members }
+    return context
+
+def get_memsummary_context(mid):
+    member = Member.objects.get(pk=mid)
+    context = { 'member': member } 
     return context
 
 def member_search(request):
@@ -24,8 +29,12 @@ def member_loan(request, member_id):
     return render(request, 'toybox/member_loan.html', { 'member_id': member_id })
 
 # Create your views here.
-def loans(request):
+def loans(request, member_id=0):
     context = get_memsearch_context(request)
+    if member_id != 0:
+        context.update(get_memsummary_context(member_id))
+    else:
+        context['member'] = 'foo'
     return render(request, 'toybox/loans.html', context)
 
 def returns(request):
