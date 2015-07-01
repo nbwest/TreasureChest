@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Member
+from .models import Member, Toy
 
 def home(request):
     return render(request, 'toybox/landing_page.html', {})
@@ -18,7 +18,9 @@ def get_memsearch_context(request):
 
 def get_memsummary_context(mid):
     member = Member.objects.get(pk=mid)
-    context = { 'member': member } 
+    toys = Toy.objects.get(member=mid)
+    context = { 'member': member,
+                'toys': toys } 
     return context
 
 def member_search(request):
@@ -33,8 +35,6 @@ def loans(request, member_id=0):
     context = get_memsearch_context(request)
     if member_id != 0:
         context.update(get_memsummary_context(member_id))
-    else:
-        context['member'] = 'foo'
     return render(request, 'toybox/loans.html', context)
 
 def returns(request):
