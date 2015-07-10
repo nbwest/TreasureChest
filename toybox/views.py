@@ -1,13 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from .models import Member
+from django.views.generic import ListView
+from .models import *
 
 def home(request):
     return render(request, 'toybox/landing_page.html', {})
 
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(member_name__contains=fragment) 
+        return Member.objects.filter(name__contains=fragment)
     else:
         return []
 
@@ -38,3 +38,5 @@ def membership_admin(request):
 
 def end_of_day(request):
     return render(request, 'toybox/end_of_day.html')
+
+

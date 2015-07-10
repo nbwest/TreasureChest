@@ -46,8 +46,8 @@ class LoanType(models.Model):
 
 class Member(models.Model):
     # surname?
-    member_name = models.CharField(max_length=100)
-    partner_name = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100)
+    partner = models.CharField(max_length=100, blank=True)
     address = models.CharField(max_length=300)
     phone_number1 = models.CharField(max_length=12)
     phone_number2 = models.CharField(max_length=12, blank=True)
@@ -66,19 +66,19 @@ class Member(models.Model):
     # member notes/characteristics?
 
     def __unicode__(self):
-        return self.member_name
+        return self.name
 
     def __str__(self):
-        return self.member_name
+        return self.name
 
     def membership_due_soon(self):
         return timezone.now().date + datetime.timedelta(days=60) <= self.aniversary_date
 
 
-class Children(models.Model):
+class Child(models.Model):
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
-    parent_member = models.ForeignKey(Member)
+    parent = models.ForeignKey(Member)
 
     def __unicode__(self):
         return self.name
@@ -151,9 +151,8 @@ class Toy(models.Model):
     #     return url
 
     code = models.CharField(max_length=10, blank=False, unique=True)
-    name = models.CharField(max_length=60, blank=False, unique=True)
     description = models.CharField(max_length=200)
-    toy_brand = models.OneToOneField(ToyBrand)
+    toy_brand = models.ForeignKey(ToyBrand)
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
@@ -170,10 +169,10 @@ class Toy(models.Model):
     loan_type = models.ForeignKey(LoanType, null=True)
 
     def __unicode__(self):
-        return self.name
+        return self.code
 
     def __str__(self):
-        return self.name
+        return self.description
 
     def admin_image(self):
         return '<img src="%s"/>' % self.image
@@ -185,7 +184,7 @@ class Toy(models.Model):
     #     image_.allow_tags = True
 
 
-class IssuesResister(models.Model):
+class Issue(models.Model):
     BROKEN_REPAIRABLE = 0
     BROKEN_NOT_REPAIRABLE = 1
     MINOR_MISSING_PIECE = 2
@@ -218,7 +217,7 @@ class IssuesResister(models.Model):
         return self.comment
 
 
-class TransactionRegister(models.Model):
+class Transaction(models.Model):
     DONATION = 0
     BOND_REFUND = 1
     PETTY_CASH_ADJUSTMENT = 2
@@ -253,11 +252,11 @@ class TransactionRegister(models.Model):
         (BOND, 'Bond'),
     )
     date_time = models.DateField('Transaction event date and time', auto_now_add=True)
-    volunteer_reporting = models.ForeignKey(Member)
-    toy = models.ForeignKey(Toy)
+    member = models.ForeignKey(Member, null=True, related_name='member_involved')
+    volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
+    toy = models.ForeignKey(Toy, null=True)
     transaction_type = models.IntegerField(choices=TRANSACTION_TYPE_CHOICES)
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
-    balance = models.DecimalField('Current Balance', decimal_places=2, max_digits=6, default=0)
 
     def __unicode__(self):
         return self.get_transaction_type_display()  # ????
