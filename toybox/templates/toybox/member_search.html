@@ -4,12 +4,10 @@ Member name:<br>
  <input type="submit" value="Search"/>
 </form>
 
-{% if member_names %}
-    <select name="mid">
-    {% for member in member_names %}
-        <option value={{ member.member_id }}> {{ member.member_name }}</option>
+{% if members %}
+    {% for member in members %}
+        <a href="{% url 'toybox:member_loan' member.id %}"> {{ member.member_name }} </a><br>
     {% endfor %}
-    </select>
 {% else %}
 <i>No matching members</i>
 {% endif %}
