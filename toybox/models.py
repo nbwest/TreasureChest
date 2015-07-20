@@ -176,6 +176,7 @@ class Toy(models.Model):
 
     def admin_image(self):
         return '<img src="%s"/>' % self.image
+
     admin_image.allow_tags = True
 
 

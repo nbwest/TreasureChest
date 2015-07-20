@@ -1,4 +1,5 @@
 from django import forms
+from django.shortcuts import redirect
 from toybox.models import *
 
 
@@ -20,12 +21,32 @@ def get_memsummary_context(mid):
                'toys': toys}
     return context
 
-
-def get_memsearch_context(request):
-    possible_members = fragment_search(request.GET.get('member_name_frag', ''))
-    context = {'members': possible_members}
+def handle_member_search(member_id, request):
+    possible_members = None
+    form = MemberSearchForm()
+    if (request.method == "POST"):
+        form = MemberSearchForm(request.POST)
+        if form.is_valid():
+            possible_members = fragment_search(form.cleaned_data['member_name_fragment'])
+    elif (request.method == "GET" and member_id):
+        possible_members = Member.objects.filter(pk=member_id)
+        if (possible_members.count() > 0):
+            form = MemberSearchForm(initial={
+                'member_name_fragment': possible_members[0].name
+            })
+        else:
+            redirect('..')
+    context = {'member_search_form': form,
+               'members': possible_members}
     return context
 
+
+def handle_borrowed_toy_list(member_id):
+    context = {}
+    if (member_id):
+        toys = Toy.objects.filter(member_loaned=member_id)
+        context = {'toy_list': toys}
+    return context
 
 ##################
 # Form classes
