@@ -1,7 +1,12 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
+</head>
+<body>
 <form action="." method='post' >
     {%  csrf_token %}
-    {{ member_search_form }}
- <input type="submit" value="Search"/>
+    {{ member_search_form.member_name_fragment.label }}<br>
+    {{ member_search_form.member_name_fragment }}
+ <input type="image" src="/static/toybox/icons/search.svg" height="18" width="18" alt="Search"/>
 </form>
 
 {% if members %}
@@ -11,3 +16,4 @@
 {% else %}
 <i>No matching members</i>
 {% endif %}
+</body>

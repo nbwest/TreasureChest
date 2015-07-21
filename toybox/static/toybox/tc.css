@@ -8,3 +8,10 @@ h1 {
     color: red;
     text-align: center;
 }
+
+table, th, td {
+   border: 1px solid mediumpurple;
+}
+th, td {
+    padding: 8px;
+}

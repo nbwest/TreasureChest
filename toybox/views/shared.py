@@ -1,5 +1,5 @@
 from django import forms
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from toybox.models import *
 
 
@@ -39,6 +39,15 @@ def handle_member_search(request):
                'members': possible_members}
     return context
 
+def handle_member_summary(request):
+    context = {}
+    member_id = request.GET.get('mid', 0)
+    if (member_id):
+        member = get_object_or_404(Member, pk=member_id)
+        children = Child.objects.filter(parent=member_id)
+        context = {'member': member,
+                   'children': children}
+    return context
 
 def handle_borrowed_toy_list(request):
     context = {}
@@ -51,4 +60,4 @@ def handle_borrowed_toy_list(request):
 ##################
 # Form classes
 class MemberSearchForm(forms.Form):
-    member_name_fragment = forms.CharField(label="Member Name", max_length=20)
+    member_name_fragment = forms.CharField(label="Member", max_length=20)
