@@ -2,9 +2,15 @@ from django.shortcuts import render
 from shared import *
 
 
-def loans(request):
+def loans(request, member_id):
     context = handle_member_search(request)
-    context.update(handle_borrowed_toy_list(request))
-    context.update(handle_member_summary(request))
+
+    # Always need this so search box renders
     context.update(handle_toy_search(request))
+
+    # Only need to handle these frames if member_id set
+    if (member_id):
+        context.update(handle_member_summary(request, member_id))
+        context.update(handle_borrowed_toy_list(request, member_id))
+
     return render(request, 'toybox/loans.html', context)

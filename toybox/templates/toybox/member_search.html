@@ -11,7 +11,7 @@
 
 {% if members %}
     {% for member in members %}
-        <a href="{% url 'toybox:loans' %}?mid={{ member.id }}"> {{ member.name }} </a><br>
+        <a href="{% url 'toybox:member_loan' member.id %}"> {{ member.name }} </a><br>
     {% endfor %}
 {% else %}
 <i>No matching members</i>
