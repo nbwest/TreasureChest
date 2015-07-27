@@ -126,7 +126,7 @@ class Command(BaseCommand):
         Toy.objects.filter(code="B1").delete()
         self.t_b1, created = Toy.objects.update_or_create(code="B1",
                                                           description="Roller Coaster",
-                                                          toy_brand=self.tb_unk,
+                                                          brand=self.tb_unk,
                                                           member_loaned=self.m_alicecatcher,
                                                           max_age=6,
                                                           min_age=2,
@@ -138,7 +138,7 @@ class Command(BaseCommand):
         Toy.objects.filter(code="I13").delete()
         self.t_i13, created = Toy.objects.update_or_create(code="I13",
                                                            description="Pirate costume",
-                                                           toy_brand=self.tb_unk,
+                                                           brand=self.tb_unk,
                                                            member_loaned=None,
                                                            max_age=5,
                                                            min_age=4,
@@ -151,7 +151,7 @@ class Command(BaseCommand):
         Toy.objects.filter(code="P5").delete()
         self.t_p5, created = Toy.objects.update_or_create(code="P5",
                                                           description="Monkey Puzzle",
-                                                          toy_brand=self.tb_mandd,
+                                                          brand=self.tb_mandd,
                                                           member_loaned=None,
                                                           max_age=4,
                                                           min_age=1,
@@ -164,7 +164,7 @@ class Command(BaseCommand):
         Toy.objects.filter(code="O2").delete()
         self.t_o2, created = Toy.objects.update_or_create(code="O2",
                                                           description="Plastic Car",
-                                                          toy_brand=self.tb_fp,
+                                                          brand=self.tb_fp,
                                                           member_loaned=None,
                                                           max_age=6,
                                                           min_age=3,

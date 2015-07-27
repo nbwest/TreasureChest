@@ -1,10 +1,14 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
 </head>
-<body>
-<h3>{{ member.name }}</h3>
+<span id="member_summary">
+    {% if member %}
+        <h3>{{ member.name }}</h3>
+    {% else %}
+        <h3><i>select member</i></h3>
+    {% endif %}
 Partner: {{ member.partner }}<br>
 Joined: {{ member.join_date }}<br>
 Balance: ${{ member.balance }}<br>
 Phone: {{ member.phone_number1 }}<br>
-</body>
+</span>

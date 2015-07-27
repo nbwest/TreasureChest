@@ -5,9 +5,8 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
 </head>
-<body>
-<h2>Loan Toy</h2>
-<form action="." method="post" >
+<span id="toy_search">
+<form action={{ request.get_full_path }} method="post" >
     {% csrf_token %}
     {{ toy_search_form.toy_id.label }}<br>
     {{ toy_search_form.toy_id }}
@@ -15,7 +14,7 @@
 </form>
 {% if toys %}
     {% for toy in toys %}
-        <a href="{% url 'toybox:loans' %}?tc={{ toy.code }}"> {{ toy.code }} ({{ toy.description }}) </a><br>
+        <a href="{{ request.path }}?tc={{ toy.code }}"> {{ toy.code }} ({{ toy.description }}) </a><br>
     {% endfor %}
 {% endif %}
-</body>
+</span>

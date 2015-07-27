@@ -68,6 +68,17 @@ def handle_toy_search(request):
                'toys': toys}
     return context
 
+def handle_toy_summary(request):
+    toy = None
+    if (request.method == "GET" or
+        request.method == "POST"):
+        toycode = request.GET.get('tc')
+        if (toycode):
+            toy = get_object_or_404(Toy, code=toycode)
+
+    context = {'toy': toy}
+    return context
+
 ##################
 # Form classes
 class MemberSearchForm(forms.Form):

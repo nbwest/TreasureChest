@@ -1,0 +1,15 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
+</head>
+<span id="toy_summary">
+    {% if toy %}
+        <h3>{{ toy.code }}</h3>
+    {% else %}
+        <h3><i>select toy</i></h3>
+    {% endif %}
+    Description: {{ toy.description }}<br>
+    Brand: {{ toy.brand }}<br>
+    Number of Pieces: {{ toy.num_pieces }}<br>
+    Packaging: {{ toy.packaging }}<br>
+    Loan Type: {{ toy.loan_type }}<br>
+</span>

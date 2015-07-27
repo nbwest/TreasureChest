@@ -152,7 +152,7 @@ class Toy(models.Model):
 
     code = models.CharField(max_length=10, blank=False, unique=True)
     description = models.CharField(max_length=200)
-    toy_brand = models.ForeignKey(ToyBrand)
+    brand = models.ForeignKey(ToyBrand)
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)

@@ -3,15 +3,16 @@
 </head>
 <body>
 <h1>Loans</h1>
-<div align="left">
-{% include "toybox/member_search.html" %}
-</div>
-<div align="Left">
+
+<div id="member">
+    {% include "toybox/member_search.html" %}
     {% include "toybox/member_summary.html" %}
 </div>
-<hr>
-<div>
+<div id="toy">
+    {% include "toybox/toy_search.html" %}
+    {% include "toybox/toy_summary.html" %}
+</div>
+<div id="transaction">
     {% include "toybox/borrowed_toy_list.html" %}
-    {% include "toybox/borrow_toy.html" %}
 </div>
 </body>

@@ -1,19 +1,19 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
 </head>
-<body>
-<form action="." method='post' >
-    {%  csrf_token %}
+<span id="member_search">
+<form action={{  request.get_full_path }} method='post'>
+    {% csrf_token %}
     {{ member_search_form.member_name_fragment.label }}<br>
     {{ member_search_form.member_name_fragment }}
- <input type="image" src="/static/toybox/icons/search.svg" height="18" width="18" alt="Search"/>
+    <input type="image" src="/static/toybox/icons/search.svg" height="18" width="18" alt="Search"/>
 </form>
 
 {% if members %}
     {% for member in members %}
         <a href="{% url 'toybox:member_loan' member.id %}"> {{ member.name }} </a><br>
     {% endfor %}
-{% else %}
-<i>No matching members</i>
+{% elif member_search_form.member_name_fragment != None %}
+    <i>No matching members</i>
 {% endif %}
-</body>
+</span>
