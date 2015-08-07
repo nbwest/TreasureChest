@@ -1,25 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-    <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
-</head>
-<body>
-<h2>Toys</h2>
-<table style="width:40%">
-    <tr>
-        <th>Toy ID</th>
-        <th>Description</th>
-        <th>Due Date</th>
-    </tr>
-    {% for toy in toy_list %}
-        <tr>
-            <td> {{ toy.code }}</td>
-            <td> {{ toy.description }}</td>
-            <td> never </td>
-        </tr>
-    {% endfor %}
-</table>
-</body>
-</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+    <!--<meta charset="UTF-8">-->
+    <!--<title></title>-->
+    <!--<link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">-->
+<!--</head>-->
+<!--<body>-->
+
+
+              <!-- Default panel contents -->
+              <div class="panel-heading">Borrowed Toys</div>
+
+              <!-- Table -->
+              <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Toy ID</th>
+                        	<th>Toy Description</th>
+                            <!--<th>Due In (days)</th>-->
+                            <th>Returned</th>
+                            <th>Report Issue</th>
+                       	</tr>
+                    </thead>
+
+                   {% for attr in borrowed_toys %}
+                   <tr>
+                        <td>{{ toy.code }}</td>
+                        <td>{{ toy.description }}</td>
+                        <!--<td>{{ toy.due_in }}</td>-->
+
+                        <td><input type="checkbox" /></td>
+
+                        <td>
+                            <!--<div class="selectContainer">-->
+                                <select class="form-control" name="issue">
+                                 {% for issue in issue_list %}
+                                    <option value={{ issue.value }} {% if attr.issue == issue.value %}selected{% endif %}> {{ issue.name }} </option>
+                                 {% endfor %}
+                                </select>
+                            <!--</div>-->
+                        </td>
+
+                     </tr>
+                     {% endfor %}
+              </table>
+
+
+
+<!--<h2>Toys</h2>-->
+<!--<table style="width:40%">-->
+    <!--<tr>-->
+        <!--<th>Toy ID</th>-->
+        <!--<th>Description</th>-->
+        <!--<th>Due Date</th>-->
+    <!--</tr>-->
+    <!--{% for toy in toy_list %}-->
+        <!--<tr>-->
+            <!--<td> {{ toy.code }}</td>-->
+            <!--<td> {{ toy.description }}</td>-->
+            <!--<td> never </td>-->
+        <!--</tr>-->
+    <!--{% endfor %}-->
+<!--</table>-->
+<!--</body>-->
+<!--</html>-->

@@ -1,0 +1,129 @@
+<!--
+context inputs:
+daily_balance - decimal, currency for daily balance on top bar
+current_page - string, current page to highlight in the menus,
+options:
+    borrow
+    return
+    members
+    transactions
+    admin
+
+member_name - logged in member name
+
+For page html use the following template tags:
+ block content
+ endblock content
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Toy Library</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- TODO copy these files locally -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+</head>
+<body  onload="onloadFunction()">
+
+<script type="text/javascript">
+    //used to duplicate the side menu from the top menu (top menu hidden until collapsed)
+      $(document).ready(function()
+      {
+        $("#duplicate-menu").html($("#menu").html());
+      });
+</script>
+
+
+<!-- top nav bar -->
+<nav class="navbar navbar-inverse navbar-fixed-top  ">
+
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+           <!-- TODO set logo link -->
+            <a href="#"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
+            <a class="navbar-brand" href="#">Toy Library</a>
+
+            <ul class="hidden-xs navbar-text">Daily Balance: ${{ daily_balance|floatformat:2}}</ul>
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+
+                <!--TODO set logged in member link-->
+                <li><a href="#">Logged in as: {{ member_name }}</a></li>
+
+                <!-- TODO utilise logout Button -->
+                <button type="button" class="btn btn-default navbar-btn">Logout</button>
+
+                <!-- these are hidden until used for collapsed menu-->
+                <!-- TODO set href links -->
+                <div id="menu" class="visible-xs nav navbar-nav ">
+                    {% if current_page == "borrow" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="/toybox/loans/">Borrow</a></li>
+
+                    {% if current_page == "return" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="/toybox/returns/">Return</a></li>
+
+                    {% if current_page == "members" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="#">Members</a></li>
+
+                    {% if current_page == "transactions" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="#">Transactions</a></li>
+
+                    {% if current_page == "admin" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="#">Admin</a></li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div style="padding-top:70px;" class="container-fluid">
+    <div class="row-fluid">
+
+        <!-- side menu -->
+        <div class="col-xs-2  nav hidden-xs ">
+            <ul class="nav nav-sidebar nav-pills nav-stacked">
+                <div id="duplicate-menu" class="nav nav-sidebar nav-pills nav-stacked"></div>
+                <!-- menu duplicated with java script from top menu -->
+            </ul>
+        </div>
+
+        <div class="col-xs-9  main ">
+            <!-- Page specific code -->
+            {% block content %}{% endblock content %}
+            <!-- Page specific code end -->
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

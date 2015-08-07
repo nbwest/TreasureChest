@@ -4,7 +4,7 @@ from shared import *
 
 def loans(request, member_id):
     context = handle_member_search(request)
-
+    print request
     # Always need this so search box renders
     context.update(handle_toy_search(request))
 
@@ -16,5 +16,8 @@ def loans(request, member_id):
     # Only need to handle this frame is a toy is selected
     if (request.GET.get('tc')):
         context.update(handle_toy_summary(request))
+
+    #base page context
+    context.update({"daily_balance":23.20, "current_page":"borrow", "member_name":"Jess Benning"})
 
     return render(request, 'toybox/loans.html', context)

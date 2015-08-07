@@ -1,4 +1,76 @@
-<h1>Returns</h1>
-<div>
-{% include "toybox/member_search.html" %}
-</div>
+<!--
+inputs:
+Member_status - boolean (true for valid, false for overdue)
+Member_balance - decimal
+issue_list - Dict for report issue, "issue":string and "value":integer pairs
+toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "issue":integer
+-->
+
+
+{% extends "toybox\base.html" %}
+
+{% block content %}
+
+
+   <h1  class="page-header">Return Toy</h1>
+
+			 <div   class="col-xs-8">
+                 {% include "toybox/member_search.html" %}
+              </div>
+
+
+              <div class="col-xs-4">
+                  {% include "toybox/member_summary.html" %}
+              </div>
+
+             <div class="panel-fluid panel-default col-xs-12">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Borrowed Toys</div>
+
+              <!-- Table -->
+              <table class="table">
+
+                    <thead>
+                        <tr>
+                             <th>Toy ID</th>
+                        	<th>Toy Name</th>
+                            <th>Due In (days)</th>
+                            <th>Returned</th>
+                            <th>Report Issue</th>
+                       	</tr>
+                    </thead>
+
+                   {% for toy in borrowed_toys %}
+                   <tr>
+                        <td><a href="#">{{ toy.ID }}</a></td>
+
+                        <td>{{ toy.name }}</td>
+                        <td>{{ toy.due_in }}</td>
+
+                        <td><input type="checkbox" /></td>
+
+                        <td>
+                            <!--<div class="selectContainer">-->
+                                <select class="form-control" name="issue">
+                                 {% for issue in issue_list %}
+                                    <option value={{ issue.value }} {% if attr.issue == issue.value %}selected{% endif %}> {{ issue.name }} </option>
+                                 {% endfor %}
+                                </select>
+                            <!--</div>-->
+                        </td>
+
+                     </tr>
+                     {% endfor %}
+              </table>
+            </div>
+
+
+         <div class="input-group">
+              <span class="input-group-addon">Fee Due $</span>
+              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+               <span class="input-group-btn">
+        			<button class="btn btn-default" type="button">Done</button>
+      		   </span>
+            </div>
+
+{% endblock content %}

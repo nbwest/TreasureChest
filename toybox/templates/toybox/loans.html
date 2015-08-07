@@ -1,18 +1,100 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
-</head>
-<body>
-<h1>Loans</h1>
+{% extends "toybox\base.html" %}
+
+{% block content %}
+<h1>Borrow Toy</h1>
 
 <div id="member">
-    {% include "toybox/member_search.html" %}
-    {% include "toybox/member_summary.html" %}
+
+    <div   class="col-xs-8">
+           {% include "toybox/member_search.html" %}
+    </div>
+
+
+      <div class="col-xs-4">
+          <!--TODO popular member link-->
+           {% if members == None %}
+
+
+                {% include "toybox/member_summary.html" %}
+
+          {% else %}
+            <br><br><br><br>
+          {% endif %}
+      </div>
+
 </div>
+
+
 <div id="toy">
-    {% include "toybox/toy_search.html" %}
-    {% include "toybox/toy_summary.html" %}
+
+    <div   class="col-xs-8">
+         <br>
+        {% include "toybox/toy_search.html" %}
+    </div>
+
+    <div class="col-xs-4">
+         <br>
+        {% if toy != None %}
+
+         {% include "toybox/toy_summary.html" %}
+
+        {% else %}
+            <br><br><br><br>
+        {% endif %}
+    </div>
 </div>
+
+
 <div id="transaction">
-    {% include "toybox/borrowed_toy_list.html" %}
+    <div class="panel-fluid panel-default col-xs-12">
+                 <!-- Default panel contents -->
+              <div class="panel-heading">Borrowed Toys</div>
+
+              <!-- Table -->
+              <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Toy ID</th>
+                        	<th>Toy Description</th>
+                            <!--<th>Due In (days)</th>-->
+                            <th>Remove</th>
+                            <!--<th>Report Issue</th>-->
+                       	</tr>
+                    </thead>
+
+                   <!--{% for toy in borrowed_toys %}-->
+                   <tr>
+                        <td>{{ toy.code }}</td>
+                        <td>{{ toy.description }}</td>
+                        <!--<td>{{ toy.due_in }}</td>-->
+                        <!--<td><input type="checkbox" /></td>-->
+                        <td><button type="button" class="btn btn-danger" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
+                            </button></td>
+
+
+
+                     </tr>
+                     <!--{% endfor %}-->
+              </table>
+        </div>
 </div>
-</body>
+
+{% endblock content %}
+
+
+
+<!--<h1>Loans</h1>-->
+
+<!--<div id="member">-->
+    <!--{% include "toybox/member_search.html" %}-->
+    <!--{% include "toybox/member_summary.html" %}-->
+<!--</div>-->
+<!--<div id="toy">-->
+    <!--{% include "toybox/toy_search.html" %}-->
+    <!--{% include "toybox/toy_summary.html" %}-->
+<!--</div>-->
+<!--<div id="transaction">-->
+    <!--{% include "toybox/borrowed_toy_list.html" %}-->
+<!--</div>-->

@@ -4,13 +4,16 @@ from toybox.models import *
 
 class Command(BaseCommand):
     help = 'Reset test data in the database'
+    firstRun=True
 
     def _reset_membertype(self):
+       
         MemberType.objects.filter(name="Public").delete()
+
         MemberType.objects.update_or_create(name="Public",
                                             fee="30",
                                             membership_period=0)
-
+       
         MemberType.objects.filter(name="Play Group").delete()
         MemberType.objects.update_or_create(name="Play Group",
                                             fee=200,
@@ -20,13 +23,13 @@ class Command(BaseCommand):
         YEARS = 365
         mt_public = MemberType.objects.get(name="Public")
         mt_playgrp = MemberType.objects.get(name="Play Group")
-
+       
         Member.objects.filter(name="John Doh").delete()
         self.m_johndoh, created = Member.objects.update_or_create(name="John Doh",
                                                                   address="1 example place",
                                                                   phone_number1="0404233322",
                                                                   type=mt_public,
-                                                                  join_date=timezone.now() - datetime.timedelta(days=7))
+                                                                  join_date=timezone.now() )
 
         Child.objects.update_or_create(name="Alice",
                                        date_of_birth=timezone.now() - datetime.timedelta(
@@ -37,7 +40,7 @@ class Command(BaseCommand):
                                        date_of_birth=timezone.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johndoh)
-
+       
         Member.objects.filter(name="John Smith").delete()
         self.m_johnsmith, created = Member.objects.update_or_create(name="John Smith",
                                                                     address="2 example place",
@@ -63,7 +66,7 @@ class Command(BaseCommand):
                                        date_of_birth=timezone.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johnsmith)
-
+       
         Member.objects.filter(name="Alice Catcher").delete()
         self.m_alicecatcher, created = Member.objects.update_or_create(name="Alice Catcher",
                                                                        address="12 allweather st",
@@ -81,7 +84,7 @@ class Command(BaseCommand):
                                        date_of_birth=timezone.now() - datetime.timedelta(
                                            days=(6 * YEARS)),
                                        parent=self.m_alicecatcher)
-
+       
         Member.objects.filter(name="Olivia Stone").delete()
         Member.objects.update_or_create(name="Olivia Stone",
                                         address="45/104 Northebourne Avenue, Canberra",
@@ -91,7 +94,7 @@ class Command(BaseCommand):
                                         volunteer=True,
                                         active=False,
                                         join_date=timezone.now() - datetime.timedelta(days=360))
-
+       
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
                                                                 address="44 Irvine st Watson",
@@ -123,6 +126,7 @@ class Command(BaseCommand):
         self.tp_bag, created = ToyPackaging.objects.update_or_create(name="Bag")
 
     def _reset_toys(self):
+       
         Toy.objects.filter(code="B1").delete()
         self.t_b1, created = Toy.objects.update_or_create(code="B1",
                                                           description="Roller Coaster",
@@ -134,7 +138,7 @@ class Command(BaseCommand):
                                                           state=Toy.BORROWED,
                                                           category=self.tc_big,
                                                           packaging=self.tp_bag)
-
+       
         Toy.objects.filter(code="I13").delete()
         self.t_i13, created = Toy.objects.update_or_create(code="I13",
                                                            description="Pirate costume",
@@ -147,7 +151,7 @@ class Command(BaseCommand):
                                                            availability_state=Toy.MAJOR_NOTABLE_ISSUE,
                                                            category=self.tc_img,
                                                            packaging=self.tp_bag)
-
+       
         Toy.objects.filter(code="P5").delete()
         self.t_p5, created = Toy.objects.update_or_create(code="P5",
                                                           description="Monkey Puzzle",
@@ -160,7 +164,7 @@ class Command(BaseCommand):
                                                           availability_state=Toy.AVAILABLE,
                                                           category=self.tc_puz,
                                                           packaging=self.tp_none)
-
+       
         Toy.objects.filter(code="O2").delete()
         self.t_o2, created = Toy.objects.update_or_create(code="O2",
                                                           description="Plastic Car",
@@ -235,6 +239,7 @@ class Command(BaseCommand):
                                              amount=20)
 
     def handle(self, *args, **options):
+
         self._reset_membertype()
         self._reset_members()
         self._reset_toybrand()

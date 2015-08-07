@@ -29,8 +29,10 @@ def handle_member_search(request):
     # Search pressed.  Validate form and get list of matching members
     if (request.method == "POST"):
         form = MemberSearchForm(request.POST)
+        print request.POST
         if form.is_valid():
             possible_members = fragment_search(form.cleaned_data['member_name_fragment'])
+            print form.cleaned_data['member_name_fragment']
     # TODO, find a way to persist member_name_fragment across refresh
     elif (request.method == "GET"):
         pass
