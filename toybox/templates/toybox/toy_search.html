@@ -36,34 +36,34 @@
     </form>
 
 
-    <!--&lt;!&ndash;initial page no message or toy summary&ndash;&gt;-->
-     <!--{% if toys == None %}-->
-        <!--<p></p>-->
+    <!--initial page no message or toy summary-->
+     {% if toys == None %}
+        <p></p>
 
-    <!--&lt;!&ndash;Saerch returned no toys&ndash;&gt;-->
-      <!--{% elif toys|length == 0 %}-->
-         <!--<p>No Toys found</p>-->
+    <!--Saerch returned no toys-->
+      {% elif toys|length == 0 %}
+         <p>No Toys found</p>
 
-    <!--&lt;!&ndash;search returned more than one toy&ndash;&gt;-->
-     <!--{% elif toys|length > 1 %}-->
-         <!--<script>-->
-            <!--function onloadFunction()-->
-            <!--{  $('#searchModal').modal(); }-->
-         <!--</script>-->
+    <!--search returned more than one toy-->
+     {% elif toys|length > 1 %}
+         <script>
+            function onloadFunction()
+            {  $('#searchModal').modal(); }
+         </script>
 
-    <!--&lt;!&ndash;search returned only one toy, automatically load this one&ndash;&gt;-->
-     <!--{% elif toys|length == 1 %}-->
-          <!--<script>-->
-            <!--function onloadFunction()-->
-            <!--{-->
-                <!--$(document).ready(function()-->
-                <!--{-->
-                    <!--var url = "{{ request.path }}?tc={{ toys.0.code }}";-->
-                    <!--$(location).attr('href',url);-->
-                <!--});-->
-            <!--}-->
-          <!--</script>-->
-    <!--{% endif %}-->
+    <!--search returned only one toy, automatically load this one-->
+     {% elif toys|length == 1 %}
+          <script>
+            function onloadFunction()
+            {
+                $(document).ready(function()
+                {
+                    var url = "{{ request.path }}?tc={{ toys.0.code }}";
+                    $(location).attr('href',url);
+                });
+            }
+          </script>
+    {% endif %}
 
 
     <!-- dialog box with search results -->
