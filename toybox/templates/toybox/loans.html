@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row" >
       <div class="col-xs-12 col-sm-10 " style="margin-left: 20px; ">
         <br>
           <!--TODO populate member link-->
@@ -44,42 +44,31 @@
 
 </div>
 
-
     {% if toy %}
-   <div class="row" style=" min-height:200px;">
+   <div class="row" style=" min-height:180px; ">
    {%else%}
      <div class="row" >
    {% endif %}
 
-        <div   class="col-xs-3" style="margin-left: 20px;">
-            <br>
+        <div   class="col-sm-3 col-xs-6" style="margin-left: 20px;">
             {% if toy != None %}
-
-             {% include "toybox/toy_summary.html" %}
-
-            {% else %}
-                <br><br><br><br>
+                 {% include "toybox/toy_summary.html" %}
             {% endif %}
-           <br>
        </div>
 
-       <div   class="col-xs-4"    >
-
-            <br>
+       <div   class="col-sm-4 col-xs-5">
             {% if toy != None %}
             <!--TODO include toy image in context-->
              <!--<img class="pull-left img-thumbnail"   src="{{ toy.image }}">-->
-            <img class="pull-left img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
-
+                <img class="pull-right img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
             {% endif %}
-            <br>
        </div>
     </div>
 
 <div class="row" style=" min-height: 80px;margin-left: 0px;" >
     <div class="input-group  col-xs-12 col-sm-10 ">
 
-        <span type="text" class="input-group-addon">Loan Duration (wks)</span>
+        <span type="text" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
 
           <div class="btn-group " data-toggle="buttons">
               {% for i in "123456" %}
@@ -110,21 +99,21 @@
                        	</tr>
                     </thead>
 
-                   {% for toy in toys %}
+                   {% for t in toys %}
                    <tr>
-                        <td>{{ toy.code }}</td>
-                        <td>{{ toy.description }}</td>
+                        <td>{{ t.code }}</td>
+                        <td>{{ t.description }}</td>
 
                         <td>
-                            {% if toy.due_in < 0 %}
+                            {% if t.due_in < 0 %}
                                 <span class="label label-danger label-as-badge">
                             {% else %}
                                 <span class="label label-success label-as-badge">
                             {% endif %}
-                                    {{ toy.due_in }}</span>
+                                    {{ t.due_in }}</span>
                         </td>
 
-                        <td>${{ toy.fee|floatformat:2 }}</td>
+                        <td>${{ t.fee|floatformat:2 }}</td>
                        <!--TODO only show if toy is newly added-->
                         <td><button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
@@ -149,6 +138,11 @@
           </span>
     </div>
 </div>
+
+{{ toys }}
+{{ toy }}
+{{ toy_list }}
+
 
 {% endblock content %}
 

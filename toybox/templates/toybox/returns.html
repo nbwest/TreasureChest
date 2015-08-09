@@ -34,15 +34,15 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
               <div class="panel-heading">Borrowed Toys</div>
 
               <!-- Table -->
-              <table class="table">
+              <table id="toy_table" class="table">
 
                     <thead>
                         <tr>
                              <th>Toy ID</th>
                         	<th>Toy Name</th>
                             <th>Due In (days)</th>
-                            <th>Late Fee</th>
-                            <th>Returned</th>
+                            <th id="fee">Fee</th>
+                            <th id="returned">Returned</th>
                             <th>Report Issue</th>
                        	</tr>
                     </thead>
@@ -62,7 +62,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                                     {{ toy.due_in }}</span>
                         </td>
                        <td>${{ toy.fee|floatformat:2 }}</td>
-                        <td><input type="checkbox" /></td>
+                        <td><input type="checkbox" id="returned_checkbox_{{ toy.ID }}" onclick="handleCheckbox(this);"/></td>
 
                         <td>
                             <!--<div class="selectContainer">-->
@@ -80,10 +80,28 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             </div>
 
 </div>
+
+<script>
+    function handleCheckbox(cb)
+    {
+        var table = document.getElementById("toy_table");
+        var total= 0.0;
+        var checkboxCol=document.getElementById("returned").cellIndex;
+        var feeCol=document.getElementById("fee").cellIndex;
+
+        for (var i = 1, row; row = table.rows[i]; i++)
+        {
+            if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
+                total+=parseFloat(row.cells[feeCol].innerHTML.slice(1));
+        }
+        document.getElementById("fee_due").value=total.toFixed(2);
+    }
+</script>
+
 <div class="row">
          <div class="input-group col-xs-12 col-sm-10 ">
               <span class="input-group-addon">Fee Due $</span>
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+              <input type="text" id="fee_due" class="form-control" aria-label="Amount ">
                <span class="input-group-btn">
         			<button class="btn btn-default" type="button">Done</button>
       		   </span>

@@ -26,7 +26,7 @@ def returns(request):
     context.update({"toys":
                     ({"ID":"BT3", "name":"Big toy 3", "due_in":32, "issue":0, "fee":0},
                      {"ID":"BT2", "name":"Big toy 2","due_in":-3, "issue":0, "fee":2.5},
-                     {"ID":"BT1", "name":"Big toy 1","due_in":52, "issue":0, "fee":0})})
+                     {"ID":"BT1", "name":"Big toy 1","due_in":52, "issue":0, "fee":0.5})})
 
 
 

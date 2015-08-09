@@ -37,14 +37,14 @@
 
 
     <!--&lt;!&ndash;initial page no message or toy summary&ndash;&gt;-->
-     <!--{% if toys == None %}-->
-        <!--<p></p>-->
+     {% if toys == None %}
+        <p></p>
 
-    <!--&lt;!&ndash;Saerch returned no toys&ndash;&gt;-->
-      <!--{% elif toys|length == 0 %}-->
-         <!--<p>No Toys found</p>-->
+    <!--Saerch returned no toys-->
+      {% elif toys|length == 0 %}
+         <p>No Toys found</p>
 
-    <!--&lt;!&ndash;search returned more than one toy&ndash;&gt;-->
+    <!--search returned more than one toy-->
      <!--{% elif toys|length > 1 %}-->
          <!--<script>-->
             <!--function onloadFunction()-->
