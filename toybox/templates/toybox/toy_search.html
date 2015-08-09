@@ -26,72 +26,72 @@
 
         <div class="input-group ">
             <!--TODO remove Django rendered input line in form -->
-            <input name="toy_id" type="text" class="form-control" placeholder="Toy ID" name="srch-term"
+            <input name="toy_id" type="text" class="form-control" placeholder="Toy ID"
                    id="srch-term">
 
             <div class="input-group-btn">
-                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-plus"></i></button>
             </div>
         </div>
     </form>
 
 
-    <!--initial page no message or toy summary-->
-     {% if toys == None %}
-        <p></p>
+    <!--&lt;!&ndash;initial page no message or toy summary&ndash;&gt;-->
+     <!--{% if toys == None %}-->
+        <!--<p></p>-->
 
-    <!--Saerch returned no toys-->
-      {% elif toys|length == 0 %}
-         <p>No Toys found</p>
+    <!--&lt;!&ndash;Saerch returned no toys&ndash;&gt;-->
+      <!--{% elif toys|length == 0 %}-->
+         <!--<p>No Toys found</p>-->
 
-    <!--search returned more than one toy-->
-     {% elif toys|length > 1 %}
-         <script>
-            function onloadFunction()
-            {  $('#searchModal').modal(); }
-         </script>
+    <!--&lt;!&ndash;search returned more than one toy&ndash;&gt;-->
+     <!--{% elif toys|length > 1 %}-->
+         <!--<script>-->
+            <!--function onloadFunction()-->
+            <!--{  $('#searchModal').modal(); }-->
+         <!--</script>-->
 
-    <!--search returned only one toy, automatically load this one-->
-     {% elif toys|length == 1 %}
-          <script>
-            function onloadFunction()
-            {
-                $(document).ready(function()
-                {
-                    var url = "{{ request.path }}?tc={{ toys.0.code }}";
-                    $(location).attr('href',url);
-                });
-            }
-          </script>
-    {% endif %}
+    <!--&lt;!&ndash;search returned only one toy, automatically load this one&ndash;&gt;-->
+     <!--{% elif toys|length == 1 %}-->
+          <!--<script>-->
+            <!--function onloadFunction()-->
+            <!--{-->
+                <!--$(document).ready(function()-->
+                <!--{-->
+                    <!--var url = "{{ request.path }}?tc={{ toys.0.code }}";-->
+                    <!--$(location).attr('href',url);-->
+                <!--});-->
+            <!--}-->
+          <!--</script>-->
+    <!--{% endif %}-->
 
 
     <!-- dialog box with search results -->
-    <div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+    <!--<div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">-->
+        <!--<div class="modal-dialog">-->
+            <!--<div class="modal-content">-->
+                <!--<div class="modal-header">-->
 
-                    <h4 class="modal-title" id="myModalLabel">Search Results</h4>
-                </div>
-                <div class="modal-body">
+                    <!--<h4 class="modal-title" id="myModalLabel">Search Results</h4>-->
+                <!--</div>-->
+                <!--<div class="modal-body">-->
 
-                    {% if toys %}
-                    <ul class="list-group">
-                        {% for toy in toys %}
-                        <a class="list-group-item" href="{{ request.path }}?tc={{ toy.code }}"> {{ toy.code }} ({{
-                            toy.description }}) </a>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
+                    <!--{% if toys %}-->
+                    <!--<ul class="list-group">-->
+                        <!--{% for toy in toys %}-->
+                        <!--<a class="list-group-item" href="{{ request.path }}?tc={{ toy.code }}"> {{ toy.code }} ({{-->
+                            <!--toy.description }}) </a>-->
+                        <!--{% endfor %}-->
+                    <!--</ul>-->
+                    <!--{% endif %}-->
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                <!--</div>-->
+                <!--<div class="modal-footer">-->
+                    <!--<button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 
 
 

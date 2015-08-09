@@ -14,16 +14,22 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
    <h1  class="page-header">Return Toy</h1>
 
-			 <div   class="col-xs-8">
+        <div class="row">
+			 <div   class="col-xs-12 col-sm-10 ">
                  {% include "toybox/member_search.html" %}
               </div>
+        </div>
 
-
-              <div class="col-xs-4">
+        <div class="row" style="margin-left: 10px;">
+              <div class="col-xs-12 col-sm-10 " >
+                  <br>
                   {% include "toybox/member_summary.html" %}
+                  <br>
               </div>
+        </div>
 
-             <div class="panel-fluid panel-default col-xs-12">
+        <div class="row">
+             <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
               <!-- Default panel contents -->
               <div class="panel-heading">Borrowed Toys</div>
 
@@ -35,18 +41,27 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                              <th>Toy ID</th>
                         	<th>Toy Name</th>
                             <th>Due In (days)</th>
+                            <th>Late Fee</th>
                             <th>Returned</th>
                             <th>Report Issue</th>
                        	</tr>
                     </thead>
 
-                   {% for toy in borrowed_toys %}
+                   {% for toy in toys %}
                    <tr>
                         <td><a href="#">{{ toy.ID }}</a></td>
 
                         <td>{{ toy.name }}</td>
-                        <td>{{ toy.due_in }}</td>
 
+                       <td>
+                        {% if toy.due_in < 0 %}
+                                <span class="label label-danger label-as-badge">
+                            {% else %}
+                                <span class="label label-success label-as-badge">
+                            {% endif %}
+                                    {{ toy.due_in }}</span>
+                        </td>
+                       <td>${{ toy.fee|floatformat:2 }}</td>
                         <td><input type="checkbox" /></td>
 
                         <td>
@@ -64,13 +79,14 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
               </table>
             </div>
 
-
-         <div class="input-group">
+</div>
+<div class="row">
+         <div class="input-group col-xs-12 col-sm-10 ">
               <span class="input-group-addon">Fee Due $</span>
               <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
                <span class="input-group-btn">
         			<button class="btn btn-default" type="button">Done</button>
       		   </span>
             </div>
-
+</div>
 {% endblock content %}

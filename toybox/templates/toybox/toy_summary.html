@@ -1,19 +1,13 @@
-<!--<head>-->
-    <!--<link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">-->
-<!--</head>-->
+
 <span id="toy_summary">
     {% if toy %}
-    <!--TODO populate member link-->
-    <a href="#"><p align="right"><strong>Toy ID: {{ toy.code }}</strong></p></a>
-    <p align="right">Description: {{ toy.description }}</p>
-    <p align="right">Brand: {{ toy.brand }}</p>
-    <p align="right">Number of Pieces: {{ toy.num_pieces }}</p>
-    <p align="right"> Packaging: {{ toy.packaging }}</p>
-    <p align="right">Loan Type: {{ toy.loan_type }}</p>
-    {% else %}
-        <!--<h3><i>select toy</i></h3>-->
-    <br><br><br><br>
+        <!--TODO populate member link-->
+        <a href="#"><strong>Toy ID: {{ toy.code }}</strong></a><br>
+        Description: {{ toy.description }}<br>
+        Brand: {{ toy.brand }}<br>
+        Number of Pieces: {{ toy.num_pieces }}<br>
+        Packaging: {{ toy.packaging }}<br>
+        Loan Type: {{ toy.loan_type }}<br>
     {% endif %}
-
 </span>
 

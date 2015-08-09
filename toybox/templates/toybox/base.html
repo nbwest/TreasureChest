@@ -77,27 +77,32 @@ For page html use the following template tags:
                     {% if current_page == "borrow" %}
                     <li class="active"> {% else %}
                     <li> {% endif %}
-                        <a href="/toybox/loans/">Borrow</a></li>
+                        <a href="{% url 'toybox:loans' %}">&nbsp;&nbsp; Borrow</a></li>
 
                     {% if current_page == "return" %}
                     <li class="active"> {% else %}
                     <li> {% endif %}
-                        <a href="/toybox/returns/">Return</a></li>
+                        <a href="{% url 'toybox:returns' %}">&nbsp;&nbsp; Return</a></li>
 
                     {% if current_page == "members" %}
                     <li class="active"> {% else %}
                     <li> {% endif %}
-                        <a href="#">Members</a></li>
+                        <a href="#">&nbsp;&nbsp; Members</a></li>
 
                     {% if current_page == "transactions" %}
                     <li class="active"> {% else %}
                     <li> {% endif %}
-                        <a href="#">Transactions</a></li>
+                        <a href="#">&nbsp;&nbsp; Transactions</a></li>
+
+                    {% if current_page == "reports" %}
+                    <li class="active"> {% else %}
+                    <li> {% endif %}
+                        <a href="#">&nbsp;&nbsp; Reports</a></li>
 
                     {% if current_page == "admin" %}
                     <li class="active"> {% else %}
                     <li> {% endif %}
-                        <a href="#">Admin</a></li>
+                        <a href="#">&nbsp;&nbsp; Admin</a></li>
                 </div>
             </ul>
         </div>
@@ -115,10 +120,12 @@ For page html use the following template tags:
             </ul>
         </div>
 
-        <div class="col-xs-9  main ">
+        <div class="col-xs-12 col-sm-10 main ">
+            <div class="container-fluid">
             <!-- Page specific code -->
             {% block content %}{% endblock content %}
             <!-- Page specific code end -->
+            </div>
         </div>
 
     </div>

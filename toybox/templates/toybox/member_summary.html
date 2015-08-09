@@ -1,27 +1,27 @@
 <!--<head>-->
     <!--<link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">-->
 <!--</head>-->
-<span id="member_summary">
+<div id="member_summary">
 {% if member %}
 
-
+    <a href="#"><strong>{{ member.name }}</strong></a>
     <h4>
-        <p align="right">
+        <!--<p >-->
         {% if member_status %}
         <span class="label label-success label-as-badge"> Member Status: VALID</span>
         {% else %}
         <span class="label label-danger label-as-badge"> Member Status: OVER DUE</span>
         {% endif %}
-        </p>
+        <!--</p>-->
     </h4>
     <!--TODO populate member link-->
-    <a href="#"><p align="right">{{ member.name }}</p></a>
-    <p align="right">Balance: ${{ member.balance|floatformat:2 }}</p>
+
+    <div >Balance: ${{ member.balance|floatformat:2 }}</div>
     <!--<p align="right">Phone: {{ member.phone_number1 }}</p>-->
     <!--<p align="right">Joined: {{ member.join_date }}</p>-->
 
 {% else %}
-    <br><br><br><br>
+    <!--<br><br><br><br>-->
 {% endif %}
     <!--{% if member %}-->
         <!--<h3>{{ member.name }}</h3>-->
@@ -32,4 +32,4 @@
 
 <!--Balance: ${{ member.balance }}<br>-->
 
-</span>
+</div>
