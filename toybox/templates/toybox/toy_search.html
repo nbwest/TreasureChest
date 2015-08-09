@@ -36,20 +36,20 @@
     </form>
 
 
-    <!--initial page no message or toy summary-->
-     {% if toys == None %}
-        <p></p>
+    <!--&lt;!&ndash;initial page no message or toy summary&ndash;&gt;-->
+     <!--{% if toys == None %}-->
+        <!--<p></p>-->
 
-    <!--Saerch returned no toys-->
-      {% elif toys|length == 0 %}
-         <p>No Toys found</p>
+    <!--&lt;!&ndash;Saerch returned no toys&ndash;&gt;-->
+      <!--{% elif toys|length == 0 %}-->
+         <!--<p>No Toys found</p>-->
 
-    <!--search returned more than one toy-->
-     {% elif toys|length > 1 %}
-         <script>
-            function onloadFunction()
-            {  $('#searchModal').modal(); }
-         </script>
+    <!--&lt;!&ndash;search returned more than one toy&ndash;&gt;-->
+     <!--{% elif toys|length > 1 %}-->
+         <!--<script>-->
+            <!--function onloadFunction()-->
+            <!--{  $('#searchModal').modal(); }-->
+         <!--</script>-->
 
     <!--search returned only one toy, automatically load this one-->
      {% elif toys|length == 1 %}
@@ -66,7 +66,7 @@
     {% endif %}
 
 
-    <!-- dialog box with search results -->
+     <!--dialog box with search results-->
     <!--<div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">-->
         <!--<div class="modal-dialog">-->
             <!--<div class="modal-content">-->
