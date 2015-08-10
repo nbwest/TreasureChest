@@ -8,7 +8,7 @@ class MemberTypeAdmin(admin.ModelAdmin):
 
 
 class LoanTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'loan_period', 'loan_cost', 'loan_deposit', 'member_type')
+    list_display = ('name', 'loan_period', 'loan_cost', 'loan_deposit')
 
 # Admin space lists
 admin.site.register(MemberType, MemberTypeAdmin)

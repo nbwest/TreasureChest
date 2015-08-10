@@ -10,7 +10,7 @@ def returns(request):
     #context = get_memsearch_context(request)
 
     #base page context
-    context = {"daily_balance":23.20, "current_page":"return", "member_name":"Jess Benning"}
+    context = {"daily_balance":23.20,"login_name":"Jess Benning"}
 
     #page context
     context.update({"member":{"name":"John Smith","status":True,"balance":12.50}})

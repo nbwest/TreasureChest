@@ -18,7 +18,7 @@ def loans(request, member_id):
         context.update(handle_toy_summary(request))
 
     #base page context
-    context.update({"daily_balance":23.20, "current_page":"borrow", "member_name":"Jess Benning"})
+    context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
 
     print(context)
 

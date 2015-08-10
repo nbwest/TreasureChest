@@ -2,10 +2,7 @@
 
 {% block content %}
 
-
-
-
-<h1>Borrow Toy</h1>
+<h1  class="page-header">Borrow Toy</h1>
 
 <div id="member" class="row" >
 
@@ -18,7 +15,6 @@
 
         <a href="#"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
-
 
     </div>
 </div>
@@ -35,6 +31,21 @@
 
 </div>
 
+<div class="row" style=" min-height: 80px;margin-left: 0px;" >
+    <div class="input-group  col-xs-12 col-sm-10 ">
+
+        <span type="text" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
+
+          <div class="btn-group " data-toggle="buttons">
+              {% for i in "123456" %}
+                <label class="btn btn-default">
+                    <input type="radio" id="loanDuration{{ i }}" value={{ i }} />{{ i }}
+                </label>
+              {% endfor %}
+          </div>
+    </div>
+
+</div>
 
 <div id="toy" class="row">
 
@@ -65,21 +76,7 @@
        </div>
     </div>
 
-<div class="row" style=" min-height: 80px;margin-left: 0px;" >
-    <div class="input-group  col-xs-12 col-sm-10 ">
 
-        <span type="text" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
-
-          <div class="btn-group " data-toggle="buttons">
-              {% for i in "123456" %}
-                <label class="btn btn-default">
-                    <input type="radio" id="loanDuration{{ i }}" value={{ i }} />{{ i }}
-                </label>
-              {% endfor %}
-          </div>
-    </div>
-
-</div>
 
 <div id="transaction"  class="row">
     <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">

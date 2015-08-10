@@ -1,15 +1,7 @@
 <!--
 context inputs:
 daily_balance - decimal, currency for daily balance on top bar
-current_page - string, current page to highlight in the menus,
-options:
-    borrow
-    return
-    members
-    transactions
-    admin
-
-member_name - logged in member name
+login_name - logged in member name
 
 For page html use the following template tags:
  block content
@@ -55,54 +47,69 @@ For page html use the following template tags:
                 <span class="icon-bar"></span>
             </button>
 
-           <!-- TODO set logo link -->
-            <a href="#"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
-            <a class="navbar-brand" href="#">Toy Library</a>
 
-            <ul class="hidden-xs navbar-text">Daily Balance: ${{ daily_balance|floatformat:2}}</ul>
+            <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
+            <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
+
+             <!-- TODO set link to transactions page end of day info-->
+            {% if daily_balance %}
+            <ul class="nav navbar-nav hidden-xs ">
+                <li><a href="#">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
+            </ul>
+            {% endif %}
         </div>
 
-        <div id="navbar" class="navbar-collapse collapse">
+        <div id="navbar" class="navbar-collapse collapse " style="max-height: none;">
             <ul class="nav navbar-nav navbar-right">
 
+                {% if login_name %}
                 <!--TODO set logged in member link-->
-                <li><a href="#">Logged in as: {{ member_name }}</a></li>
+                <li><a href="#">Logged in as: {{ login_name }}</a></li>
+                {% endif %}
 
                 <!-- TODO utilise logout Button -->
-                <button type="button" class="btn btn-default navbar-btn">Logout</button>
+                <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button>
 
                 <!-- these are hidden until used for collapsed menu-->
                 <!-- TODO set href links -->
-                <div id="menu" class="visible-xs nav navbar-nav ">
-                    {% if current_page == "borrow" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="{% url 'toybox:loans' %}">&nbsp;&nbsp; Borrow</a></li>
+                <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
 
-                    {% if current_page == "return" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="{% url 'toybox:returns' %}">&nbsp;&nbsp; Return</a></li>
+                    <li><a href="{% url 'toybox:loans' %}">Borrow</a></li>
+                    <li><a href="{% url 'toybox:returns' %}">Return</a></li>
+                    <li><a href="{% url 'toybox:membership_admin' %}">Members</a></li>
+                    <li><a href="#">Transactions</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="/admin">Admin</a></li>
 
-                    {% if current_page == "members" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="#">&nbsp;&nbsp; Members</a></li>
+                    <!--{% if current_page == "borrow" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="{% url 'toybox:loans' %}">Borrow</a></li>-->
 
-                    {% if current_page == "transactions" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="#">&nbsp;&nbsp; Transactions</a></li>
+                    <!--{% if current_page == "return" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="{% url 'toybox:returns' %}">Return</a></li>-->
 
-                    {% if current_page == "reports" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="#">&nbsp;&nbsp; Reports</a></li>
+                    <!--{% if current_page == "members" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="{% url 'toybox:membership_admin' %}">Members</a></li>-->
 
-                    {% if current_page == "admin" %}
-                    <li class="active"> {% else %}
-                    <li> {% endif %}
-                        <a href="#">&nbsp;&nbsp; Admin</a></li>
+                    <!--{% if current_page == "transactions" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="#">Transactions</a></li>-->
+
+                    <!--{% if current_page == "reports" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="#">Reports</a></li>-->
+
+                    <!--{% if current_page == "admin" %}-->
+                    <!--<li class="active"> {% else %}-->
+                    <!--<li> {% endif %}-->
+                        <!--<a href="/admin">Admin</a></li>-->
                 </div>
             </ul>
         </div>
@@ -118,6 +125,18 @@ For page html use the following template tags:
                 <div id="duplicate-menu" class="nav nav-sidebar nav-pills nav-stacked"></div>
                 <!-- menu duplicated with java script from top menu -->
             </ul>
+
+            <!--<div class="panel panel-default" style="margin-top: 20px;" >-->
+                <!--<div class="panel-heading">-->
+                    <!--<h5>Message board</h5>-->
+                <!--</div>-->
+                <!--<div class="panel-body" style="white-space:normal !important; max-height:300px; overflow-y: auto;">-->
+                    <!--<p>-->
+                    <!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut egpsum dolor sit amet, consectetur adipiscing elit. Ut eget suet supsum dolor sit amet, consectetur adipiscing elit. Ut eget supsum dolpsum dolor sit amet, consectetur adipiscing elit. Ut eget suor sit amet, consectetur adipiscing elit. Ut eget su-->
+                    <!--</p>-->
+
+                <!--</div>-->
+            <!--</div>-->
         </div>
 
         <div class="col-xs-12 col-sm-10 main ">
