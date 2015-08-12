@@ -26,7 +26,8 @@ class Command(BaseCommand):
                                                                   address="1 example place",
                                                                   phone_number1="0404233322",
                                                                   type=mt_public,
-                                                                  join_date=timezone.now() - datetime.timedelta(days=7))
+                                                                  join_date=timezone.now() - datetime.timedelta(days=7),
+                                                                  aniversary_date=timezone.now() + datetime.timedelta(days=365-7))
 
         Child.objects.update_or_create(name="Alice",
                                        date_of_birth=timezone.now() - datetime.timedelta(
@@ -47,7 +48,8 @@ class Command(BaseCommand):
                                                                     partner="James Smith",
                                                                     volunteer=True,
                                                                     join_date=timezone.now() - datetime.timedelta(
-                                                                        days=307))
+                                                                        days=307),
+                                                                    aniversary_date=timezone.now() + datetime.timedelta(days=58))
 
         Child.objects.update_or_create(name="Huey",
                                        date_of_birth=timezone.now() - datetime.timedelta(
@@ -75,7 +77,8 @@ class Command(BaseCommand):
                                                                        balance="4.30",
                                                                        committee_member=True,
                                                                        join_date=timezone.now() - datetime.timedelta(
-                                                                           days=1037))
+                                                                           days=1037),
+                                                                       aniversary_date=timezone.now + datetime.timedelta(days=5))
 
         Child.objects.update_or_create(name="Elizabeth Jayne",
                                        date_of_birth=timezone.now() - datetime.timedelta(
@@ -90,7 +93,8 @@ class Command(BaseCommand):
                                         balance="23",
                                         volunteer=True,
                                         active=False,
-                                        join_date=timezone.now() - datetime.timedelta(days=360))
+                                        join_date=timezone.now() - datetime.timedelta(days=360),
+                                        aniversary_date=timezone.now())
 
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
@@ -99,7 +103,8 @@ class Command(BaseCommand):
                                                                 phone_number2="02 77 889 455",
                                                                 type=mt_playgrp,
                                                                 balance="-12",
-                                                                join_date=timezone.now() - datetime.timedelta(days=100))
+                                                                join_date=timezone.now() - datetime.timedelta(days=100),
+                                                                aniversary_date=timezone.now + datetime.timedelta(days=265))
 
     def _reset_toybrand(self):
         self.tb_mandd, created = ToyBrand.objects.update_or_create(name="Mellisa & Doug")
