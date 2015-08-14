@@ -1,18 +1,160 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">
-</head>
-<body>
-<h1>Loans</h1>
+{% extends "toybox\base.html" %}
 
-<div id="member">
-    {% include "toybox/member_search.html" %}
-    {% include "toybox/member_summary.html" %}
+{% block content %}
+
+<h1  class="page-header">Borrow Toy</h1>
+
+<div id="member" class="row" >
+
+    <div   class="col-xs-11 col-sm-10 ">
+
+           {% include "toybox/member_search.html" %}
+
+    </div>
+    <div   class="col-xs-1" >
+
+        <a href="#"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
+
+    </div>
 </div>
-<div id="toy">
-    {% include "toybox/toy_search.html" %}
-    {% include "toybox/toy_summary.html" %}
+
+<div class="row" >
+      <div class="col-xs-12 col-sm-10 " style="margin-left: 20px; ">
+        <br>
+          <!--TODO populate member link-->
+           {% if members == None %}
+                {% include "toybox/member_summary.html" %}
+          {% endif %}
+        <br>
+      </div>
+
 </div>
-<div id="transaction">
-    {% include "toybox/borrowed_toy_list.html" %}
+
+<div class="row" style=" min-height: 80px;margin-left: 0px;" >
+    <div class="input-group  col-xs-12 col-sm-10 ">
+
+        <span type="text" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
+
+          <div class="btn-group " data-toggle="buttons">
+              {% for i in "123456" %}
+                <label class="btn btn-default">
+                    <input type="radio" id="loanDuration{{ i }}" value={{ i }} />{{ i }}
+                </label>
+              {% endfor %}
+          </div>
+    </div>
+
 </div>
-</body>
+
+<div id="toy" class="row">
+
+    <div   class="col-xs-12 col-sm-10 ">
+        {% include "toybox/toy_search.html" %}
+    </div>
+
+</div>
+
+    {% if toy %}
+   <div class="row" style=" min-height:180px; ">
+   {%else%}
+     <div class="row" >
+   {% endif %}
+
+        <div   class="col-sm-3 col-xs-6" style="margin-left: 20px;">
+            {% if toy != None %}
+                 {% include "toybox/toy_summary.html" %}
+            {% endif %}
+       </div>
+
+       <div   class="col-sm-4 col-xs-5">
+            {% if toy != None %}
+            <!--TODO include toy image in context-->
+             <!--<img class="pull-left img-thumbnail"   src="{{ toy.image }}">-->
+                <img class="pull-right img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
+            {% endif %}
+       </div>
+    </div>
+
+
+
+<div id="transaction"  class="row">
+    <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
+
+              <div class="panel-heading">Borrowed Toys</div>
+
+              <!-- Table -->
+              <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Toy ID</th>
+                        	<th>Toy Description</th>
+                            <th>Due In (days)</th>
+                            <th>Fee</th>
+                            <th>Remove</th>
+                       	</tr>
+                    </thead>
+
+                   {% for t in toys %}
+                   <tr>
+                        <td>{{ t.code }}</td>
+                        <td>{{ t.description }}</td>
+
+                        <td>
+                            {% if t.due_in < 0 %}
+                                <span class="label label-danger label-as-badge">
+                            {% else %}
+                                <span class="label label-success label-as-badge">
+                            {% endif %}
+                                    {{ t.due_in }}</span>
+                        </td>
+
+                        <td>${{ t.fee|floatformat:2 }}</td>
+                       <!--TODO only show if toy is newly added-->
+                        <td><button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
+                            </button>
+                        </td>
+                     </tr>
+                     {% endfor %}
+              </table>
+        </div>
+
+
+</div>
+
+
+
+<div class="row" style=" min-height: 80px;" >
+    <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
+          <span class="input-group-addon">Fee Due $</span>
+          <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+           <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Done</button>
+          </span>
+    </div>
+</div>
+
+{{ toys }}
+{{ toy }}
+{{ toy_list }}
+
+
+{% endblock content %}
+
+
+
+<!--<h1>Loans</h1>-->
+
+<!--<div id="member">-->
+    <!--{% include "toybox/member_search.html" %}-->
+    <!--{% include "toybox/member_summary.html" %}-->
+<!--</div>-->
+<!--<div id="toy">-->
+    <!--{% include "toybox/toy_search.html" %}-->
+    <!--{% include "toybox/toy_summary.html" %}-->
+<!--</div>-->
+<!--<div id="transaction">-->
+    <!--{% include "toybox/borrowed_toy_list.html" %}-->
+<!--</div>-->

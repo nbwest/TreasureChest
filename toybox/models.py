@@ -27,6 +27,12 @@ class MemberType(models.Model):
     def __str__(self):
         return self.name
 
+# loan type needs some thought, regarding missing pieces and the issue register
+# loan period may not be needed, or set to zero if not fixed?
+# remove member type, a toy can have only one loan type so different member type doesn't make sense
+# overdue fine - per week?
+
+
 
 class LoanType(models.Model):
     name = models.CharField(max_length=20)
@@ -36,7 +42,7 @@ class LoanType(models.Model):
     missing_piece_fine = models.DecimalField(decimal_places=2, max_digits=5)
     missing_piece_refund = models.DecimalField(decimal_places=2, max_digits=5)
     loan_deposit = models.DecimalField(decimal_places=2, max_digits=5)
-    member_type = models.ForeignKey(MemberType, null=True)
+   # member_type = models.ForeignKey(MemberType, null=True)
 
     def __unicode__(self):
         return self.name
@@ -165,6 +171,7 @@ class Toy(models.Model):
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
+    purchase_cost = models.DecimalField(blank=True,null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(max_length=50)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
@@ -190,6 +197,7 @@ class Toy(models.Model):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
     #     image_.allow_tags = True
 
+# fine associated with missing pieces etc? currently captured by loan type
 
 class Issue(models.Model):
     BROKEN_REPAIRABLE = 0
@@ -198,7 +206,9 @@ class Issue(models.Model):
     MAJOR_MISSING_PIECE = 3
     WHOLE_TOY_MISSING = 4
     RETURNED_MISSING_PIECE = 5
-    REPAIRED = 6
+    RETURNED_MISSING_TOY = 6
+    REPAIRED = 7
+
 
     ISSUE_TYPE_CHOICES = (
         (BROKEN_REPAIRABLE, 'Broken repairable'),
@@ -207,6 +217,7 @@ class Issue(models.Model):
         (MAJOR_MISSING_PIECE, 'Major missing piece'),
         (WHOLE_TOY_MISSING, 'Whole toy missing'),
         (RETURNED_MISSING_PIECE, 'Returned missing piece'),
+        (RETURNED_MISSING_TOY, 'Returned missing toy'),
         (REPAIRED, 'Repaired'),
     )
 

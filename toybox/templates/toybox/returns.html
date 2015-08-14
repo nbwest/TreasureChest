@@ -1,4 +1,110 @@
-<h1>Returns</h1>
-<div>
-{% include "toybox/member_search.html" %}
+<!--
+inputs:
+Member_status - boolean (true for valid, false for overdue)
+Member_balance - decimal
+issue_list - Dict for report issue, "issue":string and "value":integer pairs
+toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "issue":integer
+-->
+
+
+{% extends "toybox\base.html" %}
+
+{% block content %}
+
+
+   <h1  class="page-header">Return Toy</h1>
+
+        <div class="row">
+			 <div   class="col-xs-12 col-sm-10 ">
+                 {% include "toybox/member_search.html" %}
+              </div>
+        </div>
+
+        <div class="row" style="margin-left: 10px;">
+              <div class="col-xs-12 col-sm-10 " >
+                  <br>
+                  {% include "toybox/member_summary.html" %}
+                  <br>
+              </div>
+        </div>
+
+        <div class="row">
+             <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Borrowed Toys</div>
+
+              <!-- Table -->
+              <table id="toy_table" class="table">
+
+                    <thead>
+                        <tr>
+                             <th>Toy ID</th>
+                        	<th>Toy Name</th>
+                            <th>Due In (days)</th>
+                            <th id="fee">Fee</th>
+                            <th id="returned">Returned</th>
+                            <th>Report Issue</th>
+                       	</tr>
+                    </thead>
+
+                   {% for toy in toys %}
+                   <tr>
+                        <td><a href="#">{{ toy.ID }}</a></td>
+
+                        <td>{{ toy.name }}</td>
+
+                       <td>
+                        {% if toy.due_in < 0 %}
+                                <span class="label label-danger label-as-badge">
+                            {% else %}
+                                <span class="label label-success label-as-badge">
+                            {% endif %}
+                                    {{ toy.due_in }}</span>
+                        </td>
+                       <td>${{ toy.fee|floatformat:2 }}</td>
+                        <td><input type="checkbox" id="returned_checkbox_{{ toy.ID }}" onclick="handleCheckbox(this);"/></td>
+
+                        <td>
+                            <!--<div class="selectContainer">-->
+                                <select class="form-control" name="issue">
+                                 {% for issue in issue_list %}
+                                    <option value={{ issue.value }} {% if attr.issue == issue.value %}selected{% endif %}> {{ issue.name }} </option>
+                                 {% endfor %}
+                                </select>
+                            <!--</div>-->
+                        </td>
+
+                     </tr>
+                     {% endfor %}
+              </table>
+            </div>
+
 </div>
+
+<script>
+    function handleCheckbox(cb)
+    {
+        var table = document.getElementById("toy_table");
+        var total= 0.0;
+        var checkboxCol=document.getElementById("returned").cellIndex;
+        var feeCol=document.getElementById("fee").cellIndex;
+
+        for (var i = 1, row; row = table.rows[i]; i++)
+        {
+            if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
+                total+=parseFloat(row.cells[feeCol].innerHTML.slice(1));
+        }
+        document.getElementById("fee_due").value=total.toFixed(2);
+    }
+</script>
+
+<div class="row">
+         <div class="input-group col-xs-12 col-sm-10 ">
+              <span class="input-group-addon">Fee Due $</span>
+              <input type="text" id="fee_due" class="form-control" aria-label="Amount ">
+               <span class="input-group-btn">
+        			<button class="btn btn-default" type="button">Done</button>
+      		   </span>
+            </div>
+</div>
+{% endblock content %}

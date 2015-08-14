@@ -17,4 +17,9 @@ def loans(request, member_id):
     if (request.GET.get('tc')):
         context.update(handle_toy_summary(request))
 
+    #base page context
+    context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
+
+    print(context)
+
     return render(request, 'toybox/loans.html', context)
