@@ -7,7 +7,7 @@ class Command(BaseCommand):
     firstRun=True
 
     def _reset_membertype(self):
-       
+        
         MemberType.objects.filter(name="Public").delete()
 
         MemberType.objects.update_or_create(name="Public",
@@ -93,8 +93,9 @@ class Command(BaseCommand):
                                         balance="23",
                                         volunteer=True,
                                         active=False,
-                                        join_date=timezone.now() - datetime.timedelta(days=360))
-       
+                                        join_date=timezone.now() - datetime.timedelta(days=360),
+                                        anniversary_date=timezone.now())
+
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
                                                                 address="44 Irvine st Watson",
@@ -102,7 +103,8 @@ class Command(BaseCommand):
                                                                 phone_number2="02 77 889 455",
                                                                 type=mt_playgrp,
                                                                 balance="-12",
-                                                                join_date=timezone.now() - datetime.timedelta(days=100))
+                                                                join_date=timezone.now() - datetime.timedelta(days=100),
+                                                                anniversary_date=timezone.now() + datetime.timedelta(days=265))
 
     def _reset_toybrand(self):
         self.tb_mandd, created = ToyBrand.objects.update_or_create(name="Mellisa & Doug")

@@ -1,4 +1,5 @@
 import datetime
+import django
 
 from django.db import models
 from django.utils import timezone
@@ -61,7 +62,7 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    # anniversary_date = models.DateField('Membership due',null=True)
+    anniversary_date = models.DateField('Membership due', default = django.utils.timezone.now)
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
@@ -78,7 +79,12 @@ class Member(models.Model):
         return self.name
 
     def membership_due_soon(self):
+        #TODO move magic value to config
         return timezone.now().date + datetime.timedelta(days=60) <= self.aniversary_date
+
+    def is_current(self):
+        #TODO move magic value to config
+        return timezone.now() + datetime.timedelta(days=14) > self.aniversary_date
 
 
 class Child(models.Model):
@@ -162,6 +168,7 @@ class Toy(models.Model):
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
+    due_date = models.DateField(blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
@@ -174,6 +181,7 @@ class Toy(models.Model):
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
+    fee = models.DecimalField(decimal_places=2, max_digits=3, default=0.5)
 
     def __unicode__(self):
         return self.code
@@ -186,6 +194,11 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
+    def borrow(self, member, duration):
+        self.member_loaned = member
+        self.state = self.BORROWED
+        self.due_date = timezone.now() + datetime.timedelta(days=duration*7)
+        self.save()
 
     # def admin_image(self):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
