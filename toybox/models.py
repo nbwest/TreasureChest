@@ -192,7 +192,7 @@ class Toy(models.Model):
     #     image_.allow_tags = True
 
 # fine associated with missing pieces etc? currently captured by loan type
-
+#add none=0?
 class Issue(models.Model):
     BROKEN_REPAIRABLE = 0
     BROKEN_NOT_REPAIRABLE = 1

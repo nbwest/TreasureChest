@@ -1,0 +1,61 @@
+<span id="member_search_select">
+<!--initial page no message or member summary-->
+ {% if members == None %}
+    <!--<p></p>-->
+
+<!--Saerch returned no members-->
+  {% elif members|length == 0 %}
+     <p>No members found</p>
+
+<!--search returned more than one member-->
+ {% elif members|length > 1 %}
+     <script>
+        function onloadFunction()
+        {  $('#searchModal').modal(); }
+
+     </script>
+
+
+
+<!-- dialog box with search results -->
+    <div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title" id="myModalLabel">Search Results</h4>
+                </div>
+                <div class="modal-body">
+
+                    {% if members %}
+                    <ul class="list-group">
+                        {% for member in members %}
+
+                        <a class="list-group-item" href="{{ return_page }}/{{member.id }}"> {{ member.name }} </a>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--search returned only one member, automatically load this one-->
+ {% elif members|length == 1 %}
+      <script>
+        function onloadFunction()
+        {
+            $(document).ready(function()
+            {
+                var url = "{{ return_page }}/{{members.0.id }}";
+                $(location).attr('href',url);
+            });
+        }
+      </script>
+{% endif %}
+
+</span>

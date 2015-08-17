@@ -4,7 +4,7 @@
 <div id="member_summary">
 {% if member %}
 
-    <a href="#"><strong>{{ member.name }}</strong></a>
+    <a href="{% url 'toybox:membership_admin' member.id %}"><strong>{{ member.name }}</strong></a>
     <h4>
         <!--<p >-->
         {% if member_status %}
@@ -14,7 +14,7 @@
         {% endif %}
         <!--</p>-->
     </h4>
-    <!--TODO populate member link-->
+
 
     <div >Balance: ${{ member.balance|floatformat:2 }}</div>
     <!--<p align="right">Phone: {{ member.phone_number1 }}</p>-->

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from shared import *
 
 def home(request):
@@ -6,14 +7,19 @@ def home(request):
 
 #########################
 # Unimplemented workflows
-def returns(request):
-    #context = get_memsearch_context(request)
+def returns(request, member_id=None):
+
+    # context = get_memsearch_context(request)
+
+    context= handle_returns(request,member_id)
+
+    print(context)
 
     #base page context
-    context = {"daily_balance":23.20,"login_name":"Jess Benning"}
+    context.update({"daily_balance":23.20,"login_name":"Jess Benning"})
 
     #page context
-    context.update({"member":{"name":"John Smith","status":True,"balance":12.50}})
+    # context.update({"member":{"name":"John Smith","status":True,"balance":12.50}})
 
     context.update({"issue_list":
                         ({"name":"None","value":0},
@@ -28,13 +34,19 @@ def returns(request):
                      {"ID":"BT2", "name":"Big toy 2","due_in":-3, "issue":0, "fee":2.5},
                      {"ID":"BT1", "name":"Big toy 1","due_in":52, "issue":0, "fee":0.5})})
 
-
+    context.update(handle_member_search(request))
 
     return render(request, 'toybox/returns.html', context)
 
-def membership_admin(request):
+def membership_admin(request, member_id=None):
    # context = get_memsearch_context(request)
-    return render(request, 'toybox/membership_admin.html')#, context)
+    context=handle_member_details(request, member_id)
+    return render(request, 'toybox/membership_admin.html', context)
 
-def end_of_day(request):
-    return render(request, 'toybox/end_of_day.html')
+
+
+def transactions(request):
+     return render(request, 'toybox/transactions.html')
+
+def reports(request):
+     return render(request, 'toybox/reports.html')

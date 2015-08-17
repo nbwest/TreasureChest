@@ -21,11 +21,8 @@ For page html use the following template tags:
     <script src="/static/toybox/jquery-1.11.3/jquery-1.11.3.min.js"></script>
     <script src="/static/toybox/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 
-    <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-    <!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
-
 </head>
+
 <body  onload="onloadFunction()">
 
 <script type="text/javascript">
@@ -58,7 +55,7 @@ For page html use the following template tags:
              <!-- TODO set link to transactions page end of day info-->
             {% if daily_balance %}
             <ul class="nav navbar-nav hidden-xs ">
-                <li><a href="#">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
+                <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
             </ul>
             {% endif %}
         </div>
@@ -75,45 +72,17 @@ For page html use the following template tags:
                 <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button>
 
                 <!-- these are hidden until used for collapsed menu-->
-                <!-- TODO set href links -->
+
                 <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
 
                     <li><a href="{% url 'toybox:loans' %}">Borrow</a></li>
                     <li><a href="{% url 'toybox:returns' %}">Return</a></li>
                     <li><a href="{% url 'toybox:membership_admin' %}">Members</a></li>
-                    <li><a href="#">Transactions</a></li>
-                    <li><a href="#">Reports</a></li>
+                    <li><a href="{% url 'toybox:transactions' %}">Transactions</a></li>
+                    <li><a href="{% url 'toybox:reports' %}">Reports</a></li>
                     <li><a href="/admin">Admin</a></li>
 
-                    <!--{% if current_page == "borrow" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="{% url 'toybox:loans' %}">Borrow</a></li>-->
 
-                    <!--{% if current_page == "return" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="{% url 'toybox:returns' %}">Return</a></li>-->
-
-                    <!--{% if current_page == "members" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="{% url 'toybox:membership_admin' %}">Members</a></li>-->
-
-                    <!--{% if current_page == "transactions" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="#">Transactions</a></li>-->
-
-                    <!--{% if current_page == "reports" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="#">Reports</a></li>-->
-
-                    <!--{% if current_page == "admin" %}-->
-                    <!--<li class="active"> {% else %}-->
-                    <!--<li> {% endif %}-->
-                        <!--<a href="/admin">Admin</a></li>-->
                 </div>
             </ul>
         </div>

@@ -26,6 +26,8 @@
 
         <div class="input-group ">
             <!--TODO remove Django rendered input line in form -->
+            <!--{{ toy_search_form.toy_id.label }}<br>-->
+            <!--{{ toy_search_form.toy_id }}-->
             <input name="toy_id" type="text" class="form-control" placeholder="Toy ID"
                    id="srch-term">
 
@@ -44,12 +46,6 @@
       {% elif toys|length == 0 %}
          <p>No Toys found</p>
 
-    <!--search returned more than one toy-->
-     <!--{% elif toys|length > 1 %}-->
-         <!--<script>-->
-            <!--function onloadFunction()-->
-            <!--{  $('#searchModal').modal(); }-->
-         <!--</script>-->
 
     <!--search returned only one toy, automatically load this one-->
      {% elif toys|length == 1 %}
@@ -66,32 +62,6 @@
     {% endif %}
 
 
-     <!--dialog box with search results-->
-    <!--<div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">-->
-        <!--<div class="modal-dialog">-->
-            <!--<div class="modal-content">-->
-                <!--<div class="modal-header">-->
-
-                    <!--<h4 class="modal-title" id="myModalLabel">Search Results</h4>-->
-                <!--</div>-->
-                <!--<div class="modal-body">-->
-
-                    <!--{% if toys %}-->
-                    <!--<ul class="list-group">-->
-                        <!--{% for toy in toys %}-->
-                        <!--<a class="list-group-item" href="{{ request.path }}?tc={{ toy.code }}"> {{ toy.code }} ({{-->
-                            <!--toy.description }}) </a>-->
-                        <!--{% endfor %}-->
-                    <!--</ul>-->
-                    <!--{% endif %}-->
-
-                <!--</div>-->
-                <!--<div class="modal-footer">-->
-                    <!--<button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
 
 
 

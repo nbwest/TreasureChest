@@ -1,13 +1,16 @@
+{% load widget_tweaks %}
 <span id="member_search">
 
 
-<form role="search" action="{{ request.get_full_path }}" method='post'>
+<form role="search" action="{{ request.get_full_path }}" method='get'>
     {% csrf_token %}
 
     <div class="input-group ">
         <!--TODO remove Django rendered input line in form -->
-        <input name="member_name_fragment" type="text" class="form-control" placeholder="Member Name"
-               id="srch-term">
+        <!--<input name="member_name_fragment" type="text" class="form-control" placeholder="Member Name"-->
+               <!--id="srch-term">-->
+        {{member_search_form.member_name_fragment|add_class:"form-control"|attr:"placeholder:Member Name"}}
+
 
         <div class="input-group-btn">
             <button title="Search for Member" class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
@@ -15,63 +18,6 @@
     </div>
 </form>
 
-
-<!--initial page no message or member summary-->
- {% if members == None %}
-    <!--<p></p>-->
-
-<!--Saerch returned no members-->
-  {% elif members|length == 0 %}
-     <p>No members found</p>
-
-<!--search returned more than one member-->
- {% elif members|length > 1 %}
-     <script>
-        function onloadFunction()
-        {  $('#searchModal').modal(); }
-
-     </script>
-
-<!--search returned only one member, automatically load this one-->
- {% elif members|length == 1 %}
-      <script>
-        function onloadFunction()
-        {
-            $(document).ready(function()
-            {
-                var url = "{% url 'toybox:member_loan' members.0.id %}";
-                $(location).attr('href',url);
-            });
-        }
-      </script>
-{% endif %}
-
-
-<!-- dialog box with search results -->
-    <div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-
-                    <h4 class="modal-title" id="myModalLabel">Search Results</h4>
-                </div>
-                <div class="modal-body">
-
-                    {% if members %}
-                    <ul class="list-group">
-                        {% for member in members %}
-                        <a class="list-group-item" href="{% url 'toybox:member_loan' member.id %}"> {{ member.name }} </a>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
 

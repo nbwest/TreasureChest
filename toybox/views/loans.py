@@ -20,6 +20,6 @@ def loans(request, member_id):
     #base page context
     context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
 
-    print(context)
+    #print(context)
 
     return render(request, 'toybox/loans.html', context)
