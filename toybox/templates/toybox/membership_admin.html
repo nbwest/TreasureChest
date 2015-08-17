@@ -1,11 +1,94 @@
-
+<<<<<<< HEAD
 {% extends "toybox\base.html" %}
+{% load widget_tweaks %}
+=======
 
+{% extends "toybox/base.html" %}
+
+>>>>>>> origin/master
 {% block content %}
+
 
 <h1  class="page-header">Members</h1>
 
-{% include "toybox/member_search.html" %}
+<!--<div class="row">-->
+    <!--<div class="panel-fluid panel-default col-xs-12 col-sm-10 ">-->
+<!--{#% include "toybox/member_search.html" %#}-->
+         <!--</div>-->
+<!--</div>-->
+<!--<br>-->
+<div id="member" class="row" >
 
+    <div   class="col-xs-11 col-sm-10">
+           {% include "toybox/member_search.html" %}
+        <br>
+
+    </div>
+
+</div>
+
+<div class="row">
+
+
+
+    <div class="panel-fluid panel-default col-xs-11 col-sm-4">
+              <!-- Default panel contents -->
+         <div class="panel-heading">Member List</div>
+            <table id="member_table" class="table">
+
+                    <thead>
+                        <tr>
+
+                        	<th>Name</th>
+                            <th>Remove</th>
+                            <!--<th>Due In (days)</th>-->
+                            <!--<th id="fee">Fee</th>-->
+                            <!--<th id="returned">Returned</th>-->
+                            <!--<th>Report Issue</th>-->
+                       	</tr>
+                    </thead>
+
+                    {% for m in members %}
+                       <tr>
+
+                            <td> <a  href="{% url 'toybox:membership_admin' member_id=m.id %}{{action}}"> {{ m.name }}</a></td>
+
+                            <td><button title="Remove this member" type="button" class="btn btn-danger" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
+                            </button>
+                        </td>
+
+                       </tr>
+                    {% endfor %}
+            </table>
+      </div>
+
+     <div   class="col-xs-1" >
+
+        <a href="#"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
+
+    </div>
+
+
+    <div class="panel-fluid panel-default col-xs-12 col-sm-5 ">
+
+        <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+            {% csrf_token %}
+            <div class="fieldWrapper">
+            {% for field in member_details_form %}
+                    {{ field.label_tag }}
+                    {{ field|add_class:"form-control"}}
+            {% endfor %}
+                <br>
+                <button type="submit" class="btn btn-success form-control"><strong>{{ member_detail_submit_button_label }}</strong></button>
+
+            </div>
+        </form>
+
+    </div>
+
+
+</div>
 
 {% endblock content %}
