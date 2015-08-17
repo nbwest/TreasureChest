@@ -1,4 +1,4 @@
-{% extends "toybox\base.html" %}
+{% extends "toybox/base.html" %}
 
 {% block content %}
 
@@ -64,6 +64,7 @@
         <div   class="col-sm-3 col-xs-6" style="margin-left: 20px;">
             {% if toy != None %}
                  {% include "toybox/toy_summary.html" %}
+            <a class="btn btn-primary btn-xs col-lg-12" href="{{ request.path }}?bt={{ toy.code }}">Borrow</a>
             {% endif %}
        </div>
 
@@ -96,7 +97,7 @@
                        	</tr>
                     </thead>
 
-                   {% for t in toys %}
+                   {% for t in toy_list %}
                    <tr>
                         <td>{{ t.code }}</td>
                         <td>{{ t.description }}</td>

@@ -94,7 +94,7 @@ class Command(BaseCommand):
                                         volunteer=True,
                                         active=False,
                                         join_date=timezone.now() - datetime.timedelta(days=360),
-                                        aniversary_date=timezone.now())
+                                        anniversary_date=timezone.now())
 
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                                                                 type=mt_playgrp,
                                                                 balance="-12",
                                                                 join_date=timezone.now() - datetime.timedelta(days=100),
-                                                                aniversary_date=timezone.now + datetime.timedelta(days=265))
+                                                                anniversary_date=timezone.now() + datetime.timedelta(days=265))
 
     def _reset_toybrand(self):
         self.tb_mandd, created = ToyBrand.objects.update_or_create(name="Mellisa & Doug")

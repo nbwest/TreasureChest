@@ -1,8 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from shared import *
 
 
 def loans(request, member_id):
+    # If borrow button has been pushed, handle borrow of toy and reload page
+    toy_code = request.GET.get('bt')
+    if (toy_code):
+        toy = get_object_or_404(Toy, code=toy_code)
+        member = get_object_or_404(Member, pk=member_id)
+        print "Loaning toy"
+        toy.borrow(member,1)
+        return HttpResponseRedirect(reverse('toybox:member_loan', kwargs={'member_id': member_id}) )
+
     context = handle_member_search(request)
 
     # Always need this so search box renders

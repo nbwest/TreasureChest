@@ -168,6 +168,7 @@ class Toy(models.Model):
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
+    due_date = models.DateField(blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
@@ -180,6 +181,7 @@ class Toy(models.Model):
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
+    fee = models.DecimalField(decimal_places=2, max_digits=3, default=0.5)
 
     def __unicode__(self):
         return self.code
@@ -192,6 +194,11 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
+    def borrow(self, member, duration):
+        self.member_loaned = member
+        self.state = self.BORROWED
+        self.due_date = timezone.now() + datetime.timedelta(days=duration*7)
+        self.save()
 
     # def admin_image(self):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
