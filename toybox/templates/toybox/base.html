@@ -52,7 +52,7 @@ For page html use the following template tags:
             <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
             <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
 
-             <!-- TODO set link to transactions page end of day info-->
+
             {% if daily_balance %}
             <ul class="nav navbar-nav hidden-xs ">
                 <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
@@ -72,15 +72,14 @@ For page html use the following template tags:
                 <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button>
 
                 <!-- these are hidden until used for collapsed menu-->
-
                 <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
 
-                    <li><a href="{% url 'toybox:loans' %}">Borrow</a></li>
-                    <li><a href="{% url 'toybox:returns' %}">Return</a></li>
-                    <li><a href="{% url 'toybox:membership_admin' %}">Members</a></li>
-                    <li><a href="{% url 'toybox:transactions' %}">Transactions</a></li>
-                    <li><a href="{% url 'toybox:reports' %}">Reports</a></li>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="{% url 'toybox:borrow' %}"><strong>Borrow</strong></a></li>
+                    <li><a href="{% url 'toybox:returns' %}"><strong>Return</strong></a></li>
+                    <li><a href="{% url 'toybox:members' %}"><strong>Members</strong></a></li>
+                    <li><a href="{% url 'toybox:transactions' %}"><strong>Transactions</strong></a></li>
+                    <li><a href="{% url 'toybox:reports' %}"><strong>Reports</strong></a></li>
+                    <li><a href="/admin"><strong>Admin</strong></a></li>
 
 
                 </div>

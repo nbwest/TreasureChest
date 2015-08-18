@@ -29,9 +29,10 @@ class MemberType(models.Model):
 
 # loan type needs some thought, regarding missing pieces and the issue register
 # loan period may not be needed, or set to zero if not fixed?
-# remove member type, a toy can have only one loan type so different member type doesn't make sense
+# Removed member type, a toy can have only one loan type so different member type doesn't make sense
 # overdue fine - per week?
-
+# I think this can this be combined with Toy category.
+# Is the main difference between the cost of loan the type of toy?
 
 
 class LoanType(models.Model):
@@ -50,6 +51,15 @@ class LoanType(models.Model):
     def __str__(self):
         return self.name
 
+
+class ToyCategory(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
 
 class Member(models.Model):
     # surname?
@@ -109,14 +119,7 @@ class ToyBrand(models.Model):
         return self.name
 
 
-class ToyCategory(models.Model):
-    name = models.CharField(max_length=50)
 
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
 
 
 class ToyPackaging(models.Model):
@@ -128,7 +131,9 @@ class ToyPackaging(models.Model):
     def __str__(self):
         return self.name
 
-
+# should there be a borrow register, what about the history of the toy, how popular is it?
+# This is a report they are interested in.
+# this would be instead of recording the member, due date etc in the toy record. Not sure about state.
 class Toy(models.Model):
     AT_TOY_LIBRARY = 0
     BORROWED = 1
@@ -169,6 +174,7 @@ class Toy(models.Model):
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
     due_date = models.DateField(blank=True, null=True)
+    borrow_date=models.DateField(blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
@@ -196,6 +202,7 @@ class Toy(models.Model):
 
     def borrow(self, member, duration):
         self.member_loaned = member
+        self.borrow_date = timezone.now()
         self.state = self.BORROWED
         self.due_date = timezone.now() + datetime.timedelta(days=duration*7)
         self.save()

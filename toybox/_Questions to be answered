@@ -1,0 +1,55 @@
+Toy library Questions
+==============================
+
+Model
+-----
+
+# loan type needs some thought, regarding missing pieces and the issue register
+# loan period may not be needed, or set to zero if not fixed?
+# Removed member type, a toy can have only one loan type so different member type doesn't make sense
+# overdue fine - per week?
+# I think this can this be combined with Toy category.
+# Is the main difference between the cost of loan the type of toy?
+
+* Do you want rostered days recorded - what will you do with them? - report?
+
+# should there be a borrow register, what about the history of the toy, how popular is it?
+# This is a report they are interested in.
+# this would be instead of recording the member, due date etc in the toy record. Not sure about state.
+
+Home Page
+---------
+* What information is useful on the title bar?
+* Is daily balance useful?
+
+Borrow Page
+----------
+* What details of the member should be displayed in the summary?
+* Do the members have a balance?
+* Max loan duration?
+* What details of the toy should be displayed?
+* What information is useful in the borrowed toy table?
+* Prefer to hide unused sections until they are relevant?
+
+Return Page
+-----------
+* What details of the member should be displayed in the summary?
+* What information is useful in the borrowed toy table?
+
+Member Page
+-----------
+* Two phone numbers?
+
+Transaction Page
+----------------
+*TODO
+
+Reports Page
+------------
+*TODO
+
+Internal Discussion
+===================
+* I think when adding a toy it should be just added and removed if wrong, normal workflow should require two clicks, enter a code then press enter.
+* How can we differentiate the newly added toys to the so they can be removed and the fees are included in the total
+* Shared and other.py views - break into separate files or bring borrow logic into other.py and rename file?

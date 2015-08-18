@@ -36,10 +36,10 @@
                     {% for m in members %}
                        <tr>
 
-                            <td> <a  href="{% url 'toybox:membership_admin' member_id=m.id %}{{action}}"> {{ m.name }}</a></td>
+                            <td> <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}"> {{ m.name }}</a></td>
 
                             <td><button title="Remove this member" type="button" class="btn btn-danger" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
 
@@ -51,7 +51,7 @@
      <div   class="col-xs-1" >
 
         <a href="#"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button></a>
 
     </div>
 

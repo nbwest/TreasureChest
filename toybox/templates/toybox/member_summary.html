@@ -4,7 +4,7 @@
 <div id="member_summary">
 {% if member %}
 
-    <a href="{% url 'toybox:membership_admin' member.id %}"><strong>{{ member.name }}</strong></a>
+    <a href="{% url 'toybox:members' member.id %}"><strong>{{ member.name }}</strong></a>
     <h4>
         <!--<p >-->
         {% if member_status %}

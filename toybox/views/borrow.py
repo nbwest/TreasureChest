@@ -4,17 +4,26 @@ from django.http import HttpResponseRedirect
 from shared import *
 
 
-def loans(request, member_id):
+def borrow(request, member_id):
+
+    context={}
     # If borrow button has been pushed, handle borrow of toy and reload page
-    toy_code = request.GET.get('bt')
+
+    # Only need to handle this frame is a toy is selected
+    toy_code = request.GET.get('tc')
     if (toy_code):
+        context.update(handle_toy_summary(request))
+    # toy_code = request.GET.get('bt')
+    # if (toy_code):
         toy = get_object_or_404(Toy, code=toy_code)
         member = get_object_or_404(Member, pk=member_id)
         print "Loaning toy"
+        # TODO include borrow duration, 1 is placeholder
         toy.borrow(member,1)
-        return HttpResponseRedirect(reverse('toybox:member_loan', kwargs={'member_id': member_id}) )
 
-    context = handle_member_search(request)
+        # return HttpResponseRedirect(reverse('toybox:borrow', kwargs={'member_id': member_id}) )
+
+    context.update( handle_member_search(request))
 
     # Always need this so search box renders
     context.update(handle_toy_search(request))
@@ -24,13 +33,8 @@ def loans(request, member_id):
         context.update(handle_member_summary(request, member_id))
         context.update(handle_borrowed_toy_list(request, member_id))
 
-    # Only need to handle this frame is a toy is selected
-    if (request.GET.get('tc')):
-        context.update(handle_toy_summary(request))
-
+    # TODO retrieve from elsewhere
     #base page context
     context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
 
-    #print(context)
-
-    return render(request, 'toybox/loans.html', context)
+    return render(request, 'toybox/borrow.html', context)

@@ -1,2 +1,2 @@
 from other import *
-from loans import loans
+from borrow import borrow

@@ -9,13 +9,13 @@
     <div   class="col-xs-11 col-sm-10 ">
 
            {% include "toybox/member_search.html" %}
-           {% include "toybox/member_search_select.html" with return_page="/toybox/loans"%}
+           {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
 
     </div>
     <div   class="col-xs-1" >
 
-        <a href="#"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
+        <a href="{% url 'toybox:members' %}"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
+        <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button></a>
 
     </div>
 </div>
@@ -23,7 +23,6 @@
 <div class="row" >
       <div class="col-xs-12 col-sm-10 " style="margin-left: 20px; ">
         <br>
-          <!--TODO populate member link-->
            {% if members == None %}
                 {% include "toybox/member_summary.html" %}
           {% endif %}
@@ -32,6 +31,7 @@
 
 </div>
 
+<!--TODO need to be in a form to get data back in POST-->
 <div class="row" style=" min-height: 80px;margin-left: 0px;" >
     <div class="input-group  col-xs-12 col-sm-10 ">
 
@@ -57,25 +57,27 @@
 </div>
 
     {% if toy %}
-   <div class="row" style=" min-height:180px; ">
+   <div class="row panel-fluid panel-default" style=" min-height:180px; ">
    {%else%}
-     <div class="row" >
+     <div class="row panel-fluid panel-default" >
    {% endif %}
 
-        <div   class="col-sm-3 col-xs-6" style="margin-left: 20px;">
-            {% if toy != None %}
-                 {% include "toybox/toy_summary.html" %}
-            <a class="btn btn-primary btn-xs col-lg-12" href="{{ request.path }}?bt={{ toy.code }}">Borrow</a>
-            {% endif %}
-       </div>
-
-       <div   class="col-sm-4 col-xs-5">
+         <div   class="col-sm-3 col-xs-12">
             {% if toy != None %}
             <!--TODO include toy image in context-->
              <!--<img class="pull-left img-thumbnail"   src="{{ toy.image }}">-->
-                <img class="pull-right img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
+                <img class="pull-left img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
             {% endif %}
        </div>
+
+        <div   class="col-sm-8 col-xs-12 " style="margin-left: 20px;">
+            {% if toy != None %}
+                 {% include "toybox/toy_summary.html" %}
+            <!--<a class="btn btn-primary btn-xs col-lg-12" href="{{ request.path }}?bt={{ toy.code }}">Borrow</a>-->
+            {% endif %}
+       </div>
+
+
     </div>
 
 
@@ -100,7 +102,7 @@
 
                    {% for t in toy_list %}
                    <tr>
-                        <td>{{ t.code }}</td>
+                        <td><a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.code}}" >{{ t.code }}</a></td>
                         <td>{{ t.description }}</td>
 
                         <td>
@@ -111,11 +113,11 @@
                             {% endif %}
                                     {{ t.due_in }}</span>
                         </td>
-
+                       <!--TODO only show if toy is newly added-->
                         <td>${{ t.fee|floatformat:2 }}</td>
                        <!--TODO only show if toy is newly added-->
                         <td><button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-remove " aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
                      </tr>
@@ -127,6 +129,7 @@
 </div>
 
 
+<!--TODO calculate fee-->
 
 <div class="row" style=" min-height: 80px;" >
     <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
@@ -138,25 +141,6 @@
     </div>
 </div>
 
-{{ toys }}
-{{ toy }}
-{{ toy_list }}
-
 
 {% endblock content %}
 
-
-
-<!--<h1>Loans</h1>-->
-
-<!--<div id="member">-->
-    <!--{% include "toybox/member_search.html" %}-->
-    <!--{% include "toybox/member_summary.html" %}-->
-<!--</div>-->
-<!--<div id="toy">-->
-    <!--{% include "toybox/toy_search.html" %}-->
-    <!--{% include "toybox/toy_summary.html" %}-->
-<!--</div>-->
-<!--<div id="transaction">-->
-    <!--{% include "toybox/borrowed_toy_list.html" %}-->
-<!--</div>-->
