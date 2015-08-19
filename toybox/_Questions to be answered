@@ -16,6 +16,25 @@ Model
 # should there be a borrow register, what about the history of the toy, how popular is it?
 # This is a report they are interested in.
 # this would be instead of recording the member, due date etc in the toy record. Not sure about state.
+- add toy_transaction table, used only for reprting. keep current fields.
+toy transaction type
+time stamp
+member
+toy
+overdue days/weeks
+
+Transaction:
+do we need toy link? no
+add balance filed back in
+
+
+Loan type:
+How do you handle increasing toy rent fees?
+Loan period is this ever fixed? what is the max?
+fines? for missing toy? cost of toy captured in toy
+defaults?
+
+Buckets of money? member balance, member membership balance, transactions
 
 Home Page
 ---------
@@ -30,15 +49,22 @@ Borrow Page
 * What details of the toy should be displayed?
 * What information is useful in the borrowed toy table?
 * Prefer to hide unused sections until they are relevant?
+* Due in display days/weeks/date?
+* Do you borrow all toys for the same duration?
+* How are fees collected/calculated. do you need extra calculations
+* overdue fee vs balance? hw is balance worked out.
+* extra credit given?
 
 Return Page
 -----------
 * What details of the member should be displayed in the summary?
 * What information is useful in the borrowed toy table?
+* non paid late fees?
 
 Member Page
 -----------
 * Two phone numbers?
+* display in list? - valid membership
 
 Transaction Page
 ----------------
@@ -48,8 +74,14 @@ Reports Page
 ------------
 *TODO
 
+TOY LIST PAGE?
+-------------
+Primarily for stock take, check box and report issue option.
+filter? sort?
+
 Internal Discussion
 ===================
-* I think when adding a toy it should be just added and removed if wrong, normal workflow should require two clicks, enter a code then press enter.
+* Done. I think when adding a toy it should be just added and removed if wrong, normal workflow should require two clicks, enter a code then press enter.
 * How can we differentiate the newly added toys to the so they can be removed and the fees are included in the total
-* Shared and other.py views - break into separate files or bring borrow logic into other.py and rename file?
+* Done. Shared and other.py views - break into separate files or bring borrow logic into other.py and rename file?
+* Reports page - look into add-ons. Ability to enter in SQL to allow maximum flexibility would be nice

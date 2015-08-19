@@ -1,11 +1,16 @@
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
 from shared import *
-# TODO break into separate files or bring borrow logic into here and rename this file?
 
+def handle_returns(request,member_id):
+    context={}
 
-def home(request):
-    return render(request, 'toybox/home.html', {})
+    context.update(handle_member_search(request))
+
+    if (request.method == "GET"):
+        if (member_id):
+            context.update(handle_member_summary(request, member_id))
+
+    return context
 
 
 def returns(request, member_id=None):
@@ -35,16 +40,3 @@ def returns(request, member_id=None):
     context.update(handle_member_search(request))
 
     return render(request, 'toybox/returns.html', context)
-
-
-def members(request, member_id=None):
-    context=handle_member_details(request, member_id)
-    return render(request, 'toybox/members.html', context)
-
-
-def transactions(request):
-     return render(request, 'toybox/transactions.html')
-
-
-def reports(request):
-     return render(request, 'toybox/reports.html')

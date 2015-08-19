@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from shared import *
-
+from django.db.models import *
+from datetime import *
 
 def borrow(request, member_id):
 
@@ -38,3 +39,23 @@ def borrow(request, member_id):
     context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
 
     return render(request, 'toybox/borrow.html', context)
+
+
+def handle_borrowed_toy_list(request, member_id):
+    context = {}
+    if (member_id):
+        # toys = Toy.objects.all().annotate(due_in=F("due_date")-timezone.now()).filter(member_loaned=member_id)
+        #toys= Toy.objects.all().extra(select={"difference":"due_date"-timezone.now()}).filter(member_loaned=member_id)
+        toys = Toy.objects.filter(member_loaned=member_id).values()
+
+
+#TODO time/date is wrong here - research timezone stuff
+    if (toys):
+        for t in toys:
+            print( timezone.now(), t["due_date"])
+            t.update({"due_in":(t["due_date"]-timezone.now().date()).days})
+
+
+    context = {'toy_list': toys}
+
+    return context

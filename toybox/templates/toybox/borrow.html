@@ -31,14 +31,14 @@
 
 </div>
 
-<!--TODO need to be in a form to get data back in POST-->
+<!--TODO need to be in a form to get data back in POST: toy search form-->
 <div class="row" style=" min-height: 80px;margin-left: 0px;" >
     <div class="input-group  col-xs-12 col-sm-10 ">
 
         <span type="text" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
 
           <div class="btn-group " data-toggle="buttons">
-              {% for i in "123456" %}
+              {% for i in "126" %}
                 <label class="btn btn-default">
                     <input type="radio" id="loanDuration{{ i }}" value={{ i }} />{{ i }}
                 </label>

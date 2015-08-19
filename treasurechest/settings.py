@@ -90,7 +90,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'Australia/Canberra' #'EST'
 
 USE_I18N = True
 
