@@ -46,6 +46,7 @@ Borrow Page
 * What details of the member should be displayed in the summary?
 * Do the members have a balance?
 * Max loan duration?
+* Default loan duration?
 * What details of the toy should be displayed?
 * What information is useful in the borrowed toy table?
 * Prefer to hide unused sections until they are relevant?
