@@ -86,23 +86,37 @@
 
                    {% for t in toy_list %}
                    <tr>
-                        <td><a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.code}}" >{{ t.code }}</a></td>
+                        <td>
+                            <a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.code}}" >{{ t.code }}</a>
+                            {% if t.borrow_date == today.date %}
+                                <span class="label label-success label-as-badge">New</span>
+                            {% endif %}
+                        </td>
+
                         <td>{{ t.description }}</td>
 
                         <td>
-                            {% if t.due_in < 0 %}
-                                <span class="label label-danger label-as-badge">
-                            {% else %}
-                                <span class="label label-success label-as-badge">
-                            {% endif %}
-                                    {{ t.due_in}}</span>
+
+                            <span class="label {% if t.due_in < 0 %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ t.due_in}}</span>
+
                         </td>
-                       <!--TODO only show if toy is newly added - by borrow date/time?-->
-                        <td>$<span name="fee" value="{{t.fee}}">{{ t.fee|floatformat:2}}</span></td>
-                       <!--TODO only show if toy is newly added-->
-                        <td><button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align">
+
+
+                       <td>
+                       {% if t.borrow_date == today.date %}
+                            $<span name="fee" value="{{t.fee}}">{{ t.fee|floatformat:2}}</span>
+                       {% else %}
+                           N/A
+                       {% endif %}
+                       </td>
+
+
+                        <td>
+
+                            <button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align" {% if t.borrow_date != today.date %} disabled {% endif %}>
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
+
                         </td>
                      </tr>
                      {% endfor %}
@@ -112,33 +126,7 @@
 
 </div>
 
-<script type="text/javascript">
-$( document ).ready(function()
-{
 
-    $("#loanDuration")
-    .change(
-        function()
-        {
-            var fee_mult=parseFloat($("input[name='loanDurationRadio']:checked","#loanDuration").val());
-            var total=0.0;
-
-           $("span[name='fee']","#toy_table")
-           .each(
-
-                   function()
-                   {
-                        var originalValue=parseFloat(this.getAttribute("value"));
-                        var newValue=fee_mult*originalValue;
-                        this.innerHTML=newValue.toFixed(2);
-                        total+=newValue;
-                   }
-           );
-           document.getElementById("fee_due").value=total.toFixed(2);
-        }
-    );
-});
-</script>
 
 <!--TODO add borrow duration data to final form and multiply fees in table-->
 <div class="row" style=" min-height: 80px;margin-left: 0px;" >
@@ -148,8 +136,11 @@ $( document ).ready(function()
 
           <div class="btn-group " data-toggle="buttons" id="loanDuration">
               {% for i in "126" %}
-                <label class="btn btn-default" >
-                    <input type="radio"   name="loanDurationRadio" value={{ i }} />{{ i }}
+                <label class="btn btn-default {% if i == "1" %} active {% endif %}">
+                    <input type="radio"   name="loanDurationRadio"  {% if i == "1" %} checked {% endif %} value={{ i }} />{{ i }}
+
+
+
                 </label>
               {% endfor %}
           </div>
@@ -158,14 +149,20 @@ $( document ).ready(function()
 </div>
 
 <!--TODO make this a django form-->
-<!--TODO calculate fee-->
-<!--TODO include duration loan data in this form -->
 <!--TODO add extra input line to include amount paid to add to fee - changes member balance on too little/ too much payment-->
 <!--TODO show member balance as a result - above?-->
+<!--TODO send back actual fee due and fee paid. Update member balance-->
 <div class="row" style=" min-height: 80px;" >
     <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
           <span class="input-group-addon">Fee Due $</span>
-          <input id="fee_due" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+          <input id="fee_due" type="text" class="form-control" aria-label="Amount owed - can be overridden">
+    </div>
+</div>
+
+<div class="row" style=" min-height: 80px;" >
+    <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
+          <span class="input-group-addon">Fee Paid $</span>
+          <input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid, calculate member balance from this">
            <span class="input-group-btn">
                 <button class="btn btn-default" type="button">Done</button>
           </span>
@@ -173,5 +170,33 @@ $( document ).ready(function()
 </div>
 
 
+<script type="text/javascript">
+
+$("#loanDuration").change(function(){UpdateFee()});
+
+$( document ).ready(function(){UpdateFee()});
+
+function UpdateFee()
+{
+    var fee_mult=parseFloat($("input[name='loanDurationRadio']:checked","#loanDuration").val());
+    var total=0.0;
+
+   $("span[name='fee']","#toy_table")
+   .each(
+
+           function()
+           {
+                var originalValue=parseFloat(this.getAttribute("value"));
+                var newValue=fee_mult*originalValue;
+
+                this.innerHTML=newValue.toFixed(2);
+                total+=newValue;
+           }
+   );
+   document.getElementById("fee_due").value=total.toFixed(2);
+}
+
+
+</script>
 {% endblock content %}
 

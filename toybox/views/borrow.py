@@ -19,7 +19,7 @@ def borrow(request, member_id):
         toy = get_object_or_404(Toy, code=toy_code)
         member = get_object_or_404(Member, pk=member_id)
         print "Loaning toy"
-        # TODO include borrow duration, 1 is placeholder
+        # TODO include borrow duration, 1 is placeholder, updated again when fee paid
         toy.borrow(member,1)
 
         # return HttpResponseRedirect(reverse('toybox:borrow', kwargs={'member_id': member_id}) )
@@ -37,6 +37,8 @@ def borrow(request, member_id):
     # TODO retrieve from elsewhere
     #base page context
     context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
+
+    context.update({"today": timezone.now()})
 
     return render(request, 'toybox/borrow.html', context)
 
