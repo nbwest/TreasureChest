@@ -56,14 +56,14 @@
     </div>
 
 
-    <div class="panel-fluid panel-default col-xs-12 col-sm-5 ">
+    <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
 
         <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
             {% csrf_token %}
-            <div class="fieldWrapper">
+            <div class="fieldWrapper" >
             {% for field in member_details_form %}
                     {{ field.label_tag }}
-                    {{ field|add_class:"form-control"}}
+                    {% render_field field class+="form-control" %}
             {% endfor %}
                 <br>
                 <button type="submit" class="btn btn-success form-control"><strong>{{ member_detail_submit_button_label }}</strong></button>

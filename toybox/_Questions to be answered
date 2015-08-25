@@ -53,8 +53,21 @@ Borrow Page
 * Due in display days/weeks/date?
 * Do you borrow all toys for the same duration?
 * How are fees collected/calculated. do you need extra calculations
-* overdue fee vs balance? hw is balance worked out.
+* overdue fee vs balance? how is balance worked out.
 * extra credit given?
+
+* Regarding Borrow use case:
+    System calculates fee and volunteer communicates fee to member
+    The fee should include the cost to borrow the toys and membership fee and late fees
+
+    The above are different pages - Need rethink on payment form
+        Payment to be modal
+        Top bar to contain current member being served
+        return, borrow to have payment button only
+    If borrow and loan over two computers who takes the money?
+        All fees go straight into member balance, if balance is low or negative then payment is required
+        Either can perform transaction?
+
 
 Return Page
 -----------

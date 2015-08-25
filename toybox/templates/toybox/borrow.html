@@ -33,7 +33,7 @@
 <p id="demo"></p>
 
 <div id="toy" class="row">
-
+ <!--TODO change to form that doesn't use URL attributes - clicking on toy reborrows the toy-->
     <div   class="col-xs-12 col-sm-10 ">
         {% include "toybox/toy_search.html" %}
     </div>
@@ -57,7 +57,6 @@
         <div   class="col-sm-8 col-xs-12 " style="margin-left: 20px;">
             {% if toy != None %}
                  {% include "toybox/toy_summary.html" %}
-            <!--<a class="btn btn-primary btn-xs col-lg-12" href="{{ request.path }}?bt={{ toy.code }}">Borrow</a>-->
             {% endif %}
        </div>
 
@@ -79,7 +78,7 @@
                             <th>Toy ID</th>
                         	<th>Toy Description</th>
                             <th>Due In (days)</th>
-                            <th>Fee</th>
+                            <th>Borrow Fee</th>
                             <th>Remove</th>
                        	</tr>
                     </thead>
@@ -127,60 +126,78 @@
 </div>
 
 
+ <form role="form" action="{% url 'toybox:borrow' %}" class="form-group" method='post'>
+    {% csrf_token %}
 
-<!--TODO add borrow duration data to final form and multiply fees in table-->
-<div class="row" style=" min-height: 80px;margin-left: 0px;" >
-    <div class="input-group  col-xs-12 col-sm-10 ">
+    <div class="row" style=" min-height: 80px;margin-left: 0px;" >
+        <div class="input-group  col-xs-12 col-sm-10 ">
 
-        <span type="text" id="duration_title" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
+            <span type="text" id="duration_title" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
 
-          <div class="btn-group " data-toggle="buttons" id="loanDuration">
-              {% for i in "126" %}
-                <label class="btn btn-default {% if i == "1" %} active {% endif %}">
-                    <input type="radio"   name="loanDurationRadio"  {% if i == "1" %} checked {% endif %} value={{ i }} />{{ i }}
+              <div class="btn-group " data-toggle="buttons" id="loanDurationRadioGroup">
 
+                  {% for item in payment_form.loan_duration %}
+                        <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
+                  {% endfor %}
 
+              </div>
+        </div>
 
-                </label>
-              {% endfor %}
-          </div>
     </div>
 
-</div>
-
-<!--TODO make this a django form-->
-<!--TODO add extra input line to include amount paid to add to fee - changes member balance on too little/ too much payment-->
 <!--TODO show member balance as a result - above?-->
 <!--TODO send back actual fee due and fee paid. Update member balance-->
-<div class="row" style=" min-height: 80px;" >
-    <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
-          <span class="input-group-addon">Fee Due $</span>
-          <input id="fee_due" type="text" class="form-control" aria-label="Amount owed - can be overridden">
-    </div>
-</div>
 
-<div class="row" style=" min-height: 80px;" >
-    <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 ">
-          <span class="input-group-addon">Fee Paid $</span>
-          <input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid, calculate member balance from this">
-           <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Done</button>
-          </span>
-    </div>
-</div>
+    <div class="row" style=" min-height: 80px;" >
+        <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 {%if payment_form.fee_due.errors %} has-error {%endif%} ">
+              <span class="input-group-addon">Fee Due $</span>
 
+                {% render_field payment_form.fee_due class+="form-control" id="fee_due"%}
+
+              <!--<input id="fee_due" type="text" class="form-control" aria-label="Amount owed - can be overridden">-->
+        </div>
+
+        <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+        {% for error in payment_form.fee_due.errors  %}
+            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+        {% endfor %}
+        </ul>
+
+    </div>
+
+    <div class="row" style=" min-height: 80px;" >
+
+        <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 {%if payment_form.fee_paid.errors %} has-error {%endif%}">
+
+              <span class="input-group-addon">Fee Paid $</span>
+            {% render_field payment_form.fee_paid class+="form-control" id="fee_paid"%}
+
+              <!--<input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid">-->
+               <span class="input-group-btn">
+                   <button class="btn btn-default "  > <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</button>
+                    <button class="btn btn-default" type="submit" >Done</button>
+              </span>
+        </div>
+
+        <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+        {% for error in payment_form.fee_paid.errors  %}
+            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+        {% endfor %}
+        </ul>
+
+    </div>
+</form>
 
 <script type="text/javascript">
 
-$("#loanDuration").change(function(){UpdateFee()});
+$("#loanDurationRadioGroup").change(function(){UpdateFee()});
 
 $( document ).ready(function(){UpdateFee()});
 
 function UpdateFee()
 {
-    var fee_mult=parseFloat($("input[name='loanDurationRadio']:checked","#loanDuration").val());
+    var fee_mult=parseFloat($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val());
     var total=0.0;
-
    $("span[name='fee']","#toy_table")
    .each(
 

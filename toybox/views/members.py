@@ -47,14 +47,17 @@ def members(request, member_id=None):
 #Form
 class MemberDetailsForm(forms.Form):
     name=forms.CharField(label="Name", max_length=Member._meta.get_field('name').max_length)
-    phone_number1=forms.CharField(label="Phone Number", max_length=Member._meta.get_field('phone_number1').max_length)#Member.phone_number1.max_length)
+    partner=forms.CharField(label="Partner Name", max_length=Member._meta.get_field('partner').max_length)
+    phone_number1=forms.CharField(label="Primary Phone", max_length=Member._meta.get_field('phone_number1').max_length)#Member.phone_number1.max_length)
+    phone_number2=forms.CharField(label="Secondary Phone", max_length=Member._meta.get_field('phone_number2').max_length)#Member.phone_number1.max_length)
     address=forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address=forms.CharField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
     committee_member=forms.BooleanField(label="Committee Member")
     volunteer = forms.BooleanField(label="Volunteer")
+    potential_volunteer = forms.BooleanField(label="Potential Volunteer")
 
- #    partner = models.CharField(max_length=100, blank=True)
+
  #    potential_volunteer = models.BooleanField(default=False)
  #    # anniversary_date = models.DateField('Membership due',null=True)
  #    balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)

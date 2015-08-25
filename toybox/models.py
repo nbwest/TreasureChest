@@ -4,6 +4,19 @@ import django
 from django.db import models
 from django.utils import timezone
 
+#TODO create key value pair table for one off settings - max toys borrowed etc
+#
+class Settings(models.Model):
+    name = models.CharField(max_length=20)
+    value= models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name+":"+self.value
+
+    def __str__(self):
+        return self.name+":"+self.value
+
+
 
 class MemberType(models.Model):
     YEARLY = 0
@@ -28,11 +41,10 @@ class MemberType(models.Model):
         return self.name
 
 # loan type needs some thought, regarding missing pieces and the issue register
-# loan period may not be needed, or set to zero if not fixed?
+# loan period may not be needed, or set to zero if not fixed- change to loan_period_max ?
 # Removed member type, a toy can have only one loan type so different member type doesn't make sense
 # overdue fine - per week?
-# I think this can this be combined with Toy category.
-# Is the main difference between the cost of loan the type of toy?
+
 
 
 class LoanType(models.Model):
