@@ -49,7 +49,7 @@ def handle_member_summary(request, member_id):
     if (member_id):
         member = get_object_or_404(Member, pk=member_id)
         children = Child.objects.filter(parent=member_id)
-        context = {'member': member.__dict__,'children': children}
+        context = {'member': member,'children': children}
         #print(context["member"])
     return context
 
@@ -75,8 +75,21 @@ def handle_toy_summary(request):
         if (toycode):
             toy = get_object_or_404(Toy, code=toycode)
 
-    context = {'toy': toy}
+    #print(toy.loan_type.loan_cost)
+
+    context = {'toy': toy, "loan_type__loan_cost":toy.loan_type.loan_cost}
     return context
+
+
+def handle_borrowed_toy_list(request, member_id):
+    context = {}
+    if (member_id):
+        toys=Toy.objects.filter(member_loaned=member_id)
+
+    context = {'toy_list': toys}
+
+    return context
+
 
 
 def get_members(*fields,**kwargs):

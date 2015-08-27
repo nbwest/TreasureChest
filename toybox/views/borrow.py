@@ -39,9 +39,11 @@ def borrow(request, member_id):
     # if (toy_code):
         toy = get_object_or_404(Toy, code=toy_code)
         member = get_object_or_404(Member, pk=member_id)
-        print "Loaning toy"
+        #print "Loaning toy"
+        #print(context)
         # TODO include borrow duration, 1 is placeholder, updated again when fee paid
         toy.borrow(member,1)
+
 
         # return HttpResponseRedirect(reverse('toybox:borrow', kwargs={'member_id': member_id}) )
 
@@ -50,17 +52,17 @@ def borrow(request, member_id):
 
     if (request.method == "POST"):
          payment_form = PaymentForm(request.POST)
-         print("posted")
+         #print("posted")
          if payment_form.is_valid():
-            print("valid form")
+            #print("valid form")
             loan_duration = payment_form.cleaned_data['loan_duration']
             fee_due = payment_form.cleaned_data['fee_due']
             fee_paid = payment_form.cleaned_data['fee_paid']
-            print(loan_duration)
-            print(fee_due)
-            print(fee_paid)
-         else:
-            print(payment_form.errors)
+            #print(loan_duration)
+            #print(fee_due)
+            #print(fee_paid)
+        # else:
+            #print(payment_form.errors)
     else:
          payment_form=PaymentForm(initial={"loan_duration":2})
 
@@ -86,22 +88,7 @@ def borrow(request, member_id):
     return render(request, 'toybox/borrow.html', context)
 
 
-def handle_borrowed_toy_list(request, member_id):
-    context = {}
-    if (member_id):
-        # toys = Toy.objects.all().annotate(due_in=F("due_date")-timezone.now()).filter(member_loaned=member_id)
-        #toys= Toy.objects.all().extra(select={"difference":"due_date"-timezone.now()}).filter(member_loaned=member_id)
-        toys = Toy.objects.filter(member_loaned=member_id).values()
 
-
-#TODO time/date is wrong here - research timezone stuff
-    if (toys):
-        for t in toys:
-            t.update({"due_in":(t["due_date"]-timezone.now().date()).days})
-
-    context = {'toy_list': toys}
-
-    return context
 
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):

@@ -1,5 +1,6 @@
 {% extends "toybox/base.html" %}
 {% load widget_tweaks %}
+{% load templatetags %}
 {% block content %}
 
 <h1  id="page_table" class="page-header">Borrow Toy</h1>
@@ -77,13 +78,14 @@
                         <tr>
                             <th>Toy ID</th>
                         	<th>Toy Description</th>
-                            <th>Due In (days)</th>
+                            <th>Due</th>
                             <th>Borrow Fee</th>
                             <th>Remove</th>
                        	</tr>
                     </thead>
 
                    {% for t in toy_list %}
+
                    <tr>
                         <td>
                             <a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.code}}" >{{ t.code }}</a>
@@ -96,14 +98,14 @@
 
                         <td>
 
-                            <span class="label {% if t.due_in < 0 %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ t.due_in}}</span>
+                            <span class="label {% if t.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ t.due_date|timebetween}}</span>
 
                         </td>
 
 
                        <td>
                        {% if t.borrow_date == today.date %}
-                            $<span name="fee" value="{{t.fee}}">{{ t.fee|floatformat:2}}</span>
+                            $<span name="fee" value="{{t.loan_type.loan_cost}}">{{ t.loan_type.loan_cost|floatformat:2}}</span>
                        {% else %}
                            N/A
                        {% endif %}

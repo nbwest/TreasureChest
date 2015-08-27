@@ -7,7 +7,7 @@
     <a href="{% url 'toybox:members' member.id %}"><strong>{{ member.name }}</strong></a>
     <h4>
         <!--<p >-->
-        {% if member_status %}
+        {% if member.is_current %}
         <span class="label label-success label-as-badge"> Member Status: VALID</span>
         {% else %}
         <span class="label label-danger label-as-badge"> Member Status: OVER DUE</span>

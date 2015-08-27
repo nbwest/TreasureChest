@@ -8,7 +8,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 
 {% extends "toybox/base.html" %}
-
+{% load templatetags %}
 {% block content %}
 
 
@@ -29,6 +29,12 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
               </div>
         </div>
 
+        <div   class="col-sm-8 col-xs-12 " style="margin-left: 20px;">
+            {% if toy != None %}
+                 {% include "toybox/toy_summary.html" %}
+            {% endif %}
+       </div>
+
         <div class="row">
              <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
               <!-- Default panel contents -->
@@ -41,38 +47,55 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         <tr>
                              <th>Toy ID</th>
                         	<th>Toy Name</th>
-                            <th>Due In (days)</th>
+                            <th>Due</th>
                             <th id="fee">Fee</th>
                             <th id="returned">Returned</th>
                             <th>Report Issue</th>
+                            <th>Comments</th>
                        	</tr>
                     </thead>
 
                    {% for toy in toy_list %}
                    <tr>
-                        <td><a href="#">{{ toy.ID }}</a></td>
-
-                        <td>{{ toy.name }}</td>
-
-                       <td>
-                        {% if toy.due_in < 0 %}
-                                <span class="label label-danger label-as-badge">
-                            {% else %}
-                                <span class="label label-success label-as-badge">
-                            {% endif %}
-                                    {{ toy.due_in }}</span>
+                        <td>
+                            <a href="{% url 'toybox:returns' %}{{member.id}}/?tc={{toy.code}}">{{ toy.code }}</a>
                         </td>
-                       <td>${{ toy.fee|floatformat:2 }}</td>
-                        <td><input type="checkbox" id="returned_checkbox_{{ toy.ID }}" onclick="handleCheckbox(this);"/></td>
+
+                        <td>
+                            {{ toy.description }}
+                        </td>
+
+                        <!--TODO add issue fee to overdue fee-->
+                        <td>
+                           <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween }}</span>
+                        </td>
+
+                       {% if toy.due_date|timebetween|slice:':1' == '-' %}
+                            <td value="{{ toy.loan_type.overdue_fine|floatformat:2 }}">
+                                ${{ toy.loan_type.overdue_fine|floatformat:2 }}
+                            </td>
+                       {%else%}
+                            <td value="0.00">
+                                $0.00
+                            </td>
+                       {%endif%}
+
+                        <td>
+                           <input type="checkbox" id="returned_checkbox_{{ toy.ID }}" onclick="handleCheckbox(this);"/>
+                        </td>
 
                         <td>
                             <!--<div class="selectContainer">-->
                                 <select class="form-control" name="issue">
                                  {% for issue in issue_list %}
-                                    <option value={{ issue.value }} {% if attr.issue == issue.value %}selected{% endif %}> {{ issue.name }} </option>
+                                    <option value="{{ issue.0 }}" {% if toy.issue_type == issue.0 %}selected{% endif %} > {{ issue.1 }} </option>
                                  {% endfor %}
                                 </select>
                             <!--</div>-->
+                        </td>
+
+                        <td>
+                            <input class="form-control" href="#">
                         </td>
 
                      </tr>
@@ -93,7 +116,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         for (var i = 1, row; row = table.rows[i]; i++)
         {
             if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
-                total+=parseFloat(row.cells[feeCol].innerHTML.slice(1));
+            {
+                total+=parseFloat(row.cells[feeCol].getAttribute("value"));
+            }
         }
         document.getElementById("fee_due").value=total.toFixed(2);
     }

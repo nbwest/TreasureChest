@@ -102,11 +102,12 @@ class Member(models.Model):
 
     def membership_due_soon(self):
         #TODO move magic value to config
-        return timezone.now().date + datetime.timedelta(days=60) <= self.aniversary_date
+        return timezone.now().date + datetime.timedelta(days=60) <= self.anniversary_date
 
     def is_current(self):
         #TODO move magic value to config
-        return timezone.now() + datetime.timedelta(days=14) > self.aniversary_date
+        return timezone.now().date()<self.anniversary_date
+        #return timezone.now().date + datetime.timedelta(days=14) > self.anniversary_date
 
 
 class Child(models.Model):
@@ -142,6 +143,30 @@ class ToyPackaging(models.Model):
 
     def __str__(self):
         return self.name
+
+class IssueChoiceType:
+    ISSUE_NONE = 0
+    BROKEN_REPAIRABLE = 1
+    BROKEN_NOT_REPAIRABLE = 2
+    MINOR_MISSING_PIECE = 3
+    MAJOR_MISSING_PIECE = 4
+    WHOLE_TOY_MISSING = 5
+    RETURNED_MISSING_PIECE = 6
+    RETURNED_MISSING_TOY = 7
+    REPAIRED = 8
+
+
+    ISSUE_TYPE_CHOICES = (
+        (ISSUE_NONE,'No Issue'),
+        (BROKEN_REPAIRABLE, 'Broken repairable'),
+        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),
+        (MINOR_MISSING_PIECE, 'Minor missing piece'),
+        (MAJOR_MISSING_PIECE, 'Major missing piece'),
+        (WHOLE_TOY_MISSING, 'Whole toy missing'),
+        (RETURNED_MISSING_PIECE, 'Returned missing piece'),
+        (RETURNED_MISSING_TOY, 'Returned missing toy'),
+        (REPAIRED, 'Repaired'),
+    )
 
 # should there be a borrow register, what about the history of the toy, how popular is it?
 # This is a report they are interested in.
@@ -199,7 +224,9 @@ class Toy(models.Model):
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
-    fee = models.DecimalField(decimal_places=2, max_digits=3, default=0.5)
+    #TODO this is linked to loan type and should be removed, also late_fee
+    #fee = models.DecimalField(decimal_places=2, max_digits=3, default=0.5)
+    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
 
     def __unicode__(self):
         return self.code
@@ -224,32 +251,14 @@ class Toy(models.Model):
     #     image_.allow_tags = True
 
 # fine associated with missing pieces etc? currently captured by loan type
+
 #add none=0?
 class Issue(models.Model):
-    BROKEN_REPAIRABLE = 0
-    BROKEN_NOT_REPAIRABLE = 1
-    MINOR_MISSING_PIECE = 2
-    MAJOR_MISSING_PIECE = 3
-    WHOLE_TOY_MISSING = 4
-    RETURNED_MISSING_PIECE = 5
-    RETURNED_MISSING_TOY = 6
-    REPAIRED = 7
 
-
-    ISSUE_TYPE_CHOICES = (
-        (BROKEN_REPAIRABLE, 'Broken repairable'),
-        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),
-        (MINOR_MISSING_PIECE, 'Minor missing piece'),
-        (MAJOR_MISSING_PIECE, 'Major missing piece'),
-        (WHOLE_TOY_MISSING, 'Whole toy missing'),
-        (RETURNED_MISSING_PIECE, 'Returned missing piece'),
-        (RETURNED_MISSING_TOY, 'Returned missing toy'),
-        (REPAIRED, 'Repaired'),
-    )
 
     toy = models.ForeignKey(Toy)
     date_time = models.DateField('Issue reported date and time', auto_now_add=True)
-    issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES)
+    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
     member_involved = models.ForeignKey(Member)
     # issue here? volunteer_reporting = models.ForeignKey(Member)
     comment = models.CharField(max_length=1024)
