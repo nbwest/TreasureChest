@@ -259,6 +259,7 @@ class TempBorrowList(models.Model):
         self.toy = toy
         self.save()
 
+
     def __unicode__(self):
         return self.toy.code+":"+self.member.name
 

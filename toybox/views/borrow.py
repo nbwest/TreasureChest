@@ -46,6 +46,16 @@ def borrow(request, member_id):
     new_borrow_list=TempBorrowList.objects.filter(member=member_id)
     context.update({"new_borrow_list":new_borrow_list})
 
+    if request.method=="POST":
+        for item in request.POST:
+            if item.startswith("remove_toy_"):
+                toy_to_remove=item[len("remove_toy_"):]
+                TempBorrowList.objects.filter(toy__code=toy_to_remove, member__id=member_id).delete()
+                print(toy_to_remove)
+
+
+
+
     context.update(handle_payment_form(request))
 
     return render(request, 'toybox/borrow.html', context)

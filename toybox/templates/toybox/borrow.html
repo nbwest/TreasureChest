@@ -72,6 +72,8 @@
               <div class="panel-heading">Borrowed Toys</div>
 
               <!-- Table -->
+          <form role="search" action="{{ request.get_full_path }}" method='post'>
+                {% csrf_token %}
               <table class="table" id="toy_table">
 
                     <thead>
@@ -110,6 +112,7 @@
                      </tr>
                      {% endfor %}
 
+
                    {% for t in new_borrow_list %}
 
                    <tr>
@@ -129,7 +132,7 @@
                        </td>
 
                         <td>
-                            <button title="Remove this toy from list" type="button" class="btn btn-danger" aria-label="Left Align">
+                            <button title="Remove this toy from list" name="remove_toy_{{t.toy.code}}" type="submit" class="btn btn-danger" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
@@ -137,7 +140,10 @@
                      </tr>
                      {% endfor %}
 
+
+
               </table>
+               </form>
         </div>
 
 
