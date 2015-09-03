@@ -17,7 +17,6 @@ class Settings(models.Model):
         return self.name+":"+self.value
 
 
-
 class MemberType(models.Model):
     YEARLY = 0
     BIANNUALLY = 2
@@ -250,12 +249,26 @@ class Toy(models.Model):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
     #     image_.allow_tags = True
 
+
+class TempBorrowList(models.Model):
+    member = models.ForeignKey(Member)
+    toy = models.ForeignKey(Toy)
+
+    def store(self, member, toy):
+        self.member = member
+        self.toy = toy
+        self.save()
+
+    def __unicode__(self):
+        return self.toy.code+":"+self.member.name
+
+    def __str__(self):
+        return self.toy.code+":"+self.member.name
+
 # fine associated with missing pieces etc? currently captured by loan type
 
 #add none=0?
 class Issue(models.Model):
-
-
     toy = models.ForeignKey(Toy)
     date_time = models.DateField('Issue reported date and time', auto_now_add=True)
     issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)

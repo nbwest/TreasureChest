@@ -20,36 +20,42 @@ from datetime import *
 # on fee being collected, done commits new toys to DB
 
 
-def borrow(request, member_id):
 
+def borrow(request, member_id):
     context={}
 
-    # If borrow button has been pushed, handle borrow of toy and reload page
 
-    # Only need to handle this frame is a toy is selected
-    # TODO change this to POST - it performs the action of adding the toy
-    # TODO somehow mark when a toy is to be borrowed (after toy add) vs just selecting it from the list
+    #TODO retrieve from elsewhere
+    #base page context
+    context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
 
-    # TODO newly borrowed toy criteria shouldn't be based on date - base on toy transaction - payment details.
-    # OR added toys don't go into borrowed yet - List borrowed toys, store temporarily, add to this list, on accept commit to DB
-    toy_code = request.GET.get('tc')
-    if (toy_code):
-        context.update(handle_toy_summary(request))
-    # toy_code = request.GET.get('bt')
-    # if (toy_code):
-        toy = get_object_or_404(Toy, code=toy_code)
-        member = get_object_or_404(Member, pk=member_id)
-        #print "Loaning toy"
-        #print(context)
-        # TODO include borrow duration, 1 is placeholder, updated again when fee paid
-        toy.borrow(member,1)
+    #display toy in toy summary
+    context.update(handle_toy_summary(request))
+
+    #handle member search
+    context.update( handle_member_search(request))
+
+    # if member_id set display member summary and list of borrowed toys
+    if (member_id):
+        context.update(handle_member_summary(request, member_id))
+        context.update(handle_borrowed_toy_list(request, member_id))
+
+    # Always need this so search box renders
+    context.update(handle_toy_search(request,member_id))
+
+    new_borrow_list=TempBorrowList.objects.filter(member=member_id)
+    context.update({"new_borrow_list":new_borrow_list})
+
+    context.update(handle_payment_form(request))
+
+    return render(request, 'toybox/borrow.html', context)
 
 
-        # return HttpResponseRedirect(reverse('toybox:borrow', kwargs={'member_id': member_id}) )
 
-    # TODO update member balance and transaction table
+def handle_payment_form(request):
+     # TODO update member balance and transaction table
     # TODO update toy loan duration
-
+    context={}
     if (request.method == "POST"):
          payment_form = PaymentForm(request.POST)
          #print("posted")
@@ -58,38 +64,19 @@ def borrow(request, member_id):
             loan_duration = payment_form.cleaned_data['loan_duration']
             fee_due = payment_form.cleaned_data['fee_due']
             fee_paid = payment_form.cleaned_data['fee_paid']
+
             #print(loan_duration)
             #print(fee_due)
             #print(fee_paid)
         # else:
             #print(payment_form.errors)
     else:
-         payment_form=PaymentForm(initial={"loan_duration":2})
+        # TODO store default duration in settings
+         payment_form=PaymentForm(initial={"loan_duration":"2"})
 
+    context={'payment_form': payment_form}
 
-    context.update( handle_member_search(request))
-
-    # Always need this so search box renders
-    context.update(handle_toy_search(request))
-
-    # Only need to handle these frames if member_id set
-    if (member_id):
-        context.update(handle_member_summary(request, member_id))
-        context.update(handle_borrowed_toy_list(request, member_id))
-
-    # TODO retrieve from elsewhere
-    #base page context
-    context.update({"daily_balance":23.20, "login_name":"Jess Benning"})
-
-    context.update({"today": timezone.now()})
-
-    context.update({'payment_form': payment_form})
-
-    return render(request, 'toybox/borrow.html', context)
-
-
-
-
+    return context
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
   def render(self):
@@ -98,8 +85,14 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
 
 class PaymentForm(forms.Form):
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')
-    # TODO store these somewhere
-    LOAN_CHOICES=[(1,"1"),(2,"2"),(6,"6")]
+    # TODO store loan durations in settings
+    LOAN_DURATIONS="126"
+    LOAN_CHOICES=[]
+
+    #so choices can be easily stored in settings
+    for c in LOAN_DURATIONS:
+        LOAN_CHOICES.append((c,c))
+
 
     loan_duration=forms.ChoiceField(choices=LOAN_CHOICES, widget=forms.RadioSelect(renderer=HorizontalRadioRenderer))
     fee_due = forms.CharField(label="Fee Due", max_length=20, validators=[numeric])

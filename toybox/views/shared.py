@@ -25,22 +25,28 @@ def fragment_search(fragment):
 def handle_member_search(request):
 
     possible_members = None
+    error=""
 
     # Search pressed.  Validate form and get list of matching members
     if (request.method == "GET"):
         form = MemberSearchForm(request.GET)
         if form.is_valid():
-            possible_members = fragment_search(form.cleaned_data['member_name_fragment'])
-            form = MemberSearchForm(initial={"member_name_fragment":form.cleaned_data['member_name_fragment']})
-    #
-    # elif (request.method == "GET"):
+            name_fragment=form.cleaned_data['member_name_fragment']
+            if name_fragment!="":
+                possible_members = fragment_search(name_fragment)
+
+                if possible_members.__len__()==0:
+                    error="No members found"
+            #else:
+                #error="Member name not entered"
+            if error!="":
+                form.add_error("member_name_fragment",error)
     else:
          form = MemberSearchForm()
 
-
     context = {'member_search_form': form,
                'members': possible_members}
-    # print(context)
+
     return context
 
 
@@ -53,31 +59,68 @@ def handle_member_summary(request, member_id):
         #print(context["member"])
     return context
 
+#also adds toy to temp list in DB via POST - not sure if this is a good idea
+def handle_toy_search(request,member_id):
 
-def handle_toy_search(request):
-    form = ToySearchForm()
     toys = None
-    if (request.method == "POST"):
-        form = ToySearchForm(request.POST)
-        if form.is_valid():
-            toys = get_list_or_404(Toy,code__contains=form.cleaned_data['toy_id'])
+    error=""
+    toycode=""
 
-    context = {'toy_search_form': form,
-               'toys': toys}
+    form = ToySearchForm(request.POST)
+
+    if (request.method == "POST"):
+        if form.is_valid():
+            toycode=form.cleaned_data['toy_id']
+
+            if toycode=="":
+                error="Toy code not entered"
+            else:
+                toy = Toy.objects.filter(code=toycode, state=Toy.AT_TOY_LIBRARY)
+
+                if toy.count()>0:
+                    in_temp_list=TempBorrowList.objects.filter(toy=toy[0])
+
+                    if not in_temp_list:
+                        member = get_object_or_404(Member, pk=member_id)
+                        tempBorrowList=TempBorrowList()
+                        tempBorrowList.store(member,toy[0])
+                    else:
+                        error="Toy on loan"
+                else:
+                    error="Toy not found"
+                    if (member_id):
+                        if (Toy.objects.filter(member_loaned=member_id, code=toycode).count()>0):
+                            error="Toy on loan"
+
+            if error!="":
+                form.add_error("toy_id",error)
+
+    elif request.method == "GET":
+        toycode = request.GET.get('tc')
+
+    if form.is_valid() and toycode:
+        toys = get_list_or_404(Toy,code__contains=toycode)
+
+    context = {'toy_search_form': form, 'toys': toys}
+    
     return context
 
 
 def handle_toy_summary(request):
-    toy = None
-    if (request.method == "GET" or
-        request.method == "POST"):
+    context={}
+
+    if request.method == "GET":
         toycode = request.GET.get('tc')
-        if (toycode):
-            toy = get_object_or_404(Toy, code=toycode)
 
-    #print(toy.loan_type.loan_cost)
+    if request.method == "POST":
+        form=ToySearchForm(request.POST)
+        if form.is_valid():
+            toycode=form.cleaned_data['toy_id']
 
-    context = {'toy': toy, "loan_type__loan_cost":toy.loan_type.loan_cost}
+    if (toycode):
+        toy = get_object_or_404(Toy, code=toycode)
+        context = {'toy': toy, "loan_type__loan_cost":toy.loan_type.loan_cost}
+
     return context
 
 
@@ -97,15 +140,15 @@ def get_members(*fields,**kwargs):
 
 
 def get_all_members_names():
-     return {"members":Member.objects.values("name","id","phone_number1")}
+     return {"members":Member.objects.values("name","id")}
 
 
 
 ##################
 # Shared form classes
 class MemberSearchForm(forms.Form):
-    member_name_fragment = forms.CharField(label="Member Name", max_length=20)
+    member_name_fragment = forms.CharField(label="Member Name", max_length=20,required=False)
 
 class ToySearchForm(forms.Form):
-    toy_id = forms.CharField(label="Toy ID", max_length=10)
+    toy_id = forms.CharField(label="Toy ID", max_length=10,required=False)
 

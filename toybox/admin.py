@@ -16,7 +16,7 @@ admin.site.register(ToyBrand)
 admin.site.register(ToyCategory)
 admin.site.register(ToyPackaging)
 admin.site.register(LoanType, LoanTypeAdmin)
-
+admin.site.register(TempBorrowList)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'description', 'admin_image')
@@ -24,7 +24,7 @@ class ToyAdmin(admin.ModelAdmin):
 # User space lists
 admin.site.register(Member)
 admin.site.register(Child)
-admin.site.register(Toy, ToyAdmin)  # Toy list available in user space
+admin.site.register(Toy, ToyAdmin)
 
 # Issues added when returning or from toy list (stocktake)
 # used for toy history

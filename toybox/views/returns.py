@@ -30,12 +30,6 @@ def returns(request, member_id=None):
         context.update(handle_borrowed_toy_list(request, member_id))
 
 
-    # TODO get this from DB borrowed list
-    # context.update({"toy_list":
-    #                 ({"ID":"BT3", "name":"Big toy 3", "due_in":32, "issue":0, "fee":0},
-    #                  {"ID":"BT2", "name":"Big toy 2","due_in":-3, "issue":0, "fee":2.5},
-    #                  {"ID":"BT1", "name":"Big toy 1","due_in":52, "issue":0, "fee":0.5})})
-
     context.update(handle_member_search(request))
 
     return render(request, 'toybox/returns.html', context)

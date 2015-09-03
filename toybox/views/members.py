@@ -14,7 +14,7 @@ from shared import *
 
 def handle_member_details(request, member_id):
     context={}
-
+    form=None
     context.update(handle_member_search(request))
 
     if (request.method == "GET"):
@@ -26,15 +26,15 @@ def handle_member_details(request, member_id):
 
         if (member_id):
             context.update(handle_member_summary(request, member_id))
-            form = MemberDetailsForm(initial=context["member"],label_suffix="")
+            form = MemberDetailsForm(initial=context["member"].__dict__,label_suffix="")
         else:
             form = MemberDetailsForm(label_suffix="")
+
+        context.update({'member_details_form': form})
 
     #if no members have been searched for display all members
     if context["members"]==None:
         context.update(get_all_members_names())
-
-    context.update({'member_details_form': form})
 
     return context
 
@@ -44,22 +44,26 @@ def members(request, member_id=None):
     return render(request, 'toybox/members.html', context)
 
 
+
 #Form
 class MemberDetailsForm(forms.Form):
     name=forms.CharField(label="Name", max_length=Member._meta.get_field('name').max_length)
+
     partner=forms.CharField(label="Partner Name", max_length=Member._meta.get_field('partner').max_length)
-    phone_number1=forms.CharField(label="Primary Phone", max_length=Member._meta.get_field('phone_number1').max_length)#Member.phone_number1.max_length)
-    phone_number2=forms.CharField(label="Secondary Phone", max_length=Member._meta.get_field('phone_number2').max_length)#Member.phone_number1.max_length)
+    phone_number1=forms.CharField(label="Primary Phone", max_length=Member._meta.get_field('phone_number1').max_length)
+    phone_number2=forms.CharField(label="Secondary Phone", max_length=Member._meta.get_field('phone_number2').max_length)
     address=forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address=forms.CharField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
+    balance = forms.CharField(label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    anniversary_date = forms.DateField(label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     committee_member=forms.BooleanField(label="Committee Member")
     volunteer = forms.BooleanField(label="Volunteer")
     potential_volunteer = forms.BooleanField(label="Potential Volunteer")
 
 
- #    potential_volunteer = models.BooleanField(default=False)
+
+ #children
  #    # anniversary_date = models.DateField('Membership due',null=True)
- #    balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
  #    active = models.BooleanField(default=True)
  #    join_date = models.DateField(null=True)

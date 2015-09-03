@@ -1,11 +1,11 @@
 {% load widget_tweaks %}
 <span id="member_search">
 
+<form role="search" action="{{ return_page }}" method='get'>
 
-<form role="search" action="{{ request.get_full_path }}" method='get'>
     {% csrf_token %}
 
-    <div class="input-group ">
+    <div class="input-group  {% if not member %} has-error {% endif %}">
 
         {% render_field member_search_form.member_name_fragment class+="form-control" placeholder=member_search_form.member_name_fragment.label %}
 
@@ -14,6 +14,13 @@
         </div>
 
     </div>
+
+     <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+            {% for error in member_search_form.member_name_fragment.errors  %}
+                <li><label class="label label-danger">{{ error|striptags }}</label></li>
+            {% endfor %}
+     </ul>
+
 </form>
 
 
