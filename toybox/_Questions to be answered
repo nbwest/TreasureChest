@@ -45,6 +45,7 @@ Borrow Page
 ----------
 * What details of the member should be displayed in the summary?
 * Do the members have a balance?
+* Should partner name also be searched?
 * Max loan duration?
 * Default loan duration?
 * What details of the toy should be displayed?
@@ -68,6 +69,7 @@ Borrow Page
         All fees go straight into member balance, if balance is low or negative then payment is required
         Either can perform transaction?
 
+* Does anyone ever need change? how would you like to address this?
 
 Return Page
 -----------

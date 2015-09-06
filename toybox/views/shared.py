@@ -59,55 +59,10 @@ def handle_member_summary(request, member_id):
         #print(context["member"])
     return context
 
-#also adds toy to temp list in DB via POST - not sure if this is a good idea
-def handle_toy_search(request,member_id):
-
-    toys = None
-    error=""
-    toycode=""
-
-    form = ToySearchForm(request.POST)
-
-    if (request.method == "POST"):
-        if form.is_valid():
-            toycode=form.cleaned_data['toy_id']
-
-            if toycode=="":
-                error="Toy code not entered"
-            else:
-                toy = Toy.objects.filter(code=toycode, state=Toy.AT_TOY_LIBRARY)
-
-                if toy.count()>0:
-                    in_temp_list=TempBorrowList.objects.filter(toy=toy[0])
-
-                    if not in_temp_list:
-                        member = get_object_or_404(Member, pk=member_id)
-                        tempBorrowList=TempBorrowList()
-                        tempBorrowList.store(member,toy[0])
-                    else:
-                        error="Toy on loan"
-                else:
-                    error="Toy not found"
-                    if (member_id):
-                        if (Toy.objects.filter(member_loaned=member_id, code=toycode).count()>0):
-                            error="Toy on loan"
-
-            if error!="":
-                form.add_error("toy_id",error)
-
-    elif request.method == "GET":
-        toycode = request.GET.get('tc')
-
-    if form.is_valid() and toycode:
-        toys = get_list_or_404(Toy,code__contains=toycode)
-
-    context = {'toy_search_form': form, 'toys': toys}
-    
-    return context
-
 
 def handle_toy_summary(request):
     context={}
+    toycode=None
 
     if request.method == "GET":
         toycode = request.GET.get('tc')
@@ -118,8 +73,8 @@ def handle_toy_summary(request):
             toycode=form.cleaned_data['toy_id']
 
     if (toycode):
-        toy = get_object_or_404(Toy, code=toycode)
-        context = {'toy': toy, "loan_type__loan_cost":toy.loan_type.loan_cost}
+        toy = get_object_or_404(Toy, code__iexact=toycode)
+        context = {'toy': toy}
 
     return context
 

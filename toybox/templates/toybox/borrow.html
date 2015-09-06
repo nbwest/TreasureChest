@@ -41,29 +41,18 @@
 
 </div>
 
-    {% if toy %}
-   <div class="row panel-fluid panel-default" style=" min-height:180px; ">
-   {%else%}
-     <div class="row panel-fluid panel-default" >
-   {% endif %}
+{% if toy %}
+   <div class="row panel-fluid panel-default" style=" min-height:160px; ">
 
-         <div   class="col-sm-3 col-xs-12">
-            {% if toy != None %}
-            <!--TODO include toy image in context-->
-             <!--<img class="pull-left img-thumbnail"   src="{{ toy.image }}">-->
-                <img class="pull-left img-thumbnail"  style=" max-height:150px;" src="/static/toybox/MTB logo.png">
-            {% endif %}
-       </div>
+        <!--TODO include toy image in context-->
+       <!--<img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="{{ toy.image }}">-->
+        <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="/static/toybox/MTB logo.png">
+        {% include "toybox/toy_summary.html" %}
 
-        <div   class="col-sm-8 col-xs-12 " style="margin-left: 20px;">
-            {% if toy != None %}
-                 {% include "toybox/toy_summary.html" %}
-            {% endif %}
-       </div>
-
-
-    </div>
-
+   </div>
+{%else%}
+     <div class="row panel-fluid panel-default" ></div>
+{% endif %}
 
 
 <div id="transaction"  class="row">
@@ -72,7 +61,7 @@
               <div class="panel-heading">Borrowed Toys</div>
 
               <!-- Table -->
-          <form role="search" action="{{ request.get_full_path }}" method='post'>
+          <form action="{{ request.get_full_path }}" method='post'>
                 {% csrf_token %}
               <table class="table" id="toy_table">
 
@@ -85,6 +74,33 @@
                             <th>Remove</th>
                        	</tr>
                     </thead>
+
+                  {% for t in new_borrow_list %}
+                   <tr>
+                        <td>
+                            <a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.toy.code}}" >{{ t.toy.code }}</a>
+                                <span class="label label-success label-as-badge">New</span>
+                        </td>
+
+                        <td>{{ t.toy.description }}</td>
+
+                        <td>
+                            <span class="label label-success label-as-badge"><span name="new_toy_due">0</span> weeks</span>
+                        </td>
+
+                       <td>
+                            $<span name="fee" value="{{t.toy.loan_type.loan_cost}}">{{ t.toy.loan_type.loan_cost|floatformat:2}}</span>
+                       </td>
+
+                        <td>
+                            <button title="Remove this toy from list" name="remove_toy_{{t.toy.code}}" type="submit" class="btn btn-danger" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
+                            </button>
+                        </td>
+
+                     </tr>
+                   {% endfor %}
+
 
                    {% for t in toy_list %}
 
@@ -113,32 +129,7 @@
                      {% endfor %}
 
 
-                   {% for t in new_borrow_list %}
 
-                   <tr>
-                        <td>
-                            <a href="{% url 'toybox:borrow' %}{{member.id}}/?tc={{t.toy.code}}" >{{ t.toy.code }}</a>
-                                <span class="label label-success label-as-badge">New</span>
-                        </td>
-
-                        <td>{{ t.toy.description }}</td>
-
-                        <td>
-                            <span class="label label-success label-as-badge"><span name="new_toy_due">0</span> weeks</span>
-                        </td>
-
-                       <td>
-                            $<span name="fee" value="{{t.toy.loan_type.loan_cost}}">{{ t.toy.loan_type.loan_cost|floatformat:2}}</span>
-                       </td>
-
-                        <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{t.toy.code}}" type="submit" class="btn btn-danger" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                            </button>
-                        </td>
-
-                     </tr>
-                     {% endfor %}
 
 
 
@@ -150,7 +141,8 @@
 </div>
 
 
- <form role="form" action="{% url 'toybox:borrow' %}" class="form-group" method='post'>
+
+ <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
 
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
@@ -160,8 +152,18 @@
 
               <div class="btn-group " data-toggle="buttons" id="loanDurationRadioGroup">
 
+
                   {% for item in payment_form.loan_duration %}
-                        <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
+
+
+                  <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
+
+                <!--&lt;!&ndash;<label class="btn btn-default">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<input class="btn btn-default{% if 'checked' in item.render %} active {% endif %}" type="radio" id="loanDuration" name="loanDuration" value="{{item|striptags}}" />{{item|striptags}}&ndash;&gt;-->
+                <!--&lt;!&ndash;</label>&ndash;&gt;-->
+
+
                   {% endfor %}
 
               </div>
@@ -198,8 +200,8 @@
 
               <!--<input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid">-->
                <span class="input-group-btn">
-                   <button class="btn btn-default "  > <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</button>
-                    <button class="btn btn-default" type="submit" >Done</button>
+                   <button class="btn btn-default" name="cancel"  > <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</button>
+                    <button class="btn btn-default" name="done" type="submit" >Done</button>
               </span>
         </div>
 
