@@ -219,7 +219,7 @@ class Toy(models.Model):
     storage_location = models.CharField(max_length=50)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
     availability_state = models.IntegerField(choices=TOY_NOT_IN_SERVICE_STATE_CHOICES, default=AVAILABLE)
-    image = models.ImageField(upload_to="./", null=True)  # need Pillow (pip install Pillow)
+    image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
@@ -234,7 +234,7 @@ class Toy(models.Model):
         return self.description
 
     def admin_image(self):
-        return '<img src="%s"/>' % self.image
+        return u'<img src="%s" />' % self.image.url
 
     admin_image.allow_tags = True
 

@@ -45,8 +45,8 @@
    <div class="row panel-fluid panel-default" style=" min-height:160px; ">
 
         <!--TODO include toy image in context-->
-       <!--<img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="{{ toy.image }}">-->
-        <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="/static/toybox/MTB logo.png">
+       <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="{{ MEDIA_URL }}{{ toy.image }}">
+        <!--<img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="/static/toybox/MTB logo.png">-->
         {% include "toybox/toy_summary.html" %}
 
    </div>

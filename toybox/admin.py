@@ -20,6 +20,7 @@ admin.site.register(TempBorrowList)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'description', 'admin_image')
+    #readonly_fields = ('member_loaned','due_date','borrow_date','state')
 
 # User space lists
 admin.site.register(Member)

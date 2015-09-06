@@ -1,6 +1,15 @@
 from django.shortcuts import render
 from shared import *
-
+from django import forms
+from django.core.validators import *
 
 def transactions(request):
-    return render(request, 'toybox/transactions.html', {})
+    form=TransactionForm(request.POST)
+    context={"transaction_form":form}
+    return render(request, 'toybox/transactions.html',context )
+
+
+class TransactionForm(forms.Form):
+    date_from = forms.DateField()
+    date_to = forms.DateField()
+    filter_type=forms.ChoiceField(choices=Transaction.TRANSACTION_TYPE_CHOICES,  initial=Transaction.DEBIT_ADJUSTMENT)
