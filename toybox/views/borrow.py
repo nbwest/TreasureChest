@@ -73,7 +73,7 @@ def handle_toy_borrow(request, member_id):
 
                     toy = Toy.objects.filter(code__iexact=toycode)
 
-                    print("SERACH " + toycode + ": " + str(toy.count()))
+                    #print("SERACH " + toycode + ": " + str(toy.count()))
 
                     if toy.count() > 0:
                         if toy[0].state != Toy.AT_TOY_LIBRARY:
@@ -140,7 +140,7 @@ def handle_payment_form(request, member_id):
                         loan_duration = payment_form.cleaned_data['loan_duration']
                         # print("LOAN_DURATION: "+loan_duration)
                         toy = get_object_or_404(Toy, code=new_toy.toy.code)
-                        toy.borrow(member, int(loan_duration))
+                        toy.borrow_toy(member, int(loan_duration))
                         TempBorrowList.objects.filter(toy__code=new_toy.toy.code, member__id=member_id).delete()
 
                     try:

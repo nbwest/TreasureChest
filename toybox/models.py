@@ -238,12 +238,18 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow(self, member, duration):
+    def borrow_toy(self, member, duration):
         self.member_loaned = member
         self.borrow_date = timezone.now()
         self.state = self.BORROWED
         self.due_date = timezone.now() + datetime.timedelta(days=duration*7)
         self.save()
+
+    def return_toy(self):
+        self.member_loaned=None
+        self.state=self.AT_TOY_LIBRARY
+        self.save()
+
 
     # def admin_image(self):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)

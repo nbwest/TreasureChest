@@ -31,10 +31,10 @@
       </div>
 
 </div>
-<p id="demo"></p>
+
 
 <div id="toy" class="row">
- <!--TODO change to form that doesn't use URL attributes - clicking on toy reborrows the toy-->
+
     <div   class="col-xs-12 col-sm-10 ">
         {% include "toybox/toy_search.html" %}
     </div>
@@ -44,9 +44,9 @@
 {% if toy %}
    <div class="row panel-fluid panel-default" style=" min-height:160px; ">
 
-        <!--TODO include toy image in context-->
+
        <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="{{ MEDIA_URL }}{{ toy.image }}">
-        <!--<img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"  src="/static/toybox/MTB logo.png">-->
+
         {% include "toybox/toy_summary.html" %}
 
    </div>
