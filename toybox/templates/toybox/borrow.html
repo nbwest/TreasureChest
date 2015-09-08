@@ -200,7 +200,7 @@
 
               <!--<input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid">-->
                <span class="input-group-btn">
-                   <button class="btn btn-default" name="cancel"  > <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</button>
+                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="cancel" role="button"> <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</a>
                     <button class="btn btn-default" name="done" type="submit" >Done</button>
               </span>
         </div>

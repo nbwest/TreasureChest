@@ -7,7 +7,7 @@ from django.forms import ModelChoiceField
 # general helpers
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(name__contains=fragment)
+        return Member.objects.filter(name__contains=fragment).order_by("name")
     else:
         return []
 
@@ -95,7 +95,8 @@ def get_members(*fields,**kwargs):
 
 
 def get_all_members_names():
-     return {"members":Member.objects.values("name","id")}
+    members=Member.objects.all().order_by('name')
+    return {"members":members.values("name","id")}
 
 
 

@@ -17,6 +17,7 @@ admin.site.register(ToyCategory)
 admin.site.register(ToyPackaging)
 admin.site.register(LoanType, LoanTypeAdmin)
 admin.site.register(TempBorrowList)
+admin.site.register(Settings)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'description', 'admin_image')

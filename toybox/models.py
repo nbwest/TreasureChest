@@ -7,14 +7,14 @@ from django.utils import timezone
 #TODO create key value pair table for one off settings - max toys borrowed etc
 #
 class Settings(models.Model):
-    name = models.CharField(max_length=20)
-    value= models.CharField(max_length=100)
+    name = models.CharField(max_length=30, unique=True)
+    value = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return self.name+":"+self.value
+        return self.name+" = "+self.value
 
     def __str__(self):
-        return self.name+":"+self.value
+        return self.name+" = "+self.value
 
 
 class MemberType(models.Model):
@@ -234,7 +234,7 @@ class Toy(models.Model):
         return self.description
 
     def admin_image(self):
-        return u'<img src="%s" />' % self.image.url
+        return u'<img src="%s" style="max-height:150px;" />' % self.image.url
 
     admin_image.allow_tags = True
 
@@ -249,6 +249,8 @@ class Toy(models.Model):
         self.member_loaned=None
         self.state=self.AT_TOY_LIBRARY
         self.save()
+
+
 
 
     # def admin_image(self):

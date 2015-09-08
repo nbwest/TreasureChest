@@ -34,6 +34,7 @@ def returns(request, member_id=None):
 
     context.update({"issue_list":IssueChoiceType.ISSUE_TYPE_CHOICES[:IssueChoiceType.RETURNED_MISSING_PIECE]})
 
+    #TODO take into account of half week overdue - leeway for half week
     if (member_id):
         context.update(handle_member_summary(request, member_id))
         #TODO add fee multiplier by weeks late
