@@ -6,15 +6,16 @@ from django.utils import timezone
 
 #TODO create key value pair table for one off settings - max toys borrowed etc
 #
-class Settings(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+class Config(models.Model):
+    key = models.CharField(max_length=30, unique=True)
     value = models.CharField(max_length=100)
+    help= models.CharField(max_length=1024, default="")
 
     def __unicode__(self):
-        return self.name+" = "+self.value
+        return self.key+" = "+self.value+"  ("+self.help+")"
 
     def __str__(self):
-        return self.name+" = "+self.value
+        return self.key+" = "+self.value+"  ("+self.help+")"
 
 
 class MemberType(models.Model):
@@ -48,13 +49,13 @@ class MemberType(models.Model):
 
 class LoanType(models.Model):
     name = models.CharField(max_length=20)
-    loan_period = models.IntegerField(blank=True, null=True)
+    loan_period_max = models.IntegerField(blank=True, null=True)
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5)
     overdue_fine = models.DecimalField(decimal_places=2, max_digits=5)
     missing_piece_fine = models.DecimalField(decimal_places=2, max_digits=5)
     missing_piece_refund = models.DecimalField(decimal_places=2, max_digits=5)
     loan_deposit = models.DecimalField(decimal_places=2, max_digits=5)
-   # member_type = models.ForeignKey(MemberType, null=True)
+    # member_type = models.ForeignKey(MemberType, null=True)
 
     def __unicode__(self):
         return self.name

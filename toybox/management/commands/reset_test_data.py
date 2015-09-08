@@ -19,6 +19,28 @@ class Command(BaseCommand):
                                             fee=200,
                                             membership_period=1)
 
+    def _reset_loantype(self):
+
+        LoanType.objects.filter(name="Standard").delete()
+
+        LoanType.objects.update_or_create(name="Standard",
+                                            loan_period_max=6,
+                                            loan_cost=0.5,
+                                            overdue_fine=0.5,
+                                            missing_piece_fine=0.5,
+                                            missing_piece_refund=0.5,
+                                            loan_deposit=0.0)
+
+        LoanType.objects.filter(name="Outdoor Toy").delete()
+
+        LoanType.objects.update_or_create(name="Outdoor Toy",
+                                            loan_period_max=6,
+                                            loan_cost=2.0,
+                                            overdue_fine=2.0,
+                                            missing_piece_fine=0.5,
+                                            missing_piece_refund=0.5,
+                                            loan_deposit=5.0)
+
     def _reset_members(self):
         YEARS = 365
         mt_public = MemberType.objects.get(name="Public")
@@ -139,7 +161,9 @@ class Command(BaseCommand):
                                                           num_pieces=7,
                                                           state=Toy.BORROWED,
                                                           category=self.tc_big,
-                                                          packaging=self.tp_bag)
+                                                          packaging=self.tp_bag,
+                                                          image="toy_images/51JFER2cZpL._SY300__6bqlMzq.jpg")
+
        
         Toy.objects.filter(code="I13").delete()
         self.t_i13, created = Toy.objects.update_or_create(code="I13",
@@ -152,7 +176,8 @@ class Command(BaseCommand):
                                                            state=Toy.NOT_IN_SERVICE,
                                                            availability_state=Toy.MAJOR_NOTABLE_ISSUE,
                                                            category=self.tc_img,
-                                                           packaging=self.tp_bag)
+                                                           packaging=self.tp_bag,
+                                                           image="toy_images/kids-captain-black-pirate-costume_Dk0e1gc.jpg")
        
         Toy.objects.filter(code="P5").delete()
         self.t_p5, created = Toy.objects.update_or_create(code="P5",
@@ -165,11 +190,13 @@ class Command(BaseCommand):
                                                           state=Toy.AT_TOY_LIBRARY,
                                                           availability_state=Toy.AVAILABLE,
                                                           category=self.tc_puz,
-                                                          packaging=self.tp_none)
+                                                          packaging=self.tp_none,
+                                                          image="toy_images/Supplies-26-letter-digital-wooden-font-b-puzzle-b-font-building-font-b-monkey_9FCx2kM.jpg")
+
        
         Toy.objects.filter(code="O2").delete()
         self.t_o2, created = Toy.objects.update_or_create(code="O2",
-                                                          description="Plastic Car",
+                                                          description="Train",
                                                           brand=self.tb_fp,
                                                           member_loaned=None,
                                                           max_age=6,
@@ -177,28 +204,30 @@ class Command(BaseCommand):
                                                           state=Toy.AT_TOY_LIBRARY,
                                                           availability_state=Toy.AVAILABLE,
                                                           category=self.tc_out,
-                                                          packaging=self.tp_none)
+                                                          packaging=self.tp_none,
+                                                          image="toy_images/6-30108_8917.jpg")
+
 
     def _reset_issues(self):
         Issue.objects.filter(toy=self.t_i13,
-                             issue_type=Issue.MAJOR_MISSING_PIECE,
+                             issue_type=IssueChoiceType.MAJOR_MISSING_PIECE,
                              member_involved=self.m_johnsmith).delete()
         Issue.objects.update_or_create(toy=self.t_i13,
-                                       issue_type=Issue.MAJOR_MISSING_PIECE,
+                                       issue_type=IssueChoiceType.MAJOR_MISSING_PIECE,
                                        member_involved=self.m_johnsmith)
 
         Issue.objects.filter(toy=self.t_b1,
-                             issue_type=Issue.REPAIRED,
+                             issue_type=IssueChoiceType.REPAIRED,
                              member_involved=self.m_alicecatcher).delete()
         Issue.objects.update_or_create(toy=self.t_b1,
-                                       issue_type=Issue.REPAIRED,
+                                       issue_type=IssueChoiceType.REPAIRED,
                                        member_involved=self.m_alicecatcher)
 
         Issue.objects.filter(toy=self.t_p5,
-                             issue_type=Issue.RETURNED_MISSING_PIECE,
+                             issue_type=IssueChoiceType.RETURNED_MISSING_PIECE,
                              member_involved=self.m_alicecatcher).delete()
         Issue.objects.update_or_create(toy=self.t_p5,
-                                       issue_type=Issue.RETURNED_MISSING_PIECE,
+                                       issue_type=IssueChoiceType.RETURNED_MISSING_PIECE,
                                        member_involved=self.m_alicecatcher)
 
     def _reset_transactions(self):
@@ -240,9 +269,32 @@ class Command(BaseCommand):
                                              transaction_type=Transaction.MEMBERSHIP,
                                              amount=20)
 
+    def _reset_config(self):
+        Config.objects.filter(key="loan_durations").delete()
+        Config.objects.update_or_create(key="loan_durations",
+                                            value="126",
+                                            help="Single digit number of weeks in a string, eg 126",
+                                            )
+
+        Config.objects.filter(key="default_loan_duration").delete()
+        Config.objects.update_or_create(key="default_loan_duration",
+                                            value="2",
+                                            help="Default time a toy is borrowed in weeks eg 2",
+                                            )
+
+        Config.objects.filter(key="max_toys").delete()
+        Config.objects.update_or_create(key="max_toys",
+                                          value="4",
+                                          help="Maximum number of toys a member can borrow at once eg 4",
+                                          )
+
+
+
+
     def handle(self, *args, **options):
 
         self._reset_membertype()
+        self._reset_loantype()
         self._reset_members()
         self._reset_toybrand()
         self._reset_toycategory()
@@ -250,3 +302,4 @@ class Command(BaseCommand):
         self._reset_toys()
         self._reset_issues()
         self._reset_transactions()
+        self._reset_config()

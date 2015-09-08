@@ -8,7 +8,7 @@ class MemberTypeAdmin(admin.ModelAdmin):
 
 
 class LoanTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'loan_period', 'loan_cost', 'loan_deposit')
+    list_display = ('name', 'loan_cost', 'loan_deposit')
 
 # Admin space lists
 admin.site.register(MemberType, MemberTypeAdmin)
@@ -17,7 +17,7 @@ admin.site.register(ToyCategory)
 admin.site.register(ToyPackaging)
 admin.site.register(LoanType, LoanTypeAdmin)
 admin.site.register(TempBorrowList)
-admin.site.register(Settings)
+admin.site.register(Config)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'description', 'admin_image')

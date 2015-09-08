@@ -171,8 +171,8 @@ def handle_payment_form(request, member_id):
                     print("invalid form")
 
     try:
-        default_loan_duration = Settings.objects.get(name="default_loan_duration").value
-    except Settings.DoesNotExist:
+        default_loan_duration = Config.objects.get(key="default_loan_duration").value
+    except Config.DoesNotExist:
         default_loan_duration = "2"
 
     # TODO Request.POST here ruins initial data
@@ -190,8 +190,8 @@ class PaymentForm(forms.Form):
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')
 
     try:
-        loan_durations = Settings.objects.get(name="loan_durations").value
-    except Settings.DoesNotExist:
+        loan_durations = Config.objects.get(key="loan_durations").value
+    except Config.DoesNotExist:
         loan_durations = "126"
 
     loan_choices = []
