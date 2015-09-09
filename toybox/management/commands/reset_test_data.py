@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
         LoanType.objects.filter(name="Standard").delete()
 
-        LoanType.objects.update_or_create(name="Standard",
+        self.lt_standard, created = LoanType.objects.update_or_create(name="Standard",
                                             loan_period_max=6,
                                             loan_cost=0.5,
                                             overdue_fine=0.5,
@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         LoanType.objects.filter(name="Outdoor Toy").delete()
 
-        LoanType.objects.update_or_create(name="Outdoor Toy",
+        self.lt_outdoor, created = LoanType.objects.update_or_create(name="Outdoor Toy",
                                             loan_period_max=6,
                                             loan_cost=2.0,
                                             overdue_fine=2.0,
@@ -162,6 +162,7 @@ class Command(BaseCommand):
                                                           state=Toy.BORROWED,
                                                           category=self.tc_big,
                                                           packaging=self.tp_bag,
+                                                          loan_type=self.lt_standard,
                                                           image="toy_images/51JFER2cZpL._SY300__6bqlMzq.jpg")
 
        
@@ -177,6 +178,7 @@ class Command(BaseCommand):
                                                            availability_state=Toy.MAJOR_NOTABLE_ISSUE,
                                                            category=self.tc_img,
                                                            packaging=self.tp_bag,
+                                                           loan_type=self.lt_standard,
                                                            image="toy_images/kids-captain-black-pirate-costume_Dk0e1gc.jpg")
        
         Toy.objects.filter(code="P5").delete()
@@ -191,6 +193,7 @@ class Command(BaseCommand):
                                                           availability_state=Toy.AVAILABLE,
                                                           category=self.tc_puz,
                                                           packaging=self.tp_none,
+                                                          loan_type=self.lt_standard,
                                                           image="toy_images/Supplies-26-letter-digital-wooden-font-b-puzzle-b-font-building-font-b-monkey_9FCx2kM.jpg")
 
        
@@ -205,6 +208,7 @@ class Command(BaseCommand):
                                                           availability_state=Toy.AVAILABLE,
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
+                                                          loan_type=self.lt_outdoor,
                                                           image="toy_images/6-30108_8917.jpg")
 
 

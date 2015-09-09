@@ -31,7 +31,7 @@ def handle_member_search(request):
     if (request.method == "GET"):
         form = MemberSearchForm(request.GET)
         if form.is_valid():
-            name_fragment=form.cleaned_data['member_name_fragment']
+            name_fragment=form.cleaned_data['member_name_fragment'].strip()
             if name_fragment!="":
                 possible_members = fragment_search(name_fragment)
 

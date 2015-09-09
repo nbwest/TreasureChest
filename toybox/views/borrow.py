@@ -67,7 +67,7 @@ def handle_toy_borrow(request, member_id):
         #print("POST")
         if form.is_valid():
             if "add_toy" in request.POST:
-                toycode = form.cleaned_data['toy_id']
+                toycode = form.cleaned_data['toy_id'].strip()
                 form = ToySearchForm(request.POST, initial={"toy_id": toycode})
 
                 if toycode == "":
