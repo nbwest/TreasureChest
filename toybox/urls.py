@@ -9,6 +9,7 @@ from views.members import members
 from views.returns import returns
 from views.transactions import transactions
 from views.reports import reports
+from views.toys import toys
 
 
 
@@ -22,4 +23,5 @@ urlpatterns = [
                   url(r'^members/(?P<member_id>[0-9]+)/$', members, name='members'),
                   url(r'^transactions/', transactions, name='transactions'),
                   url(r'^reports/', reports, name='reports'),
+                  url(r'^toys/', toys, name='toys'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

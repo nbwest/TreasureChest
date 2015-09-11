@@ -39,65 +39,75 @@ Buckets of money? member balance, member membership balance, transactions
 
 Home Page
 ---------
-* What information is useful on the title bar?
-* Is daily balance useful?
+* What information is useful on the title bar? add number of members have borrowed, total toys
+* Is daily balance useful? yes
+* volunteers info on page
+* DB message admin can change
 
 Borrow Page
 ----------
-* What details of the member should be displayed in the summary?
-* Do the members have a balance?
-* Should partner name also be searched?
-* Max loan duration?
-* Default loan duration?
-* What details of the toy should be displayed?
-* Should there be a toy search/lookup option?
-* What information is useful in the borrowed toy table?
-* Prefer to hide unused sections until they are relevant?
-* Due in display days/weeks/date?
-* Do you borrow all toys for the same duration?
-* How are fees collected/calculated. do you need extra calculations
-* overdue fee vs balance? how is balance worked out.
-* extra credit given?
-
+* What details of the member should be displayed in the summary? add partner - done
+* membership, 6 months or year, default 1 year - done
+* Do the members have a balance? to be confirmed.
+* Should partner name also be searched? yes - done
+* Max loan duration? 1&2 for normal login, other available for admin login - max 10 weeks max selectable via dialog box - limit to 1&2 - other yet to do
+* Default loan duration? 2 weeks - done
+* What details of the toy should be displayed? min age, category, comment, issue type and issue comment - obvious - done except toy_issue
+* Should there be a toy search/lookup option? yes add magnifier icon to toy page
+* What information is useful in the borrowed toy table? ok as is
+* Prefer to hide unused sections until they are relevant? ok as is
+* Due in display days/weeks/date? fine, week overdue fine only. ok as is
+* Do you borrow all toys for the same duration? yes ok as is
+* How are fees collected/calculated. do you need extra calculations, change given, donation, other fees
+* overdue fee vs balance? how is balance worked out. ok
+* extra credit given? No
+ donation, late fee, broken missing fee paymnet area done at borrow page
+ any override should come with reason. override is a little harder to do.
+ * can't complete borrow on negative balance
+* pay ?
 * Regarding Borrow use case:
     System calculates fee and volunteer communicates fee to member
     The fee should include the cost to borrow the toys and membership fee and late fees
 
-    The above are different pages - Need rethink on payment form
-        Payment to be modal
-        Top bar to contain current member being served
-        return, borrow to have payment button only
-    If borrow and loan over two computers who takes the money?
-        All fees go straight into member balance, if balance is low or negative then payment is required
-        Either can perform transaction?
 
-* Does anyone ever need change? how would you like to address this?
+* Does anyone ever need change? how would you like to address this? yes, change given button
+* Add comment for toy, in toy summary - done
 
 Return Page
 -----------
-* What details of the member should be displayed in the summary?
-* What information is useful in the borrowed toy table?
-* non paid late fees?
+* What details of the member should be displayed in the summary?, same as borrow - done
+* What information is useful in the borrowed toy table? ok as is
+* non paid late fees? - ok can't borrow with neg credit
 
 Member Page
 -----------
-* Two phone numbers?
-* display in list? - valid membership
-* Roster - how would this be used?
-* Membership payment?
+* Two phone numbers? yes, ok as is
+* display in list? - valid membership, sort by this - done
+* Roster - how would this be used? - forgot to ask
+* Membership payment? i'll think of something fee attached to member
+* deposit payment separate bucket attached to member - added deposit and mebership fee decimal fields to model
+
+add remove member
 
 Transaction Page
 ----------------
 *TODO
+email, for receipt - later, more useful for toy reminders. Start with receipt number
 
 Reports Page
 ------------
 *TODO
 
-TOY LIST PAGE?
+TOY LIST PAGE -yes
 -------------
 Primarily for stock take, check box and report issue option.
 filter? sort? lookup select?
+toy search, filter for stock take and toy lookup
 
 Internal Discussion
 ===================
+
+change loan type to loan fees
+
+membership fee yearly $20
+deposit one per member $30 currently

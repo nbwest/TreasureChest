@@ -32,9 +32,11 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 {% if toy %}
 <div class="row panel-fluid panel-default" style=" min-height:160px; ">
 
-    <img class="pull-left img-thumbnail" style="margin-right: 20px; margin-left:20px; max-height:150px;" align="left"
-         src="{{ MEDIA_URL }}{{ toy.image }}">
-    {% include "toybox/toy_summary.html" %}
+     <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-width:200px; max-height:150px;" align="left"  src="{{ MEDIA_URL }}{{ toy.image }}">
+
+       <div class="col-sm-6">
+        {% include "toybox/toy_summary.html" %}
+       </div>
 </div>
 {%else%}
 <div class="row panel-fluid panel-default"></div>

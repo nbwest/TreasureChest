@@ -1,12 +1,77 @@
 
 <span id="toy_summary">
     {% if toy %}
-        <strong>Toy ID: {{ toy.code }}</strong><br>
-        Description: {{ toy.description }}<br>
-        Brand: {{ toy.brand }}<br>
-        Number of Pieces: {{ toy.num_pieces }}<br>
-        Packaging: {{ toy.packaging }}<br>
-        Weekly Fee: ${{ toy.loan_type.loan_cost }}<br>
+
+        <div class="panel-default">
+        <div class="panel-heading"><a href="#">Toy ID: {{ toy.code }}</a></div>
+          <table class="table table-condensed ">
+            <tbody>
+              <tr>
+                <td>Description</td>
+                <td>{{ toy.description }}</td>
+              </tr>
+
+              <tr>
+                <td>Comment</td>
+                <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
+              </tr>
+
+
+              <tr>
+                <td>Category</td>
+                <td>{{toy.category}}</td>
+              </tr>
+
+              <tr>
+                <td>Min age</td>
+                <td>{{toy.min_age}}</td>
+              </tr>
+
+              <tr>
+                <td>Brand</td>
+                <td>{{ toy.brand }}</td>
+              </tr>
+
+              <tr>
+                <td>Number of Pieces</td>
+                <td>{{ toy.num_pieces }}</td>
+              </tr>
+
+              <tr>
+                <td>Packaging</td>
+                <td>{{ toy.packaging }}</td>
+              </tr>
+
+              <tr>
+                <td>Weekly Fee</td>
+                <td>${{ toy.loan_type.loan_cost }}</td>
+              </tr>
+
+              <tr>
+                <td>Issue</td>
+                  <td>
+
+
+                {% if toy.issue_type != IssueChoiceType.ISSUE_NONE %}
+                   <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
+                  {%else%}
+                      {{toy.get_issue_type_display}}
+                  {%endif%}
+                  </td>
+
+
+              </tr>
+
+              <tr>
+                <td>Issue Comment</td>
+                <td>{{toy.issue_comment}}</td>
+              </tr>
+
+
+
+            </tbody>
+          </table>
+        </div>
     {% endif %}
 </span>
 

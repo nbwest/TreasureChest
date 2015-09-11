@@ -126,7 +126,7 @@ def handle_payment_form(request, member_id):
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
         for item in request.POST:
-            #print(item)
+            print(item)
             if item.startswith("remove_toy_"):
                 toy_to_remove = item[len("remove_toy_"):]
                 # print("REMOVE TOY: "+toy_to_remove)

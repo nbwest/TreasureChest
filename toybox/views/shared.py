@@ -74,7 +74,11 @@ def handle_toy_summary(request):
 
     if (toycode):
         toy = get_object_or_404(Toy, code__iexact=toycode)
-        context = {'toy': toy}
+        context = {'toy': toy, 'IssueChoiceType':IssueChoiceType}
+
+    # print(toy.__dict__)
+    # print(toy.get_issue_type_display())
+    # print(toy.issue_type)
 
     return context
 
@@ -94,9 +98,7 @@ def get_members(*fields,**kwargs):
     return {"members":Member.objects.filter(kwargs).values(fields)}
 
 
-def get_all_members_names():
-    members=Member.objects.all().order_by('name')
-    return {"members":members.values("name","id")}
+
 
 
 

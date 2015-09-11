@@ -34,7 +34,7 @@ def handle_member_details(request, member_id):
 
     #if no members have been searched for display all members
     if context["members"]==None:
-        context.update(get_all_members_names())
+        context.update({"members":Member.objects.all().order_by('anniversary_date')})
 
     return context
 
@@ -43,7 +43,9 @@ def members(request, member_id=None):
     context=handle_member_details(request, member_id)
     return render(request, 'toybox/members.html', context)
 
-
+def get_all_members_ordered_by_name():
+    members=Member.objects.all().order_by('name')
+    return members
 
 #Form
 class MemberDetailsForm(forms.Form):

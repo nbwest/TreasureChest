@@ -27,8 +27,8 @@ class MemberType(models.Model):
     MEMBER_PERIOD_CHOICES = (
         (YEARLY, 'Yearly'),
         (BIANNUALLY, 'Biannually'),
-        (QUARTERLY, 'Quarterly'),
-        (MONTHLY, 'Monthly'),
+        # (QUARTERLY, 'Quarterly'),
+        # (MONTHLY, 'Monthly'),
     )
     membership_period = models.IntegerField(default=YEARLY, choices=MEMBER_PERIOD_CHOICES)
     name = models.CharField(max_length=20)
@@ -89,6 +89,8 @@ class Member(models.Model):
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(null=True)
+    deposit_fee= models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    membership_fee= models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
     # volunteer capacity - bitfield
     # roster days - bitfield
@@ -204,7 +206,9 @@ class Toy(models.Model):
     #     url = "./%d.JPG" % (self.id,)
     #     return url
 
-    code = models.CharField(max_length=10, blank=False, unique=True)
+    #TODO code must be unique only is state is available, otherwise can be reused
+    code = models.CharField(max_length=10, blank=False)
+    state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
     description = models.CharField(max_length=200)
     brand = models.ForeignKey(ToyBrand)
     last_check = models.DateField('Date last checked', blank=True, null=True)
@@ -217,19 +221,20 @@ class Toy(models.Model):
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True,null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
-    storage_location = models.CharField(max_length=50)
-    state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
+    storage_location = models.CharField(blank=True, null=True,max_length=50)
     availability_state = models.IntegerField(choices=TOY_NOT_IN_SERVICE_STATE_CHOICES, default=AVAILABLE)
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
-    #TODO this is linked to loan type and should be removed, also late_fee
-    #fee = models.DecimalField(decimal_places=2, max_digits=3, default=0.5)
-    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
+    comment= models.CharField(blank=True, null=True, max_length=1024)
 
-    def __unicode__(self):
-        return self.code
+    #TODO add function that sets these so they can be recorded in issue register automatically
+    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
+    issue_comment = models.CharField(blank=True, null=True, max_length=200)
+
+
+
 
     def __str__(self):
         return self.description
@@ -251,6 +256,7 @@ class Toy(models.Model):
         self.state=self.AT_TOY_LIBRARY
         self.save()
 
+    #def set_issue(self, issue, comment):
 
 
 
