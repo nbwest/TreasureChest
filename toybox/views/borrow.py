@@ -30,6 +30,8 @@ def borrow(request, member_id):
     # base page context
     context.update({"daily_balance": 23.20, "login_name": "Jess Benning"})
 
+    context.update(handle_payment_form(request, member_id))
+
      # display toy in toy summary
     context.update(handle_toy_summary(request))
 
@@ -42,15 +44,22 @@ def borrow(request, member_id):
     context.update(handle_toy_borrow(request, member_id))
 
     new_borrow_list = TempBorrowList.objects.filter(member=member_id)
-    context.update({"new_borrow_list": new_borrow_list})
 
-    context.update(handle_payment_form(request, member_id))
+    new_borrow_toy_list=[]
+    for item in new_borrow_list:
+        new_borrow_toy_list.append(item.toy)
+
+    context.update({"new_borrow_toy_list": new_borrow_toy_list})
+
+
     #print(context)
 
      # if member_id set display member summary and list of borrowed toys
     if (member_id):
         context.update(handle_member_summary(request, member_id))
         context.update(handle_borrowed_toy_list(request, member_id))
+
+
 
     return render(request, 'toybox/borrow.html', context)
 
@@ -192,7 +201,7 @@ class PaymentForm(forms.Form):
     try:
         loan_durations = Config.objects.get(key="loan_durations").value
     except Config.DoesNotExist:
-        loan_durations = "126"
+        loan_durations = "12"
 
     loan_choices = []
     # so choices can be easily stored in settings

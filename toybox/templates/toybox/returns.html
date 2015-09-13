@@ -29,18 +29,15 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     </div>
 </div>
 
-{% if toy %}
-<div class="row panel-fluid panel-default" style=" min-height:160px; ">
+<!--{% if toy %}-->
+<!--<div class="row">-->
 
-     <img class="pull-left img-thumbnail"  style="margin-right: 20px; margin-left:20px; max-width:200px; max-height:150px;" align="left"  src="{{ MEDIA_URL }}{{ toy.image }}">
+        <!--{% include "toybox/toy_summary.html" %}-->
 
-       <div class="col-sm-6">
-        {% include "toybox/toy_summary.html" %}
-       </div>
-</div>
-{%else%}
-<div class="row panel-fluid panel-default"></div>
-{% endif %}
+<!--</div>-->
+<!--{%else%}-->
+<!--<div class="row panel-fluid panel-default"></div>-->
+<!--{% endif %}-->
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
@@ -54,19 +51,23 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
                 <thead>
                 <tr>
+                    <th>Details</th>
                     <th>Toy ID</th>
                     <th>Toy Name</th>
                     <th>Due</th>
                     <th id="fee">Fee</th>
-                    <!--<th id="returned"  style="text-align: center;vertical-align: middle;"><input id="select_all_checkbox" type="checkbox"/>Returned</th>-->
                     <th id="returned">Returned</th>
                     <th>Report Issue</th>
-                    <!--<th>Comments</th>-->
+
                 </tr>
                 </thead>
 
                 {% for toy in toy_list %}
                 <tr>
+                    <td>
+                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.code}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                    </td>
+
                     <td>
                         <a href="{% url 'toybox:returns' %}{{member.id}}/?tc={{toy.code}}">{{ toy.code }}</a>
                     </td>
@@ -107,10 +108,18 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6" style="border-top: none !important;">
+                    <td colspan="7" style="border-top: none !important;">
                         <input class="form-control" name="comment_{{ toy.code }}" placeholder="Issue comments for {{toy.code}}" href="#">
                     </td>
                 </tr>
+                <tr>
+                        <td colspan="7" style="border-top: none !important;">
+                            <div id="accordion_{{toy.code}}" class="collapse">
+                                 {% include "toybox/toy_summary.html" %}
+
+                            </div>
+                        </td>
+                    </tr>
 
                 {% endfor %}
             </table>

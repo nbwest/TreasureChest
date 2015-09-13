@@ -258,7 +258,8 @@ class Toy(models.Model):
 
     #def set_issue(self, issue, comment):
 
-
+    def over_due(self):
+        return timezone.now().date()<self.due_date
 
     # def admin_image(self):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)

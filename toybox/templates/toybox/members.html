@@ -25,11 +25,12 @@
          <div class="panel-heading">Member List</div>
             <table id="member_table" class="table">
 
+                <!--TODO: make sortable? http://tablesorter.com/docs/-->
                     <thead>
                         <tr>
-
                         	<th>Name</th>
                             <th>Status</th>
+                            <th>Loans</th>
                        	</tr>
                     </thead>
 
@@ -45,6 +46,25 @@
                                 <span class="label label-danger label-as-badge">Over Due</span>
                                 {% endif %}
                             </td>
+
+                           <td>
+                               <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                   {% if m.id not in loan_counts %}
+                                    0
+                                   {%else%}
+                                       {% for key, value in loan_counts.items %}
+                                            {% if key == m.id %}
+                                                {% if m.id in loans_overdue %}
+                                                    <span class="label label-danger label-as-badge">{{ value }}</span>
+                                                {%else%}
+                                                    <span>{{ value }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                       {% endfor %}
+                                   {%endif%}
+                                </a>
+
+                           </td>
 
                        </tr>
                     {% endfor %}

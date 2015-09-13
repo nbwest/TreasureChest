@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Count
 from shared import *
 
 
@@ -34,7 +35,27 @@ def handle_member_details(request, member_id):
 
     #if no members have been searched for display all members
     if context["members"]==None:
-        context.update({"members":Member.objects.all().order_by('anniversary_date')})
+
+        #get number of loans for each member
+        overdue=Toy.objects.filter(due_date__lt=timezone.now().date())#.annotate(dcount=Count('member_loaned'))
+        loans_overdue={}
+        for toy_due in overdue:
+            if toy_due.member_loaned_id in loans_overdue:
+                loans_overdue[toy_due.member_loaned_id] += 1
+            else:
+                loans_overdue.update({toy_due.member_loaned_id:1})
+
+        #probably a better way to do this, inserting into dict. better to have it attached to members in member list
+        loans=Toy.objects.values('member_loaned').annotate(dcount=Count('member_loaned'))
+        loan_counts={}
+        for loan in loans:
+            if loan['dcount']!=0:
+                loan_counts.update({loan['member_loaned']:loan['dcount']})
+
+        print(loans_overdue)
+        print(loan_counts)
+
+        context.update({"members":Member.objects.all().order_by('anniversary_date'),"loan_counts":loan_counts, "loans_overdue":loans_overdue})
 
     return context
 

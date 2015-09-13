@@ -74,11 +74,9 @@ def handle_toy_summary(request):
 
     if (toycode):
         toy = get_object_or_404(Toy, code__iexact=toycode)
-        context = {'toy': toy, 'IssueChoiceType':IssueChoiceType}
+        context = {'toy': toy}
 
-    # print(toy.__dict__)
-    # print(toy.get_issue_type_display())
-    # print(toy.issue_type)
+    context.update({'IssueChoiceType':IssueChoiceType})
 
     return context
 
