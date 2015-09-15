@@ -1,13 +1,14 @@
 from django import forms
 from django.shortcuts import redirect, get_object_or_404, get_list_or_404
 from toybox.models import *
+from django.db.models import Q
 from django.forms import ModelChoiceField
 
 #################
 # general helpers
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(name__contains=fragment).order_by("name")
+        return Member.objects.filter(Q(name__contains=fragment)|Q(partner__contains=fragment)).order_by("name")
     else:
         return []
 

@@ -32,7 +32,7 @@
                     <ul class="list-group">
                         {% for member in members %}
 
-                        <a class="list-group-item" href="{{ return_page }}/{{member.id }}"> {{ member.name }} </a>
+                        <a class="list-group-item" href="{{ return_page }}/{{member.id }}"> {{ member.name }} {% if member.partner %}({{member.partner}}){%endif%} </a>
                         {% endfor %}
                     </ul>
                     {% endif %}
