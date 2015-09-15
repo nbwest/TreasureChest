@@ -209,7 +209,7 @@ class Toy(models.Model):
     #TODO code must be unique only is state is available, otherwise can be reused
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
-    description = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     brand = models.ForeignKey(ToyBrand)
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
@@ -237,7 +237,7 @@ class Toy(models.Model):
 
 
     def __str__(self):
-        return self.description
+        return self.name
 
     def admin_image(self):
         return u'<img src="%s" style="max-height:150px;" />' % self.image.url
@@ -258,8 +258,8 @@ class Toy(models.Model):
 
     #def set_issue(self, issue, comment):
 
-    def over_due(self):
-        return timezone.now().date()<self.due_date
+    def is_current(self):
+        return timezone.now().date()>=self.due_date
 
     # def admin_image(self):
     #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)

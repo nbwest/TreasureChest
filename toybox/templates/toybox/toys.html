@@ -1,8 +1,54 @@
+
 {% extends "toybox\base.html" %}
 
+
+
 {% block content %}
+
+
 <h1  class="page-header">Toys</h1>
 
-<p>Stuff to do here</p>
+
+<div class="row">
+
+    <div class="panel-fluid panel-default col-xs-11">
+
+         <!--<div class="panel-heading">Toy List</div>-->
+<!--data-card-view="true"-->
+            <table  class="table table-condensed"  data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true">
+
+
+                    <thead>
+                        <tr>
+                            <th data-field="id"  data-sortable="true">ID</th>
+                            <th data-field="name"  data-sortable="true">Name</th>
+                            <th data-field="state"  data-sortable="true">State</th>
+                            <th data-field="category"  data-sortable="true">Category</th>
+                            <th data-field="last_check"  data-sortable="true">Last Check</th>
+                            <th data-field="last_stock_take"  data-sortable="true">Last Stocktake</th>
+                            <th data-field="checked" data-align="center" data-sortable="true">Checked</th>
+                       	</tr>
+                    </thead>
+
+
+                  {% for toy in toys %}
+                  <tr>
+                        <td>{{toy.code}}</td>
+                        <td>{{toy.name}}</td>
+                        <td>{{toy.get_state_display}}</td>
+                        <td>{{toy.category.name}}</td>
+                        <td>{{toy.last_check}}</td>
+                        <td>{{toy.last_stock_take}}</td>
+
+                        <td style="text-align: center;vertical-align: middle;">
+                            <input type="checkbox" name="checked_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="checked_checkbox_{{ toy.code }}" />
+                        </td>
+
+                  </tr>
+                  {% endfor %}
+            </table>
+      </div>
+
+</div>
 
 {% endblock content %}

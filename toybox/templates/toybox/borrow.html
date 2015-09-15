@@ -86,7 +86,7 @@
                                 <span class="label label-success label-as-badge">New</span>
                         </td>
 
-                        <td>{{ toy.description }}</td>
+                        <td>{{ toy.name }}</td>
 
                         <td>
                             <span class="label label-success label-as-badge"><span name="new_toy_due">0</span> weeks</span>
@@ -128,7 +128,7 @@
                             <a href="{% url 'toybox:toys' %}{{toy.toy.code}}" >{{ toy.code }}</a>
                         </td>
 
-                        <td>{{ toy.description }}</td>
+                        <td>{{ toy.name }}</td>
 
                         <td>
                             <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween}}</span>
