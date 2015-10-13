@@ -1,0 +1,78 @@
+<span id="toy_search_select">
+<!--initial page no message or member summary-->
+ {% if toy_search_results == None %}
+    <!--toys==none-->
+    <!--<p></p>-->
+
+<!--Saerch returned no members-->
+  {% elif toy_search_results|length == 0 %}
+    <!--toys length ==0-->
+     <!--<p>No members found</p>-->
+
+<!--search returned more than one member-->
+ {% elif toy_search_results|length > 1 %}
+    <!--toys length >1-->
+     <script>
+
+         $(document).ready(function()
+        {  $('#searchModal').modal(); });
+
+     </script>
+
+
+
+<!-- dialog box with search results -->
+    <div class="modal " id="searchModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title" id="myModalLabel">Search Results</h4>
+                </div>
+                <div class="modal-body" >
+
+
+                    {% if toy_search_results %}
+                    <form role="form" method="post">
+                        {% csrf_token %}
+                        <ul class="list-group">
+                            {% for toy in toy_search_results %}
+
+                            <button type="submit"  name="select_toy" value="{{toy.code}}" class="list-group-item" >
+                                <img class=" img-thumbnail"  style=" max-width:200px; max-height:30px;"  src="{{ MEDIA_URL }}{{ toy.image }}">
+                                {{toy.code}}, {{ toy.name }}&nbsp
+
+
+                                <span class="label {% if toy.state != toy.AT_TOY_LIBRARY%} label-danger {%else%} label-success {%endif%} label-as-badge">
+                                {{toy.get_state_display}}</span>
+
+                            </button>
+
+                            {% endfor %}
+                         </ul>
+                    </form>
+
+                    {% endif %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--search returned only one member, automatically load this one-->
+ {% elif toy_search_results|length == 1 %}
+      <script>
+
+            //$(document).ready(function()
+           // {
+            //    var url = "{{ return_page }}/{{toy_search_results.0.id }}";
+            //    $(location).attr('href',url);
+           // });
+
+      </script>
+{% endif %}
+
+</span>

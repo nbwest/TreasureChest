@@ -41,7 +41,7 @@ def returns(request, member_id=None):
         context.update(handle_borrowed_toy_list(request, member_id))
 
     # display toy in toy summary
-    context.update(handle_toy_summary(request))
+    # context.update(handle_toy_summary(request))
 
 
     context.update(handle_member_search(request))

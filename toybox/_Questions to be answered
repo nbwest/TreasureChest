@@ -61,14 +61,26 @@ Borrow Page
 * How are fees collected/calculated. do you need extra calculations, change given, donation, other fees
 * overdue fee vs balance? how is balance worked out. ok
 * extra credit given? No
- donation, late fee, broken missing fee paymnet area done at borrow page
+ donation,
+ late fee,
+ borrow fee
+ broken fee
+ missing toy fee
+ missing piece fee
+
+- combine toy register and issue register into toy history table.
+ payment area done at borrow page
  any override should come with reason. override is a little harder to do.
+
+
  * can't complete borrow on negative balance
 * pay ?
 * Regarding Borrow use case:
     System calculates fee and volunteer communicates fee to member
     The fee should include the cost to borrow the toys and membership fee and late fees
 
+borrow transaction table - have individual overrides
+reason textbox with button to populate with "volunteer borrow"
 
 * Does anyone ever need change? how would you like to address this? yes, change given button
 * Add comment for toy, in toy summary - done
@@ -85,7 +97,7 @@ Member Page
 * display in list? - valid membership, sort by this - done
 * Roster - how would this be used? - forgot to ask
 * Membership payment? i'll think of something fee attached to member
-* deposit payment separate bucket attached to member - added deposit and mebership fee decimal fields to model
+* deposit payment separate bucket attached to member - added deposit and membership fee decimal fields to model - to be captured in transaction register.
 
 add remove member
 
@@ -111,3 +123,61 @@ change loan type to loan fees
 
 membership fee yearly $20
 deposit one per member $30 currently
+
+Explain multiple toy codes with letters???
+
+Skype with elizabeth
+* Toy and issue register
+* do you ever refund someone if they find a missing piece they have paid for?
+* Fees:
+
+ toy cost? - just a hint?
+ broken fee
+ missing toy fee
+ missing piece fee
+ membership fee
+ donation
+ late fee
+ borrow fee
+ joining deposit/bond
+ toy deposit
+
+ bond refund
+
+
+  - each fee generates its own transaction
+  - each transaction can have a comment
+  - link to toy history?
+
+   DONATION = 0
+    BOND_REFUND = 1
+    PETTY_CASH_ADJUSTMENT = 2
+    FROM_BANK = 3
+    CREDIT_ADJUSTMENT = 4
+    CHARGE_REVERSAL = 5
+    PAYMENT = 6
+    MEMBERSHIP = 7
+    HIRE_CHARGE = 8
+    FEE = 9
+    FINE = 10
+    DEBIT_ADJUSTMENT = 11
+    REFUND = 12
+    TO_BANK = 13
+    BOND = 14
+
+TODO put in real test case
+search toy test cases
+
+Borrow toy B1 to Alice
+Set P5 to unavailable thru admin
+
+
+exact match: I13 -> add to temp list - ok
+name with one entry: train -> add to temp list - ok
+name with multiple entries: e -> list displayed, select one ->added to temp list - ok - if already borrowed, state is wrong
+name not found: qwerty -> error toy not found - ok
+name already borrowed by member: I13 -> error toy borrowed - ok
+toy already borrowed by other member: B1 -> error toy borrowed - ok
+toy set to unavailable: P5 -> error toy unavailable - ok
+blank name -> error toy not entered - ok
+delete borrowed toy -> removed from list - toy code not entered error

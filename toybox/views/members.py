@@ -52,8 +52,8 @@ def handle_member_details(request, member_id):
             if loan['dcount']!=0:
                 loan_counts.update({loan['member_loaned']:loan['dcount']})
 
-        print(loans_overdue)
-        print(loan_counts)
+        # print(loans_overdue)
+        # print(loan_counts)
 
         context.update({"members":Member.objects.all().order_by('anniversary_date'),"loan_counts":loan_counts, "loans_overdue":loans_overdue})
 

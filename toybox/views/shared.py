@@ -61,26 +61,6 @@ def handle_member_summary(request, member_id):
     return context
 
 
-def handle_toy_summary(request):
-    context={}
-    toycode=None
-
-    if request.method == "GET":
-        toycode = request.GET.get('tc')
-
-    if request.method == "POST":
-        form=ToySearchForm(request.POST)
-        if form.is_valid():
-            toycode=form.cleaned_data['toy_id']
-
-    if (toycode):
-        toy = get_object_or_404(Toy, code__iexact=toycode)
-        context = {'toy': toy}
-
-    context.update({'IssueChoiceType':IssueChoiceType})
-
-    return context
-
 
 def handle_borrowed_toy_list(request, member_id):
     context = {}
@@ -107,5 +87,5 @@ class MemberSearchForm(forms.Form):
     member_name_fragment = forms.CharField(label="Member Name", max_length=20,required=False)
 
 class ToySearchForm(forms.Form):
-    toy_id = forms.CharField(label="ID of toy to borrow", max_length=10,required=False)
+    toy_id = forms.CharField(label="ID or name of toy to borrow", max_length=10,required=False)
 

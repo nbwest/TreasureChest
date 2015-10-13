@@ -50,14 +50,14 @@
                            <td>
                                <a href="{% url 'toybox:returns' member_id=m.id %}">
                                    {% if m.id not in loan_counts %}
-                                    0
+                                    <span class="label label-success label-as-badge">0</span>
                                    {%else%}
                                        {% for key, value in loan_counts.items %}
                                             {% if key == m.id %}
                                                 {% if m.id in loans_overdue %}
                                                     <span class="label label-danger label-as-badge">{{ value }}</span>
                                                 {%else%}
-                                                    <span>{{ value }}</span>
+                                                   {{ value }}
                                                 {% endif %}
                                             {% endif %}
                                        {% endfor %}

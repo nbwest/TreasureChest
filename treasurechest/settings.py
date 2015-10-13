@@ -36,10 +36,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'debug_toolbar',
+    'debug_toolbar',
     'toybox',
     'widget_tweaks',
-    'django_tables2',
 )
 
 MIDDLEWARE_CLASSES = (

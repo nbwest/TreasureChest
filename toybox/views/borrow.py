@@ -32,16 +32,12 @@ def borrow(request, member_id):
 
     context.update(handle_payment_form(request, member_id))
 
-     # display toy in toy summary
-    context.update(handle_toy_summary(request))
-
     # handle member search
     context.update(handle_member_search(request))
 
-
-
+    # print(context)
     # Always need this so search box renders
-    context.update(handle_toy_borrow(request, member_id))
+    context.update(handle_toy_borrow(request, member_id, ("toy_removed" in context)))
 
     new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
@@ -52,73 +48,72 @@ def borrow(request, member_id):
     context.update({"new_borrow_toy_list": new_borrow_toy_list})
 
 
-    #print(context)
-
      # if member_id set display member summary and list of borrowed toys
     if (member_id):
         context.update(handle_member_summary(request, member_id))
         context.update(handle_borrowed_toy_list(request, member_id))
 
 
-
+    # print(context)
     return render(request, 'toybox/borrow.html', context)
 
 
 # also adds toy to temp list in DB via POST
-def handle_toy_borrow(request, member_id):
-    toys = None
+def handle_toy_borrow(request, member_id, ignore_error):
+    toy_search_results = None
+    toy=None
     error = ""
     toycode = ""
+    form = None
 
+    #need here for toy search to render
     form = ToySearchForm(request.POST)
 
+    #from toy search
     if (request.method == "POST"):
-        #print("POST")
         if form.is_valid():
-            if "add_toy" in request.POST:
+            #from toy search
+            if "search_toy" in request.POST:
                 toycode = form.cleaned_data['toy_id'].strip()
-                form = ToySearchForm(request.POST, initial={"toy_id": toycode})
+                #from modal toy select
+            elif "select_toy" in request.POST:
+                toycode=request.POST['select_toy'].strip()
 
-                if toycode == "":
-                    error = "Toy code not entered"
-                else:
+            if toycode != "":
+                toy_search_results=Toy.objects.filter(Q(code__iexact=toycode)|Q(name__contains=toycode)).order_by("name")
+                print("SEARCH " + toycode + ": " + str(toy_search_results.count()) )
 
-                    toy = Toy.objects.filter(code__iexact=toycode)
+                if toy_search_results.count() == 1:
+                    toy=toy_search_results[0]
 
-                    #print("SERACH " + toycode + ": " + str(toy.count()))
-
-                    if toy.count() > 0:
-                        if toy[0].state != Toy.AT_TOY_LIBRARY:
-                            error = "Toy set to unavailable"
-                        else:
-                            in_temp_list = TempBorrowList.objects.filter(toy=toy[0])
-
-                            if not in_temp_list:
-                                member = get_object_or_404(Member, pk=member_id)
-                                tempBorrowList = TempBorrowList()
-                                tempBorrowList.store(member, toy[0])
-                            else:
-                                error = "Toy on loan"
+                    if toy.state == Toy.BORROWED:
+                        error = "Toy on loan"
+                    elif toy.state == Toy.NOT_IN_SERVICE:
+                        error = "Toy set to unavailable"
                     else:
-                        error = "Toy not found"
-                        if (member_id):
-                            if (Toy.objects.filter(member_loaned=member_id, code=toycode).count() > 0):
-                                error = "Toy on loan"
+                        in_temp_list = TempBorrowList.objects.filter(toy=toy)
 
-                if error != "":
-                    form.add_error("toy_id", error)
-        else:
-            print("toy borrow form not valid")
+                        if not in_temp_list:
+                            #ok to add to temp borrow list
+                            member = get_object_or_404(Member, pk=member_id)
+                            tempBorrowList = TempBorrowList()
+                            tempBorrowList.store(member, toy)
+                        else:
+                            error = "Toy already borrowed"
 
-    elif request.method == "GET":
-        toycode = request.GET.get('tc')
+                elif toy_search_results.count() == 0:
+                    error = "Toy not found"
+            else:
+                error = "Toy code not entered"
 
-    if form.is_valid() and toycode:
-        toys = get_list_or_404(Toy, code__iexact=toycode)
+            if error != "" and not ignore_error:
+                form.add_error("toy_id", error)
 
-    context = {'toy_search_form': form, 'toys': toys}
+    context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
 
     return context
+
+
 
 
 def handle_payment_form(request, member_id):
@@ -135,15 +130,16 @@ def handle_payment_form(request, member_id):
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
         for item in request.POST:
-            print(item)
+            # print(item)
             if item.startswith("remove_toy_"):
                 toy_to_remove = item[len("remove_toy_"):]
                 # print("REMOVE TOY: "+toy_to_remove)
                 TempBorrowList.objects.filter(toy__code=toy_to_remove, member__id=member_id).delete()
+                context.update({"toy_removed":True})
 
             if item == "done":
                 if payment_form.is_valid():
-                    print("valid form")
+                    # print("valid form")
                     member = get_object_or_404(Member, pk=member_id)
 
                     if new_borrow_list.count()>0:
@@ -161,7 +157,7 @@ def handle_payment_form(request, member_id):
                             # print(payment_form.cleaned_data['fee_due']," ",due_error)
                             break
 
-                        print("Due " + str(fee_due))
+                        # print("Due " + str(fee_due))
                         # TODO add error message
                         try:
                             fee_paid = decimal.Decimal(payment_form.cleaned_data['fee_paid'])
@@ -177,7 +173,7 @@ def handle_payment_form(request, member_id):
                         #print(member.balance)
                         member.save()
                 else:
-                    print("invalid form")
+                     print("invalid form")
 
     try:
         default_loan_duration = Config.objects.get(key="default_loan_duration").value
