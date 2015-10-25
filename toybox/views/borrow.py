@@ -183,9 +183,23 @@ def handle_payment_form(request, member_id):
     # TODO Request.POST here ruins initial data
     #payment_form = PaymentForm(request.POST,initial={'loan_duration':'2'})
     #including request.POST clears initial data, without it validation errors are missing
-    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration})
+    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':0, 'membership':0, 'issue_fee':0, 'bond_fee':0})
 
-    context.update({'payment_form': payment_form})
+    # if form charfield has an amount in it make it visible.
+    for field in payment_form:
+        if field.html_name in payment_form.initial and field.field.__class__.__name__=="CharField":
+            if float(payment_form.initial[field.html_name]) != 0:
+                    field.field.widget.attrs.update({'visible':'True'})
+
+        #
+        # print field.html_name
+        # print field.field.widget.attrs
+        # print field.field.__class__.__name__
+        # print
+
+
+
+    context.update({'payment_form': payment_form, 'show_late_fee':True})
 
     # print(context)
     return context
@@ -205,6 +219,20 @@ class PaymentForm(forms.Form):
         loan_choices.append((c, c))
 
     loan_duration = forms.ChoiceField(choices=loan_choices, widget=forms.RadioSelect())
-    fee_due = forms.CharField(label="Fee Due", max_length=20, validators=[numeric])
-    fee_paid = forms.CharField(label="Fee Paid", max_length=20, validators=[numeric])
+
+
+
+
+    borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True','visible':'True'}))
+
+    late_fee = forms.CharField(label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
+    issue_fee = forms.CharField(label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
+    bond_fee = forms.CharField(label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
+    membership = forms.CharField(label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
+
+    donation = forms.CharField(label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True'}))
+    total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly', 'adjust_button':'True'}))
+    fee_paid = forms.CharField(label="Actual Fee Paid", max_length=20, validators=[numeric])
+
+
 

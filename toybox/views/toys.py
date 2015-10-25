@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.forms import ModelForm
 from shared import *
-import django_tables2 as tables
+
 
 def toys(request):
     context=handle_toy_details(request)

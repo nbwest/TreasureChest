@@ -1,7 +1,19 @@
 {% extends "toybox\base.html" %}
 
 {% block content %}
+
+ {% include "toybox/change_fee.html" %}
+
 <h1  class="page-header">Transactions</h1>
+
+
+<div class="input-group col-xs-12 col-sm-10 ">
+            <span class="input-group-addon">Issue Fee $</span>
+            <input type="text" id="issue_fee" class="form-control" name="issue_fee"  disabled="true">
+            <span class="input-group-btn">
+                    <button class="btn btn-default" name="issue_fee_alter" data-toggle="modal" data-target="#feeChangeModal">Adjust</button>
+               </span>
+        </div>
 
 <p>Stuff to do here</p>
 

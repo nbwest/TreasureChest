@@ -57,7 +57,7 @@ def returns(request, member_id=None):
 
 class ReturnsTableForm(forms.Form):
     returned = forms.BooleanField()
-    comment = forms.CharField(max_length=Issue._meta.get_field('comment').max_length)
+    comment = forms.CharField(max_length=ToyHistory._meta.get_field('comment').max_length)
     issue_type=forms.ChoiceField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES[:IssueChoiceType.RETURNED_MISSING_PIECE])
 
 

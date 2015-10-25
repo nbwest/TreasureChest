@@ -30,7 +30,7 @@ admin.site.register(Toy, ToyAdmin)
 
 # Issues added when returning or from toy list (stocktake)
 # used for toy history
-admin.site.register(Issue)
+admin.site.register(ToyHistory)
 
 # Added when any transaction occurred, never changed via list
 # used for toy or member history via member list display

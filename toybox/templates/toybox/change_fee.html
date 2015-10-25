@@ -1,0 +1,39 @@
+ <span id="change_fee">
+ <!--To use set source attribute of new_fee element to the source id of the value to change-->
+
+  <div class="modal" id="feeChangeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title" id="myModalLabel">Adjust Fee</h4>
+                </div>
+                <div class="modal-body">
+
+                    <label for="new_fee">Fee adjustment</label>
+                    <input type="text" id="new_fee" class="form-control" value="old value" >
+
+                    <br>
+
+                    <label for="justification">Please enter a justification for the fee adjustment</label>
+                    <input type="text" id="justification" class="form-control" name="new_fee_justification" >
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                    <button type="button" class="btn btn-default" onclick='document.getElementById(document.getElementById("new_fee").getAttribute("source")).value=document.getElementById("new_fee").value;' data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     <script>
+         function changeFee(elementID)
+         {
+            document.getElementById("new_fee").value=document.getElementById(elementID).value;
+            document.getElementById("new_fee").setAttribute("source",elementID);
+         }
+     </script>
+
+</span>

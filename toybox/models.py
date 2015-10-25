@@ -170,29 +170,14 @@ class IssueChoiceType:
         (REPAIRED, 'Repaired'),
     )
 
-# should there be a borrow register, what about the history of the toy, how popular is it?
-# This is a report they are interested in.
-# this would be instead of recording the member, due date etc in the toy record. Not sure about state.
-class Toy(models.Model):
-    AT_TOY_LIBRARY = 0
-    BORROWED = 1
-    NOT_IN_SERVICE = 2
 
+
+class ToyConditionType:
     AVAILABLE = 0
     MAJOR_NOTABLE_ISSUE = 1
     BEING_REPAIRED = 2
     MISSING = 3
     RETIRED = 4
-
-    # needs to be table??
-    # this is covering two different states, condition and location - might want to think about this
-    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
-
-    TOY_STATE_CHOICES = (
-        (AT_TOY_LIBRARY, 'At Toy Library'),
-        (BORROWED, 'Borrowed'),
-        (NOT_IN_SERVICE, 'Not Available')
-    )
 
     TOY_NOT_IN_SERVICE_STATE_CHOICES = (
         (AVAILABLE, 'Available'),
@@ -201,6 +186,29 @@ class Toy(models.Model):
         (MISSING, 'Missing'),
         (RETIRED, 'Retired'),
     )
+
+# should there be a borrow register, what about the history of the toy, how popular is it?
+# This is a report they are interested in.
+# this would be instead of recording the member, due date etc in the toy record. Not sure about state.
+class Toy(models.Model):
+
+    AT_TOY_LIBRARY = 0
+    BORROWED = 1
+    NOT_IN_SERVICE = 2
+
+    TOY_STATE_CHOICES = (
+        (AT_TOY_LIBRARY, 'At Toy Library'),
+        (BORROWED, 'Borrowed'),
+        (NOT_IN_SERVICE, 'Not Available')
+    )
+
+
+    # needs to be table??
+    # this is covering two different states, condition and location - might want to think about this
+    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
+
+
+
 
     # def file(self, filename):
     #     url = "./%d.JPG" % (self.id,)
@@ -222,13 +230,12 @@ class Toy(models.Model):
     purchase_cost = models.DecimalField(blank=True,null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True,max_length=50)
-    availability_state = models.IntegerField(choices=TOY_NOT_IN_SERVICE_STATE_CHOICES, default=AVAILABLE)
+    availability_state = models.IntegerField(choices=ToyConditionType.TOY_NOT_IN_SERVICE_STATE_CHOICES, default=ToyConditionType.AVAILABLE)
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
     comment= models.CharField(blank=True, null=True, max_length=1024)
-
     #TODO add function that sets these so they can be recorded in issue register automatically
     issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
@@ -282,23 +289,6 @@ class TempBorrowList(models.Model):
     def __str__(self):
         return self.toy.code+":"+self.member.name
 
-# fine associated with missing pieces etc? currently captured by loan type
-
-#add none=0?
-class Issue(models.Model):
-    toy = models.ForeignKey(Toy)
-    date_time = models.DateField('Issue reported date and time', auto_now_add=True)
-    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
-    member_involved = models.ForeignKey(Member)
-    # issue here? volunteer_reporting = models.ForeignKey(Member)
-    comment = models.CharField(max_length=1024)
-
-    def __unicode__(self):
-        return self.comment
-
-    def __str__(self):
-        return self.comment
-
 
 class Transaction(models.Model):
     DONATION = 0
@@ -346,3 +336,39 @@ class Transaction(models.Model):
 
     def __str__(self):
         return self.get_transaction_type_display()
+
+
+# fine associated with missing pieces etc? currently captured by loan type
+# Issue register used for toy activity register as well
+#add none=0?
+class ToyHistory(models.Model):
+    NEW  = 0
+    RETURN = 1
+    ISSUE = 2
+    BORROW= 3
+    RETIRED = 4
+
+    # toy lifecycle
+    TOY_HISTORY_CHOICES = (
+        (NEW, 'New'),
+        (BORROW,'Borrow'),
+        (RETURN, 'Return'),
+        (ISSUE, 'Issue'),
+        (RETIRED,'Retired')
+    )
+
+    toy = models.ForeignKey(Toy)
+    date_time = models.DateField('Issue reported date and time', auto_now_add=True)
+    event_type = models.IntegerField(choices=TOY_HISTORY_CHOICES, null=True)
+    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
+    member_involved = models.ForeignKey(Member)
+    volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
+    comment = models.CharField(max_length=1024)
+    transaction = models.ForeignKey(Transaction, null=True)
+
+    def __unicode__(self):
+        return self.comment
+
+    def __str__(self):
+        return self.comment
+

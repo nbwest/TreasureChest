@@ -11,6 +11,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 {% load templatetags %}
 {% block content %}
 
+ {% include "toybox/change_fee.html" %}
 
 <h1 class="page-header">Return Toy</h1>
 
@@ -128,18 +129,44 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     </div>
 
 
-    <div class="row">
+
+
+
         <div class="input-group col-xs-12 col-sm-10 ">
-            <span class="input-group-addon">Fee Due $</span>
-            <input type="text" id="fee_due" class="form-control" name="fee_due" aria-label="Amount ">
+            <span class="input-group-addon">Late Fee $</span>
+            <input type="text" id="late_fee" class="form-control" name="late_fee" disabled="true" value="5678">
+            <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" name="late_fee_alter" data-toggle="modal" onclick='changeFee("late_fee");' data-target="#feeChangeModal">Adjust</button>
+               </span>
+        </div>
+
+        <br>
+
+        <div class="input-group col-xs-12 col-sm-10 ">
+            <span class="input-group-addon">Issue Fee $</span>
+            <input type="text" id="issue_fee" class="form-control" name="issue_fee"  disabled="true" value="2345">
+            <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" name="issue_fee_alter" data-toggle="modal" onclick='changeFee("issue_fee");' data-target="#feeChangeModal">Adjust</button>
+               </span>
+        </div>
+
+         <br>
+
+        <div class="input-group col-xs-12 col-sm-10 ">
+            <span class="input-group-addon">Total Due $</span>
+            <input type="text" id="fee_due" class="form-control" name="fee_due" aria-label="Amount " disabled="true">
                <span class="input-group-btn">
                     <button class="btn btn-default" type="submit">Done</button>
                </span>
         </div>
-    </div>
+
+
+
 </form>
 
 <script>
+
+
     function handleCheckbox(cb)
     {
         var table = document.getElementById("toy_table");
@@ -157,7 +184,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 }
             }
         }
-        document.getElementById("fee_due").value=total.toFixed(2);
+        document.getElementById("late_fee").value=total.toFixed(2);
     }
 
 </script>

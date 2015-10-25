@@ -124,30 +124,50 @@ change loan type to loan fees
 membership fee yearly $20
 deposit one per member $30 currently
 
-Explain multiple toy codes with letters???
+Explain multiple toy codes with letters - pick image with most information - provide blow up of image - TODO
 
 Skype with elizabeth
-* Toy and issue register
-* do you ever refund someone if they find a missing piece they have paid for?
+
 * Fees:
+- Issue fees:
+     lost toy fee - just a hint? how many weeks ahs it been borrowed - earned back its cost?
+     broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
+     missing toy fee - same as broken.
+     missing piece fee - open
 
- toy cost? - just a hint?
- broken fee
- missing toy fee
- missing piece fee
- membership fee
- donation
- late fee
- borrow fee
- joining deposit/bond
- toy deposit
+- borrow toy fee - 1% cost rounded up to nearest 50c. Suggested fee. damaged may change the fee - suggested fees. In spreadsheet??? - in book In folder inventory, 2013 onwards MTB inventory.
+- yearly membership fee - defined
+- donation - open
+- late fee - cost to borrow by number of weeks borrowed - must be able override
+- joining deposit/bond - fixed to $30 current, presented in borrow toys
 
- bond refund
+* bond refund - form filled out and it's mailed or direct debit. Linda. Ideally properly tracked by this system.
+
+
+Open questions:
+how is return fees communicated to borrow area so it can be properly recorded as a transaction?
+piece return refund?
+do you ever refund someone if they find a missing piece they have paid for?
+
+toy history records issue, add transaction field, if null and member and issue add them in
+
+
+
+Admin
+new toy cost? should this be recorded as a transaction
+
+Questions on commitee,
+
+
+
+TOY LIST COLUMNS?
+Link to toy history  and toy details - view only
+Toy history - new page, modal? what about exporting - report only?
 
 
   - each fee generates its own transaction
   - each transaction can have a comment
-  - link to toy history?
+  - link to toy history?  - toy history links to transaction
 
    DONATION = 0
     BOND_REFUND = 1
