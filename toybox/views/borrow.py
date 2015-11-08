@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from datetime import *
 import decimal
 
-# TODO limit toys to four - have this number stored somewhere
+# TODO limit toys to four - number is stored in DB
 
 
 
@@ -16,9 +16,13 @@ import decimal
 # member is searched for and once selected displays user stats
 # existing borrowed toys appear in toy list - these can't be removed and there are no fees
 # User enters a toy to be borrowed
-# toy appears in borrowed displayed toys list
+# if available then toy appears in borrowed displayed toys list else an error appears
 # user selects borrow duration - toy fee in list adjusts
-# on fee being collected, done commits new toys to DB
+# borrow fee is displayed
+# Other fees
+# fee is collected and entered into the actual fee field
+# Asks member if they want change, to donate or use as credit
+#
 
 
 
@@ -75,7 +79,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
             #from toy search
             if "search_toy" in request.POST:
                 toycode = form.cleaned_data['toy_id'].strip()
-                #from modal toy select
+                #from modal dialog toy select
             elif "select_toy" in request.POST:
                 toycode=request.POST['select_toy'].strip()
 
@@ -86,10 +90,16 @@ def handle_toy_borrow(request, member_id, ignore_error):
                 if toy_search_results.count() == 1:
                     toy=toy_search_results[0]
 
-                    if toy.state == Toy.BORROWED:
+                    if toy.state == Toy.ON_LOAN:
                         error = "Toy on loan"
-                    elif toy.state == Toy.NOT_IN_SERVICE:
-                        error = "Toy set to unavailable"
+                    elif toy.state == Toy.BEING_REPAIRED:
+                        error = "Toy is being repaired"
+                    elif toy.state == Toy.TO_BE_REPAIRED:
+                        error = "Toy is due for repair"
+                    elif toy.state == Toy.STOCKTAKE:
+                        error = "Toy needs stocktaking and can't be borrowed"
+                    elif toy.state == Toy.RETIRED:
+                        error = "ERROR - Toy is retired!"
                     else:
                         in_temp_list = TempBorrowList.objects.filter(toy=toy)
 
@@ -108,6 +118,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
             if error != "" and not ignore_error:
                 form.add_error("toy_id", error)
+
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
 
@@ -218,21 +229,19 @@ class PaymentForm(forms.Form):
     for c in loan_durations:
         loan_choices.append((c, c))
 
-    loan_duration = forms.ChoiceField(choices=loan_choices, widget=forms.RadioSelect())
+    loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect())
 
 
 
 
-    borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True','visible':'True'}))
-
-    late_fee = forms.CharField(label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
-    issue_fee = forms.CharField(label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
-    bond_fee = forms.CharField(label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
-    membership = forms.CharField(label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'adjust_button':'True'}))
-
-    donation = forms.CharField(label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True'}))
-    total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly', 'adjust_button':'True'}))
-    fee_paid = forms.CharField(label="Actual Fee Paid", max_length=20, validators=[numeric])
-
+    borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True','visible':'True'}))
+    late_fee = forms.CharField(label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    issue_fee = forms.CharField(label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    bond_fee = forms.CharField(label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    membership = forms.CharField(label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    donation = forms.CharField(label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','visible':'True'}))
+    total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','visible':'True','readonly':'readonly'}))
+    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'visible':'True'}))
+    change = forms.CharField(label="Change", max_length=20, validators=[numeric])
 
 

@@ -146,69 +146,123 @@ class ToyPackaging(models.Model):
     def __str__(self):
         return self.name
 
-class IssueChoiceType:
+
+# class ToyState:
+#     AVAILABLE = 0
+#     ON_LOAN = 1
+#     STOCKTAKE = 2
+#     TO_BE_REPAIRED = 3
+#     BEING_REPAIRED = 4
+#     RETIRED = 5
+#
+#     TOY_STATE_CHOICES = (
+#         (AVAILABLE,'Available'),
+#         (ON_LOAN,'On Loan'),
+#         (STOCKTAKE,'Stocktake'),
+#         (TO_BE_REPAIRED,'To Be Repaired'),
+#         (BEING_REPAIRED,'Being Repaired'),
+#         (RETIRED,'Retired')
+#     )
+
+# class IssueChoiceType:
+#     ISSUE_NONE = 0
+#     BROKEN_REPAIRABLE = 1
+#     BROKEN_NOT_REPAIRABLE = 2
+#     MINOR_MISSING_PIECE = 3
+#     MAJOR_MISSING_PIECE = 4
+#     WHOLE_TOY_MISSING = 5
+#     #not an issue, how would these been entered? - Not a "return" but noted in toy history?
+#     # RETURNED_MISSING_PIECE = 6
+#     # RETURNED_MISSING_TOY = 7
+#
+#
+#
+#     ISSUE_TYPE_CHOICES = (
+#         (ISSUE_NONE,'No Issue'),
+#         (BROKEN_REPAIRABLE, 'Broken repairable'), # -> to admin cupboard
+#         (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'), # -> retired
+#         (MINOR_MISSING_PIECE, 'Minor missing piece'),# -> to shelf
+#         (MAJOR_MISSING_PIECE, 'Major missing piece'),# -> to admin cupboard
+#         (WHOLE_TOY_MISSING, 'Whole toy missing'),# -> retired
+#         #who can retire a toy?
+#         # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
+#         # (RETURNED_MISSING_TOY, 'Returned missing toy'),
+#
+#     )
+
+
+
+# class ToyConditionType:
+#     AVAILABLE = 0
+#     MAJOR_ISSUE = 1
+#     BEING_REPAIRED = 2
+#     MISSING = 3
+#     RETIRED = 4
+#
+#     TOY_NOT_IN_SERVICE_STATE_CHOICES = (
+#         (AVAILABLE, 'Available'),
+#         (MAJOR_ISSUE, 'Notable Issue'),
+#         (BEING_REPAIRED, 'Being Repaired'),
+#         (MISSING, 'Missing'),
+#         (RETIRED, 'Retired'),
+#     )
+
+class Toy(models.Model):
+
+    # AT_TOY_LIBRARY = 0
+    # BORROWED = 1
+    # NOT_IN_SERVICE = 2
+    #
+    # TOY_STATE_CHOICES = (
+    #     (AT_TOY_LIBRARY, 'At Toy Library'),
+    #     (BORROWED, 'Borrowed'),
+    #     (NOT_IN_SERVICE, 'Not Available')
+    # )
+
+
+    # needs to be table??
+    # this is covering two different states, condition and location - might want to think about this
+    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
+    AVAILABLE = 0
+    ON_LOAN = 1
+    STOCKTAKE = 2
+    TO_BE_REPAIRED = 3
+    BEING_REPAIRED = 4
+    RETIRED = 5
+
+    TOY_STATE_CHOICES = (
+        (AVAILABLE,'Available'),
+        (ON_LOAN,'On Loan'),
+        (STOCKTAKE,'Stocktake'),
+        (TO_BE_REPAIRED,'To Be Repaired'),
+        (BEING_REPAIRED,'Being Repaired'),
+        (RETIRED,'Retired')
+    )
+
     ISSUE_NONE = 0
     BROKEN_REPAIRABLE = 1
     BROKEN_NOT_REPAIRABLE = 2
     MINOR_MISSING_PIECE = 3
     MAJOR_MISSING_PIECE = 4
     WHOLE_TOY_MISSING = 5
-    RETURNED_MISSING_PIECE = 6
-    RETURNED_MISSING_TOY = 7
-    REPAIRED = 8
+    #not an issue, how would these been entered? - Not a "return" but noted in toy history?
+    # RETURNED_MISSING_PIECE = 6
+    # RETURNED_MISSING_TOY = 7
+
 
 
     ISSUE_TYPE_CHOICES = (
         (ISSUE_NONE,'No Issue'),
-        (BROKEN_REPAIRABLE, 'Broken repairable'),
-        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),
-        (MINOR_MISSING_PIECE, 'Minor missing piece'),
-        (MAJOR_MISSING_PIECE, 'Major missing piece'),
-        (WHOLE_TOY_MISSING, 'Whole toy missing'),
-        (RETURNED_MISSING_PIECE, 'Returned missing piece'),
-        (RETURNED_MISSING_TOY, 'Returned missing toy'),
-        (REPAIRED, 'Repaired'),
+        (BROKEN_REPAIRABLE, 'Broken repairable'), # -> to admin cupboard
+        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'), # -> retired
+        (MINOR_MISSING_PIECE, 'Minor missing piece'),# -> to shelf
+        (MAJOR_MISSING_PIECE, 'Major missing piece'),# -> to admin cupboard
+        (WHOLE_TOY_MISSING, 'Whole toy missing'),# -> retired
+        #who can retire a toy?
+        # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
+        # (RETURNED_MISSING_TOY, 'Returned missing toy'),
+
     )
-
-
-
-class ToyConditionType:
-    AVAILABLE = 0
-    MAJOR_NOTABLE_ISSUE = 1
-    BEING_REPAIRED = 2
-    MISSING = 3
-    RETIRED = 4
-
-    TOY_NOT_IN_SERVICE_STATE_CHOICES = (
-        (AVAILABLE, 'Available'),
-        (MAJOR_NOTABLE_ISSUE, 'Major Notable Issue'),
-        (BEING_REPAIRED, 'Being Repaired'),
-        (MISSING, 'Missing'),
-        (RETIRED, 'Retired'),
-    )
-
-# should there be a borrow register, what about the history of the toy, how popular is it?
-# This is a report they are interested in.
-# this would be instead of recording the member, due date etc in the toy record. Not sure about state.
-class Toy(models.Model):
-
-    AT_TOY_LIBRARY = 0
-    BORROWED = 1
-    NOT_IN_SERVICE = 2
-
-    TOY_STATE_CHOICES = (
-        (AT_TOY_LIBRARY, 'At Toy Library'),
-        (BORROWED, 'Borrowed'),
-        (NOT_IN_SERVICE, 'Not Available')
-    )
-
-
-    # needs to be table??
-    # this is covering two different states, condition and location - might want to think about this
-    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
-
-
-
 
     # def file(self, filename):
     #     url = "./%d.JPG" % (self.id,)
@@ -216,7 +270,7 @@ class Toy(models.Model):
 
     #TODO code must be unique only is state is available, otherwise can be reused
     code = models.CharField(max_length=10, blank=False)
-    state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AT_TOY_LIBRARY)
+    state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
     brand = models.ForeignKey(ToyBrand)
     last_check = models.DateField('Date last checked', blank=True, null=True)
@@ -230,16 +284,16 @@ class Toy(models.Model):
     purchase_cost = models.DecimalField(blank=True,null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True,max_length=50)
-    availability_state = models.IntegerField(choices=ToyConditionType.TOY_NOT_IN_SERVICE_STATE_CHOICES, default=ToyConditionType.AVAILABLE)
+    # availability_state = models.IntegerField(choices=ToyConditionType.TOY_NOT_IN_SERVICE_STATE_CHOICES, default=ToyConditionType.AVAILABLE)
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
     comment= models.CharField(blank=True, null=True, max_length=1024)
     #TODO add function that sets these so they can be recorded in issue register automatically
-    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
+    issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
-
+    borrow_counter =models.IntegerField(default=0)
 
 
 
@@ -342,25 +396,25 @@ class Transaction(models.Model):
 # Issue register used for toy activity register as well
 #add none=0?
 class ToyHistory(models.Model):
-    NEW  = 0
-    RETURN = 1
-    ISSUE = 2
-    BORROW= 3
-    RETIRED = 4
-
-    # toy lifecycle
-    TOY_HISTORY_CHOICES = (
-        (NEW, 'New'),
-        (BORROW,'Borrow'),
-        (RETURN, 'Return'),
-        (ISSUE, 'Issue'),
-        (RETIRED,'Retired')
-    )
+    # NEW  = 0
+    # RETURN = 1
+    # ISSUE = 2
+    # BORROW= 3
+    # RETIRED = 4
+    #
+    # # toy lifecycle
+    # TOY_HISTORY_CHOICES = (
+    #     (NEW, 'New'),
+    #     (BORROW,'Borrow'),
+    #     (RETURN, 'Return'),
+    #     (ISSUE, 'Issue'),
+    #     (RETIRED,'Retired')
+    # )
 
     toy = models.ForeignKey(Toy)
     date_time = models.DateField('Issue reported date and time', auto_now_add=True)
-    event_type = models.IntegerField(choices=TOY_HISTORY_CHOICES, null=True)
-    issue_type = models.IntegerField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES, default=IssueChoiceType.ISSUE_NONE)
+    event_type = models.IntegerField(choices=Toy.TOY_STATE_CHOICES, null=True)
+    issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     member_involved = models.ForeignKey(Member)
     volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
     comment = models.CharField(max_length=1024)

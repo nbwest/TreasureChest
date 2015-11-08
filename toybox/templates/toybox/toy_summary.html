@@ -31,6 +31,11 @@
               </tr>
 
               <tr>
+                <td>Weeks Borrorwed</td>
+                <td>{{toy.borrow_counter}}</td>
+              </tr>
+
+              <tr>
                 <td>Min age</td>
                 <td>{{toy.min_age}}</td>
               </tr>
@@ -59,7 +64,7 @@
                 <td>Issue</td>
 
                   <td>
-                      {% if toy.issue_type != IssueChoiceType.ISSUE_NONE %}
+                      {% if toy.issue_type != toy.ISSUE_NONE %}
                        <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
                       {%else%}
                           {{toy.get_issue_type_display}}

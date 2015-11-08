@@ -32,7 +32,7 @@ def returns(request, member_id=None):
 
 
 
-    context.update({"issue_list":IssueChoiceType.ISSUE_TYPE_CHOICES[:IssueChoiceType.RETURNED_MISSING_PIECE]})
+    context.update({"issue_list":Toy.ISSUE_TYPE_CHOICES})#[:IssueChoiceType.RETURNED_MISSING_PIECE]})
 
     #TODO take into account of half week overdue - leeway for half week
     if (member_id):
@@ -48,7 +48,7 @@ def returns(request, member_id=None):
 
 
     # returns_table_form = formset_factory(ReturnsTableForm, extra=context["toy_list"].count())
-    # context.update({"returns_form":returns_table_form})
+    # context.update({"returns_form":returns_table_form})state
     #
     # returns_fee_due_form=ReturnsFeeDueForm(request.POST)
     # context.update({"fee_due_form":returns_fee_due_form})
@@ -58,7 +58,7 @@ def returns(request, member_id=None):
 class ReturnsTableForm(forms.Form):
     returned = forms.BooleanField()
     comment = forms.CharField(max_length=ToyHistory._meta.get_field('comment').max_length)
-    issue_type=forms.ChoiceField(choices=IssueChoiceType.ISSUE_TYPE_CHOICES[:IssueChoiceType.RETURNED_MISSING_PIECE])
+    issue_type=forms.ChoiceField(choices=Toy.ISSUE_TYPE_CHOICES)#[:IssueChoiceType.RETURNED_MISSING_PIECE])
 
 
 class ReturnsFeeDueForm(forms.Form):

@@ -178,20 +178,26 @@
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
         <div class="input-group  col-xs-12 col-sm-10 ">
 
-            <span type="text" id="duration_title" title="Loan Duration in weeks for all newly borrowed toys" class="input-group-addon">Loan Duration in weeks</span>
+            <span type="text" title="Loan duration in weeks for all newly borrowed toys" class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
 
-              <div class="btn-group " data-toggle="buttons" id="loanDurationRadioGroup">
+              <div class="btn-group " name="loanDuration" data-toggle="buttons" id="loanDurationRadioGroup">
 
 
                   {% for item in payment_form.loan_duration %}
 
-
-                  <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item|striptags }}</label>
+                    <!--{%if 'checked' in item.render %}-->
+                        <!--{% render_field item  %}-->
+                   <!--{%else%}-->
+                        <!--{% render_field item  %}-->
+                   <!--{%endif%}-->
+                  <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
 
                 <!--&lt;!&ndash;<label class="btn btn-default">&ndash;&gt;-->
 
                     <!--&lt;!&ndash;<input class="btn btn-default{% if 'checked' in item.render %} active {% endif %}" type="radio" id="loanDuration" name="loanDuration" value="{{item|striptags}}" />{{item|striptags}}&ndash;&gt;-->
                 <!--&lt;!&ndash;</label>&ndash;&gt;-->
+
+
 
 
                   {% endfor %}
@@ -209,10 +215,13 @@
     {% for field in payment_form %}
     {%if field.field.widget.attrs.visible%}
 
-     <div class="row" style=" min-height: 60px;" >
-        <div class="input-group col-xs-12 col-sm-10 ">
+     <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+
+         {% if field.field.widget.attrs.hr %} <hr> {%endif%}
+
+        <div class="input-group">
             <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
-            {% render_field field class+="form-control" id=field.auto_id %}
+            {% render_field field class+="form-control" id=field.auto_id oninput="UpdateFee()" %}
 
              {% if field.field.widget.attrs.adjust_button %}
             <span class="input-group-btn">
@@ -231,44 +240,57 @@
 
     {% endfor %}
 
+        <div class="row col-xs-12 col-sm-10" style=" min-height: 50px;" >
 
+        <div class="input-group panel-fluid panel-default " >
 
-    <div class="row" style=" min-height: 60px;" >
+              <span class="input-group-addon">{{payment_form.change.label_tag|striptags}} $</span>
+            {% render_field payment_form.change class+="form-control" id="change" readonly="true" %}
 
-        <div class="input-group panel-fluid panel-default col-xs-12 col-sm-10 {%if payment_form.fee_paid.errors %} has-error {%endif%}">
-
-              <span class="input-group-addon">{{payment_form.fee_paid.label_tag|striptags}} $</span>
-            {% render_field payment_form.fee_paid class+="form-control" id="fee_paid"%}
-
-              <!--<input id="fee_paid" type="text" class="form-control" aria-label="Actual amount member paid">-->
+              <!--<input id="payment" type="text" class="form-control" aria-label="Actual amount member paid">-->
                <span class="input-group-btn">
-                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="cancel" role="button"> <span class="glyphicon glyphicon-remove btn-danger" aria-hidden="true"></span> Cancel</a>
-                    <button class="btn btn-default" name="done" type="submit" >Done</button>
+
+                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="return" role="button">Return</a>
+                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="donate" role="button">Donate</a>
+                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="credit" role="button">Credit</a>
+                   <button class="btn btn-success" name="done" type="submit" ><span class="glyphicon glyphicon-ok-sign btn-success" aria-hidden="true"></span> Exact</button>
+
               </span>
+
+
         </div>
+     </div>
 
-        <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-        {% for error in payment_form.fee_paid.errors  %}
-            <li><label class="label label-danger">{{ error|striptags }}</label></li>
-        {% endfor %}
-        </ul>
-
-
-
-
-    </div>
 </form>
 
 <script type="text/javascript">
 
 $("#loanDurationRadioGroup").change(function(){UpdateFee()});
 
-$( document ).ready(function(){UpdateFee()});
+$( document ).ready(function()
+{
+    UpdateFee();
+});
 
 function UpdateFee()
 {
+    UpdateBorrowFee();
+    CalcTotal();
+    CalcChange();
+}
+
+function UpdateBorrowFee()
+{
     var fee_mult=parseFloat($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val());
+
+
+
+    //console.log($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val())
+    //console.log(fee_mult)
     var total=0.0;
+
+    //if (isNaN(fee_mult) break;
+
    $("span[name='fee']","#toy_table")
    .each(
 
@@ -290,8 +312,42 @@ function UpdateFee()
         }
    );
 
-   document.getElementById("fee_due").value=total.toFixed(2);
+   document.getElementById("id_borrow_fee").value=total.toFixed(2);
 }
+
+function CalcTotal()
+{
+    var elements_to_total;
+    var total=0.0;
+    elements_to_total=document.querySelectorAll("[total_me=true]");
+
+   nodes = Array.prototype.slice.call(elements_to_total,0);
+
+  nodes.forEach(function(node){
+
+        if (!isNaN(Number(node.value)))
+        {
+            total+= Number(node.value);
+        }
+  });
+
+
+
+
+    document.getElementById("id_total_fee").value=total.toFixed(2);
+}
+
+function CalcChange()
+{
+    var total=Number(document.getElementById("id_total_fee").value);
+    var paid=Number(document.getElementById("id_payment").value);
+    var change=paid-total;
+    //console.log(total);
+    //console.log(paid);
+    //console.log(change);
+    document.getElementById("change").value=change.toFixed(2);
+}
+
 
 
 </script>

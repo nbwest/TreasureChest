@@ -133,7 +133,7 @@ Skype with elizabeth
      lost toy fee - just a hint? how many weeks ahs it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
-     missing piece fee - open
+     major missing piece fee - open - manual transaction for refund?
 
 - borrow toy fee - 1% cost rounded up to nearest 50c. Suggested fee. damaged may change the fee - suggested fees. In spreadsheet??? - in book In folder inventory, 2013 onwards MTB inventory.
 - yearly membership fee - defined
@@ -145,22 +145,23 @@ Skype with elizabeth
 
 
 Open questions:
-how is return fees communicated to borrow area so it can be properly recorded as a transaction?
-piece return refund?
-do you ever refund someone if they find a missing piece they have paid for?
 
-toy history records issue, add transaction field, if null and member and issue add them in
+Mechanism for paying for return fees at borrow table:
+    toy history records issue, add transaction field, if null and member and issue add them in
 
 
 
 Admin
-new toy cost? should this be recorded as a transaction
+new toy cost? should this be recorded as a transaction - if so what bucket does come out of?
+    members buy toys, treasurer refunds the cost - transaction of PAYMENT? To be recorded in toy itself as well
 
 Questions on commitee,
 
+* Add Receipt image
+* Add Instruction image
 
 
-TOY LIST COLUMNS?
+TOY LIST COLUMNS? Add # of weeks borrowed, checklist for stocktake for each toy?
 Link to toy history  and toy details - view only
 Toy history - new page, modal? what about exporting - report only?
 
@@ -184,6 +185,13 @@ Toy history - new page, modal? what about exporting - report only?
     REFUND = 12
     TO_BANK = 13
     BOND = 14
+
+* add stocktaked state
+* on loan for > 6 months - retired
+* major missing piece - admin cupboard
+* Need mechanism to lend to a repair agent - loan type, if returned assumed repaired? or unable to repair - may not be a member
+* retire reason comment
+
 
 TODO put in real test case
 search toy test cases

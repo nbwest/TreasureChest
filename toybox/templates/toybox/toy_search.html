@@ -23,7 +23,7 @@
 
              <ul  style="list-style-type:none;list-style:none;padding-left:0;">
                 {% for error in toy_search_form.toy_id.errors  %}
-                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                    <li><span class="label label-danger label-as-badge">{{ error|striptags }}</span></li>
                 {% endfor %}
              </ul>
 
