@@ -1,21 +1,23 @@
 import datetime
 import django
+from datetime import date
 
 from django.db import models
 from django.utils import timezone
 
-#TODO create key value pair table for one off settings - max toys borrowed etc
+
+# TODO create key value pair table for one off settings - max toys borrowed etc
 #
 class Config(models.Model):
     key = models.CharField(max_length=30, unique=True)
     value = models.CharField(max_length=100)
-    help= models.CharField(max_length=1024, default="")
+    help = models.CharField(max_length=1024, default="")
 
     def __unicode__(self):
-        return self.key+" = "+self.value+"  ("+self.help+")"
+        return self.key + " = " + self.value + "  (" + self.help + ")"
 
     def __str__(self):
-        return self.key+" = "+self.value+"  ("+self.help+")"
+        return self.key + " = " + self.value + "  (" + self.help + ")"
 
 
 class MemberType(models.Model):
@@ -39,6 +41,7 @@ class MemberType(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # loan type needs some thought, regarding missing pieces and the issue register
 # loan period may not be needed, or set to zero if not fixed- change to loan_period_max ?
@@ -73,6 +76,7 @@ class ToyCategory(models.Model):
     def __str__(self):
         return self.name
 
+
 class Member(models.Model):
     # surname?
     name = models.CharField(max_length=100)
@@ -84,13 +88,13 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    anniversary_date = models.DateField('Membership due', default = django.utils.timezone.now)
+    anniversary_date = models.DateField('Membership due', default=django.utils.timezone.now)
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(null=True)
-    deposit_fee= models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    membership_fee= models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
     # volunteer capacity - bitfield
     # roster days - bitfield
@@ -103,13 +107,13 @@ class Member(models.Model):
         return self.name
 
     def membership_due_soon(self):
-        #TODO move magic value to config
+        # TODO move magic value to config
         return timezone.now().date + datetime.timedelta(days=60) <= self.anniversary_date
 
     def is_current(self):
-        #TODO move magic value to config
-        return timezone.now().date()<self.anniversary_date
-        #return timezone.now().date + datetime.timedelta(days=14) > self.anniversary_date
+        # TODO move magic value to config
+        return timezone.now().date() < self.anniversary_date
+        # return timezone.now().date + datetime.timedelta(days=14) > self.anniversary_date
 
 
 class Child(models.Model):
@@ -132,9 +136,6 @@ class ToyBrand(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
 
 
 class ToyPackaging(models.Model):
@@ -208,7 +209,6 @@ class ToyPackaging(models.Model):
 #     )
 
 class Toy(models.Model):
-
     # AT_TOY_LIBRARY = 0
     # BORROWED = 1
     # NOT_IN_SERVICE = 2
@@ -231,12 +231,12 @@ class Toy(models.Model):
     RETIRED = 5
 
     TOY_STATE_CHOICES = (
-        (AVAILABLE,'Available'),
-        (ON_LOAN,'On Loan'),
-        (STOCKTAKE,'Stocktake'),
-        (TO_BE_REPAIRED,'To Be Repaired'),
-        (BEING_REPAIRED,'Being Repaired'),
-        (RETIRED,'Retired')
+        (AVAILABLE, 'Available'),
+        (ON_LOAN, 'On Loan'),
+        (STOCKTAKE, 'Stocktake'),
+        (TO_BE_REPAIRED, 'To Be Repaired'),
+        (BEING_REPAIRED, 'Being Repaired'),
+        (RETIRED, 'Retired')
     )
 
     ISSUE_NONE = 0
@@ -245,20 +245,20 @@ class Toy(models.Model):
     MINOR_MISSING_PIECE = 3
     MAJOR_MISSING_PIECE = 4
     WHOLE_TOY_MISSING = 5
-    #not an issue, how would these been entered? - Not a "return" but noted in toy history?
+    # not an issue, how would these been entered? - Not a "return" but noted in toy history?
     # RETURNED_MISSING_PIECE = 6
     # RETURNED_MISSING_TOY = 7
 
 
 
     ISSUE_TYPE_CHOICES = (
-        (ISSUE_NONE,'No Issue'),
-        (BROKEN_REPAIRABLE, 'Broken repairable'), # -> to admin cupboard
-        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'), # -> retired
-        (MINOR_MISSING_PIECE, 'Minor missing piece'),# -> to shelf
-        (MAJOR_MISSING_PIECE, 'Major missing piece'),# -> to admin cupboard
-        (WHOLE_TOY_MISSING, 'Whole toy missing'),# -> retired
-        #who can retire a toy?
+        (ISSUE_NONE, 'No Issue'),
+        (BROKEN_REPAIRABLE, 'Broken repairable'),  # -> to admin cupboard
+        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),  # -> retired
+        (MINOR_MISSING_PIECE, 'Minor missing piece'),  # -> to shelf
+        (MAJOR_MISSING_PIECE, 'Major missing piece'),  # -> to admin cupboard
+        (WHOLE_TOY_MISSING, 'Whole toy missing'),  # -> retired
+        # who can retire a toy?
         # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
         # (RETURNED_MISSING_TOY, 'Returned missing toy'),
 
@@ -268,7 +268,7 @@ class Toy(models.Model):
     #     url = "./%d.JPG" % (self.id,)
     #     return url
 
-    #TODO code must be unique only is state is available, otherwise can be reused
+    # TODO code must be unique only is state is available, otherwise can be reused
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
@@ -277,25 +277,23 @@ class Toy(models.Model):
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
     due_date = models.DateField(blank=True, null=True)
-    borrow_date=models.DateField(blank=True, null=True)
+    borrow_date = models.DateField(blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
-    purchase_cost = models.DecimalField(blank=True,null=True, decimal_places=2, max_digits=5)
+    purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
-    storage_location = models.CharField(blank=True, null=True,max_length=50)
+    storage_location = models.CharField(blank=True, null=True, max_length=50)
     # availability_state = models.IntegerField(choices=ToyConditionType.TOY_NOT_IN_SERVICE_STATE_CHOICES, default=ToyConditionType.AVAILABLE)
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
-    comment= models.CharField(blank=True, null=True, max_length=1024)
-    #TODO add function that sets these so they can be recorded in issue register automatically
+    comment = models.CharField(blank=True, null=True, max_length=1024)
+    # TODO add function that sets these so they can be recorded in issue register automatically
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
-    borrow_counter =models.IntegerField(default=0)
-
-
+    borrow_counter = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -308,23 +306,45 @@ class Toy(models.Model):
     def borrow_toy(self, member, duration):
         self.member_loaned = member
         self.borrow_date = timezone.now()
-        self.state = self.BORROWED
-        self.due_date = timezone.now() + datetime.timedelta(days=duration*7)
+        self.state = self.ON_LOAN
+        self.due_date = timezone.now() + datetime.timedelta(days=duration * 7)
         self.save()
+
+        # TODO add toy history event
 
     def return_toy(self):
-        self.member_loaned=None
-        self.state=self.AT_TOY_LIBRARY
+        self.member_loaned = None
+        self.state = self.AVAILABLE
+
+        time_borrowed = date.today() - self.borrow_date
+        self.borrow_counter += int(time_borrowed.days / 7)
+
         self.save()
 
-    #def set_issue(self, issue, comment):
+        # TODO add toy history event
+
+    def return_toy_with_issue(self, issue, comment):
+        if issue == self.BROKEN_REPAIRABLE:
+            self.state = self.TO_BE_REPAIRED
+        elif issue == self.BROKEN_NOT_REPAIRABLE:
+            self.state = self.RETIRED  # DOES the member have the right to do this?
+        elif issue == self.MINOR_MISSING_PIECE:
+            self.state = self.AVAILABLE
+        elif issue == self.MAJOR_MISSING_PIECE:
+            self.state = self.TO_BE_REPAIRED
+        elif issue == self.WHOLE_TOY_MISSING:
+            self.state = self.RETIRED  # DOES the member have the right to do this?
+
+        self.issue_comment = comment
+        self.save()
+        # TODO add toy history event
 
     def is_current(self):
-        return timezone.now().date()>=self.due_date
+        return timezone.now().date() >= self.due_date
 
-    # def admin_image(self):
-    #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
-    #     image_.allow_tags = True
+        # def admin_image(self):
+        #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
+        #     image_.allow_tags = True
 
 
 class TempBorrowList(models.Model):
@@ -336,12 +356,11 @@ class TempBorrowList(models.Model):
         self.toy = toy
         self.save()
 
-
     def __unicode__(self):
-        return self.toy.code+":"+self.member.name
+        return self.toy.code + ":" + self.member.name
 
     def __str__(self):
-        return self.toy.code+":"+self.member.name
+        return self.toy.code + ":" + self.member.name
 
 
 class Transaction(models.Model):
@@ -394,7 +413,7 @@ class Transaction(models.Model):
 
 # fine associated with missing pieces etc? currently captured by loan type
 # Issue register used for toy activity register as well
-#add none=0?
+# add none=0?
 class ToyHistory(models.Model):
     # NEW  = 0
     # RETURN = 1
@@ -425,4 +444,3 @@ class ToyHistory(models.Model):
 
     def __str__(self):
         return self.comment
-

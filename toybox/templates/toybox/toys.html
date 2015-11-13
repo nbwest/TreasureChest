@@ -24,6 +24,7 @@
                             <th data-field="name"  data-sortable="true">Name</th>
                             <th data-field="state"  data-sortable="true">State</th>
                             <th data-field="category"  data-sortable="true">Category</th>
+                            <th data-field="borrow_counter"  data-sortable="true">Usage<br> (Wks)</th>
                             <th data-field="last_check"  data-sortable="true">Last Check</th>
                             <th data-field="last_stock_take"  data-sortable="true">Last Stocktake</th>
                             <th data-field="checked" data-align="center" data-sortable="true">Checked</th>
@@ -37,6 +38,7 @@
                         <td>{{toy.name}}</td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
+                        <td>{{toy.borrow_counter}}</td>
                         <td>{{toy.last_check}}</td>
                         <td>{{toy.last_stock_take}}</td>
 

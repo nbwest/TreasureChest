@@ -136,55 +136,56 @@ def handle_payment_form(request, member_id):
 
     if (request.method == "POST"):
         payment_form = PaymentForm(request.POST)
-        # print("posted")
+
 
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
         for item in request.POST:
-            # print(item)
+            print(item)
             if item.startswith("remove_toy_"):
                 toy_to_remove = item[len("remove_toy_"):]
                 # print("REMOVE TOY: "+toy_to_remove)
                 TempBorrowList.objects.filter(toy__code=toy_to_remove, member__id=member_id).delete()
                 context.update({"toy_removed":True})
 
-            if item == "done":
+            if item == "exact" or item=="credit":
                 if payment_form.is_valid():
-                    # print("valid form")
+                    print("valid form")
                     member = get_object_or_404(Member, pk=member_id)
 
                     if new_borrow_list.count()>0:
                         for new_toy in new_borrow_list:
-                            default_loan_duration = payment_form.cleaned_data['loan_duration']
-                            # print("LOAN_DURATION: "+loan_duration)
+                            loan_duration = payment_form.cleaned_data['loan_duration']
+                            print("LOAN_DURATION: "+loan_duration)
                             toy = get_object_or_404(Toy, code=new_toy.toy.code)
-                            toy.borrow_toy(member, int(default_loan_duration))
+                            print(toy)
+                            toy.borrow_toy(member, int(loan_duration))
                             TempBorrowList.objects.filter(toy__code=new_toy.toy.code, member__id=member_id).delete()
 
                         try:
-                            fee_due = decimal.Decimal(payment_form.cleaned_data['fee_due'])
+                            fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
                         except:
                             due_error = "Not a number"
                             # print(payment_form.cleaned_data['fee_due']," ",due_error)
                             break
 
-                        # print("Due " + str(fee_due))
+                        print("Due " + str(fee_due))
                         # TODO add error message
                         try:
-                            fee_paid = decimal.Decimal(payment_form.cleaned_data['fee_paid'])
+                            fee_paid = decimal.Decimal(payment_form.cleaned_data['payment'])
                         except:
                             paid_error = "Not a number"
-                            # print(payment_form.cleaned_data['fee_paid']," ",paid_error)
+                            print(payment_form.cleaned_data['fee_paid']," ",paid_error)
                             break
 
-                        # print("Paid "+str(fee_paid))
+                        print("Paid "+str(fee_paid))
                         # TODO create transaction record
-                        # print(member.balance)
+                        print(member.balance)
                         member.balance = member.balance - fee_due + fee_paid
-                        #print(member.balance)
+                        print(member.balance)
                         member.save()
                 else:
-                     print("invalid form")
+                     print("invalid form " + str(payment_form.errors))
 
     try:
         default_loan_duration = Config.objects.get(key="default_loan_duration").value
@@ -210,7 +211,7 @@ def handle_payment_form(request, member_id):
 
 
 
-    context.update({'payment_form': payment_form, 'show_late_fee':True})
+    context.update({'payment_form': payment_form})
 
     # print(context)
     return context
@@ -231,17 +232,14 @@ class PaymentForm(forms.Form):
 
     loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect())
 
-
-
-
     borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True','visible':'True'}))
-    late_fee = forms.CharField(label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
-    issue_fee = forms.CharField(label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
-    bond_fee = forms.CharField(label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
-    membership = forms.CharField(label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
-    donation = forms.CharField(label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','visible':'True'}))
+    late_fee = forms.CharField(required=False, label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    issue_fee = forms.CharField(required=False, label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    bond_fee = forms.CharField(required=False, label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    membership = forms.CharField(required=False, label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','visible':'True'}))
     total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','visible':'True','readonly':'readonly'}))
     payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'visible':'True'}))
-    change = forms.CharField(label="Change", max_length=20, validators=[numeric])
+    change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly', 'change_buttons':'True'}))
 
 

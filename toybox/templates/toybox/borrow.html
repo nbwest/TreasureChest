@@ -100,7 +100,7 @@
                        </td>
 
                         <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{toy.code}}" type="submit" class="btn btn-danger" aria-label="Left Align">
+                            <button title="Remove this toy from list" name="remove_toy_{{toy.code}}" type="submit" onclick="UpdateBorrowFee()" class="btn btn-danger" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
@@ -174,113 +174,82 @@
 
  <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
-
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
         <div class="input-group  col-xs-12 col-sm-10 ">
 
-            <span type="text" title="Loan duration in weeks for all newly borrowed toys" class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
+            <span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
 
-              <div class="btn-group " name="loanDuration" data-toggle="buttons" id="loanDurationRadioGroup">
-
-
+              <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateBorrowFee()" id="loanDurationRadioGroup">
                   {% for item in payment_form.loan_duration %}
-
-                    <!--{%if 'checked' in item.render %}-->
-                        <!--{% render_field item  %}-->
-                   <!--{%else%}-->
-                        <!--{% render_field item  %}-->
-                   <!--{%endif%}-->
-                  <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
-
-                <!--&lt;!&ndash;<label class="btn btn-default">&ndash;&gt;-->
-
-                    <!--&lt;!&ndash;<input class="btn btn-default{% if 'checked' in item.render %} active {% endif %}" type="radio" id="loanDuration" name="loanDuration" value="{{item|striptags}}" />{{item|striptags}}&ndash;&gt;-->
-                <!--&lt;!&ndash;</label>&ndash;&gt;-->
-
-
-
-
+                    <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
                   {% endfor %}
-
               </div>
         </div>
-
     </div>
-
-<!--TODO show member balance as a result - above?-->
-<!--TODO send back actual fee due and fee paid. Update member balance-->
-
 
 
     {% for field in payment_form %}
-    {%if field.field.widget.attrs.visible%}
+        {%if field.field.widget.attrs.visible%}
 
-     <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+         <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
-         {% if field.field.widget.attrs.hr %} <hr> {%endif%}
+             {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
-        <div class="input-group">
-            <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
-            {% render_field field class+="form-control" id=field.auto_id oninput="UpdateFee()" %}
+            <div class="input-group">
+                <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
+                {% render_field field class+="form-control" id=field.auto_id  oninput="UpdateFee()" %}
 
-             {% if field.field.widget.attrs.adjust_button %}
-            <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}");' data-target="#feeChangeModal">Adjust</button>
-               </span>
-            {% endif %}
-            </div>
+                 {% if field.field.widget.attrs.adjust_button %}
+                <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                   </span>
+                {% endif %}
 
-         <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-        {% for error in field.errors  %}
-            <li><label class="label label-danger">{{ error|striptags }}</label></li>
-        {% endfor %}
-        </ul>
-         </div>
-    {% endif %}
+                {% if field.field.widget.attrs.change_buttons %}
+                   <span class="input-group-btn">
+                       <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
+                       <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
+                       <button class="btn btn-default" id="btn_credit" name="credit" type="submit" >Credit</button>
+                       <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
+                   </span>
+                {% endif %}
+                </div>
+
+                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                {% for error in field.errors  %}
+                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                {% endfor %}
+                </ul>
+             </div>
+
+        {% endif %}
 
     {% endfor %}
 
-        <div class="row col-xs-12 col-sm-10" style=" min-height: 50px;" >
-
-        <div class="input-group panel-fluid panel-default " >
-
-              <span class="input-group-addon">{{payment_form.change.label_tag|striptags}} $</span>
-            {% render_field payment_form.change class+="form-control" id="change" readonly="true" %}
-
-              <!--<input id="payment" type="text" class="form-control" aria-label="Actual amount member paid">-->
-               <span class="input-group-btn">
-
-                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="return" role="button">Return</a>
-                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="donate" role="button">Donate</a>
-                   <a href="{% url 'toybox:borrow' %}" class="btn btn-default" name="credit" role="button">Credit</a>
-                   <button class="btn btn-success" name="done" type="submit" ><span class="glyphicon glyphicon-ok-sign btn-success" aria-hidden="true"></span> Exact</button>
-
-              </span>
-
-
-        </div>
-     </div>
-
 </form>
+
+
 
 <script type="text/javascript">
 
-$("#loanDurationRadioGroup").change(function(){UpdateFee()});
+//$("#loanDurationRadioGroup").change(function(){UpdateFee()});
 
 $( document ).ready(function()
 {
-    UpdateFee();
+    UpdateBorrowFee();
 });
 
 function UpdateFee()
 {
-    UpdateBorrowFee();
+
     CalcTotal();
     CalcChange();
 }
 
+
 function UpdateBorrowFee()
 {
+console.log("updateBorrowFee");
     var fee_mult=parseFloat($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val());
 
 
@@ -313,10 +282,13 @@ function UpdateBorrowFee()
    );
 
    document.getElementById("id_borrow_fee").value=total.toFixed(2);
+   UpdateFee();
 }
+
 
 function CalcTotal()
 {
+console.log("CalcTotal");
     var elements_to_total;
     var total=0.0;
     elements_to_total=document.querySelectorAll("[total_me=true]");
@@ -339,13 +311,20 @@ function CalcTotal()
 
 function CalcChange()
 {
+console.log("CalcChange");
     var total=Number(document.getElementById("id_total_fee").value);
     var paid=Number(document.getElementById("id_payment").value);
     var change=paid-total;
-    //console.log(total);
-    //console.log(paid);
-    //console.log(change);
-    document.getElementById("change").value=change.toFixed(2);
+
+    document.getElementById("id_change").value=change.toFixed(2);
+
+
+    $("#btn_exact").prop('disabled', (change!=0)|(change<0)|(isNaN(change)));
+    $("#btn_credit").prop('disabled', (change<=0)|(isNaN(change)));
+    $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
+    $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
+
+
 }
 
 

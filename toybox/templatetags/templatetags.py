@@ -8,7 +8,7 @@ from django.utils.timezone import is_aware, utc
 from django.utils.translation import ugettext, ungettext_lazy
 
 from django import template
-
+from django.template import Variable, VariableDoesNotExist
 register = template.Library()
 
 @register.filter('klass')
@@ -89,3 +89,12 @@ def timebetween(d, now=None):
     return result
 
 
+#allows concatination for form fields names plus exta argument, returns rendered output
+@register.simple_tag
+def form_field_concat(form, prefix, suffix, *args, **kwargs):
+
+    try:
+         field= form.fields[prefix+suffix]
+         return field.widget.render(prefix+suffix,field.initial,attrs=kwargs)
+    except VariableDoesNotExist:
+        return None

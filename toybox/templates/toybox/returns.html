@@ -9,6 +9,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 {% extends "toybox/base.html" %}
 {% load templatetags %}
+{% load widget_tweaks %}
 {% block content %}
 
  {% include "toybox/change_fee.html" %}
@@ -30,15 +31,6 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     </div>
 </div>
 
-<!--{% if toy %}-->
-<!--<div class="row">-->
-
-        <!--{% include "toybox/toy_summary.html" %}-->
-
-<!--</div>-->
-<!--{%else%}-->
-<!--<div class="row panel-fluid panel-default"></div>-->
-<!--{% endif %}-->
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
@@ -77,7 +69,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         {{ toy.name }}
                     </td>
 
-                    <!--TODO add issue fee to overdue fee-->
+                    <!--TODO add issue fee-->
                     <td>
                         <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween }}</span>
                     </td>
@@ -97,20 +89,14 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
 
                     <td>
-                        <!--<div class="selectContainer">-->
-                        <select class="form-control" name="issue_{{ toy.code }}">
-                            {% for issue in issue_list %}
-                            <option value="{{ issue.0 }}" {% if toy.issue_type == issue.0 %}selected{% endif %}>
-                                {{issue.1}}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <!--</div>-->
+                        {% form_field_concat returns_form "issue_type_" toy.code class="form-control"%}
+
                     </td>
                 </tr>
                 <tr>
                     <td colspan="7" style="border-top: none !important;">
-                        <input class="form-control" name="comment_{{ toy.code }}" placeholder="Issue comments for {{toy.code}}" href="#">
+                         {% form_field_concat returns_form "issue_comment_" toy.code class="form-control" placeholder="Issue comments"%}
+
                     </td>
                 </tr>
                 <tr>
@@ -130,41 +116,49 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 
 
+    {% for field in returns_form %}
+        {%if field.field.widget.attrs.visible%}
 
+         <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
-        <div class="input-group col-xs-12 col-sm-10 ">
-            <span class="input-group-addon">Late Fee $</span>
-            <input type="text" id="late_fee" class="form-control" name="late_fee" disabled="true" value="5678">
-            <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" name="late_fee_alter" data-toggle="modal" onclick='changeFee("late_fee");' data-target="#feeChangeModal">Adjust</button>
-               </span>
-        </div>
+             {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
-        <br>
+            <div class="input-group">
+                <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
+                {% render_field field class+="form-control" id=field.auto_id oninput="CalcTotal()" %}
 
-        <div class="input-group col-xs-12 col-sm-10 ">
-            <span class="input-group-addon">Issue Fee $</span>
-            <input type="text" id="issue_fee" class="form-control" name="issue_fee"  disabled="true" value="2345">
-            <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" name="issue_fee_alter" data-toggle="modal" onclick='changeFee("issue_fee");' data-target="#feeChangeModal">Adjust</button>
-               </span>
-        </div>
+                 {% if field.field.widget.attrs.adjust_button %}
+                <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}");' data-target="#feeChangeModal">Adjust</button>
+                   </span>
+                {% endif %}
 
-         <br>
+                {% if field.field.widget.attrs.done_button %}
+                   <span class="input-group-btn">
+                       <button class="btn btn-default" id="btn_done" name="done" type="submit" >Done</button>
+                   </span>
+                {% endif %}
+                </div>
 
-        <div class="input-group col-xs-12 col-sm-10 ">
-            <span class="input-group-addon">Total Due $</span>
-            <input type="text" id="fee_due" class="form-control" name="fee_due" aria-label="Amount " disabled="true">
-               <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">Done</button>
-               </span>
-        </div>
+                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                {% for error in field.errors  %}
+                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                {% endfor %}
+                </ul>
+             </div>
 
+        {% endif %}
 
+    {% endfor %}
 
 </form>
 
 <script>
+
+    $( document ).ready(function()
+    {
+        CalcTotal();
+    });
 
 
     function handleCheckbox(cb)
@@ -173,6 +167,8 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         var total= 0.0;
         var checkboxCol=document.getElementById("returned").cellIndex;
         var feeCol=document.getElementById("fee").cellIndex;
+
+        console.log(total);
 
         for (var i = 1, row; row = table.rows[i]; i++)
         {
@@ -184,12 +180,23 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 }
             }
         }
-        document.getElementById("late_fee").value=total.toFixed(2);
+        document.getElementById("id_late_fee").value=total.toFixed(2);
+        CalcTotal();
+    }
+
+    function CalcTotal()
+    {
+        var late_fee=Number(document.getElementById("id_late_fee").value);
+
+        var issue_fee=Number(document.getElementById("id_issue_fee").value);
+        console.log(issue_fee);
+        var total=late_fee+issue_fee;
+
+        document.getElementById("id_total").value=total.toFixed(2);
     }
 
 </script>
 
-{{returns_form}}
-{{fee_due_form}}
+
 
 {% endblock content %}
