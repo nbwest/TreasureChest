@@ -59,6 +59,12 @@ def borrow(request, member_id):
 
 
     # print(context)
+
+    if "clear_form" in context:
+        context.pop("toy_list",None)
+        context.pop("member",None)
+        context.pop("new_borrow_toy_list",None)
+
     return render(request, 'toybox/borrow.html', context)
 
 
@@ -118,6 +124,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
             if error != "" and not ignore_error:
                 form.add_error("toy_id", error)
+            # else:
+            #     form.toy_id=""
 
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
@@ -184,6 +192,9 @@ def handle_payment_form(request, member_id):
                         member.balance = member.balance - fee_due + fee_paid
                         print(member.balance)
                         member.save()
+
+                        context.update({"clear_form":True})
+
                 else:
                      print("invalid form " + str(payment_form.errors))
 

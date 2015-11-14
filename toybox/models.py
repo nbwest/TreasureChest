@@ -312,30 +312,40 @@ class Toy(models.Model):
 
         # TODO add toy history event
 
-    def return_toy(self):
+    # def return_toy(self):
+    #     self.member_loaned = None
+    #
+    #     time_borrowed = date.today() - self.borrow_date
+    #     self.borrow_counter += int(time_borrowed.days / 7)
+    #
+    #     self.save()
+
+        # TODO add toy history event
+
+    def return_toy(self, issue, comment):
+
+        self.issue_type = int(issue)
+
+        if self.issue_type == self.ISSUE_NONE:
+            self.state = self.AVAILABLE
+        elif self.issue_type == self.BROKEN_REPAIRABLE:
+            self.state = self.TO_BE_REPAIRED
+        elif self.issue_type == self.BROKEN_NOT_REPAIRABLE:
+            self.state = self.RETIRED  # DOES the member have the right to do this?
+        elif self.issue_type == self.MINOR_MISSING_PIECE:
+            self.state = self.AVAILABLE
+        elif self.issue_type == self.MAJOR_MISSING_PIECE:
+            self.state = self.TO_BE_REPAIRED
+        elif self.issue_type == self.WHOLE_TOY_MISSING:
+            self.state = self.RETIRED  # DOES the member have the right to do this?
+
+
+        self.issue_comment = comment
         self.member_loaned = None
-        self.state = self.AVAILABLE
 
         time_borrowed = date.today() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
 
-        self.save()
-
-        # TODO add toy history event
-
-    def return_toy_with_issue(self, issue, comment):
-        if issue == self.BROKEN_REPAIRABLE:
-            self.state = self.TO_BE_REPAIRED
-        elif issue == self.BROKEN_NOT_REPAIRABLE:
-            self.state = self.RETIRED  # DOES the member have the right to do this?
-        elif issue == self.MINOR_MISSING_PIECE:
-            self.state = self.AVAILABLE
-        elif issue == self.MAJOR_MISSING_PIECE:
-            self.state = self.TO_BE_REPAIRED
-        elif issue == self.WHOLE_TOY_MISSING:
-            self.state = self.RETIRED  # DOES the member have the right to do this?
-
-        self.issue_comment = comment
         self.save()
         # TODO add toy history event
 

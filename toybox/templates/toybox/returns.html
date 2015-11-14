@@ -85,7 +85,8 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     {%endif%}
 
                     <td style="text-align: center;vertical-align: middle;">
-                        <input type="checkbox" name="returned_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="returned_checkbox_{{ toy.code }}" onclick="handleCheckbox(this);"/>
+                        {% form_field_concat returns_form "returned_checkbox_" toy.code class="form-control" onclick="handleCheckbox(this)"%}
+                        <!--<input type="checkbox" name="returned_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="returned_checkbox_{{ toy.code }}" onclick="handleCheckbox(this);"/>-->
                     </td>
 
                     <td>
