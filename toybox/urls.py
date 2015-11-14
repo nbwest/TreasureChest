@@ -23,5 +23,6 @@ urlpatterns = [
                   url(r'^members/(?P<member_id>[0-9]+)/$', members, name='members'),
                   url(r'^transactions/', transactions, name='transactions'),
                   url(r'^reports/', reports, name='reports'),
-                  url(r'^toys/', toys, name='toys'),
+                  url(r'^toys/$',toys, name='toys'),
+                  url(r'^toys/(?P<toy_code>[-\w]+)/$',toys, name='toys'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

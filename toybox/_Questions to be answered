@@ -209,3 +209,6 @@ toy already borrowed by other member: B1 -> error toy borrowed - ok
 toy set to unavailable: P5 -> error toy unavailable - ok
 blank name -> error toy not entered - ok
 delete borrowed toy -> removed from list - toy code not entered error
+
+
+* Toy code isn't unique - stop assuming it is! use the id
