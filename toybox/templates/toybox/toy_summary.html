@@ -13,7 +13,7 @@
 
 
         <div class="panel-default">
-        <div class="panel-heading"><a href="#">Toy ID: {{ toy.code }}</a></div>
+        <div class="panel-heading"><a href="{% url 'toybox:toys' toy_id=toy.id %}">Toy ID: {{ toy.code }}</a></div>
           <table class="table table-condensed ">
             <tbody>
               <tr>

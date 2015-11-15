@@ -87,5 +87,5 @@ class MemberSearchForm(forms.Form):
     member_name_fragment = forms.CharField(label="Member Name", max_length=20,required=False)
 
 class ToySearchForm(forms.Form):
-    toy_id = forms.CharField(label="ID or name of toy to borrow", max_length=10,required=False)
+    toy_search_string = forms.CharField(label="ID or name of toy to borrow", max_length=10,required=False)
 

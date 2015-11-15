@@ -5,12 +5,12 @@
     <form role="search" action="{{ request.get_full_path }}" method='post'>
         {% csrf_token %}
 
-        <div class="input-group {%if toy_search_form.toy_id.errors %} has-error {%endif%}">
+        <div class="input-group {%if toy_search_form.toy_search_string.errors %} has-error {%endif%}">
 
             {% if not member %}
-                {% render_field toy_search_form.toy_id class+="form-control" placeholder=toy_search_form.toy_id.label disabled="disabled" %}
+                {% render_field toy_search_form.toy_search_string class+="form-control" placeholder=toy_search_form.toy_search_string.label disabled="disabled" %}
             {%else%}
-                {% render_field toy_search_form.toy_id class+="form-control" placeholder=toy_search_form.toy_id.label %}
+                {% render_field toy_search_form.toy_search_string class+="form-control" placeholder=toy_search_form.toy_search_string.label %}
             {%endif%}
 
             <div class="input-group-btn">
@@ -22,7 +22,7 @@
 
 
              <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                {% for error in toy_search_form.toy_id.errors  %}
+                {% for error in toy_search_form.toy_search_string.errors  %}
                     <li><span class="label label-danger label-as-badge">{{ error|striptags }}</span></li>
                 {% endfor %}
              </ul>

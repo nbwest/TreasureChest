@@ -81,11 +81,11 @@
                   {% for toy in new_borrow_toy_list %}
                    <tr>
                        <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.code}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
                        </td>
 
                         <td>
-                            <a href="{% url 'toybox:toys' %}{{toy.code}}" >{{ toy.code }}</a>
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
                                 <span class="label label-success label-as-badge">New</span>
                         </td>
 
@@ -100,7 +100,7 @@
                        </td>
 
                         <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{toy.code}}" type="submit" onclick="UpdateBorrowFee()" class="btn btn-danger" aria-label="Left Align">
+                            <button title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateBorrowFee()" class="btn btn-danger" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
@@ -111,7 +111,7 @@
 
                     <tr>
                         <td colspan="6" style="border-top: none !important;">
-                            <div id="accordion_{{toy.code}}" class="collapse">
+                            <div id="accordion_{{toy.id}}" class="collapse">
                                  {% include "toybox/toy_summary.html" %}
 
                             </div>
@@ -124,11 +124,11 @@
 
                    <tr>
                         <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.code}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
                        </td>
 
                         <td>
-                            <a href="{% url 'toybox:toys' %}{{toy.toy.code}}" >{{ toy.code }}</a>
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
                         </td>
 
                         <td>{{ toy.name }}</td>
@@ -151,7 +151,7 @@
 
                     <tr>
                         <td colspan="6" style="border-top: none !important;">
-                            <div id="accordion_{{toy.code}}" class="collapse">
+                            <div id="accordion_{{toy.id}}" class="collapse">
 
                                    <!--TODO feed toy into toy_summary-->
                                 {% include "toybox/toy_summary.html" %}

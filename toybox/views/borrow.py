@@ -73,7 +73,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
     toy_search_results = None
     toy=None
     error = ""
-    toycode = ""
+    toy_search_string = ""
     form = None
 
     #need here for toy search to render
@@ -84,18 +84,21 @@ def handle_toy_borrow(request, member_id, ignore_error):
         if form.is_valid():
             #from toy search
             if "search_toy" in request.POST:
-                toycode = form.cleaned_data['toy_id'].strip()
+                toy_search_string = form.cleaned_data['toy_search_string'].strip()
+                if toy_search_string != "":
+                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__contains=toy_search_string)).order_by("code")
+                    if toy_search_results.count() == 1:
+                        toy=toy_search_results[0]
+                    elif toy_search_results.count() == 0:
+                        error = "Toy not found"
+                else:
+                    error = "Toy code not entered"
                 #from modal dialog toy select
             elif "select_toy" in request.POST:
-                toycode=request.POST['select_toy'].strip()
+                toy_id=request.POST['select_toy'].strip()
+                toy=get_object_or_404(Toy, id=toy_id)
 
-            if toycode != "":
-                toy_search_results=Toy.objects.filter(Q(code__iexact=toycode)|Q(name__contains=toycode)).order_by("name")
-                print("SEARCH " + toycode + ": " + str(toy_search_results.count()) )
-
-                if toy_search_results.count() == 1:
-                    toy=toy_search_results[0]
-
+            if toy:
                     if toy.state == Toy.ON_LOAN:
                         error = "Toy on loan"
                     elif toy.state == Toy.BEING_REPAIRED:
@@ -106,24 +109,30 @@ def handle_toy_borrow(request, member_id, ignore_error):
                         error = "Toy needs stocktaking and can't be borrowed"
                     elif toy.state == Toy.RETIRED:
                         error = "ERROR - Toy is retired!"
-                    else:
+                    elif toy.state == Toy.AVAILABLE:
+                        #available, check it hasn't alredy been borrowed already
                         in_temp_list = TempBorrowList.objects.filter(toy=toy)
 
                         if not in_temp_list:
-                            #ok to add to temp borrow list
+                            #OK to add to temp borrow list
                             member = get_object_or_404(Member, pk=member_id)
                             tempBorrowList = TempBorrowList()
                             tempBorrowList.store(member, toy)
                         else:
                             error = "Toy already borrowed"
 
-                elif toy_search_results.count() == 0:
-                    error = "Toy not found"
+                    else:
+                        error = "Toy state invalid, toy id: "+toy.id+", toy state: "+toy.state
+                       #TODO log in feedback
+
             else:
-                error = "Toy code not entered"
+                 error = "Toy invalid, toy ID: "+toy_id+", search: "+toy_search_string
+                #TODO log in feedback
+
+
 
             if error != "" and not ignore_error:
-                form.add_error("toy_id", error)
+                form.add_error("toy_search_string", error)
             # else:
             #     form.toy_id=""
 
@@ -153,7 +162,7 @@ def handle_payment_form(request, member_id):
             if item.startswith("remove_toy_"):
                 toy_to_remove = item[len("remove_toy_"):]
                 # print("REMOVE TOY: "+toy_to_remove)
-                TempBorrowList.objects.filter(toy__code=toy_to_remove, member__id=member_id).delete()
+                TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                 context.update({"toy_removed":True})
 
             if item == "exact" or item=="credit":
@@ -165,10 +174,10 @@ def handle_payment_form(request, member_id):
                         for new_toy in new_borrow_list:
                             loan_duration = payment_form.cleaned_data['loan_duration']
                             print("LOAN_DURATION: "+loan_duration)
-                            toy = get_object_or_404(Toy, code=new_toy.toy.code)
+                            toy = get_object_or_404(Toy, id=new_toy.toy.id)
                             print(toy)
                             toy.borrow_toy(member, int(loan_duration))
-                            TempBorrowList.objects.filter(toy__code=new_toy.toy.code, member__id=member_id).delete()
+                            TempBorrowList.objects.filter(id=new_toy.toy.id, member__id=member_id).delete()
 
                         try:
                             fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])

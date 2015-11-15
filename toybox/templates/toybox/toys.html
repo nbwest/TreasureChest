@@ -41,7 +41,8 @@
 
                   {% for toy in toys %}
                   <tr>
-                        <td><a href="{% url 'toybox:toys' toy_code=toy.code %}">{{toy.code}}</a>
+                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a>
+                        <!--<td><a href="{% url 'toybox:toys' %}{{toy.toy.id}}">{{toy.code}}</a>-->
                             <br><a href="#"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
                         <td>{{toy.name}}</td>
                         <td>{{toy.get_state_display}}</td>
@@ -51,7 +52,7 @@
                         <td>{{toy.last_stock_take}}</td>
 
                         <td style="text-align: center;vertical-align: middle;">
-                            <input type="checkbox" name="checked_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="checked_checkbox_{{ toy.code }}" />
+                            <input type="checkbox" name="checked_checkbox_{{ toy.id }}" value="{{ toy.id }}" id="checked_checkbox_{{ toy.id }}" />
                         </td>
 
                   </tr>

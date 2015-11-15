@@ -24,5 +24,5 @@ urlpatterns = [
                   url(r'^transactions/', transactions, name='transactions'),
                   url(r'^reports/', reports, name='reports'),
                   url(r'^toys/$',toys, name='toys'),
-                  url(r'^toys/(?P<toy_code>[-\w]+)/$',toys, name='toys'),
+                  url(r'^toys/(?P<toy_id>[0-9]+)/$',toys, name='toys'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

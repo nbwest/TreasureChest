@@ -41,16 +41,16 @@ def returns(request, member_id=None):
         if returns_form.is_valid():
 
             for toy in toyList:
-                print(returns_form.cleaned_data['issue_type_'+toy.code])
-                print(returns_form.cleaned_data['issue_comment_'+toy.code])
-                print(returns_form.cleaned_data['returned_checkbox_'+toy.code])
+                # print(returns_form.cleaned_data['issue_type_'+toy.code])
+                # print(returns_form.cleaned_data['issue_comment_'+toy.code])
+                # print(returns_form.cleaned_data['returned_checkbox_'+toy.code])
 
                 # toy.return_toy_with_issue()
                 # toy.issue_type=returns_form.cleaned_data['issue_type_'+toy.code]
                 # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
 
-                if returns_form.cleaned_data['returned_checkbox_'+toy.code]==True:
-                    toy.return_toy(returns_form.cleaned_data['issue_type_'+toy.code],returns_form.cleaned_data['issue_comment_'+toy.code])
+                if returns_form.cleaned_data['returned_checkbox_'+toy.id]==True:
+                    toy.return_toy(returns_form.cleaned_data['issue_type_'+id],returns_form.cleaned_data['issue_comment_'+toy.id])
                     # toy.return_toy()
                 context.pop("toy_list",None)
                 context.pop("member",None)
@@ -88,9 +88,9 @@ class ReturnsForm(forms.Form):
 
         if toyList:
             for toy in toyList:
-                self.fields['returned_checkbox_%s' % toy.code]=forms.BooleanField(required=False)
-                self.fields['issue_comment_%s' % toy.code] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('comment').max_length)
-                self.fields['issue_type_%s' % toy.code] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)
+                self.fields['returned_checkbox_%s' % toy.id]=forms.BooleanField(required=False)
+                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('comment').max_length)
+                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)
 
 
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')

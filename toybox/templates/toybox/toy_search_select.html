@@ -38,12 +38,12 @@
                         <ul class="list-group">
                             {% for toy in toy_search_results %}
 
-                            <button type="submit"  name="select_toy" value="{{toy.code}}" class="list-group-item" >
+                            <button type="submit"  name="select_toy" value="{{toy.id}}" class="list-group-item" >
                                 <img class=" img-thumbnail"  style=" max-width:200px; max-height:30px;"  src="{{ MEDIA_URL }}{{ toy.image }}">
                                 {{toy.code}}, {{ toy.name }}&nbsp
 
 
-                                <span class="label {% if toy.state != toy.AT_TOY_LIBRARY%} label-danger {%else%} label-success {%endif%} label-as-badge">
+                                <span class="label {% if toy.state != toy.AVAILABLE%} label-danger {%else%} label-success {%endif%} label-as-badge">
                                 {{toy.get_state_display}}</span>
 
                             </button>

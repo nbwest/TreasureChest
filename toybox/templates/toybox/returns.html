@@ -58,11 +58,11 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 {% for toy in toy_list %}
                 <tr>
                     <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.code}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
                     </td>
 
                     <td>
-                        <a href="{% url 'toybox:returns' %}{{member.id}}/?tc={{toy.code}}">{{ toy.code }}</a>
+                        <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
                     </td>
 
                     <td>
@@ -85,29 +85,32 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     {%endif%}
 
                     <td style="text-align: center;vertical-align: middle;">
-                        {% form_field_concat returns_form "returned_checkbox_" toy.code class="form-control" onclick="handleCheckbox(this)"%}
+                        {% form_field_concat returns_form "returned_checkbox_" toy.id class="form-control" onclick="handleCheckbox(this)"%}
                         <!--<input type="checkbox" name="returned_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="returned_checkbox_{{ toy.code }}" onclick="handleCheckbox(this);"/>-->
                     </td>
 
                     <td>
-                        {% form_field_concat returns_form "issue_type_" toy.code class="form-control"%}
+                        {% form_field_concat returns_form "issue_type_" toy.id class="form-control"%}
 
                     </td>
                 </tr>
                 <tr>
                     <td colspan="7" style="border-top: none !important;">
-                         {% form_field_concat returns_form "issue_comment_" toy.code class="form-control" placeholder="Issue comments"%}
+                         {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments"%}
 
                     </td>
                 </tr>
-                <tr>
+
+                 <tr>
                         <td colspan="7" style="border-top: none !important;">
-                            <div id="accordion_{{toy.code}}" class="collapse">
+                            <div id="accordion_{{toy.id}}" class="collapse">
                                  {% include "toybox/toy_summary.html" %}
 
                             </div>
                         </td>
                     </tr>
+
+
 
                 {% endfor %}
             </table>

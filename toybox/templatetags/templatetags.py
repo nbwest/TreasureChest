@@ -93,8 +93,9 @@ def timebetween(d, now=None):
 @register.simple_tag
 def form_field_concat(form, prefix, suffix, *args, **kwargs):
 
-    if prefix+suffix not in form.fields:
+    field_name=str(prefix)+str(suffix)
+    if field_name not in form.fields:
         return None
 
-    field= form.fields[prefix+suffix]
-    return field.widget.render(prefix+suffix,field.initial,attrs=kwargs)
+    field= form.fields[field_name]
+    return field.widget.render(field_name,field.initial,attrs=kwargs)

@@ -312,15 +312,6 @@ class Toy(models.Model):
 
         # TODO add toy history event
 
-    # def return_toy(self):
-    #     self.member_loaned = None
-    #
-    #     time_borrowed = date.today() - self.borrow_date
-    #     self.borrow_counter += int(time_borrowed.days / 7)
-    #
-    #     self.save()
-
-        # TODO add toy history event
 
     def return_toy(self, issue, comment):
 
