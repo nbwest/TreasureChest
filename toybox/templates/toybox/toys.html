@@ -46,11 +46,10 @@
 
 
                   {% for toy in toys %}
-                  <tr>
+                  <a>
                         <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a>
-                        <!--<td><a href="{% url 'toybox:toys' %}{{toy.toy.id}}">{{toy.code}}</a>-->
-                            <br><a href="{% url 'toybox:toys' toy_id=toy.id %}"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
-                        <td>{{toy.name}}</td>
+                        <br><a href="{% url 'toybox:toys' toy_id=toy.id %}"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
+                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.name}}</a></td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
                         <td>{{toy.borrow_counter}}</td>

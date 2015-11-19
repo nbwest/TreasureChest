@@ -15,7 +15,7 @@
                     <th data-field="event_type"  data-sortable="true">Type</th>
                     <th data-field="issue_type"  data-sortable="true">Issue</th>
                     <th data-field="issue_comment"  data-sortable="true">Issue Comment</th>
-                    <th data-field="member_involved"  data-sortable="true">Member</th>
+                    <th data-field="member"  data-sortable="true">Member</th>
                     <th data-field="transaction"  >Transaction</th>
                 </tr>
             </thead>
@@ -26,7 +26,7 @@
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>
-                    <td><a href="{% url 'toybox:members' event.member_involved.id %}">{{event.member_involved}}</a></td>
+                    <td><a href="{% url 'toybox:members' event.member.id %}">{{event.member}}</a></td>
                     <td><a href="#">{{event.transaction}}</a></td>
               </tr>
             {% endfor %}
