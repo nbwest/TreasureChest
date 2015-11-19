@@ -126,7 +126,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                        #TODO log in feedback
 
             else:
-                 error = "Toy invalid, toy ID: "+toy_id+", search: "+toy_search_string
+                 error = ""#Toy invalid, search: "+toy_search_string
                 #TODO log in feedback
 
 
@@ -158,7 +158,7 @@ def handle_payment_form(request, member_id):
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
         for item in request.POST:
-            print(item)
+            #print(item)
             if item.startswith("remove_toy_"):
                 toy_to_remove = item[len("remove_toy_"):]
                 # print("REMOVE TOY: "+toy_to_remove)
@@ -177,7 +177,8 @@ def handle_payment_form(request, member_id):
                             toy = get_object_or_404(Toy, id=new_toy.toy.id)
                             print(toy)
                             toy.borrow_toy(member, int(loan_duration))
-                            TempBorrowList.objects.filter(id=new_toy.toy.id, member__id=member_id).delete()
+                            remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
+                            remove_toys_temp.delete()
 
                         try:
                             fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])

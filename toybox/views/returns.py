@@ -49,8 +49,9 @@ def returns(request, member_id=None):
                 # toy.issue_type=returns_form.cleaned_data['issue_type_'+toy.code]
                 # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
 
-                if returns_form.cleaned_data['returned_checkbox_'+toy.id]==True:
-                    toy.return_toy(returns_form.cleaned_data['issue_type_'+id],returns_form.cleaned_data['issue_comment_'+toy.id])
+                if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]==True:
+
+                    toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)])
                     # toy.return_toy()
                 context.pop("toy_list",None)
                 context.pop("member",None)

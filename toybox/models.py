@@ -148,78 +148,7 @@ class ToyPackaging(models.Model):
         return self.name
 
 
-# class ToyState:
-#     AVAILABLE = 0
-#     ON_LOAN = 1
-#     STOCKTAKE = 2
-#     TO_BE_REPAIRED = 3
-#     BEING_REPAIRED = 4
-#     RETIRED = 5
-#
-#     TOY_STATE_CHOICES = (
-#         (AVAILABLE,'Available'),
-#         (ON_LOAN,'On Loan'),
-#         (STOCKTAKE,'Stocktake'),
-#         (TO_BE_REPAIRED,'To Be Repaired'),
-#         (BEING_REPAIRED,'Being Repaired'),
-#         (RETIRED,'Retired')
-#     )
-
-# class IssueChoiceType:
-#     ISSUE_NONE = 0
-#     BROKEN_REPAIRABLE = 1
-#     BROKEN_NOT_REPAIRABLE = 2
-#     MINOR_MISSING_PIECE = 3
-#     MAJOR_MISSING_PIECE = 4
-#     WHOLE_TOY_MISSING = 5
-#     #not an issue, how would these been entered? - Not a "return" but noted in toy history?
-#     # RETURNED_MISSING_PIECE = 6
-#     # RETURNED_MISSING_TOY = 7
-#
-#
-#
-#     ISSUE_TYPE_CHOICES = (
-#         (ISSUE_NONE,'No Issue'),
-#         (BROKEN_REPAIRABLE, 'Broken repairable'), # -> to admin cupboard
-#         (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'), # -> retired
-#         (MINOR_MISSING_PIECE, 'Minor missing piece'),# -> to shelf
-#         (MAJOR_MISSING_PIECE, 'Major missing piece'),# -> to admin cupboard
-#         (WHOLE_TOY_MISSING, 'Whole toy missing'),# -> retired
-#         #who can retire a toy?
-#         # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
-#         # (RETURNED_MISSING_TOY, 'Returned missing toy'),
-#
-#     )
-
-
-
-# class ToyConditionType:
-#     AVAILABLE = 0
-#     MAJOR_ISSUE = 1
-#     BEING_REPAIRED = 2
-#     MISSING = 3
-#     RETIRED = 4
-#
-#     TOY_NOT_IN_SERVICE_STATE_CHOICES = (
-#         (AVAILABLE, 'Available'),
-#         (MAJOR_ISSUE, 'Notable Issue'),
-#         (BEING_REPAIRED, 'Being Repaired'),
-#         (MISSING, 'Missing'),
-#         (RETIRED, 'Retired'),
-#     )
-
 class Toy(models.Model):
-    # AT_TOY_LIBRARY = 0
-    # BORROWED = 1
-    # NOT_IN_SERVICE = 2
-    #
-    # TOY_STATE_CHOICES = (
-    #     (AT_TOY_LIBRARY, 'At Toy Library'),
-    #     (BORROWED, 'Borrowed'),
-    #     (NOT_IN_SERVICE, 'Not Available')
-    # )
-
-
     # needs to be table??
     # this is covering two different states, condition and location - might want to think about this
     # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
@@ -290,7 +219,7 @@ class Toy(models.Model):
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
     comment = models.CharField(blank=True, null=True, max_length=1024)
-    # TODO add function that sets these so they can be recorded in issue register automatically
+
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     borrow_counter = models.IntegerField(default=0)
@@ -310,7 +239,11 @@ class Toy(models.Model):
         self.due_date = timezone.now() + datetime.timedelta(days=duration * 7)
         self.save()
 
-        # TODO add toy history event
+        #TODO need volunteer user details
+        toy_history=ToyHistory()
+        toy_history.record_toy_event(self)
+
+
 
 
     def return_toy(self, issue, comment):
@@ -332,13 +265,19 @@ class Toy(models.Model):
 
 
         self.issue_comment = comment
-        self.member_loaned = None
 
+        toy_history=ToyHistory()
+        toy_history.record_toy_event(self)
+
+        self.member_loaned = None
         time_borrowed = date.today() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
+        self.last_check = timezone.now().date()
 
         self.save()
-        # TODO add toy history event
+
+
+
 
     def is_current(self):
         return timezone.now().date() >= self.due_date
@@ -404,6 +343,7 @@ class Transaction(models.Model):
     toy = models.ForeignKey(Toy, null=True)
     transaction_type = models.IntegerField(choices=TRANSACTION_TYPE_CHOICES)
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
+    balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
 
     def __unicode__(self):
         return self.get_transaction_type_display()  # ????
@@ -416,32 +356,33 @@ class Transaction(models.Model):
 # Issue register used for toy activity register as well
 # add none=0?
 class ToyHistory(models.Model):
-    # NEW  = 0
-    # RETURN = 1
-    # ISSUE = 2
-    # BORROW= 3
-    # RETIRED = 4
-    #
-    # # toy lifecycle
-    # TOY_HISTORY_CHOICES = (
-    #     (NEW, 'New'),
-    #     (BORROW,'Borrow'),
-    #     (RETURN, 'Return'),
-    #     (ISSUE, 'Issue'),
-    #     (RETIRED,'Retired')
-    # )
-
     toy = models.ForeignKey(Toy)
-    date_time = models.DateField('Issue reported date and time', auto_now_add=True)
+    date_time = models.DateField('Event date and time', auto_now_add=True)
     event_type = models.IntegerField(choices=Toy.TOY_STATE_CHOICES, null=True)
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
-    member_involved = models.ForeignKey(Member)
-    volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
-    comment = models.CharField(max_length=1024)
+    issue_comment = models.CharField(blank=True, null=True, max_length=200)
+    member = models.ForeignKey(Member)
+   # volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
+
     transaction = models.ForeignKey(Transaction, null=True)
 
+    def record_toy_event(self, toy, transaction=None):
+        self.toy=toy
+        self.date_time=timezone.now()
+        self.event_type=toy.state
+        self.issue_comment=toy.issue_comment
+        self.issue_type=toy.issue_type
+        self.member=toy.member_loaned
+
+        #TODO get  logged in user
+        #self.volunteer_reporting=logged_in_user
+
+        self.transaction=transaction
+
+        self.save()
+
     def __unicode__(self):
-        return self.comment
+        return self.date_time.strftime("%c")
 
     def __str__(self):
-        return self.comment
+        return self.date_time.strftime("%c")

@@ -7,6 +7,10 @@ def toys(request, toy_id=None):
     context={}
 
     context.update(handle_toy_details(request, toy_id))
+    context.update(handle_toy_history(request,toy_id))
+
+
+
 
     context.update({"toys":Toy.objects.all().order_by('code')})
 
@@ -24,3 +28,9 @@ def handle_toy_details(request, toy_id):
     return context
 
 
+def handle_toy_history(request, toy_id):
+
+    context={}
+    context.update({"toy_history":ToyHistory.objects.filter(toy__id=toy_id).order_by('date_time')})
+
+    return context

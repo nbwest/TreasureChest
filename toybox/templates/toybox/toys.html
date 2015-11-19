@@ -8,20 +8,26 @@
 
 <h1  class="page-header">Toys</h1>
 
-<div class="row">
 
+
+<div class="row">
     <div class="panel-fluid panel-default col-xs-11">
         {% include "toybox/toy_summary.html" %}
     </div>
 </div>
 
 <div class="row">
+    <div class="panel-fluid panel-default col-xs-11">
+        {% include "toybox/toy_history.html" %}
+    </div>
+</div>
+
+ <br>
+
+<div class="row">
 
     <div class="panel-fluid panel-default col-xs-11">
-
-
-         <!--<div class="panel-heading">Toy List</div>-->
-<!--data-card-view="true"-->
+        <div class="panel-heading">Toy List</div>
             <table  class="table table-condensed"  data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true">
 
 
@@ -43,7 +49,7 @@
                   <tr>
                         <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a>
                         <!--<td><a href="{% url 'toybox:toys' %}{{toy.toy.id}}">{{toy.code}}</a>-->
-                            <br><a href="#"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
+                            <br><a href="{% url 'toybox:toys' toy_id=toy.id %}"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
                         <td>{{toy.name}}</td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
@@ -58,7 +64,7 @@
                   </tr>
                   {% endfor %}
             </table>
-
+        </div>
       </div>
 
 </div>

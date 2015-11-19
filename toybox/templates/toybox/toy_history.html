@@ -1,0 +1,37 @@
+{% load widget_tweaks %}
+
+<!--Must filter by toy id-->
+<!--supply history item-->
+
+<span id="toy_history">
+    {% if toy_history %}
+    <div class="panel-default">
+    <div class="panel-heading">Toy History ID: {{toy.code}}</div>
+     <table  class="table table-condensed"  data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true">
+
+            <thead>
+                <tr>
+                    <th data-field="date_time"  data-sortable="true">Date</th>
+                    <th data-field="event_type"  data-sortable="true">Type</th>
+                    <th data-field="issue_type"  data-sortable="true">Issue</th>
+                    <th data-field="issue_comment"  data-sortable="true">Issue Comment</th>
+                    <th data-field="member_involved"  data-sortable="true">Member</th>
+                    <th data-field="transaction"  >Transaction</th>
+                </tr>
+            </thead>
+
+            {% for event in toy_history %}
+              <tr>
+                    <td>{{event.date_time}}</td>
+                    <td>{{event.get_event_type_display}}</td>
+                    <td>{{event.get_issue_type_display}}</td>
+                    <td>{{event.issue_comment}}</td>
+                    <td><a href="{% url 'toybox:members' event.member_involved.id %}">{{event.member_involved}}</a></td>
+                    <td><a href="#">{{event.transaction}}</a></td>
+              </tr>
+            {% endfor %}
+
+            </table>
+        </div>
+        {% endif %}
+</span>

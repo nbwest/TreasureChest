@@ -19,9 +19,13 @@ admin.site.register(LoanType, LoanTypeAdmin)
 admin.site.register(TempBorrowList)
 admin.site.register(Config)
 
+
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'admin_image')
     #readonly_fields = ('member_loaned','due_date','borrow_date','state')
+
+class ToyHistoryAdmin(admin.ModelAdmin):
+    list_display=('date_time','toy','event_type','member')
 
 # User space lists
 admin.site.register(Member)
@@ -30,7 +34,7 @@ admin.site.register(Toy, ToyAdmin)
 
 # Issues added when returning or from toy list (stocktake)
 # used for toy history
-admin.site.register(ToyHistory)
+admin.site.register(ToyHistory,ToyHistoryAdmin)
 
 # Added when any transaction occurred, never changed via list
 # used for toy or member history via member list display
