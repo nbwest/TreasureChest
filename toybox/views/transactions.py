@@ -19,5 +19,4 @@ class TransactionForm(forms.Form):
     date_from = forms.DateField(required=False)
     date_to = forms.DateField(required=False)
     member = forms.ModelChoiceField(required=False,queryset=Member.objects.all())
-    toy=forms.ModelChoiceField(required=False,queryset=Toy.objects.all())
     filter_type=forms.ChoiceField(required=False,choices=Transaction.TRANSACTION_TYPE_CHOICES,  initial=Transaction.DEBIT_ADJUSTMENT)

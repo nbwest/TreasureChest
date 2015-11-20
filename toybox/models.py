@@ -339,11 +339,12 @@ class Transaction(models.Model):
     )
     date_time = models.DateField('Transaction event date and time', auto_now_add=True)
     member = models.ForeignKey(Member, null=True, related_name='member_involved')
-    volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
-    toy = models.ForeignKey(Toy, null=True)
+    # TODO get volunteer login
+    # volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
     transaction_type = models.IntegerField(choices=TRANSACTION_TYPE_CHOICES)
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
     balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
+    comment = models.CharField(blank=True, null=True, max_length=1024)
 
     def __unicode__(self):
         return self.get_transaction_type_display()  # ????
@@ -351,6 +352,22 @@ class Transaction(models.Model):
     def __str__(self):
         return self.get_transaction_type_display()
 
+
+    def create_transaction_record(self, member, transaction_type, amount,comment):
+        self.member = member
+
+        self.transaction_type = transaction_type
+        self.date_time = timezone.now()
+        self.comment = comment
+
+        self.amount=amount
+
+        # self.balance =
+        #TODO need +ve or -ve associated with transaction types
+        #TODO save volunteer reporting
+
+
+        self.save()
 
 # fine associated with missing pieces etc? currently captured by loan type
 # Issue register used for toy activity register as well

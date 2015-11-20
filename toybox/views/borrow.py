@@ -133,8 +133,10 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
             if error != "" and not ignore_error:
                 form.add_error("toy_search_string", error)
-            # else:
-            #     form.toy_id=""
+            else:
+                form.initial.update({"toy_search_string":""})
+                #research below
+                #return http.HttpResponseRedirect('')
 
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
@@ -165,7 +167,10 @@ def handle_payment_form(request, member_id):
                 TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                 context.update({"toy_removed":True})
 
-            if item == "exact" or item=="credit":
+            #TODO Add donate and return change options
+            # donate adds a different transaction and doesn't go to their credit
+            # return change same as exact
+            if item == "exact" or item=="credit" or item=="donate" or item=="return":
                 if payment_form.is_valid():
                     print("valid form")
                     member = get_object_or_404(Member, pk=member_id)
@@ -197,11 +202,28 @@ def handle_payment_form(request, member_id):
                             break
 
                         print("Paid "+str(fee_paid))
-                        # TODO create transaction record
+
                         print(member.balance)
-                        member.balance = member.balance - fee_due + fee_paid
-                        print(member.balance)
-                        member.save()
+                        #TODO bring in other fee types, each one has their own transaction?
+                        transaction_type=Transaction.HIRE_CHARGE
+                        #TODO create transaction record for hire change
+                        transaction=Transaction()
+                        transaction.create_transaction_record(member,transaction_type,fee_paid,None)
+
+                        if item=="credit":
+                            member.balance = member.balance - fee_due + fee_paid
+                            print(member.balance)
+                            member.save()
+                            transaction_type=Transaction.CREDIT_ADJUSTMENT
+
+                            transaction.create_transaction_record(member,transaction_type,fee_paid-fee_due,None)
+                            #TODO add additional transaction record
+                        elif item=="donate":
+                            transaction_type=Transaction.DONATION
+                            transaction.create_transaction_record(member,transaction_type,fee_paid-fee_due,None)
+                            #TODO add additional transaction record
+
+
 
                         context.update({"clear_form":True})
 

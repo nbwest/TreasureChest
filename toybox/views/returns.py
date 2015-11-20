@@ -90,7 +90,7 @@ class ReturnsForm(forms.Form):
         if toyList:
             for toy in toyList:
                 self.fields['returned_checkbox_%s' % toy.id]=forms.BooleanField(required=False)
-                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('comment').max_length)
+                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
                 self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)
 
 
