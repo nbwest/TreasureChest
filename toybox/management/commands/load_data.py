@@ -133,15 +133,16 @@ class Command(BaseCommand):
         (load_members, 'LastName,FirstName'),
     ]
 
-    # Read first line of file and determine the type of data based
+    # Read up to first 5 lines of file and determine the type of data based
     # on data types configured in HEADERS.
-    # NOTE. first line of file is consumed by this function, so no need
-    # to strip header line later
+    # NOTE. header line of file is consumed by this function, so no need
+    # to strip it later
     def parse_header(self, file):
-        line = file.readline()
-        for data_type in self.HEADERS:
-            if line.startswith(data_type[self.HEADER_MATCH]):
-                return data_type[self.HEADER_FUNC]
+        for n in range(5):
+            line = file.readline()
+            for data_type in self.HEADERS:
+                if line.startswith(data_type[self.HEADER_MATCH]):
+                    return data_type[self.HEADER_FUNC]
         else:
             return None
 
