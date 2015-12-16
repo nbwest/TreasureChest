@@ -150,95 +150,188 @@ def handle_payment_form(request, member_id):
     # TODO update member balance and transaction table
     # TODO update toy loan duration
     context = {}
+    member=None
 
     #payment_form = PaymentForm(request.POST)#initial={'loan_duration':'2'})#request.POST)
 
+    if member_id:
+        member = get_object_or_404(Member, pk=member_id)
+
+
+
     if (request.method == "POST"):
         payment_form = PaymentForm(request.POST)
-
-
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
-        for item in request.POST:
-            #print(item)
-            if item.startswith("remove_toy_"):
-                toy_to_remove = item[len("remove_toy_"):]
-                # print("REMOVE TOY: "+toy_to_remove)
-                TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
-                context.update({"toy_removed":True})
+        if member:
+            #check remove toy submit action
+            for item in request.POST:
+                if item.startswith("remove_toy_"):
+                    toy_to_remove = item[len("remove_toy_"):]
+                    TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
+                    context.update({"toy_removed":True})
 
-            #TODO Add donate and return change options
-            # donate adds a different transaction and doesn't go to their credit
-            # return change same as exact
-            if item == "exact" or item=="credit" or item=="donate" or item=="return":
-                if payment_form.is_valid():
-                    print("valid form")
-                    member = get_object_or_404(Member, pk=member_id)
+            if payment_form.is_valid():
 
-                    if new_borrow_list.count()>0:
-                        for new_toy in new_borrow_list:
-                            loan_duration = payment_form.cleaned_data['loan_duration']
-                            print("LOAN_DURATION: "+loan_duration)
-                            toy = get_object_or_404(Toy, id=new_toy.toy.id)
-                            print(toy)
-                            toy.borrow_toy(member, int(loan_duration))
-                            remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
-                            remove_toys_temp.delete()
+                #check for submit action
+                if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
 
-                        try:
-                            fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
-                        except:
-                            due_error = "Not a number"
-                            # print(payment_form.cleaned_data['fee_due']," ",due_error)
-                            break
+                # if "exact" in request.POST or "add_credit" in request.POST  or "donate" in request.POST  or "return" in request.POST or "use_credit" in request.POST :
+                #     print("valid form")
 
-                        print("Due " + str(fee_due))
-                        # TODO add error message
-                        try:
-                            fee_paid = decimal.Decimal(payment_form.cleaned_data['payment'])
-                        except:
-                            paid_error = "Not a number"
-                            print(payment_form.cleaned_data['fee_paid']," ",paid_error)
-                            break
+                    # if new_borrow_list.count()>0:
 
-                        print("Paid "+str(fee_paid))
+                    #Assign borrowed toys to member if any
+                    for new_toy in new_borrow_list:
+                        loan_duration = payment_form.cleaned_data['loan_duration']
+                        print("LOAN_DURATION: "+loan_duration)
+                        toy = get_object_or_404(Toy, id=new_toy.toy.id)
+                        print(toy)
+                        toy.borrow_toy(member, int(loan_duration))
+                        remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
+                        remove_toys_temp.delete()
 
-                        print(member.balance)
-                        #TODO bring in other fee types, each one has their own transaction?
-                        transaction_type=Transaction.HIRE_CHARGE
-                        #TODO create transaction record for hire change
-                        transaction=Transaction()
-                        transaction.create_transaction_record(member,transaction_type,fee_paid,None)
+                    # try:
+                    #  fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
+                    # except:
+                    #     due_error = "Not a number"
+                        # print(payment_form.cleaned_data['fee_due']," ",due_error)
 
-                        if item=="credit":
+
+                    # print("Due " + str(fee_due))
+                    # TODO add error message
+                    # try:
+                    # fee_paid = decimal.Decimal(payment_form.cleaned_data['payment'])
+                    # except:
+                    #     paid_error = "Not a number"
+                    #     print(payment_form.cleaned_data['fee_paid']," ",paid_error)
+                    #
+                    # print("Paid "+str(fee_paid))
+                    #
+                    # print(member.balance)
+
+
+                    #TODO bring in other fee types, each one has their own transaction
+
+                    #TODO Take into account of adjusted fees
+
+
+
+                    #borrow fee transaction
+                    if payment_form.cleaned_data['borrow_fee']!="":
+                        fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
+                        if fee!=0:
+                            transaction=Transaction()
+                            transaction.create_transaction_record(member,Transaction.BORROW_FEE,fee,None)
+
+                    #membership fee transaction
+                    if "membership" in payment_form.cleaned_data:
+                        if payment_form.cleaned_data['membership']!="":
+                            fee=decimal.Decimal(payment_form.cleaned_data['membership'])
+                            if fee!=0:
+                                comment=None
+                                #TODO add in actual fee change justifcation
+                                if fee != member.type.fee:
+                                    comment="NON STANDARD FEE"
+
+                                transaction=Transaction()
+                                transaction.create_transaction_record(member,Transaction.MEMBERSHIP_FEE,fee,comment)
+
+                                member.update_membership_date()
+
+
+                    #Member deposit fee transaction
+                    if "deposit_fee" in payment_form.cleaned_data:
+                        if payment_form.cleaned_data['deposit_fee']!="":
+                            fee=decimal.Decimal(payment_form.cleaned_data['deposit_fee'])
+                            if fee!=0:
+                                transaction=Transaction()
+                                transaction.create_transaction_record(member,Transaction.MEMBER_DEPOSIT,fee,None)
+
+                    #overdue fee transaction completion
+                    if "late_fee" in payment_form.cleaned_data:
+                        if payment_form.cleaned_data['late_fee']!="":
+                            fee=decimal.Decimal(payment_form.cleaned_data['late_fee'])
+                            if fee!=0:
+                                late_fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.OVERDUE_FEE)
+
+                                for item in late_fees_records:
+                                    item.complete=True
+                                    item.save()
+
+
+
+                    #issue fee transation completion
+
+
+                    context.update({"clear_form":True})
+
+
+                    fee_paid = decimal.Decimal(payment_form.cleaned_data['payment'])
+                    fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
+
+                    #look at submit actions
+                    for item in request.POST:
+
+                        if item=="add_credit":
                             member.balance = member.balance - fee_due + fee_paid
                             print(member.balance)
                             member.save()
-                            transaction_type=Transaction.CREDIT_ADJUSTMENT
+                            transaction=Transaction()
+                            transaction.create_transaction_record(member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,None)
+                            break
 
-                            transaction.create_transaction_record(member,transaction_type,fee_paid-fee_due,None)
-                            #TODO add additional transaction record
                         elif item=="donate":
-                            transaction_type=Transaction.DONATION
-                            transaction.create_transaction_record(member,transaction_type,fee_paid-fee_due,None)
-                            #TODO add additional transaction record
+                            transaction=Transaction()
+                            transaction.create_transaction_record(member,Transaction.MEMBER_DONATION,fee_paid-fee_due,None)
+                            break
+
+                        elif item=="use_credit":
+                            if member.balance>=fee_due:
+                                member.balance = member.balance - fee_due
+                                member.save()
+                                transaction=Transaction()
+                                transaction.create_transaction_record(member,Transaction.MEMBER_DEBIT,fee_due,None)
+                                break
+                            else:
+                                print("Error, Not enough credit")
+
+            else:
+                print("invalid form " + str(payment_form.errors))
 
 
 
-                        context.update({"clear_form":True})
-
-                else:
-                     print("invalid form " + str(payment_form.errors))
-
+    # fill in default loan duration
     try:
         default_loan_duration = Config.objects.get(key="default_loan_duration").value
     except Config.DoesNotExist:
         default_loan_duration = "2"
 
-    # TODO Request.POST here ruins initial data
-    #payment_form = PaymentForm(request.POST,initial={'loan_duration':'2'})
-    #including request.POST clears initial data, without it validation errors are missing
-    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':0, 'membership':0, 'issue_fee':0, 'bond_fee':0})
+    #fill in other fees
+
+    balance=0
+    late_fee=0
+    issue_fee=0
+    membership_fee=0
+
+    deposit_fee=0
+
+    if member:
+        balance=member.balance
+        late_fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.OVERDUE_FEE)
+        late_fee=sum(f.amount for f in late_fees_records)
+
+        issue_fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
+        issue_fee=sum(f.amount for f in issue_fees_records)
+
+        if not member.is_current():
+            membership_fee=member.type.fee
+
+
+
+
+
+    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'bond_fee':deposit_fee, 'credit':balance})
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
@@ -251,6 +344,7 @@ def handle_payment_form(request, member_id):
         # print field.field.widget.attrs
         # print field.field.__class__.__name__
         # print
+
 
 
 
@@ -282,6 +376,7 @@ class PaymentForm(forms.Form):
     membership = forms.CharField(required=False, label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
     donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','visible':'True'}))
     total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','visible':'True','readonly':'readonly'}))
+    credit = forms.CharField(label="Credit", max_length=50, widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly'}))
     payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'visible':'True'}))
     change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly', 'change_buttons':'True'}))
 

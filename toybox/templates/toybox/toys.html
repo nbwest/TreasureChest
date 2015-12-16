@@ -46,9 +46,8 @@
 
 
                   {% for toy in toys %}
-                  <a>
-                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a>
-                        <br><a href="{% url 'toybox:toys' toy_id=toy.id %}"><span class="glyphicon glyphicon-time " aria-hidden="true"></span></a> </td>
+                  <tr>
+                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a></td>
                         <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.name}}</a></td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>

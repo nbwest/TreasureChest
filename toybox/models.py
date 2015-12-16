@@ -1,6 +1,7 @@
 import datetime
 import django
 from datetime import date
+from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
@@ -21,16 +22,15 @@ class Config(models.Model):
 
 
 class MemberType(models.Model):
-    YEARLY = 0
-    BIANNUALLY = 2
-    QUARTERLY = 3
-    MONTHLY = 4
+    YEARLY = 365
+    BIANNUALLY = 183
+    # QUARTERLY = 13
+
 
     MEMBER_PERIOD_CHOICES = (
         (YEARLY, 'Yearly'),
         (BIANNUALLY, 'Biannually'),
         # (QUARTERLY, 'Quarterly'),
-        # (MONTHLY, 'Monthly'),
     )
     membership_period = models.IntegerField(default=YEARLY, choices=MEMBER_PERIOD_CHOICES)
     name = models.CharField(max_length=20)
@@ -88,13 +88,18 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    anniversary_date = models.DateField('Membership due', default=django.utils.timezone.now)
+    membership_end_date = models.DateField('Membership due', default=django.utils.timezone.now)
+
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
-    active = models.BooleanField(default=True)
+    #is active required?
+    # active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(null=True)
-    deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+     # is deposit fee required???
+    # deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    # is membership fee required???
+    # membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    deposit_paid = models.BooleanField(default=False)
 
     # volunteer capacity - bitfield
     # roster days - bitfield
@@ -108,12 +113,16 @@ class Member(models.Model):
 
     def membership_due_soon(self):
         # TODO move magic value to config
-        return timezone.now().date + datetime.timedelta(days=60) <= self.anniversary_date
+        return timezone.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
     def is_current(self):
-        # TODO move magic value to config
-        return timezone.now().date() < self.anniversary_date
-        # return timezone.now().date + datetime.timedelta(days=14) > self.anniversary_date
+        return timezone.now().date() < self.membership_end_date
+
+    def update_membership_date(self):
+        self.membership_end_date = timezone.now().date()+timedelta(days=self.type.membership_period)
+        self.save()
+
+
 
 
 class Child(models.Model):
@@ -277,6 +286,11 @@ class Toy(models.Model):
         self.save()
 
 
+    def weeks_overdue(self):
+        monday2 = (timezone.now().date() - timedelta(days=timezone.now().date().weekday()))
+        monday1 = (self.due_date - timedelta(days=self.due_date.weekday()))
+
+        return (monday2 - monday1).days / 7
 
 
     def is_current(self):
@@ -304,40 +318,101 @@ class TempBorrowList(models.Model):
 
 
 class Transaction(models.Model):
-    DONATION = 0
-    BOND_REFUND = 1
-    PETTY_CASH_ADJUSTMENT = 2
-    FROM_BANK = 3
-    CREDIT_ADJUSTMENT = 4
-    CHARGE_REVERSAL = 5
-    PAYMENT = 6
-    MEMBERSHIP = 7
-    HIRE_CHARGE = 8
-    FEE = 9
-    FINE = 10
-    DEBIT_ADJUSTMENT = 11
-    REFUND = 12
-    TO_BANK = 13
-    BOND = 14
+    # DONATION = 0
+    # BOND_REFUND = 1
+    # PETTY_CASH_ADJUSTMENT = 2
+    # FROM_BANK = 3
+    # CREDIT_ADJUSTMENT = 4
+    # CHARGE_REVERSAL = 5
+    # PAYMENT = 6
+    # MEMBERSHIP = 7
+    # HIRE_CHARGE = 8
+    # FEE = 9
+    # FINE = 10
+    # DEBIT_ADJUSTMENT = 11
+    # REFUND = 12
+    # TO_BANK = 13
+    # BOND = 14
+    #
+    # TRANSACTION_TYPE_CHOICES = (
+    #     (DONATION, 'Donation'),
+    #     (BOND_REFUND, 'Bond Refund'),
+    #     (PETTY_CASH_ADJUSTMENT, 'Petty Cash Adjustment'),
+    #     (FROM_BANK, 'From Bank'),
+    #     (CREDIT_ADJUSTMENT, 'Credit Adjustment'),
+    #     (CHARGE_REVERSAL, 'Charge Reversal'),
+    #     (PAYMENT, 'Payment'),
+    #     (MEMBERSHIP, 'Membership'),
+    #     (HIRE_CHARGE, 'Hire charge'),
+    #     (FEE, 'Fee'),
+    #     (FINE, 'Fine'),
+    #     (DEBIT_ADJUSTMENT, 'Debit Adjustment'),
+    #     (REFUND, 'Refund'),
+    #     (TO_BANK, 'To Bank'),
+    #     (BOND, 'Bond'),
+    # )
+
+
+
+    MEMBER_DONATION = 0 #+ From member to toy library. Automatic in Borrow page.
+    MEMBER_CREDIT = 1   #+ From member to add to their credit amount. Added to till. Automatic from borrow page
+    MEMBER_DEPOSIT = 2  #+ From member to toy library on membership sign up. Automatic from borrow page
+    MEMBERSHIP_FEE = 3  #+ Member annual membership fee. Automatic from borrow page
+    BORROW_FEE = 4      #+ Member borrows toy. Automatic from borrow page
+    ISSUE_FEE = 5       #+ Member returns toy with notable issue. Automatic from returns page
+    OVERDUE_FEE = 6     #+ Member borrow overdue fee. Automatic from returns page
+    MEMBER_DEBIT = 7    #0 Member uses credit to pay for fees, no money changes hands. Automatic from borrow page
+    ADJUSTMENT_CREDIT = 8   #+ Adjustment of till. Manual from transactions pag
+    ADJUSTMENT_DEBIT = 9    #- Adjustment of till. Manual from transactions page
+    BANK_DEPOSIT = 10       #- End of day take money to bank. Manual from transactions page
+    MEMBER_DEPOSIT_REFUND = 11  #- From toy library to member once they cancel their the toy library membership. Manual from transaction page
+
+
 
     TRANSACTION_TYPE_CHOICES = (
-        (DONATION, 'Donation'),
-        (BOND_REFUND, 'Bond Refund'),
-        (PETTY_CASH_ADJUSTMENT, 'Petty Cash Adjustment'),
-        (FROM_BANK, 'From Bank'),
-        (CREDIT_ADJUSTMENT, 'Credit Adjustment'),
-        (CHARGE_REVERSAL, 'Charge Reversal'),
-        (PAYMENT, 'Payment'),
-        (MEMBERSHIP, 'Membership'),
-        (HIRE_CHARGE, 'Hire charge'),
-        (FEE, 'Fee'),
-        (FINE, 'Fine'),
-        (DEBIT_ADJUSTMENT, 'Debit Adjustment'),
-        (REFUND, 'Refund'),
-        (TO_BANK, 'To Bank'),
-        (BOND, 'Bond'),
+    (MEMBER_DONATION,'Donation'),
+    (MEMBER_CREDIT,'Member Credit'),
+    (MEMBER_DEPOSIT,'Member Deposit'),
+    (MEMBERSHIP_FEE,'Membership fee'),
+    (BORROW_FEE,'Borrow Fee'),
+    (ISSUE_FEE,'Issue Fee'),
+    (OVERDUE_FEE,'Overdue Fee'),
+    (MEMBER_DEBIT,'Member Debit'),
+    (ADJUSTMENT_CREDIT,'Credit Adjustment'),
+    (ADJUSTMENT_DEBIT,'Debit Adjustment'),
+    (BANK_DEPOSIT,'Bank Deposit'),
+    (MEMBER_DEPOSIT_REFUND,'Deposit Refund'),
     )
-    date_time = models.DateField('Transaction event date and time', auto_now_add=True)
+
+    TRANSACTION_DIRECTION = 0
+    ACCESS_TYPE = 1
+
+    AUTO=0
+    MANUAL=1
+
+    CREDIT =1
+    DEBIT=-1
+    NONE=0
+
+    TRANSACTION_EXTRA = {
+    MEMBER_DONATION:(CREDIT,AUTO),
+    MEMBER_CREDIT:(CREDIT,AUTO),
+    MEMBER_DEPOSIT:(CREDIT,AUTO),
+    MEMBERSHIP_FEE:(CREDIT,AUTO),
+    BORROW_FEE:(CREDIT,AUTO),
+    ISSUE_FEE:(CREDIT,AUTO),
+    OVERDUE_FEE:(CREDIT,AUTO),
+    MEMBER_DEBIT:(NONE,AUTO),
+
+    ADJUSTMENT_CREDIT:(CREDIT,MANUAL),
+    ADJUSTMENT_DEBIT:(DEBIT,MANUAL),
+    BANK_DEPOSIT:(DEBIT,MANUAL),
+    MEMBER_DEPOSIT_REFUND:(DEBIT,MANUAL),
+    }
+
+
+
+    date_time = models.DateTimeField('Transaction event date and time', auto_now_add=True)
     member = models.ForeignKey(Member, null=True, related_name='member_involved')
     # TODO get volunteer login
     # volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
@@ -345,6 +420,7 @@ class Transaction(models.Model):
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
     balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
     comment = models.CharField(blank=True, null=True, max_length=1024)
+    complete = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.get_transaction_type_display()  # ????
@@ -353,7 +429,7 @@ class Transaction(models.Model):
         return self.get_transaction_type_display()
 
 
-    def create_transaction_record(self, member, transaction_type, amount,comment):
+    def create_transaction_record(self, member, transaction_type, amount,comment, complete=True):
         self.member = member
 
         self.transaction_type = transaction_type
@@ -361,6 +437,7 @@ class Transaction(models.Model):
         self.comment = comment
 
         self.amount=amount
+        self.complete=complete
 
         # self.balance =
         #TODO need +ve or -ve associated with transaction types
@@ -374,16 +451,16 @@ class Transaction(models.Model):
 # add none=0?
 class ToyHistory(models.Model):
     toy = models.ForeignKey(Toy)
-    date_time = models.DateField('Event date and time', auto_now_add=True)
+    date_time = models.DateTimeField('Event date and time', auto_now_add=True)
     event_type = models.IntegerField(choices=Toy.TOY_STATE_CHOICES, null=True)
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     member = models.ForeignKey(Member)
    # volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
 
-    transaction = models.ForeignKey(Transaction, null=True)
+    # transaction = models.ForeignKey(Transaction, null=True)
 
-    def record_toy_event(self, toy, transaction=None):
+    def record_toy_event(self, toy):
         self.toy=toy
         self.date_time=timezone.now()
         self.event_type=toy.state
@@ -394,12 +471,12 @@ class ToyHistory(models.Model):
         #TODO get  logged in user
         #self.volunteer_reporting=logged_in_user
 
-        self.transaction=transaction
+        # self.transaction=transaction
 
         self.save()
 
-    def __unicode__(self):
-        return self.date_time.strftime("%c")
-
-    def __str__(self):
-        return self.date_time.strftime("%c")
+    # def __unicode__(self):
+    #     return self.date_time
+    #
+    # def __str__(self):
+    #     return self.date_time

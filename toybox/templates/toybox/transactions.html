@@ -46,10 +46,12 @@
 
    </div>
 
+    <div class="row col-xs-12" style=" min-height: 20px;"  >
+    </div>
+
 </form>
 
-
-    {% if transactions %}
+{% if transactions %}
 
     <div class="row col-xs-12 col-sm-10 " style=" min-height: 40px;"  >
         <div class="panel-default">
@@ -64,17 +66,19 @@
                     <!--<th data-field="volunteer_reporting"  data-sortable="true">Volunteer</th>-->
                     <th data-field="amount"  >Amount</th>
                     <th data-field="comment"  >Comment</th>
+                    <th data-field="complete"  >Complete</th>
                 </tr>
             </thead>
 
             {% for transaction in transactions %}
               <tr>
 
-                    <td>{{transaction.date_time}}</td>
+                    <td>{{transaction.date_time|date:"d-m-Y H:i"}}</td>
                     <td>{{transaction.get_transaction_type_display}}</td>
                     <td><a href="{% url 'toybox:members' member_id=transaction.member.id %}">{{transaction.member}}</a></td>
                     <td>{{transaction.amount}}</td>
                     <td>{{transaction.comment}}</td>
+                    <td>{{transaction.complete}}</td>
 
 
               </tr>
@@ -82,8 +86,9 @@
 
             </table>
         </div>
-        </div>
-        {% endif %}
+    </div>
+{% endif %}
+
 </span>
 
 {% endblock content %}

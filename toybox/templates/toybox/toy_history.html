@@ -16,18 +16,18 @@
                     <th data-field="issue_type"  data-sortable="true">Issue</th>
                     <th data-field="issue_comment"  data-sortable="true">Issue Comment</th>
                     <th data-field="member"  data-sortable="true">Member</th>
-                    <th data-field="transaction"  >Transaction</th>
+
                 </tr>
             </thead>
 
             {% for event in toy_history %}
               <tr>
-                    <td>{{event.date_time}}</td>
+                    <td>{{event.date_time|date:"d-m-Y H:i"}}</td>
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>
                     <td><a href="{% url 'toybox:members' event.member.id %}">{{event.member}}</a></td>
-                    <td><a href="#">{{event.transaction}}</a></td>
+
               </tr>
             {% endfor %}
 

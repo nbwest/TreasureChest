@@ -49,12 +49,37 @@ def returns(request, member_id=None):
                 # toy.issue_type=returns_form.cleaned_data['issue_type_'+toy.code]
                 # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
 
-                if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]==True:
 
+
+                if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]==True:
                     toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)])
                     # toy.return_toy()
+
+
+
+                if (member_id):
+
+                    member = get_object_or_404(Member, pk=member_id)
+
+                    if returns_form.cleaned_data['issue_fee']!="":
+                        issue_fee=float(returns_form.cleaned_data['issue_fee'])
+                        if issue_fee!=0:
+                            transaction=Transaction()
+                            transaction_type=Transaction.ISSUE_FEE
+                            transaction.create_transaction_record(member,transaction_type,issue_fee,None,False)
+
+                    if returns_form.cleaned_data['late_fee']!="":
+                        late_fee=float(returns_form.cleaned_data['late_fee'])
+                        if late_fee!=0:
+                            transaction=Transaction()
+                            transaction_type=Transaction.OVERDUE_FEE
+                            transaction.create_transaction_record(member,transaction_type,late_fee,None,False)
+
+
+
                 context.pop("toy_list",None)
                 context.pop("member",None)
+
 
 
 
@@ -65,15 +90,18 @@ def returns(request, member_id=None):
     # display toy in toy summary
     # context.update(handle_toy_summary(request))
 
-
     context.update(handle_member_search(request))
+
+    if toyList!=None:
+        for toy in toyList:
+            if toy.weeks_overdue()>0:
+                toy.fine=toy.weeks_overdue()* toy.loan_type.overdue_fine
 
 
     returns_form = ReturnsForm(toyList=toyList)
 
-
-
     context.update({"returns_form":returns_form})
+    print(context)
 
     return render(request, 'toybox/returns.html', context)
 

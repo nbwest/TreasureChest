@@ -75,8 +75,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
 
                     {% if toy.due_date|timebetween|slice:':1' == '-' %}
-                    <td value="{{ toy.loan_type.overdue_fine|floatformat:2 }}">
-                        ${{ toy.loan_type.overdue_fine|floatformat:2 }}
+                    <td value="{{toy.fine|floatformat:2}}">
+                        <!--${{ toy.loan_type.overdue_fine|floatformat:2 }}-->
+                        {{toy.fine|floatformat:2}}
                     </td>
                     {%else%}
                     <td value="0.00">

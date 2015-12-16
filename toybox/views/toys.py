@@ -33,4 +33,5 @@ def handle_toy_history(request, toy_id):
     context={}
     context.update({"toy_history":ToyHistory.objects.filter(toy__id=toy_id).order_by('date_time')})
 
+    print(context)
     return context

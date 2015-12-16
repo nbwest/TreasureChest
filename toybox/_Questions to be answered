@@ -211,4 +211,43 @@ blank name -> error toy not entered - ok
 delete borrowed toy -> removed from list - toy code not entered error
 
 
-* Toy code isn't unique - stop assuming it is! use the id
+* Toy code isn't unique - stop assuming it is! use the id - Done
+
+(+ or - indicates adding or subtracting from the till)
+MEMBER_DONATION         + From member to toy library. Automatic in Borrow page.
+MEMBER_CREDIT           + From member to add to their credit amount. Added to till. Automatic from borrow page
+MEMBER_DEPOSIT          + From member to toy library on membership sign up. Automatic from borrow page
+MEMBERSHIP_FEE          + Member annual membership fee. Automatic from borrow page
+BORROW_FEE              + Member borrows toy. Automatic from borrow page
+ISSUE_FEE               + Member returns toy with notable issue. Automatic from returns page
+OVERDUE_FEE             + Member borrow overdue fee. Automatic from returns page
+
+ADJUSTMENT_CREDIT       + Adjustment of till. Manual from transactions page
+ADJUSTMENT_DEBIT        - Adjustment of till. Manual from transactions page
+BANK_DEPOSIT            - End of day take money to bank. Manual from transactions page
+MEMBER_DEPOSIT_REFUND   - From toy library to member once they cancel their the toy library membership. Manual from transaction page
+
+
+FROM_BANK
+CHARGE_REVERSAL = 5
+REFUND = 12
+
+
+meeting with nathan 2/12/2015
+Gender is entered for children but not for toys. should we neither or both?
+Do toys get retired if they are never borrowed?
+who should have authority to retire toys?
+Member type: member, volunteer, play group, low income?
+remove membership fee from member, replace with below
+rename anniversary_date to paid_until_date
+Member types/roles?
+add role field to member?
+    repairer
+    admin
+    treasurer
+    stocktaker
+    admin
+    
+Borrow workflow for repairer?
+
+
