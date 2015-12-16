@@ -55,7 +55,7 @@ def handle_member_details(request, member_id):
         # print(loans_overdue)
         # print(loan_counts)
 
-        context.update({"members":Member.objects.all().order_by('anniversary_date'),"loan_counts":loan_counts, "loans_overdue":loans_overdue})
+        context.update({"members":Member.objects.all().order_by('membership_end_date'),"loan_counts":loan_counts, "loans_overdue":loans_overdue})
 
     return context
 
@@ -79,7 +79,7 @@ class MemberDetailsForm(forms.Form):
     email_address=forms.CharField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
     balance = forms.CharField(label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
-    anniversary_date = forms.DateField(label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    membership_end_date = forms.DateField(label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     committee_member=forms.BooleanField(label="Committee Member")
     volunteer = forms.BooleanField(label="Volunteer")
     potential_volunteer = forms.BooleanField(label="Potential Volunteer")

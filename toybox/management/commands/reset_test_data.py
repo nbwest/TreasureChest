@@ -114,9 +114,9 @@ class Command(BaseCommand):
                                         type=mt_public,
                                         balance="23",
                                         volunteer=True,
-                                        active=False,
+                                        # active=False,
                                         join_date=timezone.now() - datetime.timedelta(days=360),
-                                        anniversary_date=timezone.now())
+                                        membership_end_date=timezone.now())
 
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
@@ -126,7 +126,7 @@ class Command(BaseCommand):
                                                                 type=mt_playgrp,
                                                                 balance="-12",
                                                                 join_date=timezone.now() - datetime.timedelta(days=100),
-                                                                anniversary_date=timezone.now() + datetime.timedelta(days=265))
+                                                                membership_end_date=timezone.now() + datetime.timedelta(days=265))
 
     def _reset_toybrand(self):
         self.tb_mandd, created = ToyBrand.objects.update_or_create(name="Mellisa & Doug")
@@ -234,43 +234,43 @@ class Command(BaseCommand):
     def _reset_transactions(self):
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,
                                    member=self.m_alicecatcher,
-                                   transaction_type=Transaction.HIRE_CHARGE,
+                                   transaction_type=Transaction.BORROW_FEE,
                                    amount=2.5).delete()
         Transaction.objects.update_or_create(#volunteer_reporting=self.m_johnsmith,
                                              member=self.m_alicecatcher,
 
-                                             transaction_type=Transaction.HIRE_CHARGE,
+                                             transaction_type=Transaction.BORROW_FEE,
                                              amount=2.5)
 
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,
-                                   transaction_type=Transaction.DONATION,
+                                   transaction_type=Transaction.MEMBER_DONATION,
                                    amount=10).delete()
         Transaction.objects.update_or_create(#volunteer_reporting=self.m_johnsmith,
-                                             transaction_type=Transaction.DONATION,
+                                             transaction_type=Transaction.MEMBER_DONATION,
                                              amount=10)
 
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,
                                    member=self.m_johndoh,
-                                   transaction_type=Transaction.FINE,
+                                   transaction_type=Transaction.OVERDUE_FEE,
                                    amount=1).delete()
         Transaction.objects.update_or_create(#volunteer_reporting=self.m_johnsmith,
                                              member=self.m_johndoh,
-                                             transaction_type=Transaction.FINE,
+                                             transaction_type=Transaction.OVERDUE_FEE,
                                              amount=1)
 
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,
                                    member=self.m_johndoh,
-                                   transaction_type=Transaction.MEMBERSHIP,
+                                   transaction_type=Transaction.MEMBERSHIP_FEE,
                                    amount=20).delete()
         Transaction.objects.update_or_create(#volunteer_reporting=self.m_johnsmith,
                                              member=self.m_johndoh,
-                                             transaction_type=Transaction.MEMBERSHIP,
+                                             transaction_type=Transaction.MEMBERSHIP_FEE,
                                              amount=20)
 
     def _reset_config(self):
         Config.objects.filter(key="loan_durations").delete()
         Config.objects.update_or_create(key="loan_durations",
-                                            value="126",
+                                            value="12",
                                             help="Single digit number of weeks in a string, eg 126",
                                             )
 
