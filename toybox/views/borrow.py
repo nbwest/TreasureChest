@@ -100,7 +100,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
             if toy:
 
-                    temp_list_count=TempBorrowList.objects.filter(member__id=member_id).count()
+                    temp_list_count=TempBorrowList.objects.filter(member__id=member_id).count()+1
                     prev_borrow_count=Toy.objects.filter(member_loaned=member_id).count()
 
                     try:
