@@ -11,8 +11,8 @@ def transactions(request):
     context={"transaction_form":form}
     context.update({"transactions":Transaction.objects.all().order_by('date_time')})
 
-    print(Transaction.TRANSACTION_EXTRA[Transaction.MEMBER_DEPOSIT_REFUND][Transaction.TRANSACTION_DIRECTION])
-    print(Transaction.TRANSACTION_EXTRA[Transaction.MEMBER_DONATION][Transaction.ACCESS_TYPE])
+    # print(Transaction.TRANSACTION_EXTRA[Transaction.MEMBER_DEPOSIT_REFUND][Transaction.TRANSACTION_DIRECTION])
+    # print(Transaction.TRANSACTION_EXTRA[Transaction.MEMBER_DONATION][Transaction.ACCESS_TYPE])
 
     return render(request, 'toybox/transactions.html',context )
 

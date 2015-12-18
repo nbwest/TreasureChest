@@ -34,7 +34,8 @@ class MemberType(models.Model):
     )
     membership_period = models.IntegerField(default=YEARLY, choices=MEMBER_PERIOD_CHOICES)
     name = models.CharField(max_length=20)
-    fee = models.DecimalField(decimal_places=2, max_digits=5)
+    fee = models.DecimalField(decimal_places=2, max_digits=5,default=0)
+    deposit = models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
     def __unicode__(self):
         return self.name
@@ -115,8 +116,13 @@ class Member(models.Model):
         # TODO move magic value to config
         return timezone.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
+    def membership_valid(self):
+        return (timezone.now().date() < self.membership_end_date)
+
     def is_current(self):
-        return timezone.now().date() < self.membership_end_date
+        return  self.membership_valid() and  self.deposit_paid
+
+
 
     def update_membership_date(self):
         self.membership_end_date = timezone.now().date()+timedelta(days=self.type.membership_period)

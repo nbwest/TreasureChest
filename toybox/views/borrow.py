@@ -251,6 +251,7 @@ def handle_payment_form(request, member_id):
                                 member.update_membership_date()
 
 
+                    #TODO toy deposit fee - also add new transaction choice
 
                     #Member deposit fee transaction
                     if "deposit_fee" in payment_form.cleaned_data:
@@ -259,6 +260,9 @@ def handle_payment_form(request, member_id):
                             if fee!=0:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(member,Transaction.MEMBER_DEPOSIT,fee,None)
+                                member.deposit_paid=True
+                                member.save()
+
 
                     #overdue fee transaction completion
                     if "late_fee" in payment_form.cleaned_data:
@@ -321,11 +325,11 @@ def handle_payment_form(request, member_id):
 
     #fill in other fees
 
+    #TODO toy deposit?
     balance=0
     late_fee=0
     issue_fee=0
     membership_fee=0
-
     deposit_fee=0
 
     if member:
@@ -336,14 +340,13 @@ def handle_payment_form(request, member_id):
         issue_fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
         issue_fee=sum(f.amount for f in issue_fees_records)
 
-        if not member.is_current():
+        if not member.membership_valid():
             membership_fee=member.type.fee
 
+        if not member.deposit_paid:
+            deposit_fee=member.type.deposit
 
-
-
-
-    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'bond_fee':deposit_fee, 'credit':balance})
+    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'deposit_fee':deposit_fee, 'credit':balance})
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
@@ -384,7 +387,7 @@ class PaymentForm(forms.Form):
     borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True','visible':'True'}))
     late_fee = forms.CharField(required=False, label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
     issue_fee = forms.CharField(required=False, label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
-    bond_fee = forms.CharField(required=False, label="Bond Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
+    deposit_fee = forms.CharField(required=False, label="Deposit Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
     membership = forms.CharField(required=False, label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','readonly':'readonly', 'adjust_button':'True'}))
     donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'true','visible':'True'}))
     total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','visible':'True','readonly':'readonly'}))
