@@ -12,12 +12,12 @@ class Command(BaseCommand):
 
         MemberType.objects.update_or_create(name="Public",
                                             fee="30",
-                                            membership_period=0)
+                                            membership_period=MemberType.YEARLY)
        
         MemberType.objects.filter(name="Play Group").delete()
         MemberType.objects.update_or_create(name="Play Group",
                                             fee=200,
-                                            membership_period=1)
+                                            membership_period=MemberType.YEARLY)
 
     def _reset_loantype(self):
 

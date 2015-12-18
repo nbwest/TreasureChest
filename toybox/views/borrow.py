@@ -251,6 +251,7 @@ def handle_payment_form(request, member_id):
                                 member.update_membership_date()
 
 
+
                     #Member deposit fee transaction
                     if "deposit_fee" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['deposit_fee']!="":
