@@ -99,7 +99,18 @@ def handle_toy_borrow(request, member_id, ignore_error):
                 toy=get_object_or_404(Toy, id=toy_id)
 
             if toy:
-                    if toy.state == Toy.ON_LOAN:
+
+                    temp_list_count=TempBorrowList.objects.filter(member__id=member_id).count()
+                    prev_borrow_count=Toy.objects.filter(member_loaned=member_id).count()
+
+                    try:
+                        max_toys = int(Config.objects.get(key="max_toys").value)
+                    except Config.DoesNotExist:
+                        max_toys = 10
+
+                    if temp_list_count+prev_borrow_count > max_toys:
+                        error="Toy borrow limit reached"
+                    elif toy.state == Toy.ON_LOAN:
                         error = "Toy on loan"
                     elif toy.state == Toy.BEING_REPAIRED:
                         error = "Toy is being repaired"

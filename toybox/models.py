@@ -287,10 +287,14 @@ class Toy(models.Model):
 
 
     def weeks_overdue(self):
-        monday2 = (timezone.now().date() - timedelta(days=timezone.now().date().weekday()))
-        monday1 = (self.due_date - timedelta(days=self.due_date.weekday()))
 
-        return (monday2 - monday1).days / 7
+        if (self.due_date):
+            monday2 = (timezone.now().date() - timedelta(days=timezone.now().date().weekday()))
+            monday1 = (self.due_date - timedelta(days=self.due_date.weekday()))
+
+            return (monday2 - monday1).days / 7
+        else:
+            return (0)
 
 
     def is_current(self):
@@ -318,40 +322,6 @@ class TempBorrowList(models.Model):
 
 
 class Transaction(models.Model):
-    # DONATION = 0
-    # BOND_REFUND = 1
-    # PETTY_CASH_ADJUSTMENT = 2
-    # FROM_BANK = 3
-    # CREDIT_ADJUSTMENT = 4
-    # CHARGE_REVERSAL = 5
-    # PAYMENT = 6
-    # MEMBERSHIP = 7
-    # HIRE_CHARGE = 8
-    # FEE = 9
-    # FINE = 10
-    # DEBIT_ADJUSTMENT = 11
-    # REFUND = 12
-    # TO_BANK = 13
-    # BOND = 14
-    #
-    # TRANSACTION_TYPE_CHOICES = (
-    #     (DONATION, 'Donation'),
-    #     (BOND_REFUND, 'Bond Refund'),
-    #     (PETTY_CASH_ADJUSTMENT, 'Petty Cash Adjustment'),
-    #     (FROM_BANK, 'From Bank'),
-    #     (CREDIT_ADJUSTMENT, 'Credit Adjustment'),
-    #     (CHARGE_REVERSAL, 'Charge Reversal'),
-    #     (PAYMENT, 'Payment'),
-    #     (MEMBERSHIP, 'Membership'),
-    #     (HIRE_CHARGE, 'Hire charge'),
-    #     (FEE, 'Fee'),
-    #     (FINE, 'Fine'),
-    #     (DEBIT_ADJUSTMENT, 'Debit Adjustment'),
-    #     (REFUND, 'Refund'),
-    #     (TO_BANK, 'To Bank'),
-    #     (BOND, 'Bond'),
-    # )
-
 
 
     MEMBER_DONATION = 0 #+ From member to toy library. Automatic in Borrow page.
@@ -387,28 +357,28 @@ class Transaction(models.Model):
     TRANSACTION_DIRECTION = 0
     ACCESS_TYPE = 1
 
-    AUTO=0
-    MANUAL=1
-
-    CREDIT =1
-    DEBIT=-1
-    NONE=0
-
-    TRANSACTION_EXTRA = {
-    MEMBER_DONATION:(CREDIT,AUTO),
-    MEMBER_CREDIT:(CREDIT,AUTO),
-    MEMBER_DEPOSIT:(CREDIT,AUTO),
-    MEMBERSHIP_FEE:(CREDIT,AUTO),
-    BORROW_FEE:(CREDIT,AUTO),
-    ISSUE_FEE:(CREDIT,AUTO),
-    OVERDUE_FEE:(CREDIT,AUTO),
-    MEMBER_DEBIT:(NONE,AUTO),
-
-    ADJUSTMENT_CREDIT:(CREDIT,MANUAL),
-    ADJUSTMENT_DEBIT:(DEBIT,MANUAL),
-    BANK_DEPOSIT:(DEBIT,MANUAL),
-    MEMBER_DEPOSIT_REFUND:(DEBIT,MANUAL),
-    }
+    # AUTO=0
+    # MANUAL=1
+    #
+    # CREDIT =1
+    # DEBIT=-1
+    # NONE=0
+    #
+    # TRANSACTION_EXTRA = {
+    # MEMBER_DONATION:(CREDIT,AUTO),
+    # MEMBER_CREDIT:(CREDIT,AUTO),
+    # MEMBER_DEPOSIT:(CREDIT,AUTO),
+    # MEMBERSHIP_FEE:(CREDIT,AUTO),
+    # BORROW_FEE:(CREDIT,AUTO),
+    # ISSUE_FEE:(CREDIT,AUTO),
+    # OVERDUE_FEE:(CREDIT,AUTO),
+    # MEMBER_DEBIT:(NONE,AUTO),
+    #
+    # ADJUSTMENT_CREDIT:(CREDIT,MANUAL),
+    # ADJUSTMENT_DEBIT:(DEBIT,MANUAL),
+    # BANK_DEPOSIT:(DEBIT,MANUAL),
+    # MEMBER_DEPOSIT_REFUND:(DEBIT,MANUAL),
+    # }
 
 
 

@@ -155,7 +155,7 @@ class Command(BaseCommand):
         self.t_b1, created = Toy.objects.update_or_create(code="B1",
                                                           name="Roller Coaster",
                                                           brand=self.tb_unk,
-                                                          member_loaned=self.m_alicecatcher,
+                                                          member_loaned=None,
                                                           max_age=6,
                                                           min_age=2,
                                                           num_pieces=7,
@@ -202,12 +202,24 @@ class Command(BaseCommand):
                                                           member_loaned=None,
                                                           max_age=6,
                                                           min_age=3,
-                                                          state=Toy.ON_LOAN,
+                                                          state=Toy.AVAILABLE,
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
                                                           loan_type=self.lt_outdoor,
                                                           image="toy_images/6-30108_8917.jpg")
 
+        Toy.objects.filter(code="O3").delete()
+        self.t_o3, created = Toy.objects.update_or_create(code="O3",
+                                                          name="Train 2",
+                                                          brand=self.tb_fp,
+                                                          member_loaned=None,
+                                                          max_age=6,
+                                                          min_age=3,
+                                                          state=Toy.AVAILABLE,
+                                                          category=self.tc_out,
+                                                          packaging=self.tp_none,
+                                                          loan_type=self.lt_outdoor,
+                                                          image="toy_images/6-30108_8917.jpg")
 
     def _reset_toy_history(self):
         ToyHistory.objects.filter(toy=self.t_i13,
