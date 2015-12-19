@@ -237,7 +237,8 @@
 
 $( document ).ready(function()
 {
-    UpdateBorrowFee();
+     UpdateBorrowFee();
+
 });
 
 function UpdateFee(id)
@@ -364,6 +365,7 @@ console.log("CalcChange");
     $("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
+    $("#btn_use_credit").prop('disabled', (total==0)|(isNaN(change)));
 
 
 

@@ -64,6 +64,7 @@ def borrow(request, member_id):
         context.pop("toy_list",None)
         context.pop("member",None)
         context.pop("new_borrow_toy_list",None)
+        context.pop("credit",None)
 
     return render(request, 'toybox/borrow.html', context)
 
@@ -136,22 +137,25 @@ def handle_toy_borrow(request, member_id, ignore_error):
                         error = "Toy state invalid, toy id: "+toy.id+", toy state: "+toy.state
                        #TODO log in feedback
 
-            else:
-                 error = ""#Toy invalid, search: "+toy_search_string
-                #TODO log in feedback
-
-
 
             if error != "" and not ignore_error:
                 form.add_error("toy_search_string", error)
             else:
-                form.initial.update({"toy_search_string":""})
+                #reset form
+                form = ToySearchForm()
+                form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
+
+                # form.initial.update({"toy_search_string":""})
+                # form.cleaned_data.update({"toy_search_string":""})
+                # form.fields['toy_search_string']=""
+                # form.fields['toy_search_string'].initial=""
+                # form.toy_search_string=""
                 #research below
                 #return http.HttpResponseRedirect('')
 
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
-
+    print(context)
     return context
 
 
@@ -332,7 +336,7 @@ def handle_payment_form(request, member_id):
     membership_fee=0
     deposit_fee=0
 
-    if member:
+    if member and not "clear_form" in context:
         balance=member.balance
         late_fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.OVERDUE_FEE)
         late_fee=sum(f.amount for f in late_fees_records)
