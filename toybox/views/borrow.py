@@ -56,17 +56,14 @@ def borrow(request, member_id):
     if (member_id):
         context.update(handle_member_summary(request, member_id))
         context.update(handle_borrowed_toy_list(request, member_id))
+    else:
+        context["member_search_form"].fields["member_name_fragment"].widget.attrs.update({"autofocus":"true"})
 
-
-    # print(context)
 
     if "clear_form" in context:
-        context.pop("toy_list",None)
-        context.pop("member",None)
-        context.pop("new_borrow_toy_list",None)
-        context.pop("credit",None)
-
-    return render(request, 'toybox/borrow.html', context)
+         return redirect('/toybox/borrow/')
+    else:
+        return render(request, 'toybox/borrow.html', context)
 
 
 # also adds toy to temp list in DB via POST
@@ -143,7 +140,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
             else:
                 #reset form
                 form = ToySearchForm()
-                form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
+
 
                 # form.initial.update({"toy_search_string":""})
                 # form.cleaned_data.update({"toy_search_string":""})
@@ -153,6 +150,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
                 #research below
                 #return http.HttpResponseRedirect('')
 
+    if member_id:
+        form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
     print(context)
@@ -178,13 +177,19 @@ def handle_payment_form(request, member_id):
         payment_form = PaymentForm(request.POST)
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
-        if member:
+        if "cancel" in request.POST:
+            context.update({"clear_form":True})
+
+        elif member:
             #check remove toy submit action
             for item in request.POST:
                 if item.startswith("remove_toy_"):
                     toy_to_remove = item[len("remove_toy_"):]
                     TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                     context.update({"toy_removed":True})
+
+
+
 
             if payment_form.is_valid():
 
@@ -315,6 +320,7 @@ def handle_payment_form(request, member_id):
                                 break
                             else:
                                 print("Error, Not enough credit")
+
 
             else:
                 print("invalid form " + str(payment_form.errors))

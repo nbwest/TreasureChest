@@ -195,7 +195,7 @@
 
              {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
-            <div class="input-group">
+            <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}">
                 <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
                 {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
@@ -209,9 +209,10 @@
                    <span class="input-group-btn">
                        <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
                        <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
-                       <button class="btn btn-default" id="btn_add_credit" name="add_credit" type="submit" >Add Credit</button>
+                       <button class="btn btn-default"  id="btn_add_credit" name="add_credit" type="submit" >Add Credit</button>
                        <button class="btn btn-default" id="btn_use_credit" name="use_credit" type="submit" >Use Credit</button>
                        <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
+                       <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
                    </span>
                 {% endif %}
                 </div>
@@ -299,6 +300,8 @@ console.log("CalcTotal");
 
   nodes.forEach(function(node){
 
+        console.log(node);
+        console.log("VALUE: "+node.value);
         if (!isNaN(Number(node.value)))
         {
             total+= Number(node.value);
@@ -307,7 +310,8 @@ console.log("CalcTotal");
 
    var credit=Number({{payment_form.credit.value}});
 
-    console.log("TOTAl: "+total);
+    console.log("TOTAL: "+total);
+    console.log("CREDIT: "+credit);
 
    if (total!=0)
    {
@@ -318,7 +322,7 @@ console.log("CalcTotal");
             $("#btn_use_credit").prop('disabled',true);
 
        }
-       else if (credit>total)
+       else if (credit>=total)
        {
             document.getElementById("id_credit").value=(credit-total).toFixed(2)+" - CREDIT USED, NO PAYMENT NECESSARY";
             document.getElementById("id_payment").value=total.toFixed(2);
@@ -333,6 +337,7 @@ console.log("CalcTotal");
             total=total-credit;
             console.log("TOTAL: "+total);
        }
+
     }
     else
     {
@@ -361,11 +366,16 @@ console.log("CalcChange");
 
 
 
-    $("#btn_exact").prop('disabled', (change!=0)|(change<0)|(isNaN(change))|(credit>total));
+    $("#btn_exact").prop('disabled', (credit==total)|(change!=0)|(isNaN(change))|(credit>total)|(total==0));
+
+    $("#btn_use_credit").prop('disabled', (credit==0)|(total==0)|((change>=0)&(credit<=0))|(isNaN(change)));
+
+
+
     $("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
-    $("#btn_use_credit").prop('disabled', (total==0)|(isNaN(change)));
+
 
 
 
