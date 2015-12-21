@@ -4,12 +4,12 @@
     <!--toys==none-->
     <!--<p></p>-->
 
-<!--Saerch returned no members-->
+<!--Saerch returned no toys-->
   {% elif toy_search_results|length == 0 %}
     <!--toys length ==0-->
      <!--<p>No members found</p>-->
 
-<!--search returned more than one member-->
+<!--search returned more than one toy-->
  {% elif toy_search_results|length > 1 %}
     <!--toys length >1-->
      <script>
@@ -43,8 +43,18 @@
                                 {{toy.code}}, {{ toy.name }}&nbsp
 
 
-                                <span class="label {% if toy.state != toy.AVAILABLE%} label-danger {%else%} label-success {%endif%} label-as-badge">
-                                {{toy.get_state_display}}</span>
+
+
+
+                                {% if toy in new_borrow_toy_list %}
+                                 <span class="label label-danger label-as-badge">
+                                        Already Borrowed
+                                    </span>
+                                {%else%}
+                                    <span class="label {% if toy.state != toy.AVAILABLE%} label-danger {%else%} label-success {%endif%} label-as-badge">
+                                        {{toy.get_state_display}}
+                                    </span>
+                                {%endif%}
 
                             </button>
 
