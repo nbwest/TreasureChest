@@ -47,8 +47,18 @@
 
                   {% for toy in toys %}
                   <tr>
-                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.code}}</a></td>
-                        <td><a href="{% url 'toybox:toys' toy_id=toy.id %}">{{toy.name}}</a></td>
+                        <td>
+                            <!--{{toy.code}} column is sorted by entire cell contents, keep this comment here -->
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
+                                {{toy.code}}
+                            </a>
+                        </td>
+                        <td>
+                            <!--{{toy.name}} column is sorted by entire cell contents, keep this comment here -->
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
+                                {{toy.name}}
+                            </a>
+                        </td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
                         <td>{{toy.borrow_counter}}</td>

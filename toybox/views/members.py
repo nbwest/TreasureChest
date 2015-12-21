@@ -16,11 +16,16 @@ from shared import *
 def handle_member_details(request, member_id):
     context={}
     form=None
-    context.update(handle_member_search(request))
+    #context.update(handle_member_search(request))
+
+    context.update({"members":get_all_members_ordered_by_name()})
+
+
 
     if (request.method == "GET"):
+# (context["members"] != None) or
 
-        if (context["members"]!=None) or (member_id):
+        if member_id != None:
             context.update({"member_detail_submit_button_label":"Update"})
         else:
             context.update({"member_detail_submit_button_label":"Add"})
@@ -33,8 +38,21 @@ def handle_member_details(request, member_id):
 
         context.update({'member_details_form': form})
 
+    #add or update member details
+    if (request.method == "POST"):
+        form = MemberDetailsForm(request.POST)
+        if form.is_valid():
+            if "add" in request.POST:
+                form.cleaned_data.pop("membership_end_date")
+                form.cleaned_data.pop("balance")
+                Member.objects.create(**form.cleaned_data)
+            elif "update" in request.POST:
+               Member.objects.filter(pk=member_id).update(**form.cleaned_data)
+
+        context.update({'member_details_form': form})
+
     #if no members have been searched for display all members
-    if context["members"]==None:
+    if context["members"] != None:
 
         #get number of loans for each member
         overdue=Toy.objects.filter(due_date__lt=timezone.now().date())#.annotate(dcount=Count('member_loaned'))
@@ -55,8 +73,8 @@ def handle_member_details(request, member_id):
         # print(loans_overdue)
         # print(loan_counts)
 
-        context.update({"members":Member.objects.all().order_by('membership_end_date'),"loan_counts":loan_counts, "loans_overdue":loans_overdue})
-
+        context.update({"loan_counts":loan_counts, "loans_overdue":loans_overdue})
+# "members":Member.objects.all().order_by('membership_end_date'),
     return context
 
 
@@ -72,17 +90,17 @@ def get_all_members_ordered_by_name():
 class MemberDetailsForm(forms.Form):
     name=forms.CharField(label="Name", max_length=Member._meta.get_field('name').max_length)
 
-    partner=forms.CharField(label="Partner Name", max_length=Member._meta.get_field('partner').max_length)
+    partner=forms.CharField(required=False,label="Partner Name", max_length=Member._meta.get_field('partner').max_length)
     phone_number1=forms.CharField(label="Primary Phone", max_length=Member._meta.get_field('phone_number1').max_length)
-    phone_number2=forms.CharField(label="Secondary Phone", max_length=Member._meta.get_field('phone_number2').max_length)
+    phone_number2=forms.CharField(required=False,label="Secondary Phone", max_length=Member._meta.get_field('phone_number2').max_length)
     address=forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address=forms.CharField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
-    balance = forms.CharField(label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
-    membership_end_date = forms.DateField(label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
-    committee_member=forms.BooleanField(label="Committee Member")
-    volunteer = forms.BooleanField(label="Volunteer")
-    potential_volunteer = forms.BooleanField(label="Potential Volunteer")
+    balance = forms.DecimalField(required=False,label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    membership_end_date = forms.DateField(required=False,label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    committee_member=forms.BooleanField(required=False,label="Committee Member")
+    volunteer = forms.BooleanField(required=False,label="Volunteer")
+    potential_volunteer = forms.BooleanField(required=False,label="Potential Volunteer")
 
 
 

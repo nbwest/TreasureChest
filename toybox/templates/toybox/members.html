@@ -39,20 +39,34 @@
                     {% for m in members %}
                        <tr>
 
-                            <td> <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}"> {{ m.name }}</a></td>
+                            <td>
+                                <!--{{ m.name }} Due to href breaking sorting, keep this comment here - this is what is sorted by-->
+                                <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}">
+                                    {{ m.name }}
+                                </a>
+                            </td>
 
                             <td>
                                 {% if m.is_current %}
                                 <span class="label label-success label-as-badge">Valid</span>
                                 {% else %}
-                                <span class="label label-danger label-as-badge">Over Due</span>
+                                <span class="label label-danger label-as-badge">Not Current</span>
                                 {% endif %}
                             </td>
 
                            <td>
+                               <!-- Due to href breaking sorting, keep these comments here - this is what is sorted by-->
+
+                               <!--{% for key, value in loan_counts.items %}-->
+                                            <!--{% if key == m.id %}                                              -->
+                                                   <!--{{ value }}                                              -->
+                                            <!--{% endif %}-->
+                                       <!--{% endfor %}-->
+
                                <a href="{% url 'toybox:returns' member_id=m.id %}">
                                    {% if m.id not in loan_counts %}
                                     <span class="label label-success label-as-badge">0</span>
+
                                    {%else%}
                                        {% for key, value in loan_counts.items %}
                                             {% if key == m.id %}
@@ -87,12 +101,25 @@
             {% csrf_token %}
             <div class="fieldWrapper" >
             {% for field in member_details_form %}
-                    {{ field.label_tag }}
-                    {% render_field field class+="form-control" %}
-            {% endfor %}
-                <br>
-                <button type="submit" class="btn btn-success form-control"><strong>{{ member_detail_submit_button_label }}</strong></button>
+                {{ field.label_tag }}
 
+                {% render_field field class+="form-control" %}
+
+                <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                    {% for error in field.errors  %}
+                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                    {% endfor %}
+                </ul>
+
+            {% endfor %}
+
+                <br>
+
+                {%if member_detail_submit_button_label == "Add" %}
+                    <button type="submit" name="add" class="btn btn-success form-control"><strong>Add</strong></button>
+                {%else%}
+                    <button type="submit" name="update" class="btn btn-success form-control"><strong>Update</strong></button>
+                {%endif%}
             </div>
         </form>
 

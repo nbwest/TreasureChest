@@ -77,7 +77,11 @@
                     <td>{{transaction.get_transaction_type_display}}</td>
 
 
-                    <td><a {%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>{{transaction.member}}</a></td>
+                    <td>
+                        <!--{{transaction.member}} column is sorted by entire cell contents, keep this comment here -->
+                        <a {%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
+                            {{transaction.member}}
+                        </a></td>
                     <td>{{transaction.amount}}</td>
                     <td>{{transaction.comment}}</td>
                     <td>{{transaction.complete}}</td>
