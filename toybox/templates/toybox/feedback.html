@@ -1,0 +1,33 @@
+{% extends "toybox\base.html" %}
+
+{% load widget_tweaks %}
+{% block content %}
+<h1  class="page-header">Feedback</h1>
+
+
+<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+    {% csrf_token %}
+
+    <div class="fieldWrapper" >
+            {% for field in feedback_form %}
+                {{ field.label_tag }}
+
+                {% render_field field class+="form-control" %}
+
+                <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                    {% for error in field.errors  %}
+                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                    {% endfor %}
+                </ul>
+
+            {% endfor %}
+
+                <br>
+
+                <button class="btn btn-default" name="submit_feedback" type="submit">Submit</button>
+            </div>
+
+
+</form>
+
+{% endblock content %}

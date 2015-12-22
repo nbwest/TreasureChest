@@ -250,4 +250,27 @@ add role field to member?
     
 Borrow workflow for repairer?
 
+TODO 22/12/2015
+
+Add member delete (change status to removed, all member queries will have to exclude removed members)
+Add instruction and receipt images
+Add on loan >6 months sets toy as retired - include in config table
+Save adjustment justification comment in transactions
+Update till balance
+Add transaction actions such as banking (resets till balance)
+Add children to members page
+Auto focus member search after clear form on borrow page
+Auto focus member search on returns page
+Warn if borrow transaction is incomplete, on accept clear temp borrow list
+Add logged in volunteer to multiple tables: toy history and transaction
+Enable checked checkbox in toys for stocktake
+
+Bigger items:
+Add feedback table with date, member (auto from login) page and comment
+Merge import data
+Merge volunteer login
+Add reporting plugin
+
+
+
 

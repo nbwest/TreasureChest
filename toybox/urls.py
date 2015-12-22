@@ -10,6 +10,7 @@ from views.returns import returns
 from views.transactions import transactions
 from views.reports import reports
 from views.toys import toys
+from views.feedback import feedback
 
 
 
@@ -25,4 +26,5 @@ urlpatterns = [
                   url(r'^reports/', reports, name='reports'),
                   url(r'^toys/$',toys, name='toys'),
                   url(r'^toys/(?P<toy_id>[0-9]+)/$',toys, name='toys'),
+                  url(r'^feedback/', feedback, name='feedback'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

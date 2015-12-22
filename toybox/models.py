@@ -456,3 +456,37 @@ class ToyHistory(models.Model):
     #
     # def __str__(self):
     #     return self.date_time
+
+class Feedback(models.Model):
+
+     NA=0
+     HOME = 1
+     BORROW = 2
+     RETURN = 3
+     MEMBERS = 4
+     TOYS = 5
+     TRANSACTIONS = 6
+     REPORTS = 7
+     ADMIN = 8
+     FEEDBACK = 9
+
+
+     PAGE_CHOICES = (
+         (NA,"Not Applicable"),
+         (HOME,"Home"),
+         (BORROW,"Borrow"),
+         (RETURN,"Return"),
+         (MEMBERS,"Members"),
+         (TOYS,"Toys"),
+         (TRANSACTIONS,"Transactions"),
+         (REPORTS,"Reports"),
+         (ADMIN,"Admin"),
+         (FEEDBACK,"Feedback")
+     )
+
+     volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
+     page = models.IntegerField(default=NA, choices=PAGE_CHOICES)
+     comment = models.CharField(default="", max_length=2048)
+
+     def __str__(self):
+        return self.volunteer_reporting.name + ": " + self.comment
