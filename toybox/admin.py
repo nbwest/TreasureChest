@@ -10,6 +10,11 @@ class MemberTypeAdmin(admin.ModelAdmin):
 class LoanTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'loan_cost', 'loan_deposit')
 
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display=('id','volunteer_reporting','page','comment')
+    readonly_fields=('id',)
+
+
 # Admin space lists
 admin.site.register(MemberType, MemberTypeAdmin)
 admin.site.register(ToyBrand)
@@ -18,7 +23,7 @@ admin.site.register(ToyPackaging)
 admin.site.register(LoanType, LoanTypeAdmin)
 admin.site.register(TempBorrowList)
 admin.site.register(Config)
-admin.site.register(Feedback)
+admin.site.register(Feedback,FeedbackAdmin)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'admin_image')
