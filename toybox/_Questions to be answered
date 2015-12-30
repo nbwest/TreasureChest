@@ -266,14 +266,16 @@ Column filter for toy list
 Column filter for toy history
 Column filter for member list - sort by overdue? - Add extra character?
 
-Update till balance
-include balance in transactions
+Update till balance - done
+include balance in transactions - done
 Add transaction actions such as banking (resets till balance) and adding to till
-Enable donation
+Enable donation - could be done with what we have?
 Enable toy deposit? - is this required? Amount held by loan type
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date.
     Add extra step to set this option
+Pagination of transactions, members, toy, toy history to be done on server side.
+Check borrow fields for bad inputs
 
 Bigger items:
 Merge import data

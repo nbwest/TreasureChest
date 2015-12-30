@@ -19,44 +19,50 @@
 <h1  class="page-header">Transactions</h1>
 
 
-<!--<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>-->
-    <!--{% csrf_token %}-->
+<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' onsubmit="return validate(this);">
+    {% csrf_token %}
 
-     <!--<div class="row panel-default col-xs-12 col-sm-10 ">-->
-          <!--<div class="panel-heading">Filters</div>-->
-    <!--{% for field in transaction_form %}-->
-            <!--<br>-->
-            <!--<div class=" input-group" >-->
-                <!--<span class="input-group-addon">{{field.label_tag|striptags}}</span>-->
-                <!--{% render_field field class+="form-control" id=field.auto_id %}-->
+     <div class="row panel-default col-xs-12 col-sm-11 ">
+          <div class="panel-heading">Actions</div>
+    {% for field in transaction_form %}
+            <br>
+            <div class=" input-group" >
+                <span class="input-group-addon">{{field.label_tag|striptags}}</span>
+                {% render_field field class+="form-control" id=field.auto_id %}
 
-            <!--</div>-->
 
+
+              {% if field.field.widget.attrs.add_button %}
+                <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default" name="{{field.field.widget.attrs.add_button}}" data-toggle="modal" >{{field.field.widget.attrs.add_button}}</button>
+                   </span>
+                {% endif %}
+            </div>
 
              <!--<div class="row ">-->
-                 <!--<ul  style="list-style-type:none;list-style:none;padding-left:0;">-->
-                <!--{% for error in field.errors  %}-->
-                    <!--<li><label class="label label-danger">{{ error|striptags }}</label></li>-->
-                <!--{% endfor %}-->
-                <!--</ul>-->
+                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                {% for error in field.errors  %}
+                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                {% endfor %}
+                </ul>
           <!--</div>-->
-    <!--{% endfor %}-->
-    <!--<br>-->
+    {% endfor %}
 
-     <!--<button type="button" class="btn btn-default" name="apply_filter" type="submit">Apply</button>-->
 
-   <!--</div>-->
+   </div>
 
-    <!--<div class="row col-xs-12" style=" min-height: 20px;"  >-->
-    <!--</div>-->
+    <div class="row col-xs-12" style=" min-height: 20px;"  >
+    </div>
 
-<!--</form>-->
+</form>
+
+<!--TODO who can have privileges to set the till value and bank?    -->
 
 {% if transactions %}
 
     <div class="row col-xs-12 col-sm-11 " style=" min-height: 40px;"  >
         <div class="panel-default">
-
+            <div class="panel-heading">Transaction History</div>
      <table  class="table table-condensed "  data-toggle="table"  data-filter-control="true" id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
 
              <thead>
@@ -100,5 +106,8 @@
 {% endif %}
 
 </span>
+
+
+
 
 {% endblock content %}
