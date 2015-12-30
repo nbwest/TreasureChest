@@ -6,7 +6,7 @@ from django.core.validators import *
 def transactions(request):
 
     context={}
-
+    context.update(base_data())
     # form=TransactionForm(request.POST)
     # context={"transaction_form":form}
     context.update({"transactions":Transaction.objects.all().order_by('date_time')})

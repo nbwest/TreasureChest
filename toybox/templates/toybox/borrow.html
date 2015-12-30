@@ -209,9 +209,14 @@
                    <span class="input-group-btn">
                        <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
                        <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
-                       <button class="btn btn-default"  id="btn_add_credit" name="add_credit" type="submit" >Add Credit</button>
-                       <button class="btn btn-default" id="btn_use_credit" name="use_credit" type="submit" >Use Credit</button>
+                       <button class="btn btn-default"  id="btn_add_credit" name="add_credit" type="submit" >Credit</button>
+                       <!--<button class="btn btn-default" id="btn_use_credit" name="use_credit" type="submit" >Use Credit</button>-->
                        <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
+                   </span>
+                {% endif %}
+
+                {% if field.field.widget.attrs.cancel_button %}
+                   <span class="input-group-btn">
                        <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
                    </span>
                 {% endif %}
@@ -293,7 +298,7 @@ console.log("updateBorrowFee");
 
 function CalcTotal(id)
 {
-console.log("CalcTotal");
+//console.log("CalcTotal");
     var elements_to_total;
     var total=0.0;
     elements_to_total=document.querySelectorAll("[total_me=true]");
@@ -302,8 +307,8 @@ console.log("CalcTotal");
 
   nodes.forEach(function(node){
 
-        console.log(node);
-        console.log("VALUE: "+node.value);
+       // console.log(node);
+        //console.log("VALUE: "+node.value);
         if (!isNaN(Number(node.value)))
         {
             total+= Number(node.value);
@@ -312,32 +317,32 @@ console.log("CalcTotal");
 
    var credit=Number({{payment_form.credit.value}});
 
-    console.log("TOTAL: "+total);
-    console.log("CREDIT: "+credit);
+    //console.log("TOTAL: "+total);
+    //console.log("CREDIT: "+credit);
 
    if (total!=0)
    {
        if (credit==0)
        {
             document.getElementById("id_credit").value="0.00";
-            $("#btn_exact").prop('disabled',false);
-            $("#btn_use_credit").prop('disabled',true);
+          //  $("#btn_exact").prop('disabled',false);
+          //  $("#btn_use_credit").prop('disabled',true);
 
        }
        else if (credit>=total)
        {
             document.getElementById("id_credit").value=(credit-total).toFixed(2)+" - CREDIT USED, NO PAYMENT NECESSARY";
             document.getElementById("id_payment").value=total.toFixed(2);
-            $("#btn_exact").prop('disabled',true);
-            $("#btn_use_credit").prop('disabled',false);
+           // $("#btn_exact").prop('disabled',true);
+           // $("#btn_use_credit").prop('disabled',false);
        }
         else if (credit<total)
        {
             document.getElementById("id_credit").value="0.00 - REMAINING CREDIT USED FOR THIS TRANSACTION";
-            $("#btn_exact").prop('disabled',false);
-            $("#btn_use_credit").prop('disabled',true);
+         //   $("#btn_exact").prop('disabled',false);
+          //  $("#btn_use_credit").prop('disabled',true);
             total=total-credit;
-            console.log("TOTAL: "+total);
+            //console.log("TOTAL: "+total);
        }
 
     }
@@ -353,7 +358,7 @@ console.log("CalcTotal");
 
 function CalcChange(id)
 {
-console.log("CalcChange");
+//console.log("CalcChange");
     var total=Number(document.getElementById("id_total_fee").value);
     var paid=Number(document.getElementById("id_payment").value);
     var change=paid-total;
@@ -368,16 +373,12 @@ console.log("CalcChange");
 
 
 
-    $("#btn_exact").prop('disabled', (credit==total)|(change!=0)|(isNaN(change))|(credit>total)|(total==0));
-
-    $("#btn_use_credit").prop('disabled', (credit==0)|(total==0)|((change>=0)&(credit<=0))|(isNaN(change)));
-
-
-
-    $("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
+    $("#btn_exact").prop('disabled', (credit>=total)|(change!=0)|(isNaN(change))|(total==0));
+    //$("#btn_use_credit").prop('disabled', (credit==0)|(total==0)|((change>=0)&(credit<=0))|(isNaN(change)));
+    //$("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
+    $("#btn_add_credit").prop('disabled', total==0 | paid==0 |(credit<total & change==0 & total!=0));
     $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
-
 
 
 

@@ -20,7 +20,7 @@
 
 
 
-    <div class="panel-fluid panel-default col-xs-11 col-sm-4">
+    <div class="panel-fluid panel-default col-xs-11 col-sm-5">
               <!-- Default panel contents -->
          <div class="panel-heading">Member List</div>
 
@@ -65,7 +65,7 @@
 
                                <a href="{% url 'toybox:returns' member_id=m.id %}">
                                    {% if m.id not in loan_counts %}
-                                    <span class="label label-success label-as-badge">0</span>
+                                    <span class="label label-default label-as-badge">0</span>
 
                                    {%else%}
                                        {% for key, value in loan_counts.items %}
@@ -73,7 +73,7 @@
                                                 {% if m.id in loans_overdue %}
                                                     <span class="label label-danger label-as-badge">{{ value }}</span>
                                                 {%else%}
-                                                   {{ value }}
+                                                    <span class="label label-success label-as-badge">{{ value }}</span>
                                                 {% endif %}
                                             {% endif %}
                                        {% endfor %}

@@ -17,7 +17,9 @@ def handle_returns(request,member_id):
 
 def returns(request, member_id=None):
 
-    context= handle_returns(request,member_id)
+    context={}
+    context.update(base_data())
+    context.update(handle_returns(request,member_id))
 
  #TODO take into account of half week overdue - leeway for half week
     if (member_id):
@@ -72,7 +74,7 @@ def returns(request, member_id=None):
                         late_fee=float(returns_form.cleaned_data['late_fee'])
                         if late_fee!=0:
                             transaction=Transaction()
-                            transaction_type=Transaction.OVERDUE_FEE
+                            transaction_type=Transaction.LATE_FEE
                             transaction.create_transaction_record(member,transaction_type,late_fee,None,False)
 
 

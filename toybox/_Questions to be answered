@@ -256,21 +256,33 @@ Add member delete (change status to removed, all member queries will have to exc
 Add instruction and receipt images
 Add on loan >6 months sets toy as retired - include in config table
 Save adjustment justification comment in transactions
-Update till balance
-Add transaction actions such as banking (resets till balance)
 Add children to members page
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
 Warn if borrow transaction is incomplete, on accept clear temp borrow list
 Add logged in volunteer to multiple tables: toy history and transaction
-Enable checked checkbox in toys for stocktake
+Enable checked checkbox function in toys for stocktake
+Column filter for toy list
+Column filter for toy history
+Column filter for member list - sort by overdue? - Add extra character?
+
+Update till balance
+include balance in transactions
+Add transaction actions such as banking (resets till balance) and adding to till
+Enable donation
+Enable toy deposit? - is this required? Amount held by loan type
+Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
+    Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date.
+    Add extra step to set this option
 
 Bigger items:
-Add feedback table with date, member (auto from login) page and comment
 Merge import data
 Merge volunteer login
+Add login roles? Start with volunteer and admin?
 Add reporting plugin
 
+Release with these features?
 
 
-
+BUG
+Borrow page: loan duration resets when deleting a toy

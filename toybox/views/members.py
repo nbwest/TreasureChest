@@ -79,7 +79,9 @@ def handle_member_details(request, member_id):
 
 
 def members(request, member_id=None):
-    context=handle_member_details(request, member_id)
+    context={}
+    context.update(base_data())
+    context.update(handle_member_details(request, member_id))
     return render(request, 'toybox/members.html', context)
 
 def get_all_members_ordered_by_name():
@@ -98,9 +100,11 @@ class MemberDetailsForm(forms.Form):
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
     balance = forms.DecimalField(required=False,label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     membership_end_date = forms.DateField(required=False,label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    deposit_paid = forms.BooleanField(required=False,label="Deposit Paid",widget=forms.TextInput(attrs={'readonly':'readonly'}))
     committee_member=forms.BooleanField(required=False,label="Committee Member")
     volunteer = forms.BooleanField(required=False,label="Volunteer")
     potential_volunteer = forms.BooleanField(required=False,label="Potential Volunteer")
+
 
 
 

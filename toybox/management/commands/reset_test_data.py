@@ -265,11 +265,11 @@ class Command(BaseCommand):
 
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,
                                    member=self.m_johndoh,
-                                   transaction_type=Transaction.OVERDUE_FEE,
+                                   transaction_type=Transaction.LATE_FEE,
                                    amount=1).delete()
         Transaction.objects.update_or_create(#volunteer_reporting=self.m_johnsmith,
                                              member=self.m_johndoh,
-                                             transaction_type=Transaction.OVERDUE_FEE,
+                                             transaction_type=Transaction.LATE_FEE,
                                              amount=1)
 
         Transaction.objects.filter(#volunteer_reporting=self.m_johnsmith,

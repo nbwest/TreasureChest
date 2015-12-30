@@ -5,7 +5,7 @@ from shared import *
 
 def toys(request, toy_id=None):
     context={}
-
+    context.update(base_data())
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))
 

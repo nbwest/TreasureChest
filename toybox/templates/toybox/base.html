@@ -58,11 +58,11 @@ For page html use the following template tags:
             <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
 
 
-            {% if daily_balance %}
+
             <ul class="nav navbar-nav hidden-xs ">
                 <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
             </ul>
-            {% endif %}
+
         </div>
 
         <div id="navbar" class="navbar-collapse collapse " style="max-height: none;">

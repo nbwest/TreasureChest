@@ -2,6 +2,7 @@ import datetime
 import django
 from datetime import date
 from datetime import timedelta
+from decimal import *
 
 from django.db import models
 from django.utils import timezone
@@ -85,7 +86,7 @@ class Member(models.Model):
     address = models.CharField(max_length=300)
     phone_number1 = models.CharField(max_length=12)
     phone_number2 = models.CharField(max_length=12, blank=True)
-    email_address = models.EmailField(blank=True)
+    email_address = models.EmailField(max_length=100)
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
@@ -95,7 +96,7 @@ class Member(models.Model):
     #is active required?
     # active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
-    join_date = models.DateField(null=True)
+    join_date = models.DateField(default=django.utils.timezone.now)
      # is deposit fee required???
     # deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
     # is membership fee required???
@@ -336,13 +337,14 @@ class Transaction(models.Model):
     MEMBERSHIP_FEE = 3  #+ Member annual membership fee. Automatic from borrow page
     BORROW_FEE = 4      #+ Member borrows toy. Automatic from borrow page
     ISSUE_FEE = 5       #+ Member returns toy with notable issue. Automatic from returns page
-    OVERDUE_FEE = 6     #+ Member borrow overdue fee. Automatic from returns page
+    LATE_FEE = 6     #+ Member borrow overdue fee. Automatic from returns page
     MEMBER_DEBIT = 7    #0 Member uses credit to pay for fees, no money changes hands. Automatic from borrow page
     ADJUSTMENT_CREDIT = 8   #+ Adjustment of till. Manual from transactions pag
     ADJUSTMENT_DEBIT = 9    #- Adjustment of till. Manual from transactions page
     BANK_DEPOSIT = 10       #- End of day take money to bank. Manual from transactions page
     MEMBER_DEPOSIT_REFUND = 11  #- From toy library to member once they cancel their the toy library membership. Manual from transaction page
-
+    PAYMENT = 12
+    CHANGE = 13
 
 
     TRANSACTION_TYPE_CHOICES = (
@@ -352,17 +354,19 @@ class Transaction(models.Model):
     (MEMBERSHIP_FEE,'Membership fee'),
     (BORROW_FEE,'Borrow Fee'),
     (ISSUE_FEE,'Issue Fee'),
-    (OVERDUE_FEE,'Overdue Fee'),
+    (LATE_FEE,'Late Fee'),
     (MEMBER_DEBIT,'Member Debit'),
     (ADJUSTMENT_CREDIT,'Credit Adjustment'),
     (ADJUSTMENT_DEBIT,'Debit Adjustment'),
     (BANK_DEPOSIT,'Bank Deposit'),
     (MEMBER_DEPOSIT_REFUND,'Deposit Refund'),
+    (PAYMENT,'Payment'),
+    (CHANGE,'Change')
     )
 
-    TRANSACTION_DIRECTION = 0
-    ACCESS_TYPE = 1
-
+    # TRANSACTION_DIRECTION = 0
+    # ACCESS_TYPE = 1
+    #
     # AUTO=0
     # MANUAL=1
     #
@@ -370,9 +374,10 @@ class Transaction(models.Model):
     # DEBIT=-1
     # NONE=0
     #
+    # #affect on the the till balance
     # TRANSACTION_EXTRA = {
     # MEMBER_DONATION:(CREDIT,AUTO),
-    # MEMBER_CREDIT:(CREDIT,AUTO),
+    # MEMBER_CREDIT:(NONE,AUTO),
     # MEMBER_DEPOSIT:(CREDIT,AUTO),
     # MEMBERSHIP_FEE:(CREDIT,AUTO),
     # BORROW_FEE:(CREDIT,AUTO),
@@ -384,6 +389,8 @@ class Transaction(models.Model):
     # ADJUSTMENT_DEBIT:(DEBIT,MANUAL),
     # BANK_DEPOSIT:(DEBIT,MANUAL),
     # MEMBER_DEPOSIT_REFUND:(DEBIT,MANUAL),
+    # PAYMENT:(CREDIT,AUTO),
+    # CHANGE:(DEBIT,AUTO)
     # }
 
 
@@ -405,7 +412,7 @@ class Transaction(models.Model):
         return self.get_transaction_type_display()
 
 
-    def create_transaction_record(self, member, transaction_type, amount,comment, complete=True):
+    def create_transaction_record(self, member, transaction_type, amount,comment=None, complete=True, balance_change=0.00):
         self.member = member
 
         self.transaction_type = transaction_type
@@ -415,12 +422,19 @@ class Transaction(models.Model):
         self.amount=amount
         self.complete=complete
 
-        # self.balance =
-        #TODO need +ve or -ve associated with transaction types
+        latest_transaction= Transaction.objects.all().latest("date_time")
+
+        self.balance = latest_transaction.balance + Decimal(balance_change)
+
         #TODO save volunteer reporting
 
-
         self.save()
+
+    #amount to bank
+    #TODO admin rights to do this
+    def bank(self, amount):
+        self.create_transaction_record(None,self.BANK_DEPOSIT,amount,"")
+
 
 # fine associated with missing pieces etc? currently captured by loan type
 # Issue register used for toy activity register as well
