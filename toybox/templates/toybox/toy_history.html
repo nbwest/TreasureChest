@@ -7,22 +7,23 @@
     {% if toy_history %}
     <div class="panel-default">
     <div class="panel-heading">Toy History ID: {{toy.code}}</div>
-     <table  class="table table-condensed"  data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true">
+     <table  class="table table-condensed"  data-toggle="table"  data-filter-control="true" id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
 
             <thead>
                 <tr>
-                    <th data-field="date_time"  data-sortable="true">Date</th>
-                    <th data-field="event_type"  data-sortable="true">Type</th>
-                    <th data-field="issue_type"  data-sortable="true">Issue</th>
-                    <th data-field="issue_comment"  data-sortable="true">Issue Comment</th>
-                    <th data-field="member"  data-sortable="true">Member</th>
+                    <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+
+                    <th data-field="event_type"  data-sortable="true"  data-filter-control="select">Type</th>
+                    <th data-field="issue_type"  data-sortable="true"  data-filter-control="select">Issue</th>
+                    <th data-field="issue_comment"  data-sortable="true"  data-filter-control="input">Issue Comment</th>
+                    <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
 
                 </tr>
             </thead>
 
             {% for event in toy_history %}
               <tr>
-                    <td>{{event.date_time|date:"d-m-Y H:i"}}</td>
+                    <td>{{event.date_time|date:"d/m/Y H:i"}}</td>
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>

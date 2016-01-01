@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Count
 from shared import *
-
+from django.utils import timezone
 
 
 # POST - Guide: Use POST all the time except when you want the ability to bookmark a page, then use GET
@@ -55,7 +55,7 @@ def handle_member_details(request, member_id):
     if context["members"] != None:
 
         #get number of loans for each member
-        overdue=Toy.objects.filter(due_date__lt=timezone.now().date())#.annotate(dcount=Count('member_loaned'))
+        overdue=Toy.objects.filter(due_date__lt=datetime.datetime.now().date())#.annotate(dcount=Count('member_loaned'))
         loans_overdue={}
         for toy_due in overdue:
             if toy_due.member_loaned_id in loans_overdue:

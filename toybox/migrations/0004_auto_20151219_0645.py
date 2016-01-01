@@ -7,18 +7,18 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('toybox', '0004_auto_20150912_0631'),
+        ('toybox', '0003_auto_20151216_2011'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='member',
-            name='deposit_fee',
+            model_name='membertype',
+            name='deposit',
             field=models.DecimalField(default=0, max_digits=5, decimal_places=2),
         ),
-        migrations.AddField(
-            model_name='member',
-            name='membership_fee',
+        migrations.AlterField(
+            model_name='membertype',
+            name='fee',
             field=models.DecimalField(default=0, max_digits=5, decimal_places=2),
         ),
     ]

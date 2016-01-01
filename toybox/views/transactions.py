@@ -8,6 +8,7 @@ import decimal
 def transactions(request):
     error=""
     context={}
+    form=None
     context.update(base_data())
 
 
@@ -47,9 +48,9 @@ def transactions(request):
             context.update(base_data())
 
 
-
-    if error!="" or len(form.errors)>0:
-        form.add_error("till_value", error)
+    if form:
+        if error!="" or len(form.errors)>0:
+            form.add_error("till_value", error)
     else:
         form=TransactionForm(initial={'bank_value':context['daily_balance']})
 

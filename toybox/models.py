@@ -115,10 +115,10 @@ class Member(models.Model):
 
     def membership_due_soon(self):
         # TODO move magic value to config
-        return timezone.now().date + datetime.timedelta(days=60) <= self.membership_end_date
+        return datetime.datetime.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
     def membership_valid(self):
-        return (timezone.now().date() < self.membership_end_date)
+        return (datetime.datetime.now().date() < self.membership_end_date)
 
     def is_current(self):
         return  self.membership_valid() and  self.deposit_paid
@@ -126,7 +126,7 @@ class Member(models.Model):
 
 
     def update_membership_date(self):
-        self.membership_end_date = timezone.now().date()+timedelta(days=self.type.membership_period)
+        self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
         self.save()
 
 
@@ -250,9 +250,9 @@ class Toy(models.Model):
 
     def borrow_toy(self, member, duration):
         self.member_loaned = member
-        self.borrow_date = timezone.now()
+        self.borrow_date = datetime.datetime.now()
         self.state = self.ON_LOAN
-        self.due_date = timezone.now() + datetime.timedelta(days=duration * 7)
+        self.due_date = datetime.datetime.now() + datetime.timedelta(days=duration * 7)
         self.save()
 
         #TODO need volunteer user details
@@ -271,13 +271,13 @@ class Toy(models.Model):
         elif self.issue_type == self.BROKEN_REPAIRABLE:
             self.state = self.TO_BE_REPAIRED
         elif self.issue_type == self.BROKEN_NOT_REPAIRABLE:
-            self.state = self.RETIRED  # DOES the member have the right to do this?
+            self.state = self.RETIRED  # TODO DOES the member have the right to do this?
         elif self.issue_type == self.MINOR_MISSING_PIECE:
             self.state = self.AVAILABLE
         elif self.issue_type == self.MAJOR_MISSING_PIECE:
             self.state = self.TO_BE_REPAIRED
         elif self.issue_type == self.WHOLE_TOY_MISSING:
-            self.state = self.RETIRED  # DOES the member have the right to do this?
+            self.state = self.RETIRED  # TODO DOES the member have the right to do this?
 
 
         self.issue_comment = comment
@@ -288,7 +288,7 @@ class Toy(models.Model):
         self.member_loaned = None
         time_borrowed = date.today() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
-        self.last_check = timezone.now().date()
+        self.last_check = datetime.datetime.now().date()
 
         self.save()
 
@@ -296,7 +296,7 @@ class Toy(models.Model):
     def weeks_overdue(self):
 
         if (self.due_date):
-            monday2 = (timezone.now().date() - timedelta(days=timezone.now().date().weekday()))
+            monday2 = (datetime.datetime.now().date() - timedelta(days=datetime.datetime.now().date().weekday()))
             monday1 = (self.due_date - timedelta(days=self.due_date.weekday()))
 
             return (monday2 - monday1).days / 7
@@ -305,7 +305,7 @@ class Toy(models.Model):
 
 
     def is_current(self):
-        return timezone.now().date() >= self.due_date
+        return datetime.datetime.now().date() >= self.due_date
 
         # def admin_image(self):
         #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
@@ -416,7 +416,7 @@ class Transaction(models.Model):
         self.member = member
 
         self.transaction_type = transaction_type
-        self.date_time = timezone.now()
+        self.date_time = datetime.datetime.now()
         self.comment = comment
 
         self.amount=amount
@@ -452,7 +452,7 @@ class ToyHistory(models.Model):
 
     def record_toy_event(self, toy):
         self.toy=toy
-        self.date_time=timezone.now()
+        self.date_time=datetime.datetime.now()
         self.event_type=toy.state
         self.issue_comment=toy.issue_comment
         self.issue_type=toy.issue_type

@@ -53,15 +53,15 @@ class Command(BaseCommand):
                                                                   address="1 example place",
                                                                   phone_number1="0404233322",
                                                                   type=mt_public,
-                                                                  join_date=timezone.now() )
+                                                                  join_date=datetime.datetime.now() )
 
         Child.objects.update_or_create(name="Alice",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(3.5 * YEARS)),
                                        parent=self.m_johndoh)
 
         Child.objects.update_or_create(name="Brian",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johndoh)
        
@@ -73,21 +73,21 @@ class Command(BaseCommand):
                                                                     type=mt_public,
                                                                     partner="James Smith",
                                                                     volunteer=True,
-                                                                    join_date=timezone.now() - datetime.timedelta(
+                                                                    join_date=datetime.datetime.now() - datetime.timedelta(
                                                                         days=307))
 
         Child.objects.update_or_create(name="Huey",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johnsmith)
 
         Child.objects.update_or_create(name="Dewey",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johnsmith)
 
         Child.objects.update_or_create(name="Louie",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(1 * YEARS)),
                                        parent=self.m_johnsmith)
        
@@ -101,11 +101,11 @@ class Command(BaseCommand):
                                                                        partner="Eric Catcher",
                                                                        balance="4.30",
                                                                        committee_member=True,
-                                                                       join_date=timezone.now() - datetime.timedelta(
+                                                                       join_date=datetime.datetime.now() - datetime.timedelta(
                                                                            days=1037))
 
         Child.objects.update_or_create(name="Elizabeth Jayne",
-                                       date_of_birth=timezone.now() - datetime.timedelta(
+                                       date_of_birth=datetime.datetime.now() - datetime.timedelta(
                                            days=(6 * YEARS)),
                                        parent=self.m_alicecatcher)
        
@@ -117,8 +117,8 @@ class Command(BaseCommand):
                                         balance="23",
                                         volunteer=True,
                                         # active=False,
-                                        join_date=timezone.now() - datetime.timedelta(days=360),
-                                        membership_end_date=timezone.now())
+                                        join_date=datetime.datetime.now() - datetime.timedelta(days=360),
+                                        membership_end_date=datetime.datetime.now())
 
         Member.objects.filter(name="Majura Play Group").delete()
         self.m_majpg, created = Member.objects.update_or_create(name="Majura Play Group",
@@ -127,8 +127,8 @@ class Command(BaseCommand):
                                                                 phone_number2="02 77 889 455",
                                                                 type=mt_playgrp,
                                                                 balance="-12",
-                                                                join_date=timezone.now() - datetime.timedelta(days=100),
-                                                                membership_end_date=timezone.now() + datetime.timedelta(days=265))
+                                                                join_date=datetime.datetime.now() - datetime.timedelta(days=100),
+                                                                membership_end_date=datetime.datetime.now() + datetime.timedelta(days=265))
 
     def _reset_toybrand(self):
         self.tb_mandd, created = ToyBrand.objects.update_or_create(name="Mellisa & Doug")

@@ -12,7 +12,7 @@ def addMember(name, anv_offset):
                                 phone_number1   = '11 2222 3333',
                                 address         = 'home',
                                 type            = t,
-                                aniversary_date = timezone.now() + datetime.timedelta(days=anv_offset))
+                                aniversary_date = datetime.datetime.now() + datetime.timedelta(days=anv_offset))
     m.save()
 
 class MemberSearchTestCase(TestCase):

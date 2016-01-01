@@ -18,29 +18,28 @@
 
 <div class="row">
 
-
-
     <div class="panel-fluid panel-default col-xs-11 col-sm-5">
               <!-- Default panel contents -->
          <div class="panel-heading">Member List</div>
 
 
             <!--<table id="member_table" class="table">-->
-            <table  id="member_table" class="table table-condensed"  data-toggle="table"  data-sort-name="name" data-sort-order="desc" row-height="20" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+            <table  id="member_table" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="desc" row-height="20" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+
 
                     <thead>
                         <tr>
-                        	<th data-field="name"  data-sortable="true">Name</th>
-                            <th data-field="status"  data-sortable="true">Status</th>
+                        	<th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
+                            <th data-field="status"  data-sortable="true" data-filter-control="select">Status</th>
                             <th data-field="loans"  data-sortable="true">Loans</th>
                        	</tr>
                     </thead>
 
                     {% for m in members %}
-                       <tr>
 
+                    <tr>
                             <td>
-                                <!--{{ m.name }} Due to href breaking sorting, keep this comment here - this is what is sorted by-->
+                                <!--{{ m.name }} cell is sorted by entire contents, keep this comment here-->
                                 <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}">
                                     {{ m.name }}
                                 </a>
@@ -54,33 +53,35 @@
                                 {% endif %}
                             </td>
 
+
                            <td>
-                               <!-- Due to href breaking sorting, keep these comments here - this is what is sorted by-->
-
-                               <!--{% for key, value in loan_counts.items %}-->
-                                            <!--{% if key == m.id %}                                              -->
-                                                   <!--{{ value }}                                              -->
-                                            <!--{% endif %}-->
-                                       <!--{% endfor %}-->
-
-                               <a href="{% url 'toybox:returns' member_id=m.id %}">
+                               {% spaceless %}
                                    {% if m.id not in loan_counts %}
-                                    <span class="label label-default label-as-badge">0</span>
-
+                                        <!--0-->
+                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                            <span class="label label-default label-as-badge">0</span>
+                                        </a>
                                    {%else%}
-                                       {% for key, value in loan_counts.items %}
+                                        {% for key, value in loan_counts.items %}
                                             {% if key == m.id %}
-                                                {% if m.id in loans_overdue %}
-                                                    <span class="label label-danger label-as-badge">{{ value }}</span>
-                                                {%else%}
-                                                    <span class="label label-success label-as-badge">{{ value }}</span>
-                                                {% endif %}
-                                            {% endif %}
-                                       {% endfor %}
-                                   {%endif%}
-                                </a>
+                                                    {% if m.id in loans_overdue %}
+                                                        <!--{{ value }}-->
+                                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                                            <span class="label label-danger label-as-badge">{{ value }}</span>
+                                                        </a>
+                                                    {%else%}
+                                                        <!--0{{ value }}-->
+                                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                                            <span class="label label-success label-as-badge">Overdue {{ value }}</span>
+                                                        </a>
+                                                    {% endif %}
 
+                                            {% endif %}
+                                        {% endfor %}
+                                   {%endif%}
+                               {% endspaceless %}
                            </td>
+
 
                        </tr>
                     {% endfor %}

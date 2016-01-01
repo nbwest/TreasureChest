@@ -28,17 +28,17 @@
 
     <div class="panel-fluid panel-default col-xs-11">
         <div class="panel-heading">Toy List</div>
-            <table  class="table table-condensed"  data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+            <table  class="table table-condensed"   data-filter-control="true" data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
 
 
                     <thead>
                         <tr>
-                            <th data-field="id"  data-sortable="true">ID</th>
-                            <th data-field="name"  data-sortable="true">Name</th>
-                            <th data-field="state"  data-sortable="true">State</th>
-                            <th data-field="category"  data-sortable="true">Category</th>
-                            <th data-field="borrow_counter"  data-sortable="true">Usage<br> (Wks)</th>
-                            <th data-field="last_check"  data-sortable="true">Last Check</th>
+                            <th data-field="id"  data-sortable="true" data-filter-control="input">ID</th>
+                            <th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
+                            <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
+                            <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
+                            <th data-field="borrow_counter"  data-sortable="true" data-filter-control="select">Usage<br> (Wks)</th>
+                            <th data-field="last_check"  data-sortable="true" >Last Check</th>
                             <th data-field="last_stock_take"  data-sortable="true">Last Stocktake</th>
                             <th data-field="checked" data-align="center" data-sortable="true">Checked</th>
                        	</tr>
