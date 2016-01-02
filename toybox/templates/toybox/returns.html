@@ -76,8 +76,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
                     {% if toy.due_date|timebetween|slice:':1' == '-' %}
                     <td value="{{toy.fine|floatformat:2}}">
-                        <!--${{ toy.loan_type.overdue_fine|floatformat:2 }}-->
-                        {{toy.fine|floatformat:2}}
+                        ${{toy.fine|floatformat:2}}
                     </td>
                     {%else%}
                     <td value="0.00">
@@ -87,7 +86,6 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
                     <td style="text-align: center;vertical-align: middle;">
                         {% form_field_concat returns_form "returned_checkbox_" toy.id class="form-control" onclick="handleCheckbox(this)"%}
-                        <!--<input type="checkbox" name="returned_checkbox_{{ toy.code }}" value="{{ toy.code }}" id="returned_checkbox_{{ toy.code }}" onclick="handleCheckbox(this);"/>-->
                     </td>
 
                     <td>

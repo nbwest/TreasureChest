@@ -8,8 +8,6 @@ from django.db import models
 from django.utils import timezone
 
 
-# TODO create key value pair table for one off settings - max toys borrowed etc
-#
 class Config(models.Model):
     key = models.CharField(max_length=30, unique=True)
     value = models.CharField(max_length=100)
@@ -113,9 +111,9 @@ class Member(models.Model):
     def __str__(self):
         return self.name
 
-    def membership_due_soon(self):
-        # TODO move magic value to config
-        return datetime.datetime.now().date + datetime.timedelta(days=60) <= self.membership_end_date
+    # def membership_due_soon(self):
+    #     # TODO move magic value to config
+    #     return datetime.datetime.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
     def membership_valid(self):
         return (datetime.datetime.now().date() < self.membership_end_date)
@@ -213,7 +211,7 @@ class Toy(models.Model):
     #     url = "./%d.JPG" % (self.id,)
     #     return url
 
-    # TODO code must be unique only is state is available, otherwise can be reused
+
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
@@ -229,7 +227,7 @@ class Toy(models.Model):
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
-    # availability_state = models.IntegerField(choices=ToyConditionType.TOY_NOT_IN_SERVICE_STATE_CHOICES, default=ToyConditionType.AVAILABLE)
+
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
@@ -363,35 +361,6 @@ class Transaction(models.Model):
     (PAYMENT,'Payment'),
     (CHANGE,'Change')
     )
-
-    # TRANSACTION_DIRECTION = 0
-    # ACCESS_TYPE = 1
-    #
-    # AUTO=0
-    # MANUAL=1
-    #
-    # CREDIT =1
-    # DEBIT=-1
-    # NONE=0
-    #
-    # #affect on the the till balance
-    # TRANSACTION_EXTRA = {
-    # MEMBER_DONATION:(CREDIT,AUTO),
-    # MEMBER_CREDIT:(NONE,AUTO),
-    # MEMBER_DEPOSIT:(CREDIT,AUTO),
-    # MEMBERSHIP_FEE:(CREDIT,AUTO),
-    # BORROW_FEE:(CREDIT,AUTO),
-    # ISSUE_FEE:(CREDIT,AUTO),
-    # OVERDUE_FEE:(CREDIT,AUTO),
-    # MEMBER_DEBIT:(NONE,AUTO),
-    #
-    # ADJUSTMENT_CREDIT:(CREDIT,MANUAL),
-    # ADJUSTMENT_DEBIT:(DEBIT,MANUAL),
-    # BANK_DEPOSIT:(DEBIT,MANUAL),
-    # MEMBER_DEPOSIT_REFUND:(DEBIT,MANUAL),
-    # PAYMENT:(CREDIT,AUTO),
-    # CHANGE:(DEBIT,AUTO)
-    # }
 
 
 

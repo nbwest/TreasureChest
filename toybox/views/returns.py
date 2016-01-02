@@ -21,21 +21,17 @@ def returns(request, member_id=None):
     context.update(base_data())
     context.update(handle_returns(request,member_id))
 
- #TODO take into account of half week overdue - leeway for half week
+
     if (member_id):
         context.update(handle_member_summary(request, member_id))
-        #TODO add fee multiplier by weeks late
         context.update(handle_borrowed_toy_list(request, member_id))
-
-
 
     toyList=None
     if "toy_list" in context:
         toyList=context["toy_list"]
 
-    # TODO get this from authentication and transaction register
-    #base page context
-    context.update({"daily_balance":23.20,"login_name":"Jess Benning"})
+
+
 
     if (request.method == "POST"):
         returns_form = ReturnsForm(request.POST,toyList=toyList)
@@ -98,6 +94,8 @@ def returns(request, member_id=None):
         for toy in toyList:
             if toy.weeks_overdue()>0:
                 toy.fine=toy.weeks_overdue()* toy.loan_type.overdue_fine
+            else:
+                toy.fine=0
 
 
     returns_form = ReturnsForm(toyList=toyList)

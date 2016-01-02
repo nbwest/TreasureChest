@@ -6,15 +6,6 @@
 <h1  class="page-header">Members</h1>
 
 
-<!--<div id="member" class="row" >-->
-
-    <!--<div   class="col-xs-11 col-sm-10">-->
-           <!--{% include "toybox/member_search.html" with return_page="/toybox/members"%}-->
-        <!--<br>-->
-
-    <!--</div>-->
-
-<!--</div>-->
 
 <div class="row">
 
@@ -72,7 +63,7 @@
                                                     {%else%}
                                                         <!--0{{ value }}-->
                                                         <a href="{% url 'toybox:returns' member_id=m.id %}">
-                                                            <span class="label label-success label-as-badge">Overdue {{ value }}</span>
+                                                            <span class="label label-success label-as-badge">{{ value }}</span>
                                                         </a>
                                                     {% endif %}
 

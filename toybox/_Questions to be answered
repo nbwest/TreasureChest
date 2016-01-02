@@ -255,7 +255,7 @@ TODO 22/12/2015
 Add "are you sure" question for multiple uses
 Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
 Add instruction and receipt images
-Add on loan >6 months sets toy as retired - include in config table
+
 Save adjustment justification comment in transactions
 Add children to members page
 Auto focus member search after clear form on borrow page
@@ -263,39 +263,44 @@ Auto focus member search on returns page
 Warn if borrow transaction is incomplete, on accept clear temp borrow list
 Add logged in volunteer to multiple tables: toy history and transaction
 Enable checked checkbox function in toys for stocktake
-Column filter for toy list
-Column filter for toy history
-Column filter for member list - sort by overdue colour? - Add extra character?
-
 
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
     Add extra step to set this option
-Pagination of transactions, members, toy, toy history to be done on server side.
+
 Check borrow fields for bad inputs
+Permissions for toy retire, member delete, banking and till change
+Add issue fees for return
+remove children gender
 
-Enable donation - could be done with what we have?
-Enable toy deposit? - is this required? Amount held by loan type
-
-Update till balance - done
-include balance in transactions - done
-Add transaction actions such as banking (resets till balance) and adding to till - Done
-
-Bigger items:
+BIGGER ITEMS:
 Merge import data
 Merge volunteer login
 Add login roles? Start with volunteer and admin?
 Add reporting plugin
+migrate to production database
 
+COMPLETE:
+Update till balance - done
+include balance in transactions - done
+Add transaction actions such as banking (resets till balance) and adding to till - Done
+Column filter for toy list - done
+Column filter for toy history - done
+Column filter for member list - sort by overdue colour? - Add extra character - done
 
-Member availability-Is this useful given no scheduling?
+NEXT RELEASE:
+Enable donation - could be done with what we have?
+Enable toy deposit? - is this required? Amount held by loan type
+Add on loan >6 months sets toy as retired - include in config table
+Pagination of transactions, members, toy, toy history to be done on server side.
+Member availability-Is this useful given no scheduling? Below to do in model:
     # volunteer capacity - bitfield
     # roster days - bitfield
     # member notes/characteristics?
+Membership annual fee warning
 
-Release with these features?
 
 
-BUG
+BUGS:
 Borrow page: loan duration resets when deleting a toy
 Timezone().Now is not correct by a day

@@ -8,9 +8,6 @@ from django.utils.safestring import mark_safe
 from datetime import *
 import decimal
 
-# TODO limit toys to four - number is stored in DB
-
-
 
 # work flow
 # member is searched for and once selected displays user stats
@@ -131,7 +128,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
                     else:
                         error = "Toy state invalid, toy id: "+toy.id+", toy state: "+toy.state
-                       #TODO log in feedback
+
 
 
             if error != "" and not ignore_error:
@@ -160,8 +157,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
 
 def handle_payment_form(request, member_id):
-    # TODO update member balance and transaction table
-    # TODO update toy loan duration
+
     context = {}
     member=None
 
@@ -210,27 +206,7 @@ def handle_payment_form(request, member_id):
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
 
-                    # try:
-                    #  fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
-                    # except:
-                    #     due_error = "Not a number"
-                        # print(payment_form.cleaned_data['fee_due']," ",due_error)
 
-
-                    # print("Due " + str(fee_due))
-                    # TODO add error message
-                    # try:
-                    # fee_paid = decimal.Decimal(payment_form.cleaned_data['payment'])
-                    # except:
-                    #     paid_error = "Not a number"
-                    #     print(payment_form.cleaned_data['fee_paid']," ",paid_error)
-                    #
-                    # print("Paid "+str(fee_paid))
-                    #
-                    # print(member.balance)
-
-
-                    #TODO bring in other fee types, each one has their own transaction
 
                     #TODO Take into account of adjusted fees
 
