@@ -39,7 +39,13 @@
          {
             var sourceElementID = document.getElementById("new_fee").getAttribute("source");
             var sourceElement = document.getElementById(sourceElementID);
+            var sourceElementJustification = document.getElementById(sourceElementID+"_adjust_justification");
             var newValue = document.getElementById("new_fee").value;
+            var justification = document.getElementById("justification").value;
+
+            if (sourceElementJustification!=null)
+                sourceElementJustification.value = "[Adjust from $"+sourceElement.value+"] "+justification;
+
             sourceElement.value = newValue;
 
             $('#'+sourceElementID).trigger('input');

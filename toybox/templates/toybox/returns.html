@@ -120,7 +120,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 
     {% for field in returns_form %}
-        {%if field.field.widget.attrs.visible%}
+        {%if field.field.widget.attrs.enabled%}
 
          <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 

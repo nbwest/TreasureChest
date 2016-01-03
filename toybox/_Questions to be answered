@@ -254,7 +254,7 @@ TODO 22/12/2015
 
 
 
-Save adjustment justification comment in transactions
+
 Add children to members page
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
@@ -284,7 +284,8 @@ Add transaction actions such as banking (resets till balance) and adding to till
 Column filter for toy list - done
 Column filter for toy history - done
 Column filter for member list - sort by overdue colour? - Add extra character - done
-Clear temp borrow list if page is left - partially complete, clear temp list if other toy lib pages with base.html are loaded
+Clear temp borrow list if page is left - partially complete, fails if you open another borrow window - forces only one borrower at a time - could be issue down the track
+Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
 
 NEXT RELEASE:
 Enable donation - could be done with what we have?
@@ -297,7 +298,7 @@ Member availability-Is this useful given no scheduling? Below to do in model:
     # member notes/characteristics?
 Membership annual fee warning
 Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
-
+Link transaction to toy history some how
 
 BUGS:
 Borrow page: loan duration resets when deleting a toy

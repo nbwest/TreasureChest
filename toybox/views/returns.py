@@ -63,15 +63,14 @@ def returns(request, member_id=None):
                         issue_fee=float(returns_form.cleaned_data['issue_fee'])
                         if issue_fee!=0:
                             transaction=Transaction()
-                            transaction_type=Transaction.ISSUE_FEE
-                            transaction.create_transaction_record(member,transaction_type,issue_fee,None,False)
+
+                            transaction.create_transaction_record(member,Transaction.ISSUE_FEE,issue_fee,None,False)
 
                     if returns_form.cleaned_data['late_fee']!="":
                         late_fee=float(returns_form.cleaned_data['late_fee'])
                         if late_fee!=0:
                             transaction=Transaction()
-                            transaction_type=Transaction.LATE_FEE
-                            transaction.create_transaction_record(member,transaction_type,late_fee,None,False)
+                            transaction.create_transaction_record(member,Transaction.LATE_FEE,late_fee,None,False)
 
 
 
@@ -124,9 +123,9 @@ class ReturnsForm(forms.Form):
 
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')
 
-    late_fee = forms.CharField(required=False,label="Late Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'visible':'True','readonly':'readonly', 'adjust_button':'True'}))
-    issue_fee = forms.CharField( required=False,label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'visible':'True','readonly':'readonly','adjust_button':'True'}))
-    total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','visible':'True','readonly':'readonly', 'done_button':'True'}))
+    late_fee = forms.CharField(required=False,label="Late Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+    issue_fee = forms.CharField( required=False,label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
+    total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly', 'done_button':'True'}))
 
 
 

@@ -399,6 +399,9 @@ class Transaction(models.Model):
 
         self.save()
 
+
+
+
     #amount to bank
     #TODO admin rights to do this
     def bank(self, amount):

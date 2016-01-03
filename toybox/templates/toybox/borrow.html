@@ -189,14 +189,21 @@
 
 
     {% for field in payment_form %}
-        {%if field.field.widget.attrs.visible%}
+
+
+        {%if field.field.widget.attrs.type == "hidden" %}
+            {% render_field field class+="form-control" id=field.auto_id  %}
+        {%elif field.field.widget.attrs.enabled%}
 
          <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
              {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
             <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}">
+
+
                 <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
+
                 {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
                  {% if field.field.widget.attrs.adjust_button %}
