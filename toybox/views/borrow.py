@@ -39,6 +39,10 @@ def borrow(request, member_id):
     # Always need this so search box renders
     context.update(handle_toy_borrow(request, member_id, ("toy_removed" in context)))
 
+    #clears templist if there are temp toys in any other name than the current member
+    if TempBorrowList.objects.exclude(member=member_id).count()>0:
+        TempBorrowList.objects.all().delete()
+
     new_borrow_list = TempBorrowList.objects.filter(member=member_id)
 
     new_borrow_toy_list=[]
