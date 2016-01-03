@@ -252,26 +252,23 @@ add role field to member?
 
 TODO 22/12/2015
 
-Add "are you sure" question for multiple uses
-Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
-Add instruction and receipt images
+
 
 Save adjustment justification comment in transactions
 Add children to members page
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
-Warn if borrow transaction is incomplete, on accept clear temp borrow list
 Add logged in volunteer to multiple tables: toy history and transaction
 Enable checked checkbox function in toys for stocktake
-
-Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
-    Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
-    Add extra step to set this option
-
 Check borrow fields for bad inputs
 Permissions for toy retire, member delete, banking and till change
 Add issue fees for return
 remove children gender
+check UI alignments on return and borrow pages
+Add instruction and receipt images
+Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
+    Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
+    Add extra step to set this option?
 
 BIGGER ITEMS:
 Merge import data
@@ -287,6 +284,7 @@ Add transaction actions such as banking (resets till balance) and adding to till
 Column filter for toy list - done
 Column filter for toy history - done
 Column filter for member list - sort by overdue colour? - Add extra character - done
+Clear temp borrow list if page is left - partially complete, clear temp list if other toy lib pages with base.html are loaded
 
 NEXT RELEASE:
 Enable donation - could be done with what we have?
@@ -298,7 +296,7 @@ Member availability-Is this useful given no scheduling? Below to do in model:
     # roster days - bitfield
     # member notes/characteristics?
 Membership annual fee warning
-
+Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
 
 
 BUGS:

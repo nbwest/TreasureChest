@@ -80,7 +80,7 @@ def get_members(*fields,**kwargs):
 
 def base_data():
     context={}
-
+    TempBorrowList.objects.all().delete()
     latest_transaction= Transaction.objects.all().latest("date_time")
 
     #TODO get login name
