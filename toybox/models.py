@@ -258,25 +258,28 @@ class Toy(models.Model):
         toy_history.record_toy_event(self)
 
 
-
+    def issue_type_to_state(self, issue_type):
+        
+        if issue_type == self.ISSUE_NONE:
+            state = self.AVAILABLE
+        elif issue_type == self.BROKEN_REPAIRABLE:
+            state = self.TO_BE_REPAIRED
+        elif issue_type == self.BROKEN_NOT_REPAIRABLE:
+            state = self.RETIRED  # TODO DOES the member have the right to do this?
+        elif issue_type == self.MINOR_MISSING_PIECE:
+            state = self.AVAILABLE
+        elif issue_type == self.MAJOR_MISSING_PIECE:
+            state = self.TO_BE_REPAIRED
+        elif issue_type == self.WHOLE_TOY_MISSING:
+            state = self.RETIRED  # TODO DOES the member have the right to do this?
+            
+        return state    
 
     def return_toy(self, issue, comment):
 
         self.issue_type = int(issue)
 
-        if self.issue_type == self.ISSUE_NONE:
-            self.state = self.AVAILABLE
-        elif self.issue_type == self.BROKEN_REPAIRABLE:
-            self.state = self.TO_BE_REPAIRED
-        elif self.issue_type == self.BROKEN_NOT_REPAIRABLE:
-            self.state = self.RETIRED  # TODO DOES the member have the right to do this?
-        elif self.issue_type == self.MINOR_MISSING_PIECE:
-            self.state = self.AVAILABLE
-        elif self.issue_type == self.MAJOR_MISSING_PIECE:
-            self.state = self.TO_BE_REPAIRED
-        elif self.issue_type == self.WHOLE_TOY_MISSING:
-            self.state = self.RETIRED  # TODO DOES the member have the right to do this?
-
+        self.state=self.issue_type_to_state(self.issue_type)
 
         self.issue_comment = comment
 
@@ -337,7 +340,7 @@ class Transaction(models.Model):
     ISSUE_FEE = 5       #+ Member returns toy with notable issue. Automatic from returns page
     LATE_FEE = 6     #+ Member borrow overdue fee. Automatic from returns page
     MEMBER_DEBIT = 7    #0 Member uses credit to pay for fees, no money changes hands. Automatic from borrow page
-    ADJUSTMENT_CREDIT = 8   #+ Adjustment of till. Manual from transactions pag
+    ADJUSTMENT_CREDIT = 8   #+ Adjustment of till. Manual from transactions page
     ADJUSTMENT_DEBIT = 9    #- Adjustment of till. Manual from transactions page
     BANK_DEPOSIT = 10       #- End of day take money to bank. Manual from transactions page
     MEMBER_DEPOSIT_REFUND = 11  #- From toy library to member once they cancel their the toy library membership. Manual from transaction page
@@ -417,7 +420,7 @@ class ToyHistory(models.Model):
     event_type = models.IntegerField(choices=Toy.TOY_STATE_CHOICES, null=True)
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
-    member = models.ForeignKey(Member)
+    member = models.ForeignKey(Member, blank=True, null=True)
    # volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
 
     # transaction = models.ForeignKey(Transaction, null=True)

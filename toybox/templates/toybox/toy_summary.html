@@ -22,6 +22,17 @@
               </tr>
 
               <tr>
+                 <td>State</td>
+                 <td>
+                      {% if toy.state != toy.AVAILABLE %}
+                       <span class="label label-danger label-as-badge"> {{toy.get_state_display}}</span>
+                      {%else%}
+                          <span class="label label-success label-as-badge"> {{toy.get_state_display}}</span>
+                      {%endif%}
+                  </td>
+              </tr>
+
+              <tr>
                 <td>Comment</td>
                 <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
               </tr>

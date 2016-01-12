@@ -251,13 +251,17 @@ add role field to member?
 
 
 TODO 22/12/2015
-Enable checked checkbox function in toys for stocktake
+
 
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
+
+Add ability to update issue type, issue comment
+Add ability to set all toys to stocktake state
+exclude retired toys from toy list?
 
 Add children to members page - are names necessary? just birth year?, remove children gender
 Add instruction and receipt images
@@ -283,6 +287,7 @@ Add reporting plugin
 migrate to production database
 
 COMPLETE:
+Enable checked checkbox function in toys for stocktake - Done
 Update till balance - done
 include balance in transactions - done
 Add transaction actions such as banking (resets till balance) and adding to till - Done

@@ -99,3 +99,31 @@ def form_field_concat(form, prefix, suffix, *args, **kwargs):
 
     field= form.fields[field_name]
     return field.widget.render(field_name,field.initial,attrs=kwargs)
+
+
+#allows concatination for form fields id plus exta argument, returns rendered output
+#if ^suffix^ found in any kwrags replaces  with suffix
+@register.simple_tag
+def form_field_concat_id(form, prefix, suffix, *args, **kwargs):
+
+    field_id=str(prefix)+str(suffix)
+    if field_id not in form.fields:
+        return None
+
+    field= form.fields[field_id]
+    kwargs.update({"id":field_id})
+
+    for key,value in kwargs.iteritems():
+        if "^suffix^" in value:
+            value=value.replace("^suffix^",str(suffix))
+            kwargs.update({key:value})
+
+    # if "oninput" in kwargs:
+    #     code=kwargs["oninput"]
+    #     code=code.replace("^",str(suffix))
+    #     kwargs.update({"oninput":code})
+
+
+    output=field.widget.render("",field.initial,attrs=kwargs)
+    return output
+

@@ -15,7 +15,7 @@
 
 
             <!--<table id="member_table" class="table">-->
-            <table  id="member_table" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="desc" row-height="20" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+            <table  id="member_table" data-classes="table table-condensed table-no-bordered" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="desc" row-height="20" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
 
 
                     <thead>
@@ -30,7 +30,7 @@
 
                     <tr>
                             <td>
-                                <!--{{ m.name }} cell is sorted by entire contents, keep this comment here-->
+                                <span class="hidden">{ m.name }}</span>
                                 <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}">
                                     {{ m.name }}
                                 </a>
@@ -48,7 +48,7 @@
                            <td>
                                {% spaceless %}
                                    {% if m.id not in loan_counts %}
-                                        <!--0-->
+                                        <span class="hidden">0</span>
                                         <a href="{% url 'toybox:returns' member_id=m.id %}">
                                             <span class="label label-default label-as-badge">0</span>
                                         </a>
@@ -56,12 +56,12 @@
                                         {% for key, value in loan_counts.items %}
                                             {% if key == m.id %}
                                                     {% if m.id in loans_overdue %}
-                                                        <!--{{ value }}-->
+                                                        <span class="hidden">{{ value }}</span>
                                                         <a href="{% url 'toybox:returns' member_id=m.id %}">
                                                             <span class="label label-danger label-as-badge">{{ value }}</span>
                                                         </a>
                                                     {%else%}
-                                                        <!--0{{ value }}-->
+                                                        <span class="hidden">0{{ value }}</span>
                                                         <a href="{% url 'toybox:returns' member_id=m.id %}">
                                                             <span class="label label-success label-as-badge">{{ value }}</span>
                                                         </a>

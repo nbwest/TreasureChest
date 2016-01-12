@@ -1,6 +1,7 @@
 
 {% extends "toybox\base.html" %}
-
+{% load templatetags %}
+{% load widget_tweaks %}
 
 
 {% block content %}
@@ -10,9 +11,109 @@
 
 
 
+
+
+
+
+<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+    {% csrf_token %}
+
+
+<div class="row">
+
+    <div class="panel-fluid panel-default col-xs-11">
+        <div class="panel-heading">Toy List</div>
+
+ <br>
+<button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Update issues and stocktake selected toys</button>
+
+            <table
+                    data-toggle="table"
+                    data-click-to-select="true"
+                    data-classes="table table-condensed table-no-bordered"
+                    data-id-field="id"
+                    data-select-item-name="stocktake"
+                    data-filter-control="true"
+                    id="toys_table"
+                    data-sort-name="code"
+                    data-sort-order="desc"
+                    data-search="true"
+                    data-show-columns="true"
+                    data-pagination="true"
+                    data-page-size="20"
+                    data-page-list='[20, 50, 100, 200, 300, 500]'>
+
+                    <thead>
+                        <tr>
+
+                            <th data-field="checked"  data-checkbox="true" data-check-box-header="false" data-align="center" ></th>
+                            <th data-field="id" class="hidden">id</th>
+
+                            <th data-field="code"  data-sortable="true" data-filter-control="input">ID</th>
+                            <th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
+
+                            <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
+                            <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
+                            <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
+                            <th data-field="last_stock_take"  data-sortable="true">Last<br> Stocktake</th>
+                            <th data-field="issue_type"  >Issue Type</th>
+                            <th data-field="issue_comment">Issue Comment</th>
+                       	</tr>
+                    </thead>
+
+
+                  {% for toy in toys %}
+                  <tr>
+
+                      <td></td>
+                      <td class="hidden">{{toy.id}}</td>
+
+                        <td>
+                            <span class="hidden">{{toy.code}}</span>
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
+                                {{toy.code}}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="hidden">{{toy.name}}</span>
+                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
+                                {{toy.name}}
+                            </a>
+                        </td>
+                        <td>{{toy.get_state_display}}</td>
+                        <td>{{toy.category.name}}</td>
+                        <td>{{toy.borrow_counter}}</td>
+                        <td>
+                            <span class="hidden">{{toy.last_stock_take|date:"Y/m/d"}}</span>
+                            {{toy.last_stock_take|date:"d/m/Y"}}
+                        </td>
+                        <td>
+                            {% form_field_concat_id toy_issue_form "issue_type_" toy.id class="form-control" onchange="this.name='issue_type_^suffix^';"%}
+                        </td>
+                        <td>
+                            {% form_field_concat_id toy_issue_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" oninput="this.name='issue_comment_^suffix^';"%}
+
+                        </td>
+
+                    </tr>
+
+
+                  {% endfor %}
+            </table>
+
+      </div>
+
+</div>
+ </form>
+
+
+
+
 <div class="row">
     <div class="panel-fluid panel-default col-xs-11">
         {% include "toybox/toy_summary.html" %}
+
+
     </div>
 </div>
 
@@ -22,71 +123,5 @@
     </div>
 </div>
 
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-    {% csrf_token %}
 
-<button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake Selected</button>
- <br>
- <br>
-
-<div class="row">
-
-    <div class="panel-fluid panel-default col-xs-11">
-        <div class="panel-heading">Toy List</div>
-            <table  data-toggle="table" data-click-to-select="true" class="table table-condensed"  data-id-field="id" data-select-item-name="stocktake" data-filter-control="true" data-toggle="table"  id="table-custom-sort"  data-sort-name="id" data-sort-order="desc" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
-
-
-                    <thead>
-                        <tr>
-                            <th data-field="id" class="hidden">id</th>
-                            <th data-field="checked"  data-checkbox="true" data-check-box-header="false" data-align="center" ></th>
-                            <th data-field="last_stock_take"  data-sortable="true">Last Stocktake</th>
-                            <th data-field="code"  data-sortable="true" data-filter-control="input">ID</th>
-                            <th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
-
-                            <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
-                            <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
-                            <th data-field="borrow_counter"  data-sortable="true" data-filter-control="select">Usage<br> (Wks)</th>
-                            <th data-field="last_check"  data-sortable="true" >Last Check</th>
-
-                       	</tr>
-                    </thead>
-
-
-                  {% for toy in toys %}
-                  <tr>
-                      <td class="hidden">{{toy.id}}</td>
-                      <td></td>
-                      <td>{{toy.last_stock_take}}</td>
-
-
-                        <td>
-                            <!--{{toy.code}} column is sorted by entire cell contents, keep this comment here -->
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.code}}
-                            </a>
-                        </td>
-                        <td>
-                            <!--{{toy.name}} column is sorted by entire cell contents, keep this comment here -->
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.name}}
-                            </a>
-                        </td>
-                        <td>{{toy.get_state_display}}</td>
-                        <td>{{toy.category.name}}</td>
-                        <td>{{toy.borrow_counter}}</td>
-                        <td>{{toy.last_check}}</td>
-
-                        <!--<td style="text-align: center;vertical-align: middle;">-->
-                            <!--<input type="checkbox" name="checked_checkbox_{{ toy.id }}" value="{{ toy.id }}" id="checked_checkbox_{{ toy.id }}" />-->
-                        <!--</td>-->
-
-                  </tr>
-                  {% endfor %}
-            </table>
-        </div>
-      </div>
-
-</div>
- </form>
 {% endblock content %}
