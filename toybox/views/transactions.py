@@ -3,8 +3,10 @@ from shared import *
 from django import forms
 from django.core.validators import *
 from django.forms.util import ErrorList
+from django.contrib.auth.decorators import login_required
 import decimal
 
+@login_required()
 def transactions(request):
     error=""
     context={}

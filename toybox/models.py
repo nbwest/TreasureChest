@@ -131,8 +131,19 @@ class Member(models.Model):
 
 
 class Child(models.Model):
-    name = models.CharField(max_length=100)
+    # NOT_SPECIFIED = 0
+    # F  = 1
+    # M = 2
+    #
+    # GENDER_CHOICES = (
+    #     (NOT_SPECIFIED, "Not Specified"),
+    #     (F, "Female"),
+    #     (M, "Male")
+    # )
+
+    # name = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField()
+    # gender = models.CharField(max_length=13, choices=GENDER_CHOICES)
     parent = models.ForeignKey(Member)
 
     def __unicode__(self):
@@ -141,6 +152,14 @@ class Child(models.Model):
     def __str__(self):
         return self.name
 
+   # @staticmethod
+   # def get_gender(gender_set):
+   #     gs = gender_set.upper()
+   #     tup = {
+   #         "M": Child.GENDER_CHOICES[Child.M],
+   #         "F": Child.GENDER_CHOICES[Child.F],
+   #     }.get(gs, Child.GENDER_CHOICES[Child.NOT_SPECIFIED])
+   #     return tup[1]
 
 class ToyBrand(models.Model):
     name = models.CharField(max_length=50)
