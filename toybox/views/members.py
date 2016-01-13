@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Count
 from shared import *
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -59,7 +60,7 @@ def handle_member_details(request, member_id):
 
     return context
 
-
+@login_required
 def members(request, member_id=None):
     context=handle_member_details(request, member_id)
     return render(request, 'toybox/members.html', context)

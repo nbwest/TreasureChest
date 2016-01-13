@@ -7,7 +7,7 @@ from django.core.validators import *
 from django.utils.safestring import mark_safe
 from datetime import *
 import decimal
-
+from django.contrib.auth.decorators import login_required
 # TODO limit toys to four - have this number stored somewhere
 
 
@@ -21,7 +21,7 @@ import decimal
 # on fee being collected, done commits new toys to DB
 
 
-
+@login_required
 def borrow(request, member_id):
     context = {}
 

@@ -68,13 +68,14 @@ For page html use the following template tags:
         <div id="navbar" class="navbar-collapse collapse " style="max-height: none;">
             <ul class="nav navbar-nav navbar-right">
 
-                {% if login_name %}
+                {% if request.user.username %}
                 <!--TODO set logged in member link-->
-                <li><a href="#">Logged in as: {{ login_name }}</a></li>
+                <li><a href="#">Logged in as: {{ request.user.username }}</a></li>
                 {% endif %}
 
                 <!-- TODO utilise logout Button -->
-                <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button>
+                <!-- <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button-->
+                <a href="{%url 'logout' %}" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</a>
 
                 <!-- these are hidden until used for collapsed menu-->
                 <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">

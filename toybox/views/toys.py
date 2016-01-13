@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.forms import ModelForm
 from shared import *
 import django_tables2 as tables
+from django.contrib.auth.decorators import login_required
 
+@login_required()
 def toys(request):
     context=handle_toy_details(request)
     return render(request, 'toybox/toys.html', context)
