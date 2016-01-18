@@ -33,7 +33,6 @@ def handle_stocktake(request):
                     for item in selected:
                       toy=Toy.objects.get(pk=int(item))
                       toy.last_stock_take=datetime.datetime.now()
-                      # if not "issue_comment_"+item in request.POST:
                       if toy.state==Toy.ON_LOAN:
                          toy.state=Toy.AVAILABLE
                          toy.member_loaned=None
@@ -43,7 +42,6 @@ def handle_stocktake(request):
 
                     id=key.rpartition('_')[2]
                     toy=Toy.objects.get(pk=id)
-                    print(toy.__dict__)
                     toy.issue_type=int(value)
                     toy.state=toy.issue_type_to_state(toy.issue_type)
                     toy_history=ToyHistory()
@@ -51,11 +49,6 @@ def handle_stocktake(request):
                     if "issue_comment_"+id in request.POST:
                         toy.issue_comment=request.POST["issue_comment_"+id]
                     toy.save()
-
-                    print(toy.__dict__)
-                    toy=None
-                    toy=Toy.objects.get(pk=id)
-                    print(toy.__dict__)
 
                 elif key.startswith("issue_comment"):
                     id=key.rpartition('_')[2]

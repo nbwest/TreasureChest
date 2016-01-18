@@ -100,7 +100,7 @@ class MemberDetailsForm(forms.Form):
     type=ModelChoiceField(queryset=MemberType.objects.all(),label="Member Type")
     balance = forms.DecimalField(required=False,label='Balance', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     membership_end_date = forms.DateField(required=False,label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
-    deposit_paid = forms.BooleanField(required=False,label="Deposit Paid",widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    deposit_fee_paid = forms.DecimalField(required=False,label='Deposit', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     committee_member=forms.BooleanField(required=False,label="Committee Member")
     volunteer = forms.BooleanField(required=False,label="Volunteer")
     potential_volunteer = forms.BooleanField(required=False,label="Potential Volunteer")

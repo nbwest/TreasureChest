@@ -252,6 +252,10 @@ add role field to member?
 
 TODO 22/12/2015
 
+use credit and give exact - not working
+when banking set banking amount.
+members inactive - don't display in member table
+deposit fee amount for refund
 
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
@@ -259,19 +263,18 @@ Add issue fees for return
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
 
-Add ability to update issue type, issue comment
-Add ability to set all toys to stocktake state
-exclude retired toys from toy list?
+Add children to members page - are names necessary? (birth month and year only)
 
-Add children to members page - are names necessary? just birth year?, remove children gender
-Add instruction and receipt images
-Add disable of credit function in borrow page -disable credit button, set all credit to 0
+Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
+
+exclude retired toys from toy list?
 
 Add logged in volunteer to multiple tables: toy history and transaction
 Permissions for toy retire, member delete, banking and till change
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
     Add extra step to set this option?
+    Not included in borrowed toy limit
 
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
@@ -283,10 +286,14 @@ BIGGER ITEMS:
 Merge import data
 Merge volunteer login
 Add login roles? Start with volunteer and admin?
+
 Add reporting plugin
-migrate to production database
+migrate to production database - postgres
+Backup - dropbox folder?
+OS server - ubuntu, windows 7?
 
 COMPLETE:
+Add instruction and receipt images - display with extra click from toy summary
 Enable checked checkbox function in toys for stocktake - Done
 Update till balance - done
 include balance in transactions - done
@@ -296,6 +303,8 @@ Column filter for toy history - done
 Column filter for member list - sort by overdue colour? - Add extra character - done
 Clear temp borrow list if page is left - partially complete, fails if you open another borrow window - forces only one borrower at a time - could be issue down the track
 Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
+Add ability to update issue type, issue comment
+Add ability to set all toys to stocktake state
 
 NEXT RELEASE:
 Comment when toy is retired
@@ -310,6 +319,7 @@ Member availability-Is this useful given no scheduling? Below to do in model:
 Membership annual fee warning
 Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
 Link transaction to toy history some how
+Set toy add in admin in order of those fields required for adding toys manually.
 
 BUGS:
 Borrow page: loan duration resets when deleting a toy

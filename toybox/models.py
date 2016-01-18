@@ -89,18 +89,15 @@ class Member(models.Model):
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
     membership_end_date = models.DateField('Membership due', default=django.utils.timezone.now)
-
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
-    #is active required?
-    # active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(default=django.utils.timezone.now)
-     # is deposit fee required???
-    # deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    # is membership fee required???
-    # membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    deposit_paid = models.BooleanField(default=False)
+    deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
+    # deposit_paid = models.BooleanField(default=False)
+
+    #TODO
     # volunteer capacity - bitfield
     # roster days - bitfield
     # member notes/characteristics?
@@ -118,10 +115,12 @@ class Member(models.Model):
     def membership_valid(self):
         return (datetime.datetime.now().date() < self.membership_end_date)
 
+
+    def deposit_paid(self):
+         return self.deposit_fee_paid != 0
+
     def is_current(self):
-        return  self.membership_valid() and  self.deposit_paid
-
-
+        return  self.membership_valid() and self.deposit_paid()
 
     def update_membership_date(self):
         self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
@@ -131,15 +130,15 @@ class Member(models.Model):
 
 
 class Child(models.Model):
-    name = models.CharField(max_length=100)
+    # name = models.CharField(max_length=100)
     date_of_birth = models.DateField()
     parent = models.ForeignKey(Member)
 
     def __unicode__(self):
-        return self.name
+        return self.date_of_birth
 
     def __str__(self):
-        return self.name
+        return self.date_of_birth
 
 
 class ToyBrand(models.Model):
@@ -163,9 +162,6 @@ class ToyPackaging(models.Model):
 
 
 class Toy(models.Model):
-    # needs to be table??
-    # this is covering two different states, condition and location - might want to think about this
-    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
     AVAILABLE = 0
     ON_LOAN = 1
     STOCKTAKE = 2
@@ -229,6 +225,9 @@ class Toy(models.Model):
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
+    image_receipt = models.ImageField(upload_to="toy_images", null=True)
+    image_instructions = models.ImageField(upload_to="toy_images", null=True)
+
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)

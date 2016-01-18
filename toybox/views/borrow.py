@@ -258,7 +258,7 @@ def handle_payment_form(request, member_id):
                                         comment=None
                                 transaction=Transaction()
                                 transaction.create_transaction_record(member,Transaction.MEMBER_DEPOSIT,fee,comment)
-                                member.deposit_paid=True
+                                member.deposit_fee_paid=fee
                                 member.save()
 
 
@@ -404,7 +404,7 @@ def handle_payment_form(request, member_id):
         if not member.membership_valid():
             membership_fee=member.type.fee
 
-        if not member.deposit_paid:
+        if not member.deposit_paid():
             deposit_fee=member.type.deposit
 
     payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'deposit_fee':deposit_fee, 'credit':balance})
