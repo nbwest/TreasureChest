@@ -7,10 +7,8 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
 
 urlpatterns = [
-    #url(r'^accounts/login/', auth_views.login, {'next': reverse('borrow')}),
-    #url(r'^accounts/login/', auth_views.login, {'next': reverse('base')}),
-    url(r'^accounts/login/', auth_views.login),
-    url(r'^logout/$', auth_views.logout, {'template_name': 'registration/login.html'}),
+    url(r'^login/', auth_views.login),
+    url(r'^logout/$', auth_views.logout_then_login),
     url(r'^$', views.base, name='base'),
     url(r'^toybox/', include('toybox.urls', namespace="toybox")),
     url(r'^admin/', include(admin.site.urls)),

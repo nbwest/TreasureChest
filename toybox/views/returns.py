@@ -17,6 +17,7 @@ def handle_returns(request,member_id):
     return context
 
 
+@login_required
 def returns(request, member_id=None):
 
     context={}
