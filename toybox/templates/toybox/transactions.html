@@ -24,19 +24,21 @@
 
      <div class="row panel-default col-xs-12 col-sm-11 ">
           <div class="panel-heading">Actions</div>
-    {% for field in transaction_form %}
-            <br>
+    {% for field in transaction_form%}
+          <br>
             <div class=" input-group" >
                 <span class="input-group-addon">{{field.label_tag|striptags}}</span>
                 {% render_field field class+="form-control" id=field.auto_id %}
 
-
-
-              {% if field.field.widget.attrs.add_button %}
                 <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default" name="{{field.field.widget.attrs.add_button}}" data-toggle="modal" >{{field.field.widget.attrs.add_button}}</button>
-                   </span>
-                {% endif %}
+                    {% for key, value in field.field.widget.attrs.items %}
+                        {% if "button" in key %}
+                            <button type="submit" class="btn btn-default" value="{{key}}" name="{{key}}" data-toggle="modal" >{{value}}</button>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+
+
             </div>
 
              <!--<div class="row ">-->
@@ -46,6 +48,7 @@
                 {% endfor %}
                 </ul>
           <!--</div>-->
+
     {% endfor %}
 
 
