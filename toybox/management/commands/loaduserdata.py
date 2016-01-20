@@ -26,7 +26,7 @@ NUM_CHILDREN = 15
 CHILDREN = 16
 
 class Command(BaseCommand):
-    help = 'Load data from csv\'s into the database'
+    help = 'Load user data from csv\'s into the database'
     firstRun=True
 
     def add_arguments(self, parser):
@@ -87,7 +87,7 @@ class Command(BaseCommand):
                         address = address,
                         phone_number1 = member[PHONE_AH],
                         email_address = member[EMAIL],
-                        anniversary_date = next_year,
+                        membership_end_date = next_year,
                         type = annual_member,
                     )
 
@@ -112,19 +112,20 @@ class Command(BaseCommand):
                     for child in range(0, int(num_children)):
                         child_index = CHILDREN + (child * 2)
 
-                        gender = Child.get_gender(member[child_index+1])
+                        #gender = Child.get_gender(member[child_index+1])
                         bday = self.try_date(member[child_index])
                         if (bday is not None):
                             c, created = Child.objects.get_or_create(
                                 date_of_birth = bday,
-                                gender = gender,
+                                #gender = gender,
                                 parent = member_record
                             )
                             c.save()
                             if created:
-                                print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
-            except:
-                print "Exception processing: "+member.__str__()
+                                #print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
+                                print "Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
+            except Exception as e:
+                print "Exception processing: "+member.__str__()+": "+str(e)
 
     # Header lines used to identify type of data being loaded
     HEADER_FUNC = 0

@@ -11,7 +11,7 @@ def transactions(request):
     error=""
     context={}
     form=None
-    context.update(base_data())
+    context.update(base_data(request))
 
 
     if (request.method == "POST"):
@@ -47,7 +47,7 @@ def transactions(request):
                 transaction.create_transaction_record(None,Transaction.ADJUSTMENT_DEBIT,-context['daily_balance'],comment="BANK TILL",balance_change=-context['daily_balance'])
 
             #call to update current balance after transactions
-            context.update(base_data())
+            context.update(base_data(request))
 
 
     if form:

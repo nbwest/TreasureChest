@@ -20,7 +20,7 @@ def handle_returns(request,member_id):
 def returns(request, member_id=None):
 
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
     context.update(handle_returns(request,member_id))
 
 

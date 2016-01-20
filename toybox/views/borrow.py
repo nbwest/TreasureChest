@@ -28,7 +28,7 @@ def borrow(request, member_id):
     context = {}
 
 
-    context.update(base_data())
+    context.update(base_data(request))
 
 
     context.update(handle_payment_form(request, member_id))

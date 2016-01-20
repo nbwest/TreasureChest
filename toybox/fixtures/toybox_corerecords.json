@@ -1,0 +1,25 @@
+[
+  {
+    "model": "toybox.Transaction",
+    "pk": 1,
+    "fields": {
+      "date_time": "2016-01-01 00:00+11:00",
+      "transaction_type": 8,
+      "amount": 0,
+      "balance": 0,
+      "comment": "Opening balance",
+      "complete": true
+    }
+  },
+
+  {
+    "model": "toybox.MemberType",
+    "pk": 1,
+    "fields": {
+      "membership_period": 1,
+      "name": "private",
+      "fee": 30,
+      "deposit": 30
+    }
+  }
+]

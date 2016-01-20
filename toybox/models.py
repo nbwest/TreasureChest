@@ -413,7 +413,7 @@ class Transaction(models.Model):
         self.amount=amount
         self.complete=complete
 
-        latest_transaction= Transaction.objects.all().latest("date_time")
+        latest_transaction= Transaction.objects.latest()
 
         self.balance = latest_transaction.balance + Decimal(balance_change)
 
@@ -421,13 +421,14 @@ class Transaction(models.Model):
 
         self.save()
 
-
-
-
     #amount to bank
     #TODO admin rights to do this
     def bank(self, amount):
         self.create_transaction_record(None,self.BANK_DEPOSIT,amount,"")
+
+
+    class Meta:
+        get_latest_by = "date_time"
 
 
 # fine associated with missing pieces etc? currently captured by loan type

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 @login_required()
 def toys(request, toy_id=None):
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))
 

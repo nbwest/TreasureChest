@@ -4,7 +4,7 @@ from django.forms import ModelForm
 
 def feedback(request):
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
 
     form=FeedbackForm()
     context.update({"feedback_form":form})

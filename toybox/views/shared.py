@@ -78,12 +78,10 @@ def get_members(*fields,**kwargs):
     return {"members":Member.objects.filter(kwargs).values(fields)}
 
 
-def base_data():
+def base_data(request):
     context={}
-    latest_transaction= Transaction.objects.all().latest("date_time")
 
-    #TODO get login name
-    context.update({"daily_balance": latest_transaction.balance, "login_name": "Jess Benning"})
+    context.update({"daily_balance": Transaction.objects.latest().balance, "login_name": request.user})
     return context
 
 
