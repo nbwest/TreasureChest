@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from shared import *
 from django.forms import ModelForm
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def feedback(request):
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
 
     form=FeedbackForm()
     context.update({"feedback_form":form})

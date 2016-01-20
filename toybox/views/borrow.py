@@ -7,6 +7,7 @@ from django.core.validators import *
 from django.utils.safestring import mark_safe
 from datetime import *
 import decimal
+from django.contrib.auth.decorators import login_required
 
 
 # work flow
@@ -22,12 +23,12 @@ import decimal
 #
 
 
-
+@login_required
 def borrow(request, member_id):
     context = {}
 
 
-    context.update(base_data())
+    context.update(base_data(request))
 
 
     context.update(handle_payment_form(request, member_id))

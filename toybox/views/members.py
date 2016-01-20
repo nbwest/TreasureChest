@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Count
 from shared import *
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 
 # POST - Guide: Use POST all the time except when you want the ability to bookmark a page, then use GET
@@ -77,10 +78,10 @@ def handle_member_details(request, member_id):
 # "members":Member.objects.all().order_by('membership_end_date'),
     return context
 
-
+@login_required
 def members(request, member_id=None):
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
     context.update(handle_member_details(request, member_id))
     return render(request, 'toybox/members.html', context)
 

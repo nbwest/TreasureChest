@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,7 +15,7 @@ from views.feedback import feedback
 
 
 urlpatterns = [
-                  url(r'^$', home, name='home'),
+                  url(r'^$', borrow, kwargs=dict(member_id=None), name='home'),
                   url(r'^borrow/$', borrow, kwargs=dict(member_id=None), name='borrow'),
                   url(r'^borrow/(?P<member_id>[0-9]+)/$', borrow, name='borrow'),#member_
                   url(r'^returns/$', returns, name='returns'),

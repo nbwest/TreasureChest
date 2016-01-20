@@ -2,7 +2,9 @@ from django.shortcuts import render
 from shared import *
 from django.core.validators import *
 from django.forms.formsets import formset_factory
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def handle_returns(request,member_id):
     context={}
 
@@ -15,10 +17,11 @@ def handle_returns(request,member_id):
     return context
 
 
+@login_required
 def returns(request, member_id=None):
 
     context={}
-    context.update(base_data())
+    context.update(base_data(request))
     context.update(handle_returns(request,member_id))
 
 

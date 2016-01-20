@@ -89,15 +89,18 @@ class Member(models.Model):
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
     membership_end_date = models.DateField('Membership due', default=django.utils.timezone.now)
+
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
-    active = models.BooleanField(default=True)
+    #is active required?
+    # active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(default=django.utils.timezone.now)
-    deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+     # is deposit fee required???
+    # deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    # is membership fee required???
+    # membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    deposit_paid = models.BooleanField(default=False)
 
-    # deposit_paid = models.BooleanField(default=False)
-
-    #TODO
     # volunteer capacity - bitfield
     # roster days - bitfield
     # member notes/characteristics?
@@ -115,12 +118,10 @@ class Member(models.Model):
     def membership_valid(self):
         return (datetime.datetime.now().date() < self.membership_end_date)
 
-
-    def deposit_paid(self):
-         return self.deposit_fee_paid != 0
-
     def is_current(self):
-        return  self.membership_valid() and self.deposit_paid()
+        return  self.membership_valid() and  self.deposit_paid
+
+
 
     def update_membership_date(self):
         self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
@@ -130,16 +131,35 @@ class Member(models.Model):
 
 
 class Child(models.Model):
-    # name = models.CharField(max_length=100)
+    # NOT_SPECIFIED = 0
+    # F  = 1
+    # M = 2
+    #
+    # GENDER_CHOICES = (
+    #     (NOT_SPECIFIED, "Not Specified"),
+    #     (F, "Female"),
+    #     (M, "Male")
+    # )
+
+    # name = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField()
+    # gender = models.CharField(max_length=13, choices=GENDER_CHOICES)
     parent = models.ForeignKey(Member)
 
     def __unicode__(self):
-        return self.date_of_birth
+        return self.name
 
     def __str__(self):
-        return self.date_of_birth
+        return self.name
 
+   # @staticmethod
+   # def get_gender(gender_set):
+   #     gs = gender_set.upper()
+   #     tup = {
+   #         "M": Child.GENDER_CHOICES[Child.M],
+   #         "F": Child.GENDER_CHOICES[Child.F],
+   #     }.get(gs, Child.GENDER_CHOICES[Child.NOT_SPECIFIED])
+   #     return tup[1]
 
 class ToyBrand(models.Model):
     name = models.CharField(max_length=50)
@@ -162,6 +182,9 @@ class ToyPackaging(models.Model):
 
 
 class Toy(models.Model):
+    # needs to be table??
+    # this is covering two different states, condition and location - might want to think about this
+    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
     AVAILABLE = 0
     ON_LOAN = 1
     STOCKTAKE = 2
@@ -225,9 +248,6 @@ class Toy(models.Model):
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
-    image_receipt = models.ImageField(upload_to="toy_images", null=True)
-    image_instructions = models.ImageField(upload_to="toy_images", null=True)
-
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
@@ -393,7 +413,7 @@ class Transaction(models.Model):
         self.amount=amount
         self.complete=complete
 
-        latest_transaction= Transaction.objects.all().latest("date_time")
+        latest_transaction= Transaction.objects.latest()
 
         self.balance = latest_transaction.balance + Decimal(balance_change)
 
@@ -401,13 +421,14 @@ class Transaction(models.Model):
 
         self.save()
 
-
-
-
     #amount to bank
     #TODO admin rights to do this
     def bank(self, amount):
         self.create_transaction_record(None,self.BANK_DEPOSIT,amount,"")
+
+
+    class Meta:
+        get_latest_by = "date_time"
 
 
 # fine associated with missing pieces etc? currently captured by loan type
