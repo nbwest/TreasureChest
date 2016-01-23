@@ -254,8 +254,7 @@ TODO 22/12/2015
 
 use credit and give exact - not working
 
-members inactive - don't display in member table
-deposit fee amount for refund
+
 
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
@@ -267,7 +266,7 @@ Add children to members page - are names necessary? (birth month and year only)
 
 Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
 
-exclude retired toys from toy list?
+exclude retired toys from toy list
 
 Add logged in volunteer to multiple tables: toy history and transaction
 Permissions for toy retire, member delete, banking and till change
@@ -283,9 +282,7 @@ check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
 
 BIGGER ITEMS:
-Merge import data
-Merge volunteer login
-Add login roles? Start with volunteer and admin?
+Merge import data for toys
 
 Add reporting plugin
 migrate to production database - postgres
@@ -293,6 +290,11 @@ Backup - dropbox folder?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+Member import data
+Merge volunteer login
+Add login roles? Start with volunteer and admin
+members inactive - don't display in member table
+deposit fee amount for refund
 when banking set banking amount.
 Add instruction and receipt images - display with extra click from toy summary
 Enable checked checkbox function in toys for stocktake - Done
@@ -306,6 +308,7 @@ Clear temp borrow list if page is left - partially complete, fails if you open a
 Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
 Add ability to update issue type, issue comment
 Add ability to set all toys to stocktake state
+Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
 Comment when toy is retired
@@ -314,7 +317,6 @@ Enable toy deposit? - is this required? Amount held by loan type
 Add on loan >6 months sets toy as retired - include in config table
 Pagination of transactions, members, toy, toy history to be done on server side.
 Member availability-Is this useful given no scheduling? Below to do in model:
-    # volunteer capacity - bitfield
     # roster days - bitfield
     # member notes/characteristics?
 Membership annual fee warning

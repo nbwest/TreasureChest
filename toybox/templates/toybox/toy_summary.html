@@ -13,10 +13,18 @@
            </a>
 
            <br>
-           <a  href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
+            {% if toy.image_receipt %}
+                <a  href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
+            {%else%}
+                 Receipt Image <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+            {%endif%}
            <br>
            <br>
-           <a  href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
+            {% if toy.image_instructions %}
+                <a  href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
+            {%else%}
+                 Instructions Image <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+            {%endif%}
 
         </p>
     </div>
