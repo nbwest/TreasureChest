@@ -3,19 +3,28 @@
 {% load widget_tweaks %}
 
 {% block content %}
+
+<style>
+.glyphicon.glyphicon-ok, .glyphicon.glyphicon-remove, .glyphicon.glyphicon-ban-circle
+{
+    font-size: 22px;
+}
+</style>
+
+
 <h1  class="page-header">Members</h1>
 
 
 
 <div class="row">
 
-    <div class="panel-fluid panel-default col-xs-11 col-sm-5">
+    <div class="panel-fluid panel-default col-xs-11 col-sm-7">
               <!-- Default panel contents -->
          <div class="panel-heading">Member List</div>
 
 
             <!--<table id="member_table" class="table">-->
-            <table  id="member_table" data-classes="table table-condensed table-no-bordered" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="desc" row-height="20" data-search="true" showColumns="true" data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+            <table  id="member_table" data-classes="table table-condensed table-no-bordered" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="asc" row-height="20" data-search="true"  data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
 
 
                     <thead>
@@ -23,6 +32,10 @@
                         	<th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
                             <th data-field="status"  data-sortable="true" data-filter-control="select">Status</th>
                             <th data-field="loans"  data-sortable="true">Loans</th>
+                            <th data-field="wed"  data-visible="false" data-sortable="true" data-filter-control="select">Wed</th>
+                            <th data-field="sat"  data-visible="false" data-sortable="true" data-filter-control="select">Sat</th>
+                            <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
+                            <th data-field="committee"  data-visible="false" data-sortable="true" data-filter-control="select">Committe<br>Member</th>
                        	</tr>
                     </thead>
 
@@ -30,13 +43,13 @@
 
                     <tr>
                             <td>
-                                <span class="hidden">{ m.name }}</span>
+                                <span class="hidden">{{ m.name }}</span>
                                 <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}">
                                     {{ m.name }}
                                 </a>
                             </td>
 
-                            <td>
+                            <td class="text-center">
                                 {% if m.is_current %}
                                 <span class="label label-success label-as-badge">Valid</span>
                                 {% else %}
@@ -45,7 +58,7 @@
                             </td>
 
 
-                           <td>
+                           <td class="text-center">
                                {% spaceless %}
                                    {% if m.id not in loan_counts %}
                                         <span class="hidden">0</span>
@@ -73,7 +86,58 @@
                                {% endspaceless %}
                            </td>
 
+                        <td class="text-center">
+                            {% spaceless %}
+                                {% if m.volunteer %}
+                                    <span class="hidden">{{m.volunteer_capacity_wed}}</span>
+                                    {% if m.volunteer_capacity_wed %}
+                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="hidden">Inactive</span>
+                                    <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" ></span>
+                                {% endif %}
+                            {% endspaceless %}
+                        </td>
+                        <td class="text-center">
+                             {% spaceless %}
+                                {% if m.volunteer %}
+                                    <span class="hidden">{{m.volunteer_capacity_sat}}</span>
+                                    {% if m.volunteer_capacity_sat %}
+                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="hidden">Inactive</span>
+                                    <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" ></span>
+                                {% endif %}
+                            {% endspaceless %}
+                        </td>
+                        <td class="text-center">
+                             {% spaceless %}
 
+                                    <span class="hidden">{{m.volunteer}}</span>
+                                    {% if m.volunteer %}
+                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+                                    {% endif %}
+
+                            {% endspaceless %}
+                        </td>
+                        <td class="text-center">
+                            {% spaceless %}
+                                    <span class="hidden">{{m.committee_member}}</span>
+                                    {% if m.committee_member %}
+                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
+                                    {% endif %}
+                            {% endspaceless %}
+                        </td>
                        </tr>
                     {% endfor %}
             </table>
@@ -87,7 +151,8 @@
     </div>
 
 
-    <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
+    <div class="panel-fluid panel-default col-xs-12 col-sm-4 " style="text-align: left; vertical-align: middle; ">
+        <div class="panel-heading">Member Details</div>
 
         <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
             {% csrf_token %}

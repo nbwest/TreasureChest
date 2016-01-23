@@ -86,7 +86,8 @@ def members(request, member_id=None):
     return render(request, 'toybox/members.html', context)
 
 def get_all_members_ordered_by_name():
-    members=Member.objects.all().order_by('name')
+    # members=Member.objects.all().order_by('name')
+    members=Member.objects.filter(active=True).order_by('name')
     return members
 
 #Form
@@ -103,8 +104,10 @@ class MemberDetailsForm(forms.Form):
     membership_end_date = forms.DateField(required=False,label='Membership due', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     deposit_fee_paid = forms.DecimalField(required=False,label='Deposit', widget=forms.TextInput(attrs={'readonly':'readonly'}))
     committee_member=forms.BooleanField(required=False,label="Committee Member")
-    volunteer = forms.BooleanField(required=False,label="Volunteer")
-    potential_volunteer = forms.BooleanField(required=False,label="Potential Volunteer")
+    volunteer = forms.BooleanField(required=False,label="Active Volunteer")
+    # potential_volunteer = forms.BooleanField(required=False,label="Potential Volunteer")
+    volunteer_capacity_wed = forms.BooleanField(required=False,label="Wednesday Volunteer Capacity")
+    volunteer_capacity_sat = forms.BooleanField(required=False,label="Saturday Volunteer Capacity")
 
 
 

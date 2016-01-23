@@ -253,7 +253,7 @@ add role field to member?
 TODO 22/12/2015
 
 use credit and give exact - not working
-when banking set banking amount.
+
 members inactive - don't display in member table
 deposit fee amount for refund
 
@@ -293,6 +293,7 @@ Backup - dropbox folder?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+when banking set banking amount.
 Add instruction and receipt images - display with extra click from toy summary
 Enable checked checkbox function in toys for stocktake - Done
 Update till balance - done

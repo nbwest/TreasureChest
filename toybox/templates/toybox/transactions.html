@@ -3,11 +3,6 @@
 {% block content %}
 <span id="transactions">
 
-<!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
-<!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
-<!--<script src="/static/toybox/bootstrap-table-1.8.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>-->
-<!--<script src="/static/toybox/bootstrap-datepicker-1.5.0/js/bootstrap-datepicker.js"></script>-->
-
 <!--<script>-->
   <!--$(function() {-->
     <!--$( "#id_date_from" ).datepicker();-->
@@ -41,13 +36,13 @@
 
             </div>
 
-             <!--<div class="row ">-->
-                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                {% for error in field.errors  %}
-                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                {% endfor %}
-                </ul>
-          <!--</div>-->
+
+             <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+            {% for error in field.errors  %}
+                <li><label class="label label-danger">{{ error|striptags }}</label></li>
+            {% endfor %}
+            </ul>
+
 
     {% endfor %}
 
@@ -80,7 +75,7 @@
 
              <thead>
                 <tr>
-                    <th data-field="id" data-sortable="true" >ID</th>
+                    <th data-field="id" data-visible="false" data-sortable="true" >ID</th>
                     <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
 
                     <th data-field="transaction_type"  data-sortable="true" data-filter-control="select">Type</th>
@@ -88,7 +83,7 @@
                     <th data-field="amount" data-sortable="true"  >Amount</th>
                     <th data-field="balance" data-sortable="true">Balance</th>
                     <th data-field="comment"  data-filter-control="select" data-sortable="true">Comment</th>
-                    <th data-field="complete"  data-filter-control="select" data-sortable="true">Complete</th>
+                    <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true">Complete</th>
                 </tr>
             </thead>
 
