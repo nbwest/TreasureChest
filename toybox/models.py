@@ -95,12 +95,10 @@ class Member(models.Model):
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(default=django.utils.timezone.now)
     deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-
-    # deposit_paid = models.BooleanField(default=False)
-
-    #TODO
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
+
+    #TODO
     # roster days - bitfield
     # member notes/characteristics?
 
@@ -137,19 +135,8 @@ class Member(models.Model):
 
 
 class Child(models.Model):
-    # NOT_SPECIFIED = 0
-    # F  = 1
-    # M = 2
-    #
-    # GENDER_CHOICES = (
-    #     (NOT_SPECIFIED, "Not Specified"),
-    #     (F, "Female"),
-    #     (M, "Male")
-    # )
 
-    # name = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField()
-    # gender = models.CharField(max_length=13, choices=GENDER_CHOICES)
     parent = models.ForeignKey(Member)
 
     def __unicode__(self):
@@ -188,9 +175,6 @@ class ToyPackaging(models.Model):
 
 
 class Toy(models.Model):
-    # needs to be table??
-    # this is covering two different states, condition and location - might want to think about this
-    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
     AVAILABLE = 0
     ON_LOAN = 1
     STOCKTAKE = 2
@@ -396,8 +380,7 @@ class Transaction(models.Model):
 
     date_time = models.DateTimeField('Transaction event date and time', auto_now_add=True)
     member = models.ForeignKey(Member, null=True, related_name='member_involved')
-    # TODO get volunteer login
-    # volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
+    volunteer_reporting = models.ForeignKey(Member, null=True, related_name='volunteer_reporting')
     transaction_type = models.IntegerField(choices=TRANSACTION_TYPE_CHOICES)
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
     balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
@@ -426,6 +409,7 @@ class Transaction(models.Model):
         self.balance = latest_transaction.balance + Decimal(balance_change)
 
         #TODO save volunteer reporting
+        # self.volunteer_reporting=
 
         self.save()
 
@@ -449,9 +433,7 @@ class ToyHistory(models.Model):
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     member = models.ForeignKey(Member, blank=True, null=True)
-   # volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
-
-    # transaction = models.ForeignKey(Transaction, null=True)
+    volunteer_reporting = models.ForeignKey(Member, null=True, related_name='%(class)s_requests_created')
 
     def record_toy_event(self, toy):
         self.toy=toy
@@ -463,8 +445,6 @@ class ToyHistory(models.Model):
 
         #TODO get  logged in user
         #self.volunteer_reporting=logged_in_user
-
-        # self.transaction=transaction
 
         self.save()
 

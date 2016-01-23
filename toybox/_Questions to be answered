@@ -251,25 +251,30 @@ add role field to member?
 
 
 TODO 22/12/2015
+BUGS:
+Borrow page: loan duration resets when deleting a toy
+    use credit and give exact - not working
 
-use credit and give exact - not working
+QUESTIONS:
+Active volunteer vs volunteer for wed/Sat - what do these mean?
 
-
-
+TASKS:
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
 
-Add children to members page - are names necessary? (birth month and year only)
+Add children to members page - birth month and year only
 
 Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
 
 exclude retired toys from toy list
 
 Add logged in volunteer to multiple tables: toy history and transaction
+
 Permissions for toy retire, member delete, banking and till change
+
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
     Add extra step to set this option?
@@ -324,6 +329,4 @@ Add member delete (change status to removed, all member queries will have to exc
 Link transaction to toy history some how
 Set toy add in admin in order of those fields required for adding toys manually.
 
-BUGS:
-Borrow page: loan duration resets when deleting a toy
-Timezone().Now is not correct by a day
+
