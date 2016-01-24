@@ -269,12 +269,6 @@ Add children to members page - birth month and year only
 
 Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
 
-exclude retired toys from toy list
-
-Add logged in volunteer to multiple tables: toy history and transaction
-
-Permissions for toy retire, member delete, banking and till change
-
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
     Add extra step to set this option?
@@ -285,6 +279,8 @@ Auto focus member search on returns page
 Check borrow fields for bad inputs
 check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
+Check admin for fields that should be readonly and permissions
+    -Delete toy and member shouldn't be allowed
 
 BIGGER ITEMS:
 Merge import data for toys
@@ -295,6 +291,9 @@ Backup - dropbox folder?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+exclude retired toys from toy list
+Permissions for toy retire, member delete, banking and till change - member delete (not active) performed in admin
+Add logged in volunteer to multiple tables: toy history and transaction
 Member import data
 Merge volunteer login
 Add login roles? Start with volunteer and admin

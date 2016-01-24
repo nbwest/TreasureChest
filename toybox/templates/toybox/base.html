@@ -64,9 +64,11 @@ For page html use the following template tags:
 
 
 
-            <ul class="nav navbar-nav hidden-xs ">
-                <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
-            </ul>
+            {% if daily_balance %}
+                <ul class="nav navbar-nav hidden-xs ">
+                    <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
+                </ul>
+            {% endif %}
 
         </div>
 
@@ -74,8 +76,8 @@ For page html use the following template tags:
             <ul class="nav navbar-nav navbar-right">
 
                 {% if request.user.username %}
-                <!--TODO set logged in member link-->
-                <li><a href="#">Logged in as: {{ request.user.username }}</a></li>
+
+                <li><a href="/admin">Logged in as: {{ request.user.username }} {% if request.user.first_name %}({{request.user.first_name}} {{request.user.last_name}}){%endif%} </a></li>
                 {% endif %}
 
                 <!-- TODO utilise logout Button -->

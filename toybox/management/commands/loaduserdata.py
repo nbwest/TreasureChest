@@ -117,11 +117,12 @@ class Command(BaseCommand):
                     member_record.potential_volunteer = False
                     member_record.volunteer = self.parse_bool(member[VOL])
                     member_record.join_date = join_date
+                    member_record.active=True
 
                     member_record.volunteer_capacity_wed=self.parse_contains(member[DAYS],['WED','BOTH','EITHER','WEDNESDAY'])
-                    print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
+                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
                     member_record.volunteer_capacity_sat=self.parse_contains(member[DAYS],['SAT','BOTH','EITHER','SATURDAY'])
-                    print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
+                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
 
                     member_record.save()
 

@@ -26,6 +26,7 @@
 
  <br>
 <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Update issues and stocktake selected toys</button>
+<button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected issues only</button>
 
             <table
                     data-toggle="table"
@@ -36,7 +37,7 @@
                     data-filter-control="true"
                     id="toys_table"
                     data-sort-name="code"
-                    data-sort-order="desc"
+                    data-sort-order="asc"
                     data-search="true"
                     data-show-columns="true"
                     data-pagination="true"
@@ -57,7 +58,7 @@
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
                             <th data-field="toy_purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
                             <th data-field="toy_purchase_date"   data-visible="false" data-sortable="true" >Purchase<br>Date</th>
-
+                            <th data-field="last_check"  data-visible="false" data-sortable="true">Last<br>Check</th>
                             <th data-field="last_stock_take"  data-visible="false" data-sortable="true">Last<br>Stocktake</th>
                             <th data-field="issue_type"  data-visible="false" data-width="200px">Issue Type</th>
                             <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment</th>
@@ -86,8 +87,15 @@
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
                         <td>{{toy.borrow_counter}}</td>
-                        <td>{{toy.purchase_cost}}</td>
-                        <td>{{toy.purchase_date}}</td>
+                        <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
+                       <td>
+                            <span class="hidden">{{toy.purchase_date|date:"Y/m/d"}}</span>
+                            {{toy.purchase_date|date:"d/m/Y"}}
+                        </td>
+                        <td>
+                            <span class="hidden">{{toy.last_check|date:"Y/m/d"}}</span>
+                            {{toy.last_check|date:"d/m/Y"}}
+                        </td>
                         <td>
                             <span class="hidden">{{toy.last_stock_take|date:"Y/m/d"}}</span>
                             {{toy.last_stock_take|date:"d/m/Y"}}

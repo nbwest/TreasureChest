@@ -17,6 +17,7 @@
                     <th data-field="issue_type"  data-sortable="true"  data-filter-control="select">Issue</th>
                     <th data-field="issue_comment"  data-sortable="true"  data-filter-control="input">Issue Comment</th>
                     <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
+                     <th data-field="volunteer"  data-sortable="true" data-filter-control="input">Volunteer</th>
 
                 </tr>
             </thead>
@@ -31,7 +32,7 @@
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>
                     <td>{% if event.member %}<a href="{% url 'toybox:members' event.member.id %}">{{event.member}}</a>{% endif %}</td>
-
+                    <td>{{event.volunteer_reporting}}</td>
               </tr>
             {% endfor %}
 

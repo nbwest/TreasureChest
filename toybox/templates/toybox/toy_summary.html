@@ -95,6 +95,16 @@
                 <td>${{ toy.loan_type.loan_cost }}</td>
               </tr>
 
+               <tr>
+                <td>Purchase Cost</td>
+                 <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
+              </tr>
+
+              <tr>
+                <td>Purchase Date</td>
+                 <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
+              </tr>
+
               <tr>
                 <td>Issue</td>
 

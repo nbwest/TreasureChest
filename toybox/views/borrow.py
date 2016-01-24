@@ -1,11 +1,9 @@
-from django.shortcuts import render, get_object_or_404
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from shared import *
 from django.db.models import *
 from django.core.validators import *
-from django.utils.safestring import mark_safe
-from datetime import *
+from django.shortcuts import redirect
+
 import decimal
 from django.contrib.auth.decorators import login_required
 
@@ -160,7 +158,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 #                     else:
 #                         comment=None
 #                 transaction=Transaction()
-#                 transaction.create_transaction_record(member,transaction_type,fee,comment)
+#                 transaction.create_transaction_record(request.user,member,transaction_type,fee,comment)
 #                 return transaction
 
 
@@ -205,7 +203,7 @@ def handle_payment_form(request, member_id):
                         print("LOAN_DURATION: "+loan_duration)
                         toy = get_object_or_404(Toy, id=new_toy.toy.id)
                         print(toy)
-                        toy.borrow_toy(member, int(loan_duration))
+                        toy.borrow_toy(member, int(loan_duration),request.user)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
 
@@ -226,7 +224,7 @@ def handle_payment_form(request, member_id):
                                     else:
                                         comment=None
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.BORROW_FEE,fee,comment)
+                                transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
 
                     #membership fee transaction
                     if "membership" in payment_form.cleaned_data:
@@ -240,7 +238,7 @@ def handle_payment_form(request, member_id):
                                         comment=None
 
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.MEMBERSHIP_FEE,fee,comment)
+                                transaction.create_transaction_record(request.user,member,Transaction.MEMBERSHIP_FEE,fee,comment)
 
                                 member.update_membership_date()
 
@@ -258,7 +256,7 @@ def handle_payment_form(request, member_id):
                                     else:
                                         comment=None
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.MEMBER_DEPOSIT,fee,comment)
+                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DEPOSIT,fee,comment)
                                 member.deposit_fee_paid=fee
                                 member.save()
 
@@ -277,7 +275,7 @@ def handle_payment_form(request, member_id):
 
                                 for item in fees_records:
                                     # transaction=Transaction()
-                                    # transaction.create_transaction_record(member,Transaction.LATE_FEE,fee,comment)
+                                    # transaction.create_transaction_record(request.user,member,Transaction.LATE_FEE,fee,comment)
                                     item.amount=fee
                                     item.comment=comment
                                     item.complete=True
@@ -297,7 +295,7 @@ def handle_payment_form(request, member_id):
 
                                 for item in fees_records:
                                     # transaction=Transaction()
-                                    # transaction.create_transaction_record(member,Transaction.ISSUE_FEE,fee,comment)
+                                    # transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,fee,comment)
                                     item.amount=fee
                                     item.comment=comment
                                     item.complete=True
@@ -309,7 +307,7 @@ def handle_payment_form(request, member_id):
                             change=decimal.Decimal(payment_form.cleaned_data['change'])
                             # if fee!=0:
                             #     transaction=Transaction()
-                            #     transaction.create_transaction_record(member,Transaction.CHANGE,fee)
+                            #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,fee)
 
                     if "payment" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['payment']!="":
@@ -317,7 +315,7 @@ def handle_payment_form(request, member_id):
                             fee_paid=fee
                             if fee!=0:
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.PAYMENT,fee)
+                                transaction.create_transaction_record(request.user,member,Transaction.PAYMENT,fee)
 
                     #TODO enable donation
                     # if "donation" in payment_form.cleaned_data:
@@ -325,7 +323,7 @@ def handle_payment_form(request, member_id):
                     #         fee=decimal.Decimal(payment_form.cleaned_data['donation'])
                     #         if fee!=0:
                     #             transaction=Transaction()
-                    #             transaction.create_transaction_record(member,Transaction.MEMBER_DONATION,fee)
+                    #             transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee)
 
                     #issue fee transation completion
 
@@ -348,30 +346,30 @@ def handle_payment_form(request, member_id):
                                 print(member.balance)
                                 member.save()
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,balance_change=fee_paid)
+                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,balance_change=fee_paid)
                                 break
                             else:
                                 member.balance = member.balance - fee_due
                                 member.save()
                                 transaction=Transaction()
-                                transaction.create_transaction_record(member,Transaction.MEMBER_DEBIT,fee_due)
+                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DEBIT,fee_due)
                                 break
 
 
 
                         elif item=="donate":
                             transaction=Transaction()
-                            transaction.create_transaction_record(member,Transaction.MEMBER_DONATION,fee_paid-fee_due,balance_change=fee_paid)
+                            transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee_paid-fee_due,balance_change=fee_paid)
                             break
 
                         elif item=="return":
                             transaction=Transaction()
-                            transaction.create_transaction_record(member,Transaction.CHANGE,fee_paid-fee_due,balance_change=fee_due)
+                            transaction.create_transaction_record(request.user,member,Transaction.CHANGE,fee_paid-fee_due,balance_change=fee_due)
                             break
 
                         elif item=="exact":
                             transaction=Transaction()
-                            transaction.create_transaction_record(member,Transaction.CHANGE,0,balance_change=fee_due)
+                            transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
                             break
 
             else:
