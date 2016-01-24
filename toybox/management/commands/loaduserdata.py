@@ -6,25 +6,6 @@ import os.path
 
 import csv
 
-# Named indexes into Members CSV
-LAST_NAME = 0
-FIRST_NAME = 1
-ADDR_STREET = 2
-ADDR_SUBURB = 3
-ADDR_STATE = 4
-ADDR_POSTCODE = 5
-PHONE_AH = 6
-PHONE_BH = 7
-MEMBERSHIP_PD = 8
-DEPOSIT_PD = 9
-DATE_JND = 10
-EMAIL = 11
-VOL = 12
-DAYS = 13
-STOCKTAKE = 14
-NUM_CHILDREN = 15
-CHILDREN = 16
-
 class Command(BaseCommand):
     help = 'Load user data from csv\'s into the database'
     firstRun=True
@@ -63,20 +44,38 @@ class Command(BaseCommand):
         next_year = date(date.today().year, 1, 1)  # 1st Jan next year
         annual_member = MemberType.objects.get(name = "private")
 
-        members_reader = csv.reader(members_file, delimiter=',', quotechar='"')
+        members_file_column_names = [
+            'LAST_NAME',
+            'FIRST_NAME',
+            'ADDR_STREET',
+            'ADDR_SUBURB',
+            'ADDR_STATE',
+            'ADDR_POSTCODE',
+            'PHONE_AH',
+            'PHONE_BH',
+            'MEMBERSHIP_PD',
+            'DEPOSIT_PD',
+            'DATE_JND',
+            'EMAIL',
+            'VOL',
+            'DAYS',
+            'STOCKTAKE',
+            'NUM_CHILDREN',
+        ]
+        members_reader = csv.DictReader(members_file, fieldnames=members_file_column_names, restkey='CHILDREN', delimiter=',', quotechar='"')
         for member in members_reader:
             try:
-                first_name = member[FIRST_NAME].title()
-                last_name = member[LAST_NAME].title()
+                first_name = member['FIRST_NAME'].title()
+                last_name = member['LAST_NAME'].title()
                 name = first_name+" "+last_name
                 print "Processing "+name
 
-                address = member[ADDR_STREET]+" "+ \
-                          member[ADDR_SUBURB]+" "+ \
-                          member[ADDR_STATE]+" "+ \
-                          member[ADDR_POSTCODE]
+                address = member['ADDR_STREET']+" "+ \
+                          member['ADDR_SUBURB']+" "+ \
+                          member['ADDR_STATE']+" "+ \
+                          member['ADDR_POSTCODE']
 
-                join_date = self.try_date(member[DATE_JND])
+                join_date = self.try_date(member['DATE_JND'])
                 if join_date is None:
                     print "Unable to parse joined date, or none set.  Setting joined to now"
                     join_date = date.today()
@@ -85,16 +84,16 @@ class Command(BaseCommand):
                     member_record, created = Member.objects.get_or_create(
                         name = name,
                         address = address,
-                        phone_number1 = member[PHONE_AH],
-                        email_address = member[EMAIL],
+                        phone_number1 = member['PHONE_AH'],
+                        email_address = member['EMAIL'],
                         membership_end_date = next_year,
                         type = annual_member,
                     )
 
-                    member_record.phone_number2 = member[PHONE_BH]
-                    member_record.deposit_fee = member[DEPOSIT_PD]
+                    member_record.phone_number2 = member['PHONE_BH']
+                    member_record.deposit_fee = member['DEPOSIT_PD']
                     member_record.potential_volunteer = False
-                    member_record.volunteer = self.parse_bool(member[VOL])
+                    member_record.volunteer = self.parse_bool(member['VOL'])
                     member_record.join_date = join_date
                     member_record.save()
 
@@ -107,13 +106,14 @@ class Command(BaseCommand):
                 else:
                     print "Found existing record.  Member data updated."
 
-                num_children = member[NUM_CHILDREN]
+                num_children = member['NUM_CHILDREN']
                 if num_children != '':
+                    children = member['CHILDREN']
                     for child in range(0, int(num_children)):
-                        child_index = CHILDREN + (child * 2)
+                        child_index = child * 2
 
-                        #gender = Child.get_gender(member[child_index+1])
-                        bday = self.try_date(member[child_index])
+                        #gender = Child.get_gender(children['child_index+1'])
+                        bday = self.try_date(children[child_index])
                         if (bday is not None):
                             c, created = Child.objects.get_or_create(
                                 date_of_birth = bday,
@@ -127,11 +127,15 @@ class Command(BaseCommand):
             except Exception as e:
                 print "Exception processing: "+member.__str__()+": "+str(e)
 
+    def load_toys (self, toys_file):
+        return 1
+
     # Header lines used to identify type of data being loaded
     HEADER_FUNC = 0
     HEADER_MATCH = 1
     HEADERS = [
         (load_members, 'LastName,FirstName'),
+        (load_toys, 'No.,Description,Purchased From'),
     ]
 
     # Read up to first 5 lines of file and determine the type of data based
