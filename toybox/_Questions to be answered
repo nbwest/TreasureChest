@@ -257,6 +257,7 @@ Borrow page: loan duration resets when deleting a toy
 
 QUESTIONS:
 Active volunteer vs volunteer for wed/Sat - what do these mean?
+Loan Types - how will these be used?
 
 TASKS:
 Add issue fees for return
@@ -315,6 +316,8 @@ Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+loan_types: implement loan_deposit, loan_period_max
+Dealing with low income earner
 Comment when toy is retired
 Enable donation - could be done with what we have?
 Enable toy deposit? - is this required? Amount held by loan type

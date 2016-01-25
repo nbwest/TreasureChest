@@ -67,7 +67,8 @@ class LoanType(models.Model):
     missing_piece_fine = models.DecimalField(decimal_places=2, max_digits=5)
     missing_piece_refund = models.DecimalField(decimal_places=2, max_digits=5)
     loan_deposit = models.DecimalField(decimal_places=2, max_digits=5)
-    # member_type = models.ForeignKey(MemberType, null=True)
+
+    #TODO loan_deposit, loan_period_max not yet implemented
 
     def __unicode__(self):
         return self.name
