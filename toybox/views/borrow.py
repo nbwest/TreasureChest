@@ -143,7 +143,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
         form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
 
     context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
-    print(context)
+
     return context
 
 

@@ -23,12 +23,12 @@
 
     <div class="panel-fluid panel-default col-xs-11">
         <div class="panel-heading">Toy List</div>
-
- <br>
-<button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Update issues and stocktake selected toys</button>
-<button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected issues only</button>
-
+        <div id="toolbar">
+            <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
+            <button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected toys only</button>
+        </div>
             <table
+                    data-toolbar="#toolbar"
                     data-toggle="table"
                     data-click-to-select="true"
                     data-classes="table table-condensed table-no-bordered"
@@ -125,8 +125,10 @@
 <div class="row">
 
     <div class="panel-fluid panel-default col-xs-11">
+        {% if toy %}
         <div class="panel-heading">Selected Toy</div>
         <br>
+        {%endif%}
         {% include "toybox/toy_summary.html" %}
 
 

@@ -1,7 +1,7 @@
 
 {% extends "toybox/base.html" %}
 {% load widget_tweaks %}
-
+{% load templatetags %}
 {% block content %}
 
 <style>
@@ -9,6 +9,14 @@
 {
     font-size: 22px;
 }
+
+.badge-outline-default {
+    color: black;
+    border: 1px solid #999;
+    border-color: black;
+    background-color: transparent;
+}
+
 </style>
 
 
@@ -18,13 +26,24 @@
 
 <div class="row">
 
-    <div class="panel-fluid panel-default col-xs-11 col-sm-7">
+    <div class="panel-fluid panel-default col-xs-11 col-sm-8">
               <!-- Default panel contents -->
          <div class="panel-heading">Member List</div>
 
-
-            <!--<table id="member_table" class="table">-->
-            <table  id="member_table" data-classes="table table-condensed table-no-bordered" class="table table-condensed"  data-filter-control="true" data-toggle="table"  data-sort-name="name" data-sort-order="asc" row-height="20" data-search="true"  data-show-columns="true" data-pagination="true" data-page-size="20"  data-page-list='[20, 50, 100, 200, 300, 500]'>
+            <table  id="member_table"
+                    data-classes="table table-condensed table-no-bordered"
+                    class="table table-condensed"
+                    data-filter-control="true"
+                    data-toggle="table"
+                    data-sort-name="name"
+                    data-sort-order="asc"
+                    row-height="20"
+                    data-search="true"
+                    data-show-columns="true"
+                    data-pagination="true"
+                    data-page-size="20"
+                    data-page-list='[20, 50, 100, 200, 300, 500]'
+                    data-show-export="true">
 
 
                     <thead>
@@ -143,41 +162,81 @@
             </table>
       </div>
 
-     <div   class="col-xs-1" >
-
-        <a href="{% url 'toybox:members' %}"><button title="Clear fields to add New Member" type="button" class="btn btn-success" aria-label="Left Align">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button></a>
-
-    </div>
-
 
     <div class="panel-fluid panel-default col-xs-12 col-sm-4 " style="text-align: left; vertical-align: middle; ">
         <div class="panel-heading">Member Details</div>
 
-        <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+
+        <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post'>
             {% csrf_token %}
+
+            <div class="text-center">
+                <br>
+                <a href="{% url 'toybox:members' %}">
+                    <button title="Clear fields to add New Member" type="button" class="btn btn-success" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-user " aria-hidden="true"></span>
+                    </button>
+                </a>
+                &nbsp
+                {%if member_detail_submit_button_label == "Add" %}
+                    <button type="submit" name="add" class="btn btn-success" title="Commit new member to the database"><strong>Add</strong></button>
+                {%else%}
+                    <button type="submit" name="update" class="btn btn-success" title="Commit member changes to the database"><strong>Update</strong></button>
+                {%endif%}
+            </div>
+
             <div class="fieldWrapper" >
             {% for field in member_details_form %}
-                {{ field.label_tag }}
+                <br>
+                 {% for key, value in field.field.widget.attrs.items %}
+                    {% if key == "group" %}
+                        <div class="text-center">
+                            <button class="btn btn-primary " type="button" data-toggle="collapse" data-target="#{{key}}_{{value}}">
+                                <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                                {{value}}
+                            </button>
+                        </div>
+                <br>
+                        <div class="collapse collapse-class" id="{{key}}_{{value}}">
+                    {%endif%}
+                {%endfor%}
 
-                {% render_field field class+="form-control" %}
+                {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
 
-                <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                    {% for error in field.errors  %}
-                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                    {% endfor %}
-                </ul>
+                {% if 'datepicker' in field.field.widget.attrs %}
+                    <div class="input-group input-append date" >
+                        {% render_field field class+="form-control" %}
+                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {%endif%}
+
+                {% if field.errors %}
+                    <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                        {% for error in field.errors  %}
+                            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if "endgroup" in field.field.widget.attrs %}
+                    </div>
+                {%endif%}
 
             {% endfor %}
 
+            </div>
+             <div class="text-center">
                 <br>
-
                 {%if member_detail_submit_button_label == "Add" %}
-                    <button type="submit" name="add" class="btn btn-success form-control"><strong>Add</strong></button>
+                    <button type="submit" name="add" class="btn btn-success" title="Commit new member to the database"><strong>Add</strong></button>
                 {%else%}
-                    <button type="submit" name="update" class="btn btn-success form-control"><strong>Update</strong></button>
+                    <button type="submit" name="update" class="btn btn-success" title="Commit member changes to the database"><strong>Update</strong></button>
                 {%endif%}
             </div>
+
         </form>
 
     </div>
@@ -185,4 +244,46 @@
 
 </div>
 
+<div class="modal  fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <!--<div class="modal-content">-->
+                <div class="alert alert-success">
+                    <strong>Success!</strong> Member details were committed successfully
+                </div>
+            <!--</div>-->
+        </div>
+</div>
+
+<script>
+$(document).ready(function() {
+
+ $('.date')
+        .datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose:'true',
+            clearBtn:'true',
+            todayHighlight:'true',
+            todayBtn: 'linked',
+            orientation: 'auto'
+
+        })
+
+
+{% if success %}
+
+function hide_modal(){
+    $('#successModal').modal('hide');
+}
+
+$(window).load(function(){
+    $('#successModal').modal('show');
+    window.setTimeout(hide_modal, 2000);
+});
+{% endif %}
+});
+
+
+
+
+</script>
 {% endblock content %}
