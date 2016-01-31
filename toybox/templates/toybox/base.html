@@ -25,8 +25,10 @@ For page html use the following template tags:
     <script src="/static/toybox/bootstrap-3.3.5/js/bootstrap.min.js"></script>
     <script src="/static/toybox/bootstrap-table-1.8.1/bootstrap-table.js"></script>
     <script src="/static/toybox/bootstrap-table-1.8.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/export/bootstrap-table-export.js"></script>
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/export/tableExport.js"></script>
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/cookie/bootstrap-table-cookie.js"></script>
     <script src="/static/toybox/bootstrap-datepicker-1.5.0/js/bootstrap-datepicker.min.js"></script>
-
 
 </head>
 
@@ -39,6 +41,40 @@ For page html use the following template tags:
       {
         $("#duplicate-menu").html($("#menu").html());
       });
+
+
+//to deal with exporting the table with select filters - stops the choices being the column header for the exported data
+//also deal with combo boxes, inpt text boxes and...
+function DoOnCellHtmlData(cell, row, col, data)
+{
+    var result = "";
+
+    if (data != "")
+    {
+        var html = $.parseHTML(data);
+
+       // console.log(data);
+        $.each(html, function ()
+        {
+           if ($(this).prop("tagName")=="SELECT")
+                result+=$(this).find(":selected").text();
+
+           else if ($(this).prop("tagName")=="INPUT")
+                result+=$(this).val();
+
+           else if ($(this).prop("tagName")=="SPAN")
+                result+=$(this).text();
+
+            if (typeof $(this).html() === 'undefined')
+                result += $(this).text();
+            else if (typeof $(this).attr('class') === 'undefined' || $(this).hasClass('th-inner') === true)
+               result += $(this).html();
+        });
+    }
+    //console.log(result);
+    //console.log("------------------------------------");
+    return result;
+}
 </script>
 
 

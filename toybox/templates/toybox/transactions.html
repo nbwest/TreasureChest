@@ -64,14 +64,19 @@
      <table  data-classes="table table-condensed table-no-bordered"
              data-toggle="table"
              data-filter-control="true"
-             id="table_transaction"
+             id="transaction_table"
              data-sort-name="id"
              data-sort-order="desc"
              data-search="true"
              data-show-columns="true"
              data-pagination="true"
              data-page-size="20"
-             data-page-list='[20, 50, 100, 200, 300, 500]'>
+             data-page-list='[20, 50, 100, 200, 300, 500]'
+             data-cookie="true"
+             data-cookie-id-table="transaction_table"
+             data-show-export="true"
+             data-export-types="['excel','csv']"
+             data-show-pagination-switch="true">
 
              <thead>
                 <tr>
@@ -93,15 +98,14 @@
                     <td>{{transaction.id}}</td>
 
                     <td>
-                        <span class="hidden">{{transaction.date_time|date:"Y/m/d H:i"}}</span>
+                        <span name='{{transaction.date_time|date:"Y/m/d H:i"}}'></span>
                         {{transaction.date_time|date:"d/m/Y H:i"}}
                     </td>
                     <td>{{transaction.get_transaction_type_display}}</td>
 
 
                     <td>
-                        <span class="hidden">{{transaction.member}}</span>
-                        <a {%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
+                        <a name="{{transaction.member}}"{%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
                             {{transaction.member}}
                         </a></td>
                     <td>{{transaction.volunteer_reporting}}</td>
@@ -121,7 +125,18 @@
 
 </span>
 
+<script>
 
+
+$(document).ready(function() {
+var $table = $('#transaction_table');
+$table.bootstrapTable('refreshOptions', {
+    exportOptions: {
+        onCellHtmlData: DoOnCellHtmlData
+    }
+});
+});
+</script>
 
 
 {% endblock content %}

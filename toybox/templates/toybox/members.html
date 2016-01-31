@@ -31,6 +31,8 @@
          <div class="panel-heading">Member List</div>
 
             <table  id="member_table"
+                    data-show-export="true"
+                    data-export-types="['excel','csv']"
                     data-classes="table table-condensed table-no-bordered"
                     class="table table-condensed"
                     data-filter-control="true"
@@ -43,7 +45,10 @@
                     data-pagination="true"
                     data-page-size="20"
                     data-page-list='[20, 50, 100, 200, 300, 500]'
-                    data-show-export="true">
+                    data-cookie="true"
+                    data-cookie-id-table="member_table"
+                    data-show-pagination-switch="true"
+                    >
 
 
                     <thead>
@@ -62,8 +67,7 @@
 
                     <tr>
                             <td>
-                                <span class="hidden">{{ m.name }}</span>
-                                <a  href="{% url 'toybox:members' member_id=m.id %}{{action}}">
+                                <a  name="{{ m.name }}" href="{% url 'toybox:members' member_id=m.id %}{{action}}">
                                     {{ m.name }}
                                 </a>
                             </td>
@@ -80,21 +84,18 @@
                            <td class="text-center">
                                {% spaceless %}
                                    {% if m.id not in loan_counts %}
-                                        <span class="hidden">0</span>
-                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                        <a name="0" href="{% url 'toybox:returns' member_id=m.id %}">
                                             <span class="label label-default label-as-badge">0</span>
                                         </a>
                                    {%else%}
                                         {% for key, value in loan_counts.items %}
                                             {% if key == m.id %}
                                                     {% if m.id in loans_overdue %}
-                                                        <span class="hidden">{{ value }}</span>
-                                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
                                                             <span class="label label-danger label-as-badge">{{ value }}</span>
                                                         </a>
                                                     {%else%}
-                                                        <span class="hidden">0{{ value }}</span>
-                                                        <a href="{% url 'toybox:returns' member_id=m.id %}">
+                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
                                                             <span class="label label-success label-as-badge">{{ value }}</span>
                                                         </a>
                                                     {% endif %}
@@ -282,6 +283,15 @@ $(window).load(function(){
 {% endif %}
 });
 
+
+$(document).ready(function() {
+var $table = $('#member_table');
+$table.bootstrapTable('refreshOptions', {
+    exportOptions: {
+        onCellHtmlData: DoOnCellHtmlData
+    }
+});
+});
 
 
 
