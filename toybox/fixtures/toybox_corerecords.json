@@ -21,5 +21,105 @@
       "fee": 30,
       "deposit": 30
     }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 1,
+    "fields": {
+      "name": "Imagination",
+      "code_prefix": "I",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 2,
+    "fields": {
+      "name": "Music",
+      "code_prefix": "M",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 3,
+    "fields": {
+      "name": "Construction",
+      "code_prefix": "C",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 4,
+    "fields": {
+      "name": "Games",
+      "code_prefix": "G",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 5,
+    "fields": {
+      "name": "Transport",
+      "code_prefix": "T",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 6,
+    "fields": {
+      "name": "Water & Sand",
+      "code_prefix": "W",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 7,
+    "fields": {
+      "name": "Big Toys",
+      "code_prefix": "BT",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 8,
+    "fields": {
+      "name": "Baby",
+      "code_prefix": "B",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 9,
+    "fields": {
+      "name": "Puzzles",
+      "code_prefix": "P",
+      "next_code_number": 1
+    }
+  },
+
+  {
+    "model": "toybox.ToyCategory",
+    "pk": 10,
+    "fields": {
+      "name": "Party Pack",
+      "code_prefix": "PP",
+      "next_code_number": 1
+    }
   }
 ]

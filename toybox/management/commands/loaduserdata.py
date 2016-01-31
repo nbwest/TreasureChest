@@ -3,7 +3,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from toybox.models import *
 from datetime import datetime, date
 import os.path
-
+import re
 import csv
 
 class Command(BaseCommand):
@@ -39,6 +39,16 @@ class Command(BaseCommand):
     # Convert strings to boolean
     def parse_bool(self, bstring):
         return bstring in ['yes', 'Yes', 'YES', 'y', 'Y']
+
+    def get_category_from_code(self, toy_code):
+        try:
+            if toy_code == '' or toy_code == None:
+                raise ValueError("Empty toy code or 'None' provided")
+            m = re.search('^([A-Z]{1,2})\d+$', toy_code)
+            toy_code_prefix = m.group(1)
+            return ToyCategory.objects.get(code_prefix=toy_code_prefix)
+        except AttributeError as e:
+            raise
 
     def load_members (self, members_file):
         next_year = date(date.today().year, 1, 1)  # 1st Jan next year
@@ -128,28 +138,105 @@ class Command(BaseCommand):
                 print "Exception processing: "+member.__str__()+": "+str(e)
 
     def load_toys (self, toys_file):
-        return 1
+        # Identify the toys category by its toy_id prefix
+        toys_file_column_names = [
+            'CODE',
+            'DESCRIPTION',
+            'PURCHASED_FROM',
+            'COST',
+            'DATE',
+            'NUM_PIECES',
+            'FEE'
+        ]
+        toy_reader = csv.DictReader(toys_file, fieldnames=toys_file_column_names, delimiter=',', quotechar='"')
+        for toy in toy_reader:
+            try:
+                code = toy['CODE']
+                try:
+                    category = self.get_category_from_code(code)
+                except Exception as e:
+                    print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
+                    continue
+
+                description = toy['DESCRIPTION']
+
+                # Check for currently unused toy codes
+                if description == '':
+                    recycled_toy_id, created = RecycledToyId.objects.get_or_create(toy_id=code,
+                                                                          category=category)
+                    recycled_toy_id.save()
+                    if created:
+                        print "Toy code "+code+" unused.  Added to available toy codes for "+str(category)
+                    continue
+
+                purchase_cost = None
+                m = re.search('\$?([\d\.]+)', toy['COST'])
+                if m:
+                    purchase_cost = m.group(1)
+                vendor = toy['PURCHASED_FROM']
+                toy_vendor, created = ToyVendor.objects.get_or_create(
+                    defaults={'name': vendor},
+                    name__iexact = vendor
+                )
+                if created:
+                    toy_vendor.save()
+                    print "Added new toy vendor '"+str(toy_vendor)+"'"
+                purchase_date = self.try_date(toy['DATE'])
+
+                # default to 1 piece if not specified
+                num_pieces = 1 if toy['NUM_PIECES'] == '' else int(toy['NUM_PIECES'])
+
+                try:
+                    toy_record, created = Toy.objects.get_or_create(
+                        code = code,
+                        name = description,
+                        purchased_from = toy_vendor,
+                        purchase_cost = purchase_cost,
+                        purchase_date = purchase_date,
+                        num_pieces = num_pieces,
+                        category = category
+                    )
+                    toy_record.save()
+
+                except MultipleObjectsReturned:
+                    print "Multiple objects found for "+description
+                    continue
+
+                if (created):
+                    print "New toy added: "+description
+                else:
+                    print "Found existing record.  Update toy "+code
+
+            except AttributeError as e:
+                print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
 
     # Header lines used to identify type of data being loaded
     HEADER_FUNC = 0
     HEADER_MATCH = 1
+    # TODO Change these to use regexes
     HEADERS = [
         (load_members, 'LastName,FirstName'),
         (load_toys, 'No.,Description,Purchased From'),
+        (load_toys, 'No,Description,Purchased From'),
+        (load_toys, 'Number,Description,Purchased From'),
     ]
 
     # Read up to first 5 lines of file and determine the type of data based
     # on data types configured in HEADERS.
     # NOTE. header line of file is consumed by this function, so no need
     # to strip it later
-    def parse_header(self, file):
+    def parse_header(self, file, file_path):
+        read_lines = []
         for n in range(5):
             line = file.readline()
+            read_lines.append(line)
             for data_type in self.HEADERS:
                 if line.startswith(data_type[self.HEADER_MATCH]):
                     return data_type[self.HEADER_FUNC]
         else:
-            return None
+            print "Unable to find callback for file "+file_path
+            print "\n".join(read_lines)
+            raise ValueError("No callback for "+file_path)
 
     def handle(self, *args, **options):
         file_paths = options['file']
@@ -163,5 +250,5 @@ class Command(BaseCommand):
                 continue
 
             with open(file_path, 'rb') as data_file:
-                callback = self.parse_header(data_file)
+                callback = self.parse_header(data_file, file_path)
                 callback(self, data_file)

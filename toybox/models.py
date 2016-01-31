@@ -66,9 +66,10 @@ class LoanType(models.Model):
     def __str__(self):
         return self.name
 
-
 class ToyCategory(models.Model):
     name = models.CharField(max_length=50)
+    code_prefix = models.CharField(max_length=2)
+    next_code_number = models.PositiveSmallIntegerField()
 
     def __unicode__(self):
         return self.name
@@ -76,6 +77,15 @@ class ToyCategory(models.Model):
     def __str__(self):
         return self.name
 
+class RecycledToyId(models.Model):
+    toy_id = models.CharField(max_length=6)
+    category = models.ForeignKey(ToyCategory)
+
+    def __unicode__(self):
+        return self.id
+
+    def __str__(self):
+        return self.id
 
 class Member(models.Model):
     # surname?
@@ -180,6 +190,14 @@ class ToyPackaging(models.Model):
     def __str__(self):
         return self.name
 
+class ToyVendor(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
 
 class Toy(models.Model):
     # needs to be table??
@@ -234,7 +252,7 @@ class Toy(models.Model):
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
-    brand = models.ForeignKey(ToyBrand)
+    brand = models.ForeignKey(ToyBrand, null=True)
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
@@ -244,6 +262,7 @@ class Toy(models.Model):
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
+    purchased_from = models.ForeignKey(ToyVendor)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
