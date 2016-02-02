@@ -99,11 +99,11 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    membership_end_date = models.DateField('Membership due', default=datetime.datetime.now().date())
+    membership_end_date = models.DateField('Membership due', auto_now_add=True, blank=True)
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
-    join_date = models.DateField(default=datetime.datetime.now().date())
+    join_date = models.DateField(auto_now_add=True, blank=True)
     deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
@@ -503,9 +503,10 @@ class Feedback(models.Model):
          (FEEDBACK,"Feedback")
      )
 
-     volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
+     name = models.CharField(max_length=60)
+     date = models.DateTimeField(auto_now_add=True, blank=True)
      page = models.IntegerField(default=NA, choices=PAGE_CHOICES)
      comment = models.CharField(default="", max_length=2048)
 
      def __str__(self):
-        return self.volunteer_reporting + ": " + self.comment
+        return self.name + ": " + self.comment

@@ -7,7 +7,7 @@
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
-
+<div class="row panel-default col-xs-12 col-sm-11 ">
     <div class="fieldWrapper" >
             {% for field in feedback_form %}
                 {{ field.label_tag }}
@@ -27,7 +27,63 @@
                 <button class="btn btn-default" name="submit_feedback" type="submit">Submit</button>
             </div>
 
-
+</div>
 </form>
 
+<div class="row panel-default col-xs-12 col-sm-11 ">
+        <br>
+         <div class="panel-heading">Feedback So Far</div>
+
+            <table  id="feedback_table"
+                    data-show-export="true"
+                    data-export-types="['excel','csv']"
+                    data-classes="table table-condensed table-no-bordered"
+                    class="table table-condensed"
+                    data-filter-control="true"
+                    data-toggle="table"
+                    data-sort-name="date"
+                    data-sort-order="desc"
+                    row-height="20"
+                    data-search="true"
+                    data-show-columns="true"
+                    data-cookie="true"
+                    data-cookie-id-table="feedback_table"
+                    data-escape="false">
+
+
+                    <thead>
+                        <tr>
+                        	<th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
+                            <th data-field="date" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                            <th data-field="page"  data-sortable="true" data-filter-control="select">Page</th>
+                            <th data-field="comment" data-width="300px"  data-sortable="true" data-filter-control="input">Comment</th>
+                       	</tr>
+                    </thead>
+
+                    {% for m in feedback %}
+
+                    <tr>
+                         <td>{{ m.name }}</td>
+                         <td> <span name='{{m.date|date:"Y/m/d H:i"}}'></span>
+                                {{m.date|date:"d/m/Y H:i"}}
+                         </td>
+                         <td>{{m.get_page_display}}</td>
+                         <td>{{m.comment}}</td>
+                    </tr>
+
+                    {% endfor %}
+                </table>
+</div>
+<script>
+
+
+$(document).ready(function() {
+var $table = $('#feedback_table');
+$table.bootstrapTable('refreshOptions', {
+    exportOptions: {
+        onCellHtmlData: DoOnCellHtmlData
+    }
+});
+});
+</script>
 {% endblock content %}
