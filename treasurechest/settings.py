@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'debug_toolbar',
+    'report_builder',
     'toybox',
     'widget_tweaks',
 )
@@ -67,6 +68,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.core.context_processors.request',
                 'django.template.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.media'
             ],
         },
     },
@@ -112,3 +115,6 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
+
+#Report builder settings
+REPORT_BUILDER_INCLUDE = []

@@ -1,8 +1,7 @@
 from django import forms
-from django.shortcuts import redirect, get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from toybox.models import *
 from django.db.models import Q
-from django.forms import ModelChoiceField
 
 
 #################
@@ -78,15 +77,11 @@ def get_members(*fields,**kwargs):
     return {"members":Member.objects.filter(kwargs).values(fields)}
 
 
+
 def base_data(request):
     context={}
-
-    context.update({"daily_balance": Transaction.objects.latest().balance, "login_name": request.user})
+    context.update({"daily_balance": Transaction.objects.latest().balance})
     return context
-
-
-
-
 
 ##################
 # Shared form classes

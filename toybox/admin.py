@@ -34,9 +34,12 @@ class ToyAdmin(admin.ModelAdmin):
 class ToyHistoryAdmin(admin.ModelAdmin):
     list_display=('date_time','toy','event_type','member')
 
+class ChildAdmin(admin.ModelAdmin):
+    list_display=('parent','date_of_birth')
+
 # User space lists
 admin.site.register(Member)
-admin.site.register(Child)
+admin.site.register(Child,ChildAdmin)
 admin.site.register(Toy, ToyAdmin)
 
 # Issues added when returning or from toy list (stocktake)

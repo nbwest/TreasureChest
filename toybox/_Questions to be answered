@@ -251,42 +251,74 @@ add role field to member?
 
 
 TODO 22/12/2015
+BUGS:
+Borrow page: loan duration resets when deleting a toy
+    use credit and give exact - not working
+
+Check returns: missing arg
 
 
+QUESTIONS:
+Active volunteer vs volunteer for wed/Sat - what do these mean? - ok as is
+Loan Types - how will these be used? How are fees worked out - calculated? - Answered
+
+TASKS:
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
 
-Add ability to update issue type, issue comment
-Add ability to set all toys to stocktake state
-exclude retired toys from toy list?
+Add help text to toy buttons
 
-Add children to members page - are names necessary? just birth year?, remove children gender
-Add instruction and receipt images
-Add disable of credit function in borrow page -disable credit button, set all credit to 0
 
-Add logged in volunteer to multiple tables: toy history and transaction
-Permissions for toy retire, member delete, banking and till change
+Feedback - change to logged in user
+
+Add children to members page - birth month and year only - Almost done
+
+Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
+
 Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
     Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
     Add extra step to set this option?
+    Not included in borrowed toy limit
+
+    - "Repairer only" membertype - no fees
+    - member type - can repair flag - due date
+        - toy has not fees, show only repair checkbox for those with repairer flag.
+
+Remove loan type
+    Add toy_deposit to toy table - becomes extra fee
+Enable toy deposit
 
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
 Check borrow fields for bad inputs
 check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
+Check admin for fields that should be readonly and permissions
+    -Delete toy and member shouldn't be allowed
 
 BIGGER ITEMS:
-Merge import data
-Merge volunteer login
-Add login roles? Start with volunteer and admin?
-Add reporting plugin
-migrate to production database
+Merge import data for toys
+
+
+migrate to production database - postgres
+Backup - dropbox folder? google drive?
+OS server - ubuntu, windows 7?
 
 COMPLETE:
+Add reporting plugin
+exclude retired toys from toy list
+Permissions for toy retire, member delete, banking and till change - member delete (not active) performed in admin
+Add logged in volunteer to multiple tables: toy history and transaction
+Member import data
+Merge volunteer login
+Add login roles? Start with volunteer and admin
+members inactive - don't display in member table
+deposit fee amount for refund
+when banking set banking amount.
+Add instruction and receipt images - display with extra click from toy summary
 Enable checked checkbox function in toys for stocktake - Done
 Update till balance - done
 include balance in transactions - done
@@ -296,21 +328,24 @@ Column filter for toy history - done
 Column filter for member list - sort by overdue colour? - Add extra character - done
 Clear temp borrow list if page is left - partially complete, fails if you open another borrow window - forces only one borrower at a time - could be issue down the track
 Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
+Add ability to update issue type, issue comment
+Add ability to set all toys to stocktake state
+Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+All Max children displayed to be change or add + button
+Dealing with low income earner
 Comment when toy is retired
 Enable donation - could be done with what we have?
-Enable toy deposit? - is this required? Amount held by loan type
+
 Add on loan >6 months sets toy as retired - include in config table
 Pagination of transactions, members, toy, toy history to be done on server side.
 Member availability-Is this useful given no scheduling? Below to do in model:
-    # volunteer capacity - bitfield
-    # roster days - bitfield
+    # roster days - bitfield?
     # member notes/characteristics?
 Membership annual fee warning
 Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
 Link transaction to toy history some how
+Set toy add in admin in order of those fields required for adding toys manually.
+email, for receipt - later, more useful for toy reminders. Start with receipt number?
 
-BUGS:
-Borrow page: loan duration resets when deleting a toy
-Timezone().Now is not correct by a day

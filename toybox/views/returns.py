@@ -67,13 +67,13 @@ def returns(request, member_id=None):
                         if issue_fee!=0:
                             transaction=Transaction()
 
-                            transaction.create_transaction_record(member,Transaction.ISSUE_FEE,issue_fee,None,False)
+                            transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,issue_fee,None,False)
 
                     if returns_form.cleaned_data['late_fee']!="":
                         late_fee=float(returns_form.cleaned_data['late_fee'])
                         if late_fee!=0:
                             transaction=Transaction()
-                            transaction.create_transaction_record(member,Transaction.LATE_FEE,late_fee,None,False)
+                            transaction.create_transaction_record(request.user, member,Transaction.LATE_FEE,late_fee,None,False)
 
 
 
@@ -121,7 +121,7 @@ class ReturnsForm(forms.Form):
             for toy in toyList:
                 self.fields['returned_checkbox_%s' % toy.id]=forms.BooleanField(required=False)
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
-                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)
+                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])
 
 
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')

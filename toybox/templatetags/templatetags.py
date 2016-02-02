@@ -28,6 +28,11 @@ TIMESINCE_CHUNKS = (
     (1, ungettext_lazy('%d day', '%d days')),
 )
 
+@register.filter("dict", is_safe=False)
+def dict_filter(value, arg=None):
+    return value.__dict__
+
+
 
 @register.filter("timebetween", is_safe=False)
 def timebetween_filter(value, arg=None):

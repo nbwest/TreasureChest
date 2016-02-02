@@ -13,22 +13,22 @@ For page html use the following template tags:
 <head>
 
     <title>Toy Library</title>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
     <link rel="stylesheet" href="/static/toybox/bootstrap-3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/toybox/bootstrap-table-1.8.1/bootstrap-table.css">
+    <link rel="stylesheet" href="/static/toybox/bootstrap-datepicker-1.5.0/css/bootstrap-datepicker.min.css" />
 
     <script src="/static/toybox/jquery-1.11.3/jquery-1.11.3.min.js"></script>
     <script src="/static/toybox/bootstrap-3.3.5/js/bootstrap.min.js"></script>
     <script src="/static/toybox/bootstrap-table-1.8.1/bootstrap-table.js"></script>
-
-    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
-    <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
     <script src="/static/toybox/bootstrap-table-1.8.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>
-    <script src="/static/toybox/bootstrap-datepicker-1.5.0/js/bootstrap-datepicker.js"></script>
-
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/export/bootstrap-table-export.js"></script>
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/export/tableExport.js"></script>
+    <script src="/static/toybox/bootstrap-table-1.8.1/extensions/cookie/bootstrap-table-cookie.js"></script>
+    <script src="/static/toybox/bootstrap-datepicker-1.5.0/js/bootstrap-datepicker.min.js"></script>
 
 </head>
 
@@ -41,6 +41,40 @@ For page html use the following template tags:
       {
         $("#duplicate-menu").html($("#menu").html());
       });
+
+
+//to deal with exporting the table with select filters - stops the choices being the column header for the exported data
+//also deal with combo boxes, inpt text boxes and...
+function DoOnCellHtmlData(cell, row, col, data)
+{
+    var result = "";
+
+    if (data != "")
+    {
+        var html = $.parseHTML(data);
+
+       // console.log(data);
+        $.each(html, function ()
+        {
+           if ($(this).prop("tagName")=="SELECT")
+                result+=$(this).find(":selected").text();
+
+           else if ($(this).prop("tagName")=="INPUT")
+                result+=$(this).val();
+
+           else if ($(this).prop("tagName")=="SPAN")
+                result+=$(this).text();
+
+            if (typeof $(this).html() === 'undefined')
+                result += $(this).text();
+            else if (typeof $(this).attr('class') === 'undefined' || $(this).hasClass('th-inner') === true)
+               result += $(this).html();
+        });
+    }
+    //console.log(result);
+    //console.log("------------------------------------");
+    return result;
+}
 </script>
 
 
@@ -64,9 +98,11 @@ For page html use the following template tags:
 
 
 
-            <ul class="nav navbar-nav hidden-xs ">
-                <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
-            </ul>
+            {% if daily_balance %}
+                <ul class="nav navbar-nav hidden-xs ">
+                    <li><a href="{% url 'toybox:transactions' %}">Daily Balance: ${{ daily_balance|floatformat:2}}</a></li>
+                </ul>
+            {% endif %}
 
         </div>
 
@@ -74,8 +110,8 @@ For page html use the following template tags:
             <ul class="nav navbar-nav navbar-right">
 
                 {% if request.user.username %}
-                <!--TODO set logged in member link-->
-                <li><a href="#">Logged in as: {{ request.user.username }}</a></li>
+
+                <li><a href="/admin">Logged in as: {{ request.user.username }} {% if request.user.first_name %}({{request.user.first_name}} {{request.user.last_name}}){%endif%} </a></li>
                 {% endif %}
 
                 <!-- TODO utilise logout Button -->
@@ -90,7 +126,7 @@ For page html use the following template tags:
                     <li><a href="{% url 'toybox:members' %}"><strong>Members</strong></a></li>
                     <li><a href="{% url 'toybox:toys' %}"><strong>Toys</strong></a></li>
                     <li><a href="{% url 'toybox:transactions' %}"><strong>Transactions</strong></a></li>
-                    <li><a href="{% url 'toybox:reports' %}"><strong>Reports</strong></a></li>
+                    <li><a href="/report_builder"><strong>Reports</strong></a></li>
                     <li><a href="/admin"><strong>Admin</strong></a></li>
                     <li><a href="{% url 'toybox:feedback' %}"><strong>Feedback</strong></a></li>
 

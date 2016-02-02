@@ -39,7 +39,28 @@ class Command(BaseCommand):
     # Convert strings to boolean
     def parse_bool(self, bstring):
         return bstring in ['yes', 'Yes', 'YES', 'y', 'Y']
+   
+    # def parse_wed(self, days):
+    #
+    #     if any(ext in days.upper() for ext in ['W','WED','BOTH','EITHER','WEDNESDAY']):
+    #         return True
+    #
+    #     return False
+    #
+    # def parse_fri(self, days):
+    #
+    #     if any(ext in days.upper() for ext in ['F','FRI','BOTH','EITHER','FRIDAY']):
+    #        return True
+    #
+    #     return False
 
+    def parse_contains(self, source, string_list):
+
+        if any(ext in source.upper() for ext in string_list):
+           return True
+
+        return False
+    
     def get_category_from_code(self, toy_code):
         try:
             if toy_code == '' or toy_code == None:
@@ -49,10 +70,10 @@ class Command(BaseCommand):
             return ToyCategory.objects.get(code_prefix=toy_code_prefix)
         except AttributeError as e:
             raise
-
+   
     def load_members (self, members_file):
         next_year = date(date.today().year, 1, 1)  # 1st Jan next year
-        annual_member = MemberType.objects.get(name = "private")
+        annual_member = MemberType.objects.get(name = "Public")
 
         members_file_column_names = [
             'LAST_NAME',
@@ -105,6 +126,13 @@ class Command(BaseCommand):
                     member_record.potential_volunteer = False
                     member_record.volunteer = self.parse_bool(member['VOL'])
                     member_record.join_date = join_date
+                    member_record.active=True
+
+                    member_record.volunteer_capacity_wed=self.parse_contains(member[DAYS],['WED','BOTH','EITHER','WEDNESDAY'])
+                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
+                    member_record.volunteer_capacity_sat=self.parse_contains(member[DAYS],['SAT','BOTH','EITHER','SATURDAY'])
+                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
+
                     member_record.save()
 
                 except MultipleObjectsReturned:

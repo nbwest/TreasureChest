@@ -6,6 +6,15 @@ from decimal import *
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import Permission, User
+
+def format_username(user):
+
+    if user.first_name=="":
+        result= user.username
+    else:
+        result=user.first_name+" "+user.last_name
+    return result
 
 
 class Config(models.Model):
@@ -58,7 +67,8 @@ class LoanType(models.Model):
     missing_piece_fine = models.DecimalField(decimal_places=2, max_digits=5)
     missing_piece_refund = models.DecimalField(decimal_places=2, max_digits=5)
     loan_deposit = models.DecimalField(decimal_places=2, max_digits=5)
-    # member_type = models.ForeignKey(MemberType, null=True)
+
+    #TODO loan_deposit, loan_period_max not yet implemented
 
     def __unicode__(self):
         return self.name
@@ -88,32 +98,30 @@ class RecycledToyId(models.Model):
         return self.id
 
 class Member(models.Model):
+
     # surname?
     name = models.CharField(max_length=100)
     partner = models.CharField(max_length=100, blank=True)
     address = models.CharField(max_length=300)
     phone_number1 = models.CharField(max_length=12)
     phone_number2 = models.CharField(max_length=12, blank=True)
-    email_address = models.EmailField(max_length=100)
+    email_address = models.EmailField()
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    membership_end_date = models.DateField('Membership due', default=django.utils.timezone.now)
-
+    membership_end_date = models.DateField('Membership due', default=datetime.datetime.now().date())
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
-    #is active required?
-    # active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
-    join_date = models.DateField(default=django.utils.timezone.now)
-     # is deposit fee required???
-    # deposit_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    # is membership fee required???
-    # membership_fee = models.DecimalField(decimal_places=2, max_digits=5, default=0)
-    deposit_paid = models.BooleanField(default=False)
+    join_date = models.DateField(default=datetime.datetime.now().date())
+    deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    volunteer_capacity_wed = models.BooleanField(default=False)
+    volunteer_capacity_sat = models.BooleanField(default=False)
 
-    # volunteer capacity - bitfield
+    #TODO
     # roster days - bitfield
     # member notes/characteristics?
+
 
     def __unicode__(self):
         return self.name
@@ -128,9 +136,16 @@ class Member(models.Model):
     def membership_valid(self):
         return (datetime.datetime.now().date() < self.membership_end_date)
 
-    def is_current(self):
-        return  self.membership_valid() and  self.deposit_paid
 
+    def deposit_paid(self):
+         return self.deposit_fee_paid != 0
+
+    def is_current(self):
+        return  self.membership_valid() and self.deposit_paid()
+
+    def update_membership_date(self):
+        self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
+        self.save()
 
 
     def update_membership_date(self):
@@ -141,26 +156,15 @@ class Member(models.Model):
 
 
 class Child(models.Model):
-    # NOT_SPECIFIED = 0
-    # F  = 1
-    # M = 2
-    #
-    # GENDER_CHOICES = (
-    #     (NOT_SPECIFIED, "Not Specified"),
-    #     (F, "Female"),
-    #     (M, "Male")
-    # )
 
-    # name = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField()
-    # gender = models.CharField(max_length=13, choices=GENDER_CHOICES)
     parent = models.ForeignKey(Member)
 
     def __unicode__(self):
-        return self.name
+        return str(self.date_of_birth)
 
     def __str__(self):
-        return self.name
+        return str(self.date_of_birth)
 
    # @staticmethod
    # def get_gender(gender_set):
@@ -200,15 +204,13 @@ class ToyVendor(models.Model):
         return self.name
 
 class Toy(models.Model):
-    # needs to be table??
-    # this is covering two different states, condition and location - might want to think about this
-    # toy_state,text, can_be_borrowed,listed,user_selectable<- or done by workflow
     AVAILABLE = 0
     ON_LOAN = 1
     STOCKTAKE = 2
     TO_BE_REPAIRED = 3
     BEING_REPAIRED = 4
     RETIRED = 5
+    TO_BE_RETIRED = 6
 
     TOY_STATE_CHOICES = (
         (AVAILABLE, 'Available'),
@@ -216,7 +218,8 @@ class Toy(models.Model):
         (STOCKTAKE, 'Stocktake'),
         (TO_BE_REPAIRED, 'To Be Repaired'),
         (BEING_REPAIRED, 'Being Repaired'),
-        (RETIRED, 'Retired')
+        (RETIRED, 'Retired'),
+        (TO_BE_RETIRED, 'To Be Retired'),
     )
 
     ISSUE_NONE = 0
@@ -225,6 +228,7 @@ class Toy(models.Model):
     MINOR_MISSING_PIECE = 3
     MAJOR_MISSING_PIECE = 4
     WHOLE_TOY_MISSING = 5
+    RETIRE_VERIFIED =6
     # not an issue, how would these been entered? - Not a "return" but noted in toy history?
     # RETURNED_MISSING_PIECE = 6
     # RETURNED_MISSING_TOY = 7
@@ -234,10 +238,11 @@ class Toy(models.Model):
     ISSUE_TYPE_CHOICES = (
         (ISSUE_NONE, 'No Issue'),
         (BROKEN_REPAIRABLE, 'Broken repairable'),  # -> to admin cupboard
-        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),  # -> retired
+        (BROKEN_NOT_REPAIRABLE, 'Broken not repairable'),  # -> to be retired
         (MINOR_MISSING_PIECE, 'Minor missing piece'),  # -> to shelf
         (MAJOR_MISSING_PIECE, 'Major missing piece'),  # -> to admin cupboard
-        (WHOLE_TOY_MISSING, 'Whole toy missing'),  # -> retired
+        (WHOLE_TOY_MISSING, 'Whole toy missing'),  # -> to be retired
+        (RETIRE_VERIFIED, 'Verified to retire'),
         # who can retire a toy?
         # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
         # (RETURNED_MISSING_TOY, 'Returned missing toy'),
@@ -258,7 +263,7 @@ class Toy(models.Model):
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
     due_date = models.DateField(blank=True, null=True)
     borrow_date = models.DateField(blank=True, null=True)
-    max_age = models.IntegerField(blank=True, null=True)
+    # max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
@@ -267,6 +272,8 @@ class Toy(models.Model):
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
+    image_receipt = models.ImageField(blank=True,upload_to="toy_images", null=True)
+    image_instructions = models.ImageField(blank=True,upload_to="toy_images", null=True)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
     loan_type = models.ForeignKey(LoanType, null=True)
@@ -284,16 +291,15 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow_toy(self, member, duration):
+    def borrow_toy(self, member, duration, user):
         self.member_loaned = member
         self.borrow_date = datetime.datetime.now()
         self.state = self.ON_LOAN
         self.due_date = datetime.datetime.now() + datetime.timedelta(days=duration * 7)
         self.save()
 
-        #TODO need volunteer user details
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self)
+        toy_history.record_toy_event(self,user)
 
 
     def issue_type_to_state(self, issue_type):
@@ -303,17 +309,19 @@ class Toy(models.Model):
         elif issue_type == self.BROKEN_REPAIRABLE:
             state = self.TO_BE_REPAIRED
         elif issue_type == self.BROKEN_NOT_REPAIRABLE:
-            state = self.RETIRED  # TODO DOES the member have the right to do this?
+            state = self.TO_BE_RETIRED
         elif issue_type == self.MINOR_MISSING_PIECE:
             state = self.AVAILABLE
         elif issue_type == self.MAJOR_MISSING_PIECE:
             state = self.TO_BE_REPAIRED
         elif issue_type == self.WHOLE_TOY_MISSING:
-            state = self.RETIRED  # TODO DOES the member have the right to do this?
+            state = self.TO_BE_RETIRED
+        elif issue_type == self.RETIRE_VERIFIED:
+            state = self.RETIRED
             
         return state    
 
-    def return_toy(self, issue, comment):
+    def return_toy(self, issue, comment, user):
 
         self.issue_type = int(issue)
 
@@ -322,7 +330,7 @@ class Toy(models.Model):
         self.issue_comment = comment
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self)
+        toy_history.record_toy_event(self,user)
 
         self.member_loaned = None
         time_borrowed = date.today() - self.borrow_date
@@ -331,6 +339,8 @@ class Toy(models.Model):
 
         self.save()
 
+    # def change_toy_state(self, issue_type):
+    #     if "retire_toy" in self.Meta.permissions:
 
     def weeks_overdue(self):
 
@@ -350,6 +360,10 @@ class Toy(models.Model):
         #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
         #     image_.allow_tags = True
 
+    class Meta:
+        permissions = (
+            ("retire_toy", "Can retire toys"),
+        )
 
 class TempBorrowList(models.Model):
     member = models.ForeignKey(Member)
@@ -365,6 +379,7 @@ class TempBorrowList(models.Model):
 
     def __str__(self):
         return self.toy.code + ":" + self.member.name
+
 
 
 class Transaction(models.Model):
@@ -407,8 +422,7 @@ class Transaction(models.Model):
 
     date_time = models.DateTimeField('Transaction event date and time', auto_now_add=True)
     member = models.ForeignKey(Member, null=True, related_name='member_involved')
-    # TODO get volunteer login
-    # volunteer_reporting = models.ForeignKey(Member, related_name='volunteer_reporting')
+    volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
     transaction_type = models.IntegerField(choices=TRANSACTION_TYPE_CHOICES)
     amount = models.DecimalField('Transaction amount', decimal_places=2, max_digits=6, default=0)
     balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
@@ -422,7 +436,7 @@ class Transaction(models.Model):
         return self.get_transaction_type_display()
 
 
-    def create_transaction_record(self, member, transaction_type, amount,comment=None, complete=True, balance_change=0.00):
+    def create_transaction_record(self, user,member, transaction_type, amount, comment=None, complete=True, balance_change=0.00):
         self.member = member
 
         self.transaction_type = transaction_type
@@ -436,18 +450,18 @@ class Transaction(models.Model):
 
         self.balance = latest_transaction.balance + Decimal(balance_change)
 
-        #TODO save volunteer reporting
+
+        self.volunteer_reporting=format_username(user)
 
         self.save()
-
-    #amount to bank
-    #TODO admin rights to do this
-    def bank(self, amount):
-        self.create_transaction_record(None,self.BANK_DEPOSIT,amount,"")
 
 
     class Meta:
         get_latest_by = "date_time"
+        permissions = (
+            ("transaction_actions", "Can bank and adjust till"),
+        )
+
 
 
 # fine associated with missing pieces etc? currently captured by loan type
@@ -460,11 +474,9 @@ class ToyHistory(models.Model):
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     member = models.ForeignKey(Member, blank=True, null=True)
-   # volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
+    volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
 
-    # transaction = models.ForeignKey(Transaction, null=True)
-
-    def record_toy_event(self, toy):
+    def record_toy_event(self, toy, user):
         self.toy=toy
         self.date_time=datetime.datetime.now()
         self.event_type=toy.state
@@ -472,10 +484,8 @@ class ToyHistory(models.Model):
         self.issue_type=toy.issue_type
         self.member=toy.member_loaned
 
-        #TODO get  logged in user
-        #self.volunteer_reporting=logged_in_user
 
-        # self.transaction=transaction
+        self.volunteer_reporting= format_username(user)
 
         self.save()
 
@@ -488,7 +498,7 @@ class ToyHistory(models.Model):
 class Feedback(models.Model):
 
      NA=0
-     HOME = 1
+     LOGIN = 1
      BORROW = 2
      RETURN = 3
      MEMBERS = 4
@@ -501,7 +511,7 @@ class Feedback(models.Model):
 
      PAGE_CHOICES = (
          (NA,"Not Applicable"),
-         (HOME,"Home"),
+         (LOGIN,"Login"),
          (BORROW,"Borrow"),
          (RETURN,"Return"),
          (MEMBERS,"Members"),
@@ -512,9 +522,9 @@ class Feedback(models.Model):
          (FEEDBACK,"Feedback")
      )
 
-     volunteer_reporting = models.ForeignKey(Member, related_name='%(class)s_requests_created')
+     volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
      page = models.IntegerField(default=NA, choices=PAGE_CHOICES)
      comment = models.CharField(default="", max_length=2048)
 
      def __str__(self):
-        return self.volunteer_reporting.name + ": " + self.comment
+        return self.volunteer_reporting + ": " + self.comment
