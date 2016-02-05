@@ -11,7 +11,7 @@ class LoanTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'loan_cost', 'loan_deposit')
 
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display=('id','volunteer_reporting','page','comment')
+    list_display=('id','date','name','page','comment')
     readonly_fields=('id',)
 
 

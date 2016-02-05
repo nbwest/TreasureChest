@@ -23,7 +23,8 @@
              data-cookie-id-table="toy_history_table"
              data-show-export="true"
              data-export-types="['excel','csv']"
-             data-show-pagination-switch="true">
+             data-show-pagination-switch="true"
+             data-escape="false">
 
             <thead>
                 <tr>
@@ -41,7 +42,7 @@
             {% for event in toy_history %}
               <tr>
                     <td>
-                        <span class="hidden">{{event.date_time|date:"Y/m/d H:i"}}</span>
+                        <span name='{{event.date_time|date:"Y/m/d H:i"}}'></span>
                         {{event.date_time|date:"d/m/Y H:i"}}
                     </td>
                     <td>{{event.get_event_type_display}}</td>
