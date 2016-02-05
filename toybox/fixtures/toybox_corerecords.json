@@ -17,7 +17,7 @@
     "pk": 1,
     "fields": {
       "membership_period": 1,
-      "name": "private",
+      "name": "Public",
       "fee": 30,
       "deposit": 30
     }
