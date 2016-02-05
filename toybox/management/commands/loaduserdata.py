@@ -128,9 +128,9 @@ class Command(BaseCommand):
                     member_record.join_date = join_date
                     member_record.active=True
 
-                    member_record.volunteer_capacity_wed=self.parse_contains(member[DAYS],['WED','BOTH','EITHER','WEDNESDAY'])
+                    member_record.volunteer_capacity_wed=self.parse_contains(member['DAYS'],['WED','BOTH','EITHER','WEDNESDAY'])
                     # print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
-                    member_record.volunteer_capacity_sat=self.parse_contains(member[DAYS],['SAT','BOTH','EITHER','SATURDAY'])
+                    member_record.volunteer_capacity_sat=self.parse_contains(member['DAYS'],['SAT','BOTH','EITHER','SATURDAY'])
                     # print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
 
                     member_record.save()
@@ -238,6 +238,9 @@ class Command(BaseCommand):
             except AttributeError as e:
                 print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
 
+    def load_toy_photos(self, photos_dir):
+        return
+
     # Header lines used to identify type of data being loaded
     HEADER_FUNC = 0
     HEADER_MATCH = 1
@@ -273,7 +276,10 @@ class Command(BaseCommand):
             exit(1)
 
         for file_path in file_paths:
-            if not os.path.isfile(file_path):
+            # Check for dir of images
+            if os.path.isdir(file_path):
+                self.load_toy_photos(file_path)
+            elif not os.path.isfile(file_path):
                 print "Invalid file path: "+file_path
                 continue
 
