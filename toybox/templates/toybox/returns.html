@@ -63,6 +63,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
                     <td>
                         <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
+
                     </td>
 
                     <td>
@@ -72,6 +73,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     <!--TODO add issue fee-->
                     <td>
                         <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween }}</span>
+                         {% if toy.state == toy.BEING_REPAIRED %}
+                        <span class="label label-danger label-as-badge">Being Repaired</span>
+                        {%endif%}
                     </td>
 
                     {% if toy.due_date|timebetween|slice:':1' == '-' %}

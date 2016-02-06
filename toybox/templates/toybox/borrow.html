@@ -9,7 +9,7 @@
 
 <div id="member" class="row" >
 
-    <div   class="col-xs-10 col-sm-10 ">
+    <div   class="col-xs-12 col-sm-10 ">
 
            {% include "toybox/member_search.html" with return_page="/toybox/borrow" %}
            {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
@@ -45,25 +45,20 @@
 </div>
 
 {% if toy %}
-   <div class="row" >
-
-
-        {% include "toybox/toy_summary.html" %}
-
-
-   </div>
+      {% include "toybox/toy_summary.html" %}
 {%else%}
      <div class="row panel-fluid panel-default" ></div>
 {% endif %}
 
-
-<div id="transaction"  class="row">
-    <div class="panel-default col-xs-12 col-sm-10 ">
+<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+    {% csrf_token %}
+    <div id="transaction"  class="row">
+        <div class="panel-default col-xs-12 col-sm-10 ">
 
               <div class="panel-heading">Borrowed Toys</div>
 
               <!-- Table -->
-          <form action="{{ request.get_full_path }}" method='post'>
+          <!--<form action="{{ request.get_full_path }}" method='post' class="form-group">-->
                 {% csrf_token %}
               <table class="table" id="toy_table">
 
@@ -74,6 +69,7 @@
                         	<th>Toy Name</th>
                             <th>Due</th>
                             <th>Borrow Fee</th>
+                            <th>Lend for repair</th>
                             <th>Remove</th>
                        	</tr>
                     </thead>
@@ -92,12 +88,21 @@
                         <td>{{ toy.name }}</td>
 
                         <td>
-                            <span class="label label-success label-as-badge"><span name="new_toy_due">0</span> weeks</span>
+                            <span class="label label-success label-as-badge"><span name="new_toy_due" link="repair_checkbox_{{toy.id}}">0</span> weeks</span>
                         </td>
 
                        <td>
-                            $<span name="fee" value="{{toy.loan_type.loan_cost}}">{{ toy.loan_type.loan_cost|floatformat:2}}</span>
+                            <span id="fee_{{toy.id}}" link="repair_checkbox_{{toy.id}}" name="fee" value="{{toy.loan_type.loan_cost}}">{{ toy.loan_type.loan_cost|floatformat:2}}</span>
                        </td>
+
+                        <td style="text-align: center;vertical-align: middle;">
+                            {%if toy.state == toy.TO_BE_REPAIRED %}
+
+                            {% form_field_concat_id payment_form "repair_checkbox_" toy.id name="repair_checkbox_^suffix^" class="form-control" onclick="UpdateBorrowFee()"%}
+                            {%else%}
+                            -
+                            {%endif%}
+                        </td>
 
                         <td>
                             <button title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateBorrowFee()" class="btn btn-danger" aria-label="Left Align">
@@ -141,6 +146,10 @@
                            N/A
                        </td>
 
+                        <td style="text-align: center;vertical-align: middle;">
+                            -
+                        </td>
+
                         <td>
                             <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
@@ -164,7 +173,7 @@
                      {% endfor %}
 
               </table>
-               </form>
+               <!--</form>-->
         </div>
 
 
@@ -172,8 +181,7 @@
 
 
 
- <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-    {% csrf_token %}
+
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
         <div class="input-group  col-xs-12 col-sm-10 ">
 
@@ -248,7 +256,7 @@
 
 //$("#loanDurationRadioGroup").change(function(){UpdateFee()});
 
-
+var enable_exact_for_repair_only=false;
 
 $( document ).ready(function()
 {
@@ -266,7 +274,7 @@ function UpdateFee(id)
 
 function UpdateBorrowFee()
 {
-console.log("updateBorrowFee");
+//console.log("updateBorrowFee");
     var fee_mult=parseFloat($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val());
 
 
@@ -277,6 +285,10 @@ console.log("updateBorrowFee");
 
     //if (isNaN(fee_mult) break;
 
+    var toys_checked=0;
+    var for_repair=0;
+    var total_new_toys={{new_borrow_toy_list|length}};
+
    $("span[name='fee']","#toy_table")
    .each(
 
@@ -285,18 +297,59 @@ console.log("updateBorrowFee");
                 var originalValue=parseFloat(this.getAttribute("value"));
                 var newValue=fee_mult*originalValue;
 
-                this.innerHTML=newValue.toFixed(2);
+                this.innerHTML="$"+newValue.toFixed(2);
+
+                //console.log(this.getAttribute("link"));
+                //console.log(originalValue);
+
+                //exclude if lending for repair
+                this.style.visibility = "visible";
+                var repair_checkbox=document.getElementById(this.getAttribute("link"));
+                if (repair_checkbox!=null)
+                {
+                    for_repair++;
+                    if (repair_checkbox.checked)
+                    {
+                        newValue=0;
+                        this.style.visibility = "hidden";
+                        toys_checked++;
+                    }
+                }
                 total+=newValue;
+
            }
    );
+
+   enable_exact_for_repair_only=(total_new_toys==toys_checked);
+   console.log("EXACT: "+enable_exact_for_repair_only);
+
+
 
    $("span[name='new_toy_due']","#toy_table")
    .each(
         function()
         {
-           this.innerHTML=fee_mult;
+         //extend time if lending for repair
+            var repair_checkbox=document.getElementById(this.getAttribute("link"));
+         //   console.log(this);
+         //   console.log(this.getAttribute("link"));
+         //   console.log(repair_checkbox);
+        //    console.log(repair_checkbox.checked);
+
+            due=fee_mult
+            if (repair_checkbox!=null)
+            {
+                //console.log(repair_checkbox.checked);
+                if (repair_checkbox.checked)
+                   due={{repair_loan_duration}};
+            }
+
+           // console.log(this);
+           this.innerHTML=due;
         }
    );
+
+
 
    document.getElementById("id_borrow_fee").value=total.toFixed(2);
    UpdateFee();
@@ -314,10 +367,11 @@ function CalcTotal(id)
 
   nodes.forEach(function(node){
 
-       // console.log(node);
+        //console.log(node);
         //console.log("VALUE: "+node.value);
         if (!isNaN(Number(node.value)))
         {
+
             total+= Number(node.value);
         }
   });
@@ -371,21 +425,22 @@ function CalcChange(id)
     var change=paid-total;
     var credit=Number({{payment_form.credit.value}});
 
-    console.log("CHANGE: "+change);
-    console.log("PAID: "+paid);
-    console.log("CREDIT: "+credit);
-    console.log("TOTAL: "+total);
+   // console.log("CHANGE: "+change);
+  //  console.log("PAID: "+paid);
+  //  console.log("CREDIT: "+credit);
+  //  console.log("TOTAL: "+total);
 
     document.getElementById("id_change").value=change.toFixed(2);
 
 
 
-    $("#btn_exact").prop('disabled', (credit>=total)|(change!=0)|(isNaN(change))|(total==0));
+    $("#btn_exact").prop('disabled', ((credit>=total)|(change!=0)|(isNaN(change))|(total==0))& !enable_exact_for_repair_only);
     //$("#btn_use_credit").prop('disabled', (credit==0)|(total==0)|((change>=0)&(credit<=0))|(isNaN(change)));
     //$("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_add_credit").prop('disabled', total==0 | paid==0 |(credit<total & change==0 & total!=0));
     $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
+
 
 
 

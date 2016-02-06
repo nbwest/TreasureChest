@@ -4,33 +4,7 @@
 
 <div class="row">
 
-    <div class="panel-fluid panel-default col-xs-11 col-sm-5">
-
-        <p style="float:right;text-align:right;max-width:200px;">
-
-           <a  href="{{ MEDIA_URL }}{{ toy.image }}">
-              <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:150px;" src="{{ MEDIA_URL }}{{ toy.image }}">
-           </a>
-
-           <br>
-            {% if toy.image_receipt %}
-                <a  href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
-            {%else%}
-                 Receipt Image <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-            {%endif%}
-           <br>
-           <br>
-            {% if toy.image_instructions %}
-                <a  href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
-            {%else%}
-                 Instructions Image <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-            {%endif%}
-
-        </p>
-    </div>
-
-
-    <div class="panel-fluid panel-default col-xs-11 col-sm-5 " style="text-align: left; vertical-align: middle; ">
+    <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
 
 
 
@@ -129,7 +103,34 @@
         </div>
 
     </div>
-    {% endif %}
+
+
+
+        <p style="float:left;text-align:left;max-width:200px;">
+
+           <a  href="{{ MEDIA_URL }}{{ toy.image }}">
+              <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:150px;" src="{{ MEDIA_URL }}{{ toy.image }}">
+           </a>
+
+           <br>
+            {% if toy.image_receipt %}
+                <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
+            {%else%}
+                 <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Receipt Image
+            {%endif%}
+           <br>
+           <br>
+            {% if toy.image_instructions %}
+                <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
+            {%else%}
+                 <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Instructions Image
+            {%endif%}
+
+        </p>
     </div>
+
+
+ </div>
+     {% endif %}
 </span>
 

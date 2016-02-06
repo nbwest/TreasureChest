@@ -272,10 +272,15 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow_toy(self, member, duration, user):
+    def borrow_toy(self, member, duration, user, loaned_for_repair):
         self.member_loaned = member
         self.borrow_date = datetime.datetime.now()
-        self.state = self.ON_LOAN
+
+        if loaned_for_repair:
+            self.state=self.BEING_REPAIRED
+        else:
+            self.state = self.ON_LOAN
+
         self.due_date = datetime.datetime.now() + datetime.timedelta(days=duration * 7)
         self.save()
 

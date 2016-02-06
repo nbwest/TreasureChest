@@ -5,7 +5,7 @@
     <form role="search" action="{{ request.get_full_path }}" method='post'>
         {% csrf_token %}
 
-        <div class="input-group {%if toy_search_form.toy_search_string.errors %} has-error {%endif%}">
+        <div class="input-group ">
 
             {% if not member %}
                 {% render_field toy_search_form.toy_search_string class+="form-control" placeholder=toy_search_form.toy_search_string.label disabled="disabled" %}

@@ -53,7 +53,7 @@ def returns(request, member_id=None):
 
 
                 if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]==True:
-                    toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)])
+                    toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user)
                     # toy.return_toy()
 
 

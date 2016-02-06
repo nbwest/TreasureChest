@@ -285,7 +285,7 @@ class Command(BaseCommand):
         Config.objects.filter(key="loan_durations").delete()
         Config.objects.update_or_create(key="loan_durations",
                                             value="12",
-                                            help="Single digit number of weeks in a string, eg 126",
+                                            help="Single digit number of weeks in a string, eg 126 for 1, 2 and 6 weeks",
                                             )
 
         Config.objects.filter(key="default_loan_duration").delete()
@@ -298,6 +298,12 @@ class Command(BaseCommand):
         Config.objects.update_or_create(key="max_toys",
                                           value="4",
                                           help="Maximum number of toys a member can borrow at once eg 4",
+                                          )
+
+        Config.objects.filter(key="repair_loan_duration").delete()
+        Config.objects.update_or_create(key="repair_loan_duration",
+                                          value="26",
+                                          help="Maximum duration a repair agent can have a toy in weeks. eg 26",
                                           )
 
 

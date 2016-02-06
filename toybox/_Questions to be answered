@@ -263,30 +263,17 @@ QUESTIONS:
 Loan Types - how will these be used? How are fees worked out - calculated? - Answered
 
 TASKS:
+Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
+
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
+Remove loan type table, add loan_deposit to toy table
+Add toy_deposit to toy table - becomes extra fee
 
 Add help text to toy buttons
-
-
-Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
-
-Add repairer membertype - may or may not borrow toys. Could be done in membertype, member or by toy - discussion needed
-    Checkbox by toy on UI would allow flexibility. Toy is marked as being repaired, 6 month due date - prevent auto retire.
-    Add extra step to set this option?
-    Not included in borrowed toy limit
-
-    - "Repairer only" membertype - no fees
-    - member type - can repair flag - due date
-        - toy has not fees, show only repair checkbox for those with repairer flag.
-
-Remove loan type
-    Add toy_deposit to toy table - becomes extra fee
-Enable toy deposit
-
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
 Check borrow fields for bad inputs
@@ -304,6 +291,12 @@ Backup - dropbox folder? google drive?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+Add repairer membertype -
+    - "Repairer only" membertype - no annual fees
+    - member type - can repair flag - due date
+        - toy has not fees, show only repair checkbox for those with repairer flag. Not included in max toy limit
+    - Add for repair checkbox in borrow toy list
+
 Feedback - change to logged in user
 Add children to members page - birth month and year only - Almost done
 Add reporting plugin
