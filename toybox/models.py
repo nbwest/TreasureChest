@@ -52,31 +52,6 @@ class MemberType(models.Model):
         return self.name
 
 
-# loan type needs some thought, regarding missing pieces and the issue register
-# loan period may not be needed, or set to zero if not fixed- change to loan_period_max ?
-# Removed member type, a toy can have only one loan type so different member type doesn't make sense
-# overdue fine - per week?
-
-
-
-class LoanType(models.Model):
-    name = models.CharField(max_length=20)
-    loan_period_max = models.IntegerField(blank=True, null=True)
-    loan_cost = models.DecimalField(decimal_places=2, max_digits=5)
-    overdue_fine = models.DecimalField(decimal_places=2, max_digits=5)
-    missing_piece_fine = models.DecimalField(decimal_places=2, max_digits=5)
-    missing_piece_refund = models.DecimalField(decimal_places=2, max_digits=5)
-    loan_deposit = models.DecimalField(decimal_places=2, max_digits=5)
-
-    #TODO loan_deposit, loan_period_max not yet implemented
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-
 class ToyCategory(models.Model):
     name = models.CharField(max_length=50)
 
@@ -156,14 +131,6 @@ class Child(models.Model):
     def __str__(self):
         return str(self.date_of_birth)
 
-   # @staticmethod
-   # def get_gender(gender_set):
-   #     gs = gender_set.upper()
-   #     tup = {
-   #         "M": Child.GENDER_CHOICES[Child.M],
-   #         "F": Child.GENDER_CHOICES[Child.F],
-   #     }.get(gs, Child.GENDER_CHOICES[Child.NOT_SPECIFIED])
-   #     return tup[1]
 
 class ToyBrand(models.Model):
     name = models.CharField(max_length=50)
@@ -257,12 +224,15 @@ class Toy(models.Model):
     image_instructions = models.ImageField(blank=True,upload_to="toy_images", null=True)
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
-    loan_type = models.ForeignKey(LoanType, null=True)
+
     comment = models.CharField(blank=True, null=True, max_length=1024)
 
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     borrow_counter = models.IntegerField(default=0)
+
+    loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
+    loan_deposit = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
 
     def __str__(self):
         return self.name

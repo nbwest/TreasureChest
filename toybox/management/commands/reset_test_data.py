@@ -21,27 +21,7 @@ class Command(BaseCommand):
                                             deposit=100,
                                             membership_period=MemberType.YEARLY)
 
-    def _reset_loantype(self):
 
-        LoanType.objects.filter(name="Standard").delete()
-
-        self.lt_standard, created = LoanType.objects.update_or_create(name="Standard",
-                                            loan_period_max=6,
-                                            loan_cost=0.5,
-                                            overdue_fine=0.5,
-                                            missing_piece_fine=0.5,
-                                            missing_piece_refund=0.5,
-                                            loan_deposit=0.0)
-
-        LoanType.objects.filter(name="Outdoor Toy").delete()
-
-        self.lt_outdoor, created = LoanType.objects.update_or_create(name="Outdoor Toy",
-                                            loan_period_max=6,
-                                            loan_cost=2.0,
-                                            overdue_fine=2.0,
-                                            missing_piece_fine=0.5,
-                                            missing_piece_refund=0.5,
-                                            loan_deposit=5.0)
 
     def _reset_members(self):
         YEARS = 365
@@ -164,7 +144,8 @@ class Command(BaseCommand):
                                                           state=Toy.AVAILABLE,
                                                           category=self.tc_big,
                                                           packaging=self.tp_bag,
-                                                          loan_type=self.lt_standard,
+                                                          loan_cost=0.5,
+                                                          loan_deposit=0.0,
                                                           image="toy_images/51JFER2cZpL._SY300__6bqlMzq.jpg")
 
        
@@ -179,7 +160,8 @@ class Command(BaseCommand):
                                                            state=Toy.AVAILABLE,
                                                            category=self.tc_img,
                                                            packaging=self.tp_bag,
-                                                           loan_type=self.lt_standard,
+                                                           loan_cost=0.5,
+                                                           loan_deposit=0.0,
                                                            image="toy_images/kids-captain-black-pirate-costume_Dk0e1gc.jpg")
        
         Toy.objects.filter(code="P5").delete()
@@ -193,7 +175,8 @@ class Command(BaseCommand):
                                                           state=Toy.AVAILABLE,
                                                           category=self.tc_puz,
                                                           packaging=self.tp_none,
-                                                          loan_type=self.lt_standard,
+                                                          loan_cost=0.5,
+                                                          loan_deposit=0.0,
                                                           image="toy_images/Supplies-26-letter-digital-wooden-font-b-puzzle-b-font-building-font-b-monkey_9FCx2kM.jpg")
 
        
@@ -207,7 +190,8 @@ class Command(BaseCommand):
                                                           state=Toy.AVAILABLE,
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
-                                                          loan_type=self.lt_outdoor,
+                                                          loan_cost=0.5,
+                                                          loan_deposit=0.0,
                                                           image="toy_images/6-30108_8917.jpg")
 
         Toy.objects.filter(code="O3").delete()
@@ -220,7 +204,8 @@ class Command(BaseCommand):
                                                           state=Toy.AVAILABLE,
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
-                                                          loan_type=self.lt_outdoor,
+                                                          loan_cost=0.5,
+                                                          loan_deposit=1.0,
                                                           image="toy_images/6-30108_8917.jpg")
 
     def _reset_toy_history(self):

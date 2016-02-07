@@ -263,15 +263,15 @@ QUESTIONS:
 Loan Types - how will these be used? How are fees worked out - calculated? - Answered
 
 TASKS:
-Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
 
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
-Remove loan type table, add loan_deposit to toy table
-Add toy_deposit to toy table - becomes extra fee
+
+Remove loan type table, Add loan_cost and loan_deposit to toy table- becomes extra fee
+
 
 Add help text to toy buttons
 Auto focus member search after clear form on borrow page
@@ -285,12 +285,13 @@ Check admin for fields that should be readonly and permissions
 BIGGER ITEMS:
 Merge import data for toys
 
-
 migrate to production database - postgres
 Backup - dropbox folder? google drive?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
+
 Add repairer membertype -
     - "Repairer only" membertype - no annual fees
     - member type - can repair flag - due date
@@ -324,6 +325,7 @@ Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+When adding toy suggest loan fee
 All Max children displayed to be change or add + button
 Dealing with low income earner
 Comment when toy is retired
