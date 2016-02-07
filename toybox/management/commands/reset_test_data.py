@@ -306,6 +306,12 @@ class Command(BaseCommand):
                                           help="Maximum duration a repair agent can have a toy in weeks. eg 26",
                                           )
 
+        Config.objects.filter(key="credit_enable").delete()
+        Config.objects.update_or_create(key="credit_enable",
+                                          value="False",
+                                          help="Borrow toys with credit function enabled (true) or disabled (false)",
+                                          )
+
 
 
 

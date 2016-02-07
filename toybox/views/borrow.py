@@ -163,12 +163,18 @@ def handle_payment_form(request, member_id):
     if member_id:
         member = get_object_or_404(Member, pk=member_id)
 
+
+    try:
+        credit_enable = Config.objects.get(key="credit_enable").value
+    except Config.DoesNotExist:
+        credit_enable = "true"
+
     try:
         repair_loan_duration = Config.objects.get(key="repair_loan_duration").value
     except Config.DoesNotExist:
         repair_loan_duration = "26"
 
-    context.update({"repair_loan_duration":repair_loan_duration})
+    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable})
 
     if (request.method == "POST"):
 

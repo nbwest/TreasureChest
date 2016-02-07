@@ -1,136 +1,135 @@
 <span id="toy_summary">
+
     {% if toy %}
 
+        <div class="row">
 
-<div class="row">
-
-    <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
-
-
-
-        <div class="panel-default">
-        <div class="panel-heading"><a href="{% url 'toybox:toys' toy_id=toy.id %}">Toy Details  ID: {{ toy.code }}</a></div>
-          <table class="table table-condensed ">
-            <tbody>
-              <tr>
-                <td>Name</td>
-                <td>{{toy.name}}</td>
-              </tr>
-
-              <tr>
-                 <td>State</td>
-                 <td>
-                      {% if toy.state != toy.AVAILABLE %}
-                       <span class="label label-danger label-as-badge"> {{toy.get_state_display}}</span>
-                      {%else%}
-                          <span class="label label-success label-as-badge"> {{toy.get_state_display}}</span>
-                      {%endif%}
-                  </td>
-              </tr>
-
-              <tr>
-                <td>Comment</td>
-                <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
-              </tr>
-
-
-              <tr>
-                <td>Category</td>
-                <td>{{toy.category}}</td>
-              </tr>
-
-              <tr>
-                <td>Weeks Borrowed</td>
-                <td>{{toy.borrow_counter}}</td>
-              </tr>
-
-              <tr>
-                <td>Min age</td>
-                <td>{{toy.min_age}}</td>
-              </tr>
-
-              <tr>
-                <td>Brand</td>
-                <td>{{ toy.brand }}</td>
-              </tr>
-
-              <tr>
-                <td>Number of Pieces</td>
-                <td>{{ toy.num_pieces }}</td>
-              </tr>
-
-              <tr>
-                <td>Packaging</td>
-                <td>{{ toy.packaging }}</td>
-              </tr>
-
-              <tr>
-                <td>Weekly Fee</td>
-                <td>${{ toy.loan_type.loan_cost }}</td>
-              </tr>
-
-               <tr>
-                <td>Purchase Cost</td>
-                 <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
-              </tr>
-
-              <tr>
-                <td>Purchase Date</td>
-                 <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
-              </tr>
-
-              <tr>
-                <td>Issue</td>
-
-                  <td>
-                      {% if toy.issue_type != toy.ISSUE_NONE %}
-                       <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
-                      {%else%}
-                          {{toy.get_issue_type_display}}
-                      {%endif%}
-                  </td>
-              </tr>
-
-              <tr>
-                <td>Issue Comment</td>
-                <td>{{toy.issue_comment}}</td>
-              </tr>
+            <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
 
 
 
-            </tbody>
-          </table>
+                <div class="panel-default">
+                <div class="panel-heading"><a href="{% url 'toybox:toys' toy_id=toy.id %}">Toy Details  ID: {{ toy.code }}</a></div>
+                  <table class="table table-condensed ">
+                    <tbody>
+                      <tr>
+                        <td>Name</td>
+                        <td>{{toy.name}}</td>
+                      </tr>
+
+                      <tr>
+                         <td>State</td>
+                         <td>
+                              {% if toy.state != toy.AVAILABLE %}
+                               <span class="label label-danger label-as-badge"> {{toy.get_state_display}}</span>
+                              {%else%}
+                                  <span class="label label-success label-as-badge"> {{toy.get_state_display}}</span>
+                              {%endif%}
+                          </td>
+                      </tr>
+
+                      <tr>
+                        <td>Comment</td>
+                        <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
+                      </tr>
+
+
+                      <tr>
+                        <td>Category</td>
+                        <td>{{toy.category}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Weeks Borrowed</td>
+                        <td>{{toy.borrow_counter}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Min age</td>
+                        <td>{{toy.min_age}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Brand</td>
+                        <td>{{ toy.brand }}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Number of Pieces</td>
+                        <td>{{ toy.num_pieces }}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Packaging</td>
+                        <td>{{ toy.packaging }}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Weekly Fee</td>
+                        <td>${{ toy.loan_type.loan_cost }}</td>
+                      </tr>
+
+                       <tr>
+                        <td>Purchase Cost</td>
+                         <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Purchase Date</td>
+                         <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Issue</td>
+
+                          <td>
+                              {% if toy.issue_type != toy.ISSUE_NONE %}
+                               <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
+                              {%else%}
+                                  {{toy.get_issue_type_display}}
+                              {%endif%}
+                          </td>
+                      </tr>
+
+                      <tr>
+                        <td>Issue Comment</td>
+                        <td>{{toy.issue_comment}}</td>
+                      </tr>
+
+
+
+                    </tbody>
+                  </table>
+                </div>
+
+            </div>
+
+
+
+                <p style="float:left;text-align:left;max-width:200px;">
+
+                   <a  href="{{ MEDIA_URL }}{{ toy.image }}">
+                      <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:150px;" src="{{ MEDIA_URL }}{{ toy.image }}">
+                   </a>
+
+                   <br>
+                    {% if toy.image_receipt %}
+                        <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
+                    {%else%}
+                         <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Receipt Image
+                    {%endif%}
+                   <br>
+                   <br>
+                    {% if toy.image_instructions %}
+                        <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
+                    {%else%}
+                         <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Instructions Image
+                    {%endif%}
+
+                </p>
         </div>
 
-    </div>
-
-
-
-        <p style="float:left;text-align:left;max-width:200px;">
-
-           <a  href="{{ MEDIA_URL }}{{ toy.image }}">
-              <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:150px;" src="{{ MEDIA_URL }}{{ toy.image }}">
-           </a>
-
-           <br>
-            {% if toy.image_receipt %}
-                <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
-            {%else%}
-                 <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Receipt Image
-            {%endif%}
-           <br>
-           <br>
-            {% if toy.image_instructions %}
-                <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
-            {%else%}
-                 <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Instructions Image
-            {%endif%}
-
-        </p>
-    </div>
-
-
- </div>
      {% endif %}
+
 </span>
 

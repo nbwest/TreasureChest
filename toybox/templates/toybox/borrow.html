@@ -10,20 +10,19 @@
 <div id="member" class="row" >
 
     <div   class="col-xs-12 col-sm-10 ">
-
            {% include "toybox/member_search.html" with return_page="/toybox/borrow" %}
            {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
-
     </div>
-    <div   class="col-xs-1" >
 
+    <div   class="col-xs-1" >
         <a href="{% url 'toybox:members' %}"><button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align">
         <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button></a>
-
     </div>
+
 </div>
 
 <div class="row" >
+
       <div class="col-xs-12 col-sm-10 " style="margin-left: 20px; ">
         <br>
            {% if members == None %}
@@ -57,9 +56,6 @@
 
               <div class="panel-heading">Borrowed Toys</div>
 
-              <!-- Table -->
-          <!--<form action="{{ request.get_full_path }}" method='post' class="form-group">-->
-                {% csrf_token %}
               <table class="table" id="toy_table">
 
                     <thead>
@@ -173,14 +169,9 @@
                      {% endfor %}
 
               </table>
-               <!--</form>-->
+
         </div>
-
-
-</div>
-
-
-
+    </div>
 
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
         <div class="input-group  col-xs-12 col-sm-10 ">
@@ -198,63 +189,68 @@
 
     {% for field in payment_form %}
 
-
         {%if field.field.widget.attrs.type == "hidden" %}
             {% render_field field class+="form-control" id=field.auto_id  %}
+
         {%elif field.field.widget.attrs.enabled%}
 
-         <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+             <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
-             {% if field.field.widget.attrs.hr %} <hr> {%endif%}
+                 {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
-            <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}">
+                 <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}">
 
 
-                <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
+                    <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
 
-                {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
+                    {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
-                 {% if field.field.widget.attrs.adjust_button %}
-                <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
-                   </span>
-                {% endif %}
+                     {% if field.field.widget.attrs.adjust_button %}
+                    <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                    </span>
+                    {% endif %}
 
-                {% if field.field.widget.attrs.change_buttons %}
-                   <span class="input-group-btn">
-                       <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
-                       <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
-                       <button class="btn btn-default"  id="btn_add_credit" name="add_credit" type="submit" >Credit</button>
-                       <!--<button class="btn btn-default" id="btn_use_credit" name="use_credit" type="submit" >Use Credit</button>-->
-                       <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
-                   </span>
-                {% endif %}
+                    {% if field.field.widget.attrs.change_buttons %}
+                       <span class="input-group-btn">
+                           <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
+                           <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
+                           <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
+                           <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
+                       </span>
+                    {% endif %}
 
-                {% if field.field.widget.attrs.cancel_button %}
-                   <span class="input-group-btn">
-                       <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
-                   </span>
-                {% endif %}
-                </div>
+
+                    {% if field.field.widget.attrs.cancel_button %}
+                       <span class="input-group-btn">
+                           <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
+                       </span>
+                    {% endif %}
+
+                 </div>
 
                  <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                {% for error in field.errors  %}
-                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                {% endfor %}
-                </ul>
+                     {% for error in field.errors  %}
+                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                     {% endfor %}
+                 </ul>
+
              </div>
 
         {% endif %}
 
     {% endfor %}
-
 </form>
 
 
+    {% if credit_enable == "false" %}
+ <div class="row col-xs-12 col-sm-10 ">
+    <p>Credit function has been disabled</p>
+   </div>
+    {%endif%}
+
 
 <script type="text/javascript">
-
-//$("#loanDurationRadioGroup").change(function(){UpdateFee()});
 
 var enable_exact_for_repair_only=false;
 
@@ -271,20 +267,10 @@ function UpdateFee(id)
     CalcChange(id);
 }
 
-
 function UpdateBorrowFee()
 {
-//console.log("updateBorrowFee");
     var fee_mult=parseFloat($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val());
-
-
-
-    //console.log($("input[name='loan_duration']:checked","#loanDurationRadioGroup").val())
-    //console.log(fee_mult)
     var total=0.0;
-
-    //if (isNaN(fee_mult) break;
-
     var toys_checked=0;
     var for_repair=0;
     var total_new_toys={{new_borrow_toy_list|length}};
@@ -298,9 +284,6 @@ function UpdateBorrowFee()
                 var newValue=fee_mult*originalValue;
 
                 this.innerHTML="$"+newValue.toFixed(2);
-
-                //console.log(this.getAttribute("link"));
-                //console.log(originalValue);
 
                 //exclude if lending for repair
                 this.style.visibility = "visible";
@@ -321,35 +304,24 @@ function UpdateBorrowFee()
    );
 
    enable_exact_for_repair_only=(total_new_toys==toys_checked);
-   console.log("EXACT: "+enable_exact_for_repair_only);
-
-
 
    $("span[name='new_toy_due']","#toy_table")
    .each(
         function()
         {
-         //extend time if lending for repair
+            //extend time if lending for repair
             var repair_checkbox=document.getElementById(this.getAttribute("link"));
-         //   console.log(this);
-         //   console.log(this.getAttribute("link"));
-         //   console.log(repair_checkbox);
-        //    console.log(repair_checkbox.checked);
 
             due=fee_mult
             if (repair_checkbox!=null)
             {
-                //console.log(repair_checkbox.checked);
                 if (repair_checkbox.checked)
                    due={{repair_loan_duration}};
             }
 
-           // console.log(this);
            this.innerHTML=due;
         }
    );
-
-
 
    document.getElementById("id_borrow_fee").value=total.toFixed(2);
    UpdateFee();
@@ -358,60 +330,44 @@ function UpdateBorrowFee()
 
 function CalcTotal(id)
 {
-//console.log("CalcTotal");
     var elements_to_total;
     var total=0.0;
     elements_to_total=document.querySelectorAll("[total_me=true]");
 
-   nodes = Array.prototype.slice.call(elements_to_total,0);
+    nodes = Array.prototype.slice.call(elements_to_total,0);
 
-  nodes.forEach(function(node){
+    nodes.forEach(function(node){
 
-        //console.log(node);
-        //console.log("VALUE: "+node.value);
         if (!isNaN(Number(node.value)))
         {
 
             total+= Number(node.value);
         }
-  });
+    });
 
    var credit=Number({{payment_form.credit.value}});
-
-    //console.log("TOTAL: "+total);
-    //console.log("CREDIT: "+credit);
 
    if (total!=0)
    {
        if (credit==0)
        {
             document.getElementById("id_credit").value="0.00";
-          //  $("#btn_exact").prop('disabled',false);
-          //  $("#btn_use_credit").prop('disabled',true);
-
        }
        else if (credit>=total)
        {
             document.getElementById("id_credit").value=(credit-total).toFixed(2)+" - CREDIT USED, NO PAYMENT NECESSARY";
             document.getElementById("id_payment").value=total.toFixed(2);
-           // $("#btn_exact").prop('disabled',true);
-           // $("#btn_use_credit").prop('disabled',false);
        }
         else if (credit<total)
        {
             document.getElementById("id_credit").value="0.00 - REMAINING CREDIT USED FOR THIS TRANSACTION";
-         //   $("#btn_exact").prop('disabled',false);
-          //  $("#btn_use_credit").prop('disabled',true);
             total=total-credit;
-            //console.log("TOTAL: "+total);
        }
-
     }
     else
     {
         document.getElementById("id_credit").value=credit.toFixed(2);
         document.getElementById("id_payment").value=(0).toFixed(2);
-        //document.getElementById("id_total_fee").value=0.toFixed(2);
     }
 
     document.getElementById("id_total_fee").value=total.toFixed(2);
@@ -419,31 +375,17 @@ function CalcTotal(id)
 
 function CalcChange(id)
 {
-//console.log("CalcChange");
     var total=Number(document.getElementById("id_total_fee").value);
     var paid=Number(document.getElementById("id_payment").value);
     var change=paid-total;
     var credit=Number({{payment_form.credit.value}});
 
-   // console.log("CHANGE: "+change);
-  //  console.log("PAID: "+paid);
-  //  console.log("CREDIT: "+credit);
-  //  console.log("TOTAL: "+total);
-
     document.getElementById("id_change").value=change.toFixed(2);
 
-
-
     $("#btn_exact").prop('disabled', ((credit>=total)|(change!=0)|(isNaN(change))|(total==0))& !enable_exact_for_repair_only);
-    //$("#btn_use_credit").prop('disabled', (credit==0)|(total==0)|((change>=0)&(credit<=0))|(isNaN(change)));
-    //$("#btn_add_credit").prop('disabled', (change<=0)|(isNaN(change)));
-    $("#btn_add_credit").prop('disabled', total==0 | paid==0 |(credit<total & change==0 & total!=0));
+    $("#btn_credit").prop('disabled',!{{credit_enable}} | total==0 | paid==0 |(credit<total & change==0 & total!=0) );
     $("#btn_donate").prop('disabled', (change<=0)|(isNaN(change)));
     $("#btn_return").prop('disabled', (change<=0)|(isNaN(change)));
-
-
-
-
 }
 
 
