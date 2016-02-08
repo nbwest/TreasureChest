@@ -28,27 +28,21 @@ def borrow(request, member_id):
 
     context.update(base_data(request))
 
+    #clears templist if there are temp toys in any other name than the current member. Ensures temp toys
+    # aren't persistent when leaving borrow page
+    if TempBorrowList.objects.exclude(member=member_id).count()>0:
+        TempBorrowList.objects.all().delete()
 
-    context.update(handle_payment_form(request, member_id))
 
     # handle member search
     context.update(handle_member_search(request))
 
 
-    # Always need this so search box renders
+    # Always need this so search box renders. Handles borrowing a toy
     context.update(handle_toy_borrow(request, member_id, ("toy_removed" in context)))
 
-    #clears templist if there are temp toys in any other name than the current member
-    if TempBorrowList.objects.exclude(member=member_id).count()>0:
-        TempBorrowList.objects.all().delete()
-
-    new_borrow_list = TempBorrowList.objects.filter(member=member_id)
-
-    new_borrow_toy_list=[]
-    for item in new_borrow_list:
-        new_borrow_toy_list.append(item.toy)
-
-    context.update({"new_borrow_toy_list": new_borrow_toy_list})
+    # handle payments, toy removal and repair loan
+    context.update(handle_payment_form(request, member_id))
 
 
      # if member_id set display member summary and list of borrowed toys
@@ -95,7 +89,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
 
             if toy:
 
-                    temp_list_count=TempBorrowList.objects.filter(member__id=member_id).count()+1
+                    temp_list_count=TempBorrowList.objects.filter(member__id=member_id).exclude(toy__state=Toy.TO_BE_REPAIRED).count()+1
                     prev_borrow_count=Toy.objects.filter(member_loaned=member_id).count()
 
                     try:
@@ -109,13 +103,11 @@ def handle_toy_borrow(request, member_id, ignore_error):
                         error = "Toy on loan"
                     elif toy.state == Toy.BEING_REPAIRED:
                         error = "Toy is being repaired"
-                    elif toy.state == Toy.TO_BE_REPAIRED:
-                        error = "Toy is due for repair"
                     elif toy.state == Toy.STOCKTAKE:
                         error = "Toy needs stocktaking and can't be borrowed"
                     elif toy.state == Toy.RETIRED:
                         error = "ERROR - Toy is retired!"
-                    elif toy.state == Toy.AVAILABLE:
+                    elif toy.state == Toy.AVAILABLE or toy.state == Toy.TO_BE_REPAIRED:
                         #available, check it hasn't alredy been borrowed already
                         in_temp_list = TempBorrowList.objects.filter(toy=toy)
 
@@ -128,7 +120,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                             error = "Toy already borrowed"
 
                     else:
-                        error = "Toy state invalid, toy id: "+toy.id+", toy state: "+toy.state
+                        error = "Toy state invalid, toy id: "+str(toy.id)+", toy state: "+str(toy.state)
 
 
 
@@ -172,10 +164,22 @@ def handle_payment_form(request, member_id):
         member = get_object_or_404(Member, pk=member_id)
 
 
+    try:
+        credit_enable = Config.objects.get(key="credit_enable").value
+    except Config.DoesNotExist:
+        credit_enable = "true"
+
+    try:
+        repair_loan_duration = Config.objects.get(key="repair_loan_duration").value
+    except Config.DoesNotExist:
+        repair_loan_duration = "26"
+
+    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable})
 
     if (request.method == "POST"):
-        payment_form = PaymentForm(request.POST)
+
         new_borrow_list = TempBorrowList.objects.filter(member=member_id)
+        payment_form = PaymentForm(request.POST,temp_toy_list=new_borrow_list)
 
         if "cancel" in request.POST:
             context.update({"clear_form":True})
@@ -200,16 +204,22 @@ def handle_payment_form(request, member_id):
                     #Assign borrowed toys to member if any
                     for new_toy in new_borrow_list:
                         loan_duration = payment_form.cleaned_data['loan_duration']
+                        # if payment_form.cleaned_data['loan_duration']
                         print("LOAN_DURATION: "+loan_duration)
                         toy = get_object_or_404(Toy, id=new_toy.toy.id)
+
+                        loaned_for_repair=False
+
+                        if "repair_checkbox_"+str(toy.id) in payment_form.cleaned_data:
+                            if payment_form.cleaned_data["repair_checkbox_"+str(toy.id)]:
+
+                                loaned_for_repair=True
+                                loan_duration=repair_loan_duration
+
                         print(toy)
-                        toy.borrow_toy(member, int(loan_duration),request.user)
+                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
-
-
-
-                    #TODO Take into account of adjusted fees
 
 
 
@@ -406,7 +416,8 @@ def handle_payment_form(request, member_id):
         if not member.deposit_paid():
             deposit_fee=member.type.deposit
 
-    payment_form = PaymentForm(initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'deposit_fee':deposit_fee, 'credit':balance})
+    new_borrow_list=TempBorrowList.objects.filter(member=member_id)
+    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'deposit_fee':deposit_fee, 'credit':balance})
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
@@ -415,13 +426,29 @@ def handle_payment_form(request, member_id):
                     field.field.widget.attrs.update({'enabled':'True'})
 
 
-    context.update({'payment_form': payment_form})
+    #make borrow toys query result into a list of toys
+    new_borrow_toy_list=[]
+    for item in new_borrow_list:
+        new_borrow_toy_list.append(item.toy)
 
-    # print(context)
+    context.update({'payment_form': payment_form,"new_borrow_toy_list": new_borrow_toy_list})
+
+
     return context
 
 
+
 class PaymentForm(forms.Form):
+
+
+    def __init__(self, *args, **kwargs):
+        toyList=kwargs.pop("temp_toy_list", 0)
+        super(PaymentForm, self).__init__(*args, **kwargs)
+
+        if toyList:
+            for toy in toyList:
+                self.fields['repair_checkbox_%s' % toy.toy.id]=forms.BooleanField(required=False)
+
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')
 
     try:

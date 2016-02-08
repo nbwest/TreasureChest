@@ -5,7 +5,7 @@
 
     {% csrf_token %}
 
-    <div class="input-group  {% if not member %} has-error {% endif %}">
+    <div class="input-group ">
 
         {% render_field member_search_form.member_name_fragment class+="form-control" placeholder=member_search_form.member_name_fragment.label %}
 
