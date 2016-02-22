@@ -39,7 +39,7 @@
                             {% for toy in toy_search_results %}
 
                             <button type="submit"  name="select_toy" value="{{toy.id}}" class="list-group-item" >
-                                <img class=" img-thumbnail"  style=" max-width:200px; max-height:30px;"  src="{{ MEDIA_URL }}{{ toy.image }}">
+                                <img class=" img-thumbnail"  style=" max-width:200px; max-height:30px;"  src="{{ MEDIA_URL }}{{ toy.image.file }}">
                                 {{toy.code}}, {{ toy.name }}&nbsp
 
 

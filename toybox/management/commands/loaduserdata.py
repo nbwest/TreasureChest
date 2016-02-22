@@ -3,6 +3,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from toybox.models import *
 from datetime import datetime, date
 import os.path
+from django.core.files import File
 import re
 import csv
 
@@ -214,6 +215,10 @@ class Command(BaseCommand):
                 # default to 1 piece if not specified
                 num_pieces = 1 if toy['NUM_PIECES'] == '' else int(toy['NUM_PIECES'])
 
+                # Extract load fee
+                m = re.search('\$?\s?([\d\.]+)', toy['FEE'])
+                if m:
+                    loan_fee = m.group(1)
                 try:
                     toy_record, created = Toy.objects.get_or_create(
                         code = code,
@@ -224,6 +229,9 @@ class Command(BaseCommand):
                         num_pieces = num_pieces,
                         category = category
                     )
+                    if loan_fee:
+                        toy_record.loan_cost = loan_fee
+                    toy_record.loan_deposit = 0
                     toy_record.save()
 
                 except MultipleObjectsReturned:
@@ -238,8 +246,75 @@ class Command(BaseCommand):
             except AttributeError as e:
                 print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
 
+    @staticmethod
+    def parse_image_name(file):
+        m = re.search('^MTB[-_ ]*([A-Z]{1,2}) ?(\d+)[ ]?([A-Za-z]?).([jJ][pP][gG])$', file)
+        if (m == None):
+            return (None, None, None, None)
+
+        toy_category = ToyCategory.objects.get(code_prefix=m.group(1))
+        toy_number = m.group(2)
+        toy_code = toy_category.code_prefix+toy_number
+        image_id = m.group(3)
+        image_extension = str.lower(m.group(4))
+        return (toy_category, toy_code, image_id, image_extension)
+
     def load_toy_photos(self, photos_dir):
-        return
+        for root, dirs, files in os.walk(photos_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+
+                # Extract details from image name
+                toy_category, toy_code, image_id, image_extension = Command.parse_image_name(file)
+                if (toy_code == None):
+                    print "File not a toy image ("+file+"). Skipping"
+                    continue
+
+
+                # First try and find the toy.
+                # If there is no associated toy, don't load the image
+                try:
+                    toy = Toy.objects.get(category=toy_category, code=toy_code)
+
+                except Toy.DoesNotExist as e:
+                    print "No associated toy record for image "+file_path+".  Skipping"
+                    # TODO this currently leaves the image in the DB and media dir.
+                    # What should we do with this?
+                    continue
+
+                except MultipleObjectsReturned:
+                    print "Multiple toys found with code: "+toy_code+". Skipping"
+                    continue
+
+                # Add image to the DB and copy to the media directory
+                try:
+                    with open(file_path, 'rb') as file_handle:
+
+                        # Get new file name for image
+                        file_name = toy_code
+                        if image_id:
+                            file_name += "_"+str.lower(image_id)
+                        file_name += "."+image_extension
+
+                        print "Loading "+file_path+" as "+file_name+" for "+toy_code
+
+                        # Add the image to the DB and media directory
+                        image, created = Image.objects.get_or_create(file=file_name,
+                                                                     type=Image.TOY)
+                        image.file.save(file_name,
+                                        File(file_handle),
+                                        save=True)
+
+                    # Now associate the image with the toy
+                    toy.image = image
+                    toy.save()
+
+                except MultipleObjectsReturned:
+                    print "Multiple image records found for: "+file+". Skipping"
+                    continue
+
+
+
 
     # Header lines used to identify type of data being loaded
     HEADER_FUNC = 0
@@ -279,10 +354,11 @@ class Command(BaseCommand):
             # Check for dir of images
             if os.path.isdir(file_path):
                 self.load_toy_photos(file_path)
-            elif not os.path.isfile(file_path):
+            elif os.path.isfile(file_path):
+                with open(file_path, 'rb') as data_file:
+                    callback = self.parse_header(data_file, file_path)
+                    callback(self, data_file)
+            else:
                 print "Invalid file path: "+file_path
                 continue
 
-            with open(file_path, 'rb') as data_file:
-                callback = self.parse_header(data_file, file_path)
-                callback(self, data_file)
