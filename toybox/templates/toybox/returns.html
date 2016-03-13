@@ -48,8 +48,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     <th>Toy ID</th>
                     <th>Toy Name</th>
                     <th>Due</th>
-                    <th id="fee">Fee</th>
-                    <th id="returned">Returned</th>
+                    <th id="fee" style="text-align: center;">Fee</th>
+                    <th id="bond" style="text-align: center;">Bond</th>
+                    <th id="returned" style="text-align: center;">Returned</th>
                     <th>Report Issue</th>
 
                 </tr>
@@ -79,17 +80,26 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
 
                     {% if toy.due_date|timebetween|slice:':1' == '-' %}
-                    <td value="{{toy.fine|floatformat:2}}">
-                        ${{toy.fine|floatformat:2}}
+                    <td style="text-align: center;vertical-align: middle;" >
+                        <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="{{toy.fine|floatformat:2}}" >${{toy.fine|floatformat:2}}</span>
                     </td>
                     {%else%}
-                    <td value="0.00">
-                        $0.00
+                    <td style="text-align: center;vertical-align: middle;">
+                         <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="0.00" >$0.00</span>
                     </td>
                     {%endif%}
 
                     <td style="text-align: center;vertical-align: middle;">
-                        {% form_field_concat returns_form "returned_checkbox_" toy.id class="form-control" onclick="handleCheckbox(this)"%}
+                         {% if toy.state == toy.BEING_REPAIRED %}
+                             <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
+                         {%else%}
+                            <span name="loan_bond" id="loan_bond_{{toy.id}}" value="{{toy.loan_bond|floatformat:2}}" >${{toy.loan_bond|floatformat:2}}</span>
+                         {%endif%}
+
+                    </td>
+
+                    <td style="text-align: center;vertical-align: middle;">
+                        {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox(this)"%}
                     </td>
 
                     <td>
@@ -98,14 +108,14 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="7" style="border-top: none !important;">
+                    <td colspan="8" style="border-top: none !important;">
                          {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments"%}
 
                     </td>
                 </tr>
 
                  <tr>
-                        <td colspan="7" style="border-top: none !important;">
+                        <td colspan="8" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
                                  {% include "toybox/toy_summary.html" %}
 
@@ -125,8 +135,8 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
     {% for field in returns_form %}
         {%if field.field.widget.attrs.enabled%}
-
-         <div class="row col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+        <div class="row">
+         <div class="col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
              {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
@@ -153,7 +163,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 {% endfor %}
                 </ul>
              </div>
-
+           </div>
         {% endif %}
 
     {% endfor %}
@@ -170,24 +180,56 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
     function handleCheckbox(cb)
     {
-        var table = document.getElementById("toy_table");
-        var total= 0.0;
-        var checkboxCol=document.getElementById("returned").cellIndex;
-        var feeCol=document.getElementById("fee").cellIndex;
+        //var table = document.getElementById("toy_table");
+        //var total= 0.0;
+        //var checkboxCol=document.getElementById("returned").cellIndex;
+        //var feeCol=document.getElementById("fee").cellIndex;
 
-        console.log(total);
+        var total_bond_return=0.0;
+        var total_fine= 0.0;
 
-        for (var i = 1, row; row = table.rows[i]; i++)
+        //console.log(total);
+
+
+        //TODO change to jquery and total up bond refund.
+
+        $("span[name='toy_fine']","#toy_table").each(function()
         {
-            if (row.cells.length>checkboxCol)
+            var toy_id=this.getAttribute("toy_id");
+            var returned_checkbox=document.getElementById("returned_checkbox_"+toy_id);
+            var bond_return=document.getElementById("loan_bond_"+toy_id);
+
+            console.log("CB: "+returned_checkbox);
+            console.log("BOND: "+bond_return);
+
+            if (returned_checkbox!=null)
             {
-                if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
+                if (returned_checkbox.checked)
                 {
-                    total+=parseFloat(row.cells[feeCol].getAttribute("value"));
+                   total_fine+=parseFloat(this.getAttribute("value"));
+                   if (total_bond_return!=null)
+                      total_bond_return+=parseFloat(bond_return.getAttribute("value"));
                 }
             }
-        }
-        document.getElementById("id_late_fee").value=total.toFixed(2);
+
+        });
+
+
+
+        //for (var i = 1, row; row = table.rows[i]; i++)
+       //{
+           // if (row.cells.length>checkboxCol)
+           // {
+           //     if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
+           //     {
+           //         total+=parseFloat(row.cells[feeCol].getAttribute("value"));
+           //     }
+           // }
+       // }
+
+
+        document.getElementById("id_late_fee").value=total_fine.toFixed(2);
+        document.getElementById("id_loan_bond_refund").value=total_bond_return.toFixed(2);
         CalcTotal();
     }
 
@@ -196,11 +238,13 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         var late_fee=Number(document.getElementById("id_late_fee").value);
 
         var issue_fee=Number(document.getElementById("id_issue_fee").value);
-        console.log(issue_fee);
+
         var total=late_fee+issue_fee;
 
         document.getElementById("id_total").value=total.toFixed(2);
     }
+
+
 
 </script>
 

@@ -12,13 +12,19 @@ class Command(BaseCommand):
 
         MemberType.objects.update_or_create(name="Public",
                                             fee="30",
-                                            deposit=30,
+                                            bond=30,
                                             membership_period=MemberType.YEARLY)
        
         MemberType.objects.filter(name="Play Group").delete()
         MemberType.objects.update_or_create(name="Play Group",
                                             fee=200,
-                                            deposit=100,
+                                            bond=100,
+                                            membership_period=MemberType.YEARLY)
+
+        MemberType.objects.filter(name="Repair Only").delete()
+        MemberType.objects.update_or_create(name="Repair Only",
+                                            fee=0,
+                                            bond=0,
                                             membership_period=MemberType.YEARLY)
 
 
@@ -145,7 +151,7 @@ class Command(BaseCommand):
                                                           category=self.tc_big,
                                                           packaging=self.tp_bag,
                                                           loan_cost=0.5,
-                                                          loan_deposit=0.0,
+                                                          loan_bond=0.0,
                                                           image="toy_images/51JFER2cZpL._SY300__6bqlMzq.jpg")
 
        
@@ -161,7 +167,7 @@ class Command(BaseCommand):
                                                            category=self.tc_img,
                                                            packaging=self.tp_bag,
                                                            loan_cost=0.5,
-                                                           loan_deposit=0.0,
+                                                           loan_bond=0.0,
                                                            image="toy_images/kids-captain-black-pirate-costume_Dk0e1gc.jpg")
        
         Toy.objects.filter(code="P5").delete()
@@ -176,7 +182,7 @@ class Command(BaseCommand):
                                                           category=self.tc_puz,
                                                           packaging=self.tp_none,
                                                           loan_cost=0.5,
-                                                          loan_deposit=0.0,
+                                                          loan_bond=0.0,
                                                           image="toy_images/Supplies-26-letter-digital-wooden-font-b-puzzle-b-font-building-font-b-monkey_9FCx2kM.jpg")
 
        
@@ -191,7 +197,7 @@ class Command(BaseCommand):
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
                                                           loan_cost=0.5,
-                                                          loan_deposit=0.0,
+                                                          loan_bond=0.0,
                                                           image="toy_images/6-30108_8917.jpg")
 
         Toy.objects.filter(code="O3").delete()
@@ -205,7 +211,7 @@ class Command(BaseCommand):
                                                           category=self.tc_out,
                                                           packaging=self.tp_none,
                                                           loan_cost=0.5,
-                                                          loan_deposit=1.0,
+                                                          loan_bond=1.0,
                                                           image="toy_images/6-30108_8917.jpg")
 
     def _reset_toy_history(self):
@@ -304,11 +310,11 @@ class Command(BaseCommand):
 
         self._reset_membertype()
         self._reset_loantype()
-        self._reset_members()
-        self._reset_toybrand()
+        # self._reset_members()
+        # self._reset_toybrand()
         self._reset_toycategory()
         self._reset_toypackaging()
-        self._reset_toys()
-        self._reset_toy_history()
-        self._reset_transactions()
+        # self._reset_toys()
+        # self._reset_toy_history()
+        # self._reset_transactions()
         self._reset_config()

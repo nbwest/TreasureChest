@@ -51,30 +51,37 @@ def returns(request, member_id=None):
                 # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
 
 
-
-                if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]==True:
-                    toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user)
+                if 'returned_checkbox_'+str(toy.id) in returns_form.cleaned_data:
+                    if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]:
+                        toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user)
                     # toy.return_toy()
 
 
 
-                if (member_id):
+            if (member_id):
 
-                    member = get_object_or_404(Member, pk=member_id)
+                member = get_object_or_404(Member, pk=member_id)
 
+                if 'issue_fee' in returns_form.cleaned_data:
                     if returns_form.cleaned_data['issue_fee']!="":
-                        issue_fee=float(returns_form.cleaned_data['issue_fee'])
-                        if issue_fee!=0:
+                        fee=float(returns_form.cleaned_data['issue_fee'])
+                        if fee!=0:
                             transaction=Transaction()
+                            transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,fee,None,False)
 
-                            transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,issue_fee,None,False)
-
+                if 'late_fee' in returns_form.cleaned_data:
                     if returns_form.cleaned_data['late_fee']!="":
-                        late_fee=float(returns_form.cleaned_data['late_fee'])
-                        if late_fee!=0:
+                        fee=float(returns_form.cleaned_data['late_fee'])
+                        if fee!=0:
                             transaction=Transaction()
-                            transaction.create_transaction_record(request.user, member,Transaction.LATE_FEE,late_fee,None,False)
+                            transaction.create_transaction_record(request.user, member,Transaction.LATE_FEE,fee,None,False)
 
+                if 'loan_bond_refund' in returns_form.cleaned_data:
+                    if returns_form.cleaned_data['loan_bond_refund']!="":
+                        fee=float(returns_form.cleaned_data['loan_bond_refund'])
+                        if fee!=0:
+                            transaction=Transaction()
+                            transaction.create_transaction_record(request.user, member,Transaction.LOAN_BOND_REFUND,fee,None,False)
 
 
                 context.pop("toy_list",None)
@@ -128,6 +135,7 @@ class ReturnsForm(forms.Form):
 
     late_fee = forms.CharField(required=False,label="Late Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
     issue_fee = forms.CharField( required=False,label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
+    loan_bond_refund = forms.CharField( required=False,label="Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
     total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly', 'done_button':'True'}))
 
 

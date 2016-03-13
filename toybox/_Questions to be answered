@@ -97,7 +97,7 @@ Member Page
 * display in list? - valid membership, sort by this - done
 * Roster - how would this be used? - forgot to ask
 * Membership payment? i'll think of something fee attached to member
-* deposit payment separate bucket attached to member - added deposit and membership fee decimal fields to model - to be captured in transaction register.
+* bond payment separate bucket attached to member - added bond and membership fee decimal fields to model - to be captured in transaction register.
 
 add remove member
 
@@ -122,7 +122,7 @@ Internal Discussion
 change loan type to loan fees
 
 membership fee yearly $20
-deposit one per member $30 currently
+bond one per member $30 currently
 
 Explain multiple toy codes with letters - pick image with most information - provide blow up of image - DONE
 
@@ -139,7 +139,7 @@ Skype with elizabeth
 - yearly membership fee - defined
 - donation - open
 - late fee - cost to borrow by number of weeks borrowed - must be able override
-- joining deposit/bond - fixed to $30 current, presented in borrow toys
+- joining bond/bond - fixed to $30 current, presented in borrow toys
 
 * bond refund - form filled out and it's mailed or direct debit. Linda. Ideally properly tracked by this system.
 
@@ -216,7 +216,7 @@ delete borrowed toy -> removed from list - toy code not entered error
 (+ or - indicates adding or subtracting from the till)
 MEMBER_DONATION         + From member to toy library. Automatic in Borrow page.
 MEMBER_CREDIT           + From member to add to their credit amount. Added to till. Automatic from borrow page
-MEMBER_DEPOSIT          + From member to toy library on membership sign up. Automatic from borrow page
+MEMBER_bond          + From member to toy library on membership sign up. Automatic from borrow page
 MEMBERSHIP_FEE          + Member annual membership fee. Automatic from borrow page
 BORROW_FEE              + Member borrows toy. Automatic from borrow page
 ISSUE_FEE               + Member returns toy with notable issue. Automatic from returns page
@@ -224,8 +224,8 @@ OVERDUE_FEE             + Member borrow overdue fee. Automatic from returns page
 
 ADJUSTMENT_CREDIT       + Adjustment of till. Manual from transactions page
 ADJUSTMENT_DEBIT        - Adjustment of till. Manual from transactions page
-BANK_DEPOSIT            - End of day take money to bank. Manual from transactions page
-MEMBER_DEPOSIT_REFUND   - From toy library to member once they cancel their the toy library membership. Manual from transaction page
+BANK_bond            - End of day take money to bank. Manual from transactions page
+MEMBER_bond_REFUND   - From toy library to member once they cancel their the toy library membership. Manual from transaction page
 
 
 FROM_BANK
@@ -258,6 +258,8 @@ Borrow page: loan duration resets when deleting a toy
 Check returns: missing arg
 Tables using cookies seem to be sorting wrong by default
 
+Check that adjusting values recalcs
+
 QUESTIONS:
 
 Loan Types - how will these be used? How are fees worked out - calculated? - Answered
@@ -270,8 +272,6 @@ Add issue fees for return
      missing toy fee - same as broken.
      major missing piece fee - open - manual transaction for refund?
 
-Remove loan type table, Add loan_cost and loan_deposit to toy table- becomes extra fee
-
 
 Add help text to toy buttons
 Auto focus member search after clear form on borrow page
@@ -281,15 +281,18 @@ check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
+Fix double title bar in ie
 
 BIGGER ITEMS:
-Merge import data for toys
+Merge import data for toys - add in test_data that makes sense
 
 migrate to production database - postgres
 Backup - dropbox folder? google drive?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+Add loan_bond to possible fees - ok on borrow side, TODO return side
+Remove loan type table, Add loan_cost and loan_bond to toy table
 Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
 
 Add repairer membertype -
@@ -308,7 +311,7 @@ Member import data
 Merge volunteer login
 Add login roles? Start with volunteer and admin
 members inactive - don't display in member table
-deposit fee amount for refund
+bond fee amount for refund
 when banking set banking amount.
 Add instruction and receipt images - display with extra click from toy summary
 Enable checked checkbox function in toys for stocktake - Done

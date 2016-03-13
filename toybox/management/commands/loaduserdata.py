@@ -16,7 +16,7 @@ ADDR_POSTCODE = 5
 PHONE_AH = 6
 PHONE_BH = 7
 MEMBERSHIP_PD = 8
-DEPOSIT_PD = 9
+BOND_PD = 9
 DATE_JND = 10
 EMAIL = 11
 VOL = 12
@@ -113,7 +113,7 @@ class Command(BaseCommand):
                     )
 
                     member_record.phone_number2 = member[PHONE_BH]
-                    member_record.deposit_fee_paid = member[DEPOSIT_PD]
+                    member_record.bond_fee_paid = member[BOND_PD]
                     member_record.potential_volunteer = False
                     member_record.volunteer = self.parse_bool(member[VOL])
                     member_record.join_date = join_date

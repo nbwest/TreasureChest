@@ -62,6 +62,8 @@
                             <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
                             <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
+                            <th data-field="loan_fee" data-sortable="true" data-visible="false">Loan Fee</th>
+                            <th data-field="bond" data-sortable="true" data-visible="false">Bond</th>
                             <th data-field="toy_purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
                             <th data-field="toy_purchase_date"   data-visible="false" data-sortable="true" >Purchase<br>Date</th>
                             <th data-field="last_check"  data-visible="false" data-sortable="true">Last<br>Check</th>
@@ -91,6 +93,9 @@
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
                         <td>{{toy.borrow_counter}}</td>
+
+                       <td>${{toy.loan_cost|floatformat:2}}</td>
+                       <td>${{toy.loan_bond|floatformat:2}}</td>
                         <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
                        <td>
                             <span name="{{toy.purchase_date|date:'Y/m/d'}}"></span>

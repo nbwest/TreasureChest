@@ -3,14 +3,6 @@
 {% block content %}
 <span id="transactions">
 
-<!--<script>-->
-  <!--$(function() {-->
-    <!--$( "#id_date_from" ).datepicker();-->
-    <!--$( "#id_date_to" ).datepicker();-->
-  <!--});-->
-<!--</script>-->
-
-
 <h1  class="page-header">Transactions</h1>
 
 
@@ -54,7 +46,6 @@
 
 </form>
 
-<!--TODO who can have privileges to set the till value and bank?    -->
 
 {% if transactions %}
 
@@ -65,7 +56,7 @@
              data-toggle="table"
              data-filter-control="true"
              id="transaction_table"
-             data-sort-name="date_time"
+             data-sort-name="id"
              data-sort-order="desc"
              data-search="true"
              data-show-columns="true"
@@ -80,7 +71,7 @@
              data-cookie-id-table="transaction_table">
              <thead>
                 <tr>
-                    <th data-field="id" data-visible="false" data-sortable="true" >ID</th>
+                    <th data-field="id" data-sortable="true" >ID</th>
                     <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
 
                     <th data-field="transaction_type"  data-sortable="true" data-filter-control="select">Type</th>
@@ -98,7 +89,7 @@
                     <td>{{transaction.id}}</td>
 
                     <td>
-                        <span name='{{transaction.date_time|date:"Y/m/d H:i"}}'></span>
+                        <span name='{{transaction.date_time|date:"Y/m/d H:i:s"}}'></span>
                         {{transaction.date_time|date:"d/m/Y H:i"}}
                     </td>
                     <td>{{transaction.get_transaction_type_display}}</td>

@@ -106,7 +106,7 @@ class MemberDetailsForm(forms.Form):
     balance = forms.DecimalField(required=False, label='Balance',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
-    deposit_fee_paid = forms.DecimalField(required=False, label='Deposit',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    bond_fee_paid = forms.DecimalField(required=False, label='Bond',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     committee_member = forms.BooleanField(required=False, label="Committee Member")
     volunteer = forms.BooleanField(required=False, label="Active Volunteer")
     potential_volunteer = forms.BooleanField(required=False, label="Potential Volunteer")

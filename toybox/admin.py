@@ -7,9 +7,6 @@ class MemberTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'fee', 'membership_period')
 
 
-class LoanTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'loan_cost', 'loan_deposit')
-
 class FeedbackAdmin(admin.ModelAdmin):
     list_display=('id','date','name','page','comment')
     readonly_fields=('id',)

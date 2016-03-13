@@ -43,7 +43,7 @@ class MemberType(models.Model):
     membership_period = models.IntegerField(default=YEARLY, choices=MEMBER_PERIOD_CHOICES)
     name = models.CharField(max_length=20)
     fee = models.DecimalField(decimal_places=2, max_digits=5,default=0)
-    deposit = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    bond = models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
     def __unicode__(self):
         return self.name
@@ -79,7 +79,7 @@ class Member(models.Model):
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(auto_now_add=True, blank=True)
-    deposit_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    bond_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
 
@@ -99,14 +99,14 @@ class Member(models.Model):
     #     return datetime.datetime.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
     def membership_valid(self):
-        return (datetime.datetime.now().date() < self.membership_end_date)
+        return (datetime.datetime.now().date() < self.membership_end_date) or (self.type.fee==0)
 
 
-    def deposit_paid(self):
-         return self.deposit_fee_paid != 0
+    def bond_paid(self):
+         return self.bond_fee_paid == self.type.bond;
 
     def is_current(self):
-        return  self.membership_valid() and self.deposit_paid()
+        return  self.membership_valid() and self.bond_paid()
 
     def update_membership_date(self):
         self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
@@ -232,7 +232,7 @@ class Toy(models.Model):
     borrow_counter = models.IntegerField(default=0)
 
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
-    loan_deposit = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
+    loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
 
     def __str__(self):
         return self.name
@@ -343,7 +343,7 @@ class Transaction(models.Model):
 
     MEMBER_DONATION = 0 #+ From member to toy library. Automatic in Borrow page.
     MEMBER_CREDIT = 1   #+ From member to add to their credit amount. Added to till. Automatic from borrow page
-    MEMBER_DEPOSIT = 2  #+ From member to toy library on membership sign up. Automatic from borrow page
+    MEMBER_BOND = 2  #+ From member to toy library on membership sign up. Automatic from borrow page
     MEMBERSHIP_FEE = 3  #+ Member annual membership fee. Automatic from borrow page
     BORROW_FEE = 4      #+ Member borrows toy. Automatic from borrow page
     ISSUE_FEE = 5       #+ Member returns toy with notable issue. Automatic from returns page
@@ -352,15 +352,17 @@ class Transaction(models.Model):
     ADJUSTMENT_CREDIT = 8   #+ Adjustment of till. Manual from transactions page
     ADJUSTMENT_DEBIT = 9    #- Adjustment of till. Manual from transactions page
     BANK_DEPOSIT = 10       #- End of day take money to bank. Manual from transactions page
-    MEMBER_DEPOSIT_REFUND = 11  #- From toy library to member once they cancel their the toy library membership. Manual from transaction page
+    MEMBER_BOND_REFUND = 11  #- From toy library to member once they cancel their the toy library membership. Manual from transaction page
     PAYMENT = 12
     CHANGE = 13
+    LOAN_BOND = 14
+    LOAN_BOND_REFUND = 15
 
 
     TRANSACTION_TYPE_CHOICES = (
     (MEMBER_DONATION,'Donation'),
     (MEMBER_CREDIT,'Member Credit'),
-    (MEMBER_DEPOSIT,'Member Deposit'),
+    (MEMBER_BOND,'Member Bond'),
     (MEMBERSHIP_FEE,'Membership fee'),
     (BORROW_FEE,'Borrow Fee'),
     (ISSUE_FEE,'Issue Fee'),
@@ -369,9 +371,11 @@ class Transaction(models.Model):
     (ADJUSTMENT_CREDIT,'Credit Adjustment'),
     (ADJUSTMENT_DEBIT,'Debit Adjustment'),
     (BANK_DEPOSIT,'Bank Deposit'),
-    (MEMBER_DEPOSIT_REFUND,'Deposit Refund'),
+    (MEMBER_BOND_REFUND,'Member Bond Refund'),
     (PAYMENT,'Payment'),
-    (CHANGE,'Change')
+    (CHANGE,'Change'),
+    (LOAN_BOND,'Loan Bond'),
+    (LOAN_BOND_REFUND,'Loan Bond Refund')
     )
 
 
