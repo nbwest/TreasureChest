@@ -7,6 +7,7 @@ from decimal import *
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import Permission, User
+import os.path
 
 def format_username(user):
 
@@ -54,6 +55,8 @@ class MemberType(models.Model):
 
 class ToyCategory(models.Model):
     name = models.CharField(max_length=50)
+    code_prefix = models.CharField(max_length=2)
+    next_code_number = models.PositiveSmallIntegerField()
 
     def __unicode__(self):
         return self.name
@@ -61,6 +64,15 @@ class ToyCategory(models.Model):
     def __str__(self):
         return self.name
 
+class RecycledToyId(models.Model):
+    toy_id = models.CharField(max_length=6)
+    category = models.ForeignKey(ToyCategory)
+
+    def __unicode__(self):
+        return self.id
+
+    def __str__(self):
+        return self.id
 
 class Member(models.Model):
 
@@ -151,6 +163,52 @@ class ToyPackaging(models.Model):
     def __str__(self):
         return self.name
 
+class ToyVendor(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+
+class Image(models.Model):
+    TOY = 0
+    RECEIPT = 1
+    INSTRUCTIONS = 2
+
+    IMAGE_TYPE_CHOICES = (
+        (TOY, "Toy"),
+        (RECEIPT, "Receipt"),
+        (INSTRUCTIONS, "Instructions")
+    )
+
+    # Separate images into subdirectories based on type
+    @staticmethod
+    def image_path (filename, type):
+        dir = {
+            Image.TOY: 'toys',
+            Image.RECEIPT: 'receipts',
+            Image.INSTRUCTIONS: 'instructions'
+        }
+        type_dir = dir[type]
+        file_path = os.path.join("images", type_dir, filename)
+        return file_path
+
+    def image_file_name(instance, filename):
+        return Image.image_path(filename, instance.type)
+
+    file = models.ImageField(upload_to=image_file_name)  # need Pillow (pip install Pillow)
+    type = models.IntegerField(choices=IMAGE_TYPE_CHOICES)
+    primary = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return unicode(self.file.name+"["+self.type+"]")
+
+    def __str__(self):
+        return unicode(self.file.name+"["+self.type+"]")
+
 
 class Toy(models.Model):
     AVAILABLE = 0
@@ -206,7 +264,7 @@ class Toy(models.Model):
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
-    brand = models.ForeignKey(ToyBrand)
+    brand = models.ForeignKey(ToyBrand, null=True)
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
@@ -216,12 +274,14 @@ class Toy(models.Model):
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
+    purchased_from = models.ForeignKey(ToyVendor)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
-    image = models.ImageField(upload_to="toy_images", null=True)  # need Pillow (pip install Pillow)
-    image_receipt = models.ImageField(blank=True,upload_to="toy_images", null=True)
-    image_instructions = models.ImageField(blank=True,upload_to="toy_images", null=True)
+    image = models.ForeignKey(Image, null=True)
+    image_receipt = models.ForeignKey(Image, related_name='image_reciept_set', null=True)
+    image_instructions = models.ForeignKey(Image, related_name='image_instruction_set', null=True)
+
     category = models.ForeignKey(ToyCategory, null=True)
     packaging = models.ForeignKey(ToyPackaging, null=True)
 
@@ -230,15 +290,18 @@ class Toy(models.Model):
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     borrow_counter = models.IntegerField(default=0)
-
+    
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
     loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
+
+    def __unicode__(self):
+        return self.name
 
     def __str__(self):
         return self.name
 
     def admin_image(self):
-        return u'<img src="%s" style="max-height:150px;" />' % self.image.url
+        return u'<img src="%s" style="max-height:150px;" />' % self.image.file.url
 
     admin_image.allow_tags = True
 
@@ -335,7 +398,6 @@ class TempBorrowList(models.Model):
 
     def __str__(self):
         return self.toy.code + ":" + self.member.name
-
 
 
 class Transaction(models.Model):

@@ -114,19 +114,19 @@
                 <p style="float:left;text-align:left;max-width:200px;">
 
                    <a  href="{{ MEDIA_URL }}{{ toy.image }}">
-                      <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:350px;" src="{{ MEDIA_URL }}{{ toy.image }}">
+                      <img class=" img-thumbnail "  style="margin-bottom: 20px; margin-left:20px;  max-height:350px;" src="{{ MEDIA_URL }}{{ toy.image.file }}">                  
                    </a>
 
                    <br>
-                    {% if toy.image_receipt %}
-                        <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt }}">Receipt Image</a>
+                    {% if toy.image_receipt.file %}
+                        <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt.file }}">Receipt Image</a>
                     {%else%}
                          <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Receipt Image
                     {%endif%}
                    <br>
                    <br>
-                    {% if toy.image_instructions %}
-                        <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions }}">Instructions Image</a>
+                    {% if toy.image_instructions.file %}
+                        <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions.file }}">Instructions Image</a>
                     {%else%}
                          <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Instructions Image
                     {%endif%}
