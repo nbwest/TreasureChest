@@ -39,12 +39,8 @@
                             {% for toy in toy_search_results %}
 
                             <button type="submit"  name="select_toy" value="{{toy.id}}" class="list-group-item" >
-                                <img class=" img-thumbnail"  style=" max-width:200px; max-height:30px;"  src="{{ MEDIA_URL }}{{ toy.image.file }}">
+                                <img class=" img-thumbnail"  style=" max-height:70px;image-orientation:from-image;"  src="{{ MEDIA_URL }}{{ toy.image.file }}">
                                 {{toy.code}}, {{ toy.name }}&nbsp
-
-
-
-
 
                                 {% if toy in new_borrow_toy_list %}
                                  <span class="label label-danger label-as-badge">
