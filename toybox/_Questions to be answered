@@ -252,11 +252,8 @@ add role field to member?
 
 TODO 22/12/2015
 BUGS:
-Borrow page: loan duration resets when deleting a toy
-    use credit and give exact - not working
 
 Check returns: missing arg
-Tables using cookies seem to be sorting wrong by default
 
 Check that adjusting values recalcs
 
@@ -282,7 +279,7 @@ Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
 Fix double title bar in ie
-Rotated Images in toy summary
+
 
 BIGGER ITEMS:
 Merge import data for toys - add in test_data that makes sense
@@ -292,6 +289,7 @@ Backup - dropbox folder? google drive?
 OS server - ubuntu, windows 7?
 
 COMPLETE:
+Rotated Images in toy summary
 Add loan_bond to possible fees - ok on borrow side, TODO return side
 Remove loan type table, Add loan_cost and loan_bond to toy table
 Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0

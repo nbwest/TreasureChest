@@ -304,7 +304,7 @@ class Command(BaseCommand):
 
         Config.objects.filter(key="credit_enable").delete()
         Config.objects.update_or_create(key="credit_enable",
-                                          value="False",
+                                          value="true",
                                           help="Borrow toys with credit function enabled (true) or disabled (false)",
                                           )
 

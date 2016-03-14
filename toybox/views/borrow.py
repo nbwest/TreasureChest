@@ -165,7 +165,7 @@ def handle_payment_form(request, member_id):
 
 
     try:
-        credit_enable = Config.objects.get(key="credit_enable").value
+        credit_enable = Config.objects.get(key="credit_enable").value.lower()
     except Config.DoesNotExist:
         credit_enable = "true"
 
