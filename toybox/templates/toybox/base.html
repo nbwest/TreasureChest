@@ -114,9 +114,12 @@ function DoOnCellHtmlData(cell, row, col, data)
                 <li><a href="/admin">Logged in as: {{ request.user.username }} {% if request.user.first_name %}({{request.user.first_name}} {{request.user.last_name}}){%endif%} </a></li>
                 {% endif %}
 
-                <!-- TODO utilise logout Button -->
-                <!-- <button type="button" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</button-->
-                <a href="{%url 'logout' %}" class="btn btn-default navbar-btn" style="margin-right: 10px; ">Logout</a>
+                <li>
+                    <p class="navbar-btn" style="margin-right: 10px; margin-left: 10px; ">
+                        <a href="{%url 'logout' %}" class="btn btn-default">Logout</a>
+                    </p>
+                </li>
+
 
                 <!-- these are hidden until used for collapsed menu-->
                 <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
