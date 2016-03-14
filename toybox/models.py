@@ -56,7 +56,7 @@ class MemberType(models.Model):
 class ToyCategory(models.Model):
     name = models.CharField(max_length=50)
     code_prefix = models.CharField(max_length=2)
-    next_code_number = models.PositiveSmallIntegerField()
+    next_code_number = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.name
@@ -173,7 +173,16 @@ class ToyVendor(models.Model):
         return self.name
 
 
+
+
+
+
+
+def image_file_name(self, filename):
+    return Image.image_path(filename, self.type)
+
 class Image(models.Model):
+
     TOY = 0
     RECEIPT = 1
     INSTRUCTIONS = 2
@@ -183,7 +192,6 @@ class Image(models.Model):
         (RECEIPT, "Receipt"),
         (INSTRUCTIONS, "Instructions")
     )
-
     # Separate images into subdirectories based on type
     @staticmethod
     def image_path (filename, type):
@@ -195,9 +203,6 @@ class Image(models.Model):
         type_dir = dir[type]
         file_path = os.path.join("images", type_dir, filename)
         return file_path
-
-    def image_file_name(instance, filename):
-        return Image.image_path(filename, instance.type)
 
     file = models.ImageField(upload_to=image_file_name)  # need Pillow (pip install Pillow)
     type = models.IntegerField(choices=IMAGE_TYPE_CHOICES)
@@ -274,7 +279,7 @@ class Toy(models.Model):
     min_age = models.IntegerField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
-    purchased_from = models.ForeignKey(ToyVendor)
+    purchased_from = models.ForeignKey(ToyVendor, null=True)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
@@ -301,7 +306,10 @@ class Toy(models.Model):
         return self.name
 
     def admin_image(self):
-        return u'<img src="%s" style="max-height:150px;" />' % self.image.file.url
+        if self.image != None:
+            return u'<img src="%s" style="max-height:150px;" />' % self.image.file.url
+        else:
+            return "NO IMAGE"
 
     admin_image.allow_tags = True
 

@@ -282,6 +282,7 @@ Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
 Fix double title bar in ie
+Rotated Images in toy summary
 
 BIGGER ITEMS:
 Merge import data for toys - add in test_data that makes sense

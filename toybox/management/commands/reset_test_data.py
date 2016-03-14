@@ -124,11 +124,16 @@ class Command(BaseCommand):
         self.tb_unk, created = ToyBrand.objects.update_or_create(name="Unknown")
 
     def _reset_toycategory(self):
-        self.tc_big, created = ToyCategory.objects.update_or_create(name="Big")
-        self.tc_img, created = ToyCategory.objects.update_or_create(name="Imaginative")
-        self.tc_puz, created = ToyCategory.objects.update_or_create(name="Puzzle")
-        self.tc_con, created = ToyCategory.objects.update_or_create(name="Construction")
-        self.tc_out, created = ToyCategory.objects.update_or_create(name="Outside")
+        self.tc_big, created = ToyCategory.objects.update_or_create(name="Big Toys", code_prefix="BT")
+        self.tc_img, created = ToyCategory.objects.update_or_create(name="Imagination", code_prefix="I")
+        self.tc_puz, created = ToyCategory.objects.update_or_create(name="Puzzles", code_prefix="P")
+        self.tc_con, created = ToyCategory.objects.update_or_create(name="Construction", code_prefix="C")
+        self.tc_out, created = ToyCategory.objects.update_or_create(name="Music", code_prefix="M")
+        self.tc_out, created = ToyCategory.objects.update_or_create(name="Games", code_prefix="G")
+        self.tc_out, created = ToyCategory.objects.update_or_create(name="Transport", code_prefix="T")
+        self.tc_out, created = ToyCategory.objects.update_or_create(name="Baby Toys", code_prefix="B")
+        self.tc_out, created = ToyCategory.objects.update_or_create(name="Water and Sand", code_prefix="W")
+
 
     def _reset_toypackaging(self):
         self.tp_pt, created = ToyPackaging.objects.update_or_create(name="Plastic Tub")
@@ -309,7 +314,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         self._reset_membertype()
-        self._reset_loantype()
+        # self._reset_loantype()
         # self._reset_members()
         # self._reset_toybrand()
         self._reset_toycategory()
