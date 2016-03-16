@@ -29,7 +29,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         {% include "toybox/member_summary.html" %}
         <br>
     </div>
+
 </div>
+
 
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
@@ -48,9 +50,11 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     <th>Toy ID</th>
                     <th>Toy Name</th>
                     <th>Due</th>
-                    <th id="fee" style="text-align: center;">Fee</th>
-                    <th id="bond" style="text-align: center;">Bond</th>
-                    <th id="returned" style="text-align: center;">Returned</th>
+                    <th style="text-align: center;">Returned</th>
+                    <th style="text-align: center;">Bond</th>
+                    <th style="text-align: center;">Late Fee</th>
+                    <th style="text-align: center;">Issue Fee</th>
+
                     <th>Report Issue</th>
 
                 </tr>
@@ -64,6 +68,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
                     <td>
                         <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
+                        <span class="hidden" id="issue_fines_{{toy.id}}" issue_fine_major="{{toy.issue_fine_major}}" issue_fine_minor="{{toy.issue_fine_minor}}" issue_fine_allocation="{{toy.issue_fine_allocation}}"></span>
 
                     </td>
 
@@ -71,12 +76,25 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         {{ toy.name }}
                     </td>
 
-                    <!--TODO add issue fee-->
+
                     <td>
                         <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween }}</span>
                          {% if toy.state == toy.BEING_REPAIRED %}
                         <span class="label label-danger label-as-badge">Being Repaired</span>
                         {%endif%}
+                    </td>
+
+                     <td style="text-align: center;vertical-align: middle;">
+                        {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();"%}
+                    </td>
+
+                     <td style="text-align: center;vertical-align: middle;">
+                         {% if toy.state == toy.BEING_REPAIRED %}
+                             <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
+                         {%else%}
+                            <span name="loan_bond" id="loan_bond_{{toy.id}}" value="{{toy.loan_bond|floatformat:2}}" >${{toy.loan_bond|floatformat:2}}</span>
+                         {%endif%}
+
                     </td>
 
                     {% if toy.due_date|timebetween|slice:':1' == '-' %}
@@ -89,33 +107,28 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
                     {%endif%}
 
-                    <td style="text-align: center;vertical-align: middle;">
-                         {% if toy.state == toy.BEING_REPAIRED %}
-                             <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
-                         {%else%}
-                            <span name="loan_bond" id="loan_bond_{{toy.id}}" value="{{toy.loan_bond|floatformat:2}}" >${{toy.loan_bond|floatformat:2}}</span>
-                         {%endif%}
-
+                     <td id="issue_fee_{{toy.id}}" style="text-align: center;vertical-align: middle;">
+                        $0.00
                     </td>
 
-                    <td style="text-align: center;vertical-align: middle;">
-                        {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox(this)"%}
-                    </td>
+
+
+
 
                     <td>
-                        {% form_field_concat returns_form "issue_type_" toy.id class="form-control"%}
+                        {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();"%}
 
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="8" style="border-top: none !important;">
+                    <td colspan="9" style="border-top: none !important;">
                          {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments"%}
 
                     </td>
                 </tr>
 
                  <tr>
-                        <td colspan="8" style="border-top: none !important;">
+                        <td colspan="9" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
                                  {% include "toybox/toy_summary.html" %}
 
@@ -142,7 +155,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
             <div class="input-group">
                 <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
-                {% render_field field class+="form-control" id=field.auto_id oninput="CalcTotal()" %}
+                {% render_field field class+="form-control" id=field.auto_id oninput="CalcTotal();" %}
 
                  {% if field.field.widget.attrs.adjust_button %}
                 <span class="input-group-btn">
@@ -175,18 +188,15 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     $( document ).ready(function()
     {
         CalcTotal();
+
     });
 
 
-    function handleCheckbox(cb)
+    function handleCheckbox()
     {
-        //var table = document.getElementById("toy_table");
-        //var total= 0.0;
-        //var checkboxCol=document.getElementById("returned").cellIndex;
-        //var feeCol=document.getElementById("fee").cellIndex;
-
         var total_bond_return=0.0;
         var total_fine= 0.0;
+        var total_issue_fine=0.0;
 
         //console.log(total);
 
@@ -198,9 +208,20 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             var toy_id=this.getAttribute("toy_id");
             var returned_checkbox=document.getElementById("returned_checkbox_"+toy_id);
             var bond_return=document.getElementById("loan_bond_"+toy_id);
+            var issue_type=document.getElementById("issue_type_"+toy_id);
+            var issue_fines=document.getElementById("issue_fines_"+toy_id);
+            var fine=0.0;
+            var issue_fee=document.getElementById("issue_fee_"+toy_id);
 
-            console.log("CB: "+returned_checkbox);
-            console.log("BOND: "+bond_return);
+            console.log("-----------------");
+           // console.log("CB: "+returned_checkbox);
+           // console.log("BOND: "+bond_return);
+           // console.log("ID: "+toy_id);
+           // console.log("Issue #: "+issue_type.value);
+           // console.log("minor: "+issue_fines.getAttribute("issue_fine_minor"));
+           // console.log("major: "+issue_fines.getAttribute("issue_fine_major"));
+           // console.log("allocation: "+issue_fines.getAttribute("issue_fine_allocation"));
+           // console.log("result: "+issue_fines.getAttribute("issue_fine_allocation")[issue_type.value]);
 
             if (returned_checkbox!=null)
             {
@@ -209,41 +230,54 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                    total_fine+=parseFloat(this.getAttribute("value"));
                    if (total_bond_return!=null)
                       total_bond_return+=parseFloat(bond_return.getAttribute("value"));
+
+                   var fine_type=issue_fines.getAttribute("issue_fine_allocation")[issue_type.value];
+
+                   if (fine_type=="2")
+                        fine=Number(issue_fines.getAttribute("issue_fine_major"));
+                   else if (fine_type=="1")
+                        fine=Number(issue_fines.getAttribute("issue_fine_minor"));
+                   else
+                        fine=0;
+
+                   issue_fee.innerHTML="$"+fine.toFixed(2);
+
+                   total_issue_fine+=fine;
+
+                  //console.log("fine type: "+fine_type);
+                  //console.log("fine = "+fine);
+                  //console.log("total = "+total_issue_fine);
                 }
             }
 
         });
 
-
-
-        //for (var i = 1, row; row = table.rows[i]; i++)
-       //{
-           // if (row.cells.length>checkboxCol)
-           // {
-           //     if (row.cells[checkboxCol].getElementsByTagName('input')[0].checked)
-           //     {
-           //         total+=parseFloat(row.cells[feeCol].getAttribute("value"));
-           //     }
-           // }
-       // }
-
-
         document.getElementById("id_late_fee").value=total_fine.toFixed(2);
         document.getElementById("id_loan_bond_refund").value=total_bond_return.toFixed(2);
+        document.getElementById("id_issue_fee").value=total_issue_fine.toFixed(2);
         CalcTotal();
     }
 
     function CalcTotal()
     {
         var late_fee=Number(document.getElementById("id_late_fee").value);
-
         var issue_fee=Number(document.getElementById("id_issue_fee").value);
-
         var total=late_fee+issue_fee;
 
         document.getElementById("id_total").value=total.toFixed(2);
     }
 
+    //function calcFine(element)
+   // {
+        //console.log(element.value);
+
+     //   $("select[name='issue_type_select']").each(
+    //    function()
+    //    {
+    //        console.log(this.value);
+
+    //    });
+  //  }
 
 
 </script>

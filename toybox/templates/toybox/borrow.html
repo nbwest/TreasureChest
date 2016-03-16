@@ -115,7 +115,7 @@
 
 
                     <tr>
-                        <td colspan="6" style="border-top: none !important;">
+                        <td colspan="8" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
                                  {% include "toybox/toy_summary.html" %}
 
@@ -163,7 +163,7 @@
                      </tr>
 
                     <tr>
-                        <td colspan="6" style="border-top: none !important;">
+                        <td colspan="8" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
 
                                    <!--TODO feed toy into toy_summary-->
@@ -204,7 +204,9 @@
             <div class="row">
              <div class="col-xs-12 col-sm-10 " style=" min-height: 50px;" >
 
-                 {% if field.field.widget.attrs.hr %} <hr> {%endif%}
+                 {% if field.field.widget.attrs.hr %}
+                    <hr>
+                 {%endif%}
 
                  <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}">
 
@@ -377,12 +379,12 @@ function CalcTotal()
     elements_to_total=document.querySelectorAll("[total_me=positive],[total_me=negative]");
 
     nodes = Array.prototype.slice.call(elements_to_total,0);
-console.log("----------------------");
+//console.log("----------------------");
     nodes.forEach(function(node){
 
         if (!isNaN(Number(node.value)))
         {
-            console.log(node.attributes.getNamedItem("total_me").value+", VAL: "+node.value);
+            //console.log(node.attributes.getNamedItem("total_me").value+", VAL: "+node.value);
             if (node.attributes.getNamedItem("total_me").value=='positive')
                 fees+= Number(node.value);
             else
@@ -396,9 +398,17 @@ console.log("----------------------");
    var payment=Number(document.getElementById("id_payment").value);
    var change_label=document.getElementById("label_id_change");
 
+console.log("----------------------");
+    console.log("FEES: "+fees);
+    console.log("CREDIT: "+credit);
+    console.log("TOTAL: "+total);
+    console.log("CHANGE: "+change);
+    console.log("PAYMENT: "+payment);
+
+
    var A=(fees<credit),B=(fees==credit),C=(fees>credit),D=(fees<0), E=(fees==0), F=(fees>0), G=(credit>0),H=(credit==0);
 
-   var total_eq_0 = (!C && F && !H) || (B && E && !G) || (A && !D && !H);
+   var total_eq_0 = (B && E && !G) || (A && !D && !H) || (!C && F && !H);
    var total_eq_fees = (A && D) || (C && F && !G);
    var total_eq_fees_minus_credit = (C && F && !H);
 
@@ -411,8 +421,9 @@ console.log("----------------------");
    var credit_eq_0 = (C && F && !H);
    var credit_eq_credit_minus_fees = (!C && F && !H);
 
-
-
+console.log("total_eq_fees: "+total_eq_fees);
+console.log("(A && !D && !H): "+(A && !D && !H));
+console.log("(!C && F && !H): "+(!C && F && !H));
 
     if (total_eq_0)
         total=0;
@@ -450,21 +461,22 @@ console.log("----------------------");
     else if (credit_eq_credit_minus_fees)
         credit=credit-fees;
 
-   // console.log("FEES: "+fees);
-   // console.log("CREDIT: "+credit);
-
+    //console.log("----------------------");
+    //console.log("FEES: "+fees);
+    //console.log("CREDIT: "+credit);
     //console.log("TOTAL: "+total);
     //console.log("CHANGE: "+change);
     //console.log("PAYMENT: "+payment);
     //console.log("repair only:"+enable_exact_for_repair_only);
 
 
-    document.getElementById("id_total_fee").value=total.toFixed(2);
+    document.getElementById("id_total_fee").value=fees.toFixed(2);
+    document.getElementById("id_total_to_pay").value=total.toFixed(2);
     document.getElementById("id_change").value=change.toFixed(2);
     document.getElementById("id_credit").value=credit.toFixed(2);
 
     $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
-    $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) || !{{credit_enable}});
+    $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) || !{{credit_enable}});
     $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
     $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
 

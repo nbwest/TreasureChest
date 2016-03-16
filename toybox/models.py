@@ -209,10 +209,10 @@ class Image(models.Model):
     primary = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return unicode(self.file.name+"["+self.type+"]")
+        return unicode(self.file.name+" ["+self.IMAGE_TYPE_CHOICES[self.type][1]+"]")
 
     def __str__(self):
-        return unicode(self.file.name+"["+self.type+"]")
+        return unicode(self.file.name+" ["+self.IMAGE_TYPE_CHOICES[self.type][1]+"]")
 
 
 class Toy(models.Model):
@@ -247,6 +247,8 @@ class Toy(models.Model):
 
 
 
+
+
     ISSUE_TYPE_CHOICES = (
         (ISSUE_NONE, 'No Issue'),
         (BROKEN_REPAIRABLE, 'Broken repairable'),  # -> to admin cupboard
@@ -261,15 +263,33 @@ class Toy(models.Model):
 
     )
 
-    # def file(self, filename):
-    #     url = "./%d.JPG" % (self.id,)
-    #     return url
+    #percentage of toy cost
+    ISSUE_FINE_MAJOR_MIN=Decimal(0.1)
+    ISSUE_FINE_MAJOR_MAX=Decimal(0.5)
+    ISSUE_FINE_MINOR_MIN=Decimal(0.1)
+    ISSUE_FINE_MINOR_MAX=Decimal(0.3)
+
+    ISSUE_FINE_NONE =0
+    ISSUE_FINE_MINOR =1
+    ISSUE_FINE_MAJOR =2
+
+
+
+    ISSUE_FINE_CHOICES = (
+        (ISSUE_NONE, ISSUE_FINE_NONE),
+        (BROKEN_REPAIRABLE, ISSUE_FINE_MINOR),
+        (BROKEN_NOT_REPAIRABLE,ISSUE_FINE_MAJOR),
+        (MINOR_MISSING_PIECE, ISSUE_FINE_MINOR),
+        (MAJOR_MISSING_PIECE, ISSUE_FINE_MAJOR),
+        (WHOLE_TOY_MISSING, ISSUE_FINE_MAJOR),
+        (RETIRE_VERIFIED, ISSUE_FINE_NONE),
+    )
 
 
     code = models.CharField(max_length=10, blank=False)
     state = models.IntegerField(choices=TOY_STATE_CHOICES, default=AVAILABLE)
     name = models.CharField(max_length=200)
-    brand = models.ForeignKey(ToyBrand, null=True)
+    brand = models.ForeignKey(ToyBrand, null=True,blank=True )
     last_check = models.DateField('Date last checked', blank=True, null=True)
     last_stock_take = models.DateField(blank=True, null=True)
     member_loaned = models.ForeignKey(Member, blank=True, null=True, on_delete=models.SET_NULL)
@@ -284,11 +304,11 @@ class Toy(models.Model):
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ForeignKey(Image, null=True)
-    image_receipt = models.ForeignKey(Image, related_name='image_reciept_set', null=True)
-    image_instructions = models.ForeignKey(Image, related_name='image_instruction_set', null=True)
+    image_receipt = models.ForeignKey(Image, related_name='image_reciept_set', null=True,blank=True)
+    image_instructions = models.ForeignKey(Image, related_name='image_instruction_set', null=True,blank=True)
 
     category = models.ForeignKey(ToyCategory, null=True)
-    packaging = models.ForeignKey(ToyPackaging, null=True)
+    packaging = models.ForeignKey(ToyPackaging, null=True,blank=True)
 
     comment = models.CharField(blank=True, null=True, max_length=1024)
 
@@ -299,11 +319,55 @@ class Toy(models.Model):
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
     loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
 
+
+    @property
+    def earned_back_cost(self):
+        return (self.loan_cost * self.borrow_counter) >= self.purchase_cost
+
+    @property
+    def earned(self):
+        return (self.loan_cost * self.borrow_counter)
+
+    @property
+    def issue_fine_major(self):
+
+        fine=(self.ISSUE_FINE_MAJOR_MAX * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+
+        if fine<=0:
+            fine=self.ISSUE_FINE_MAJOR_MIN * self.loan_cost
+
+        fine=round(fine,0)
+
+        return fine
+
+    @property
+    def issue_fine_minor(self):
+
+        fine=(self.ISSUE_FINE_MINOR_MAX * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+
+        if fine<=0:
+            fine=self.ISSUE_FINE_MINOR_MIN * self.loan_cost
+
+        fine=round(fine,0)
+
+        return fine
+
+    @property
+    def issue_fine_allocation(self):
+
+        result=""
+        for i in self.ISSUE_FINE_CHOICES:
+            result=result+str(i[1])
+
+        return result
+
+
     def __unicode__(self):
         return self.name
 
     def __str__(self):
         return self.name
+
 
     def admin_image(self):
         if self.image != None:
@@ -369,6 +433,7 @@ class Toy(models.Model):
     # def change_toy_state(self, issue_type):
     #     if "retire_toy" in self.Meta.permissions:
 
+
     def weeks_overdue(self):
 
         if (self.due_date):
@@ -391,6 +456,7 @@ class Toy(models.Model):
         permissions = (
             ("retire_toy", "Can retire toys"),
         )
+
 
 class TempBorrowList(models.Model):
     member = models.ForeignKey(Member)

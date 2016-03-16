@@ -215,7 +215,7 @@ def handle_payment_form(request, member_id):
                                 loaned_for_repair=True
                                 loan_duration=repair_loan_duration
 
-                        print(toy)
+                        # print(toy)
                         toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
@@ -367,10 +367,12 @@ def handle_payment_form(request, member_id):
                             fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
 
                     #look at submit actions
+
+                    #TODO need to get total fees before changed to total to pay.
                     for item in request.POST:
 
                         if item=="add_credit":
-                        # TODO What happens for refund?
+
                             if change>0: #add credit
                                 member.balance = member.balance - fee_due + fee_paid
                                 print(member.balance)
@@ -513,8 +515,10 @@ class PaymentForm(forms.Form):
     membership_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
     #TODO enable donation
     # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','enabled':'True'}))
-    credit = forms.CharField(label="Credit", max_length=50, widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly'}))
-    total_fee = forms.CharField(label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+
+    total_fee = forms.CharField(label="Total Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly'}))
+    credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+    total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
 
     payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'cancel_button':'True'}))
     change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'change_buttons':'True'}))

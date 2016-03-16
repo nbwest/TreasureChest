@@ -44,6 +44,7 @@
                         <td>{{toy.borrow_counter}}</td>
                       </tr>
 
+
                       <tr>
                         <td>Min age</td>
                         <td>{{toy.min_age}}</td>
@@ -78,6 +79,12 @@
                         <td>Purchase Cost</td>
                          <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
                       </tr>
+
+                      <tr>
+                        <td>Earned back cost?</td>
+                        <td>{% if toy.earned_back_cost %}Yes {%else%}No {%endif%} (${{toy.earned|floatformat:2}})</td>
+                      </tr>
+
 
                       <tr>
                         <td>Purchase Date</td>

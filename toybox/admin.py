@@ -25,6 +25,8 @@ admin.site.register(Feedback,FeedbackAdmin)
 
 class ToyAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'admin_image')
+    search_fields = ('code','name' )
+    # list_filter = ('code', )
     #readonly_fields = ('member_loaned','due_date','borrow_date','state')
 
 class ToyHistoryAdmin(admin.ModelAdmin):

@@ -273,22 +273,23 @@ Add issue fees for return
 Add help text to toy buttons
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
+
 Check borrow fields for bad inputs
 check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
-Fix double title bar in ie
+
 
 
 BIGGER ITEMS:
-Merge import data for toys - add in test_data that makes sense
-
 migrate to production database - postgres
-Backup - dropbox folder? google drive?
-OS server - ubuntu, windows 7?
+Backup - use other laptops for backup?
+OS server - windows 7
 
 COMPLETE:
+Merge import data for toys - add in test_data that makes sense
+Fix double title bar in ie
 Rotated Images in toy summary
 Add loan_bond to possible fees - ok on borrow side, TODO return side
 Remove loan type table, Add loan_cost and loan_bond to toy table
