@@ -263,13 +263,6 @@ Loan Types - how will these be used? How are fees worked out - calculated? - Ans
 
 TASKS:
 
-Add issue fees for return
-     lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
-     broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
-     missing toy fee - same as broken.
-     major missing piece fee - open - manual transaction for refund?
-
-
 Add help text to toy buttons
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
@@ -280,14 +273,17 @@ Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
 
-
-
 BIGGER ITEMS:
 migrate to production database - postgres
 Backup - use other laptops for backup?
 OS server - windows 7
 
 COMPLETE:
+Add issue fees for return
+     lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
+     broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
+     missing toy fee - same as broken.
+     major missing piece fee - open - manual transaction for refund?
 Merge import data for toys - add in test_data that makes sense
 Fix double title bar in ie
 Rotated Images in toy summary

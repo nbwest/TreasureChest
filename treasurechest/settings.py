@@ -29,6 +29,11 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# DEBUG_TOOLBAR_PANELS = [
+#     'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+#     'debug_toolbar.panels.sql.SQLPanel',
+# ]
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,10 +42,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'debug_toolbar',
+    # 'template_timings_panel',
     'report_builder',
     'toybox',
     'widget_tweaks',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,8 +76,9 @@ TEMPLATES = [
                 'django.core.context_processors.request',
                 'django.template.context_processors.media',
                 'django.core.context_processors.static',
-                'django.core.context_processors.media'
+                'django.core.context_processors.media',
             ],
+
         },
     },
 ]
