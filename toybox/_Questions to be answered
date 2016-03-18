@@ -252,14 +252,12 @@ add role field to member?
 
 TODO 22/12/2015
 BUGS:
-
-Check returns: missing arg
-
-Check that adjusting values recalcs
+breaks when no transactions in table - tries to get latest one for daily balance
+chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 QUESTIONS:
 
-Loan Types - how will these be used? How are fees worked out - calculated? - Answered
+
 
 TASKS:
 
@@ -272,6 +270,7 @@ check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
+
 
 BIGGER ITEMS:
 migrate to production database - postgres
@@ -324,6 +323,7 @@ Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+Better toy selection - is very slow, resets filtering
 When adding toy suggest loan fee
 All Max children displayed to be change or add + button
 Dealing with low income earner
