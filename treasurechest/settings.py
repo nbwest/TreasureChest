@@ -25,6 +25,8 @@ SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+VERSION="V1.1.0"
+
 ALLOWED_HOSTS = []
 
 # Application definition

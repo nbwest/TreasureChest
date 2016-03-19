@@ -4,6 +4,7 @@ from toybox.models import *
 from django.db.models import Q
 
 
+
 #################
 # general helpers
 def fragment_search(fragment):
@@ -79,10 +80,10 @@ def get_members(*fields,**kwargs):
 
 
 def base_data(request):
-    version="V1.1.0"
+
     context={}
 
-    context.update({"daily_balance": Transaction.objects.latest().balance,"version":version})
+    context.update({"daily_balance": Transaction.objects.latest().balance,"version":VERSION})
     return context
 
 ##################
