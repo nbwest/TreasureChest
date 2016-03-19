@@ -80,10 +80,10 @@ def get_members(*fields,**kwargs):
 
 
 def base_data(request):
-
+    version="V1.1.1"
     context={}
 
-    context.update({"daily_balance": Transaction.objects.latest().balance,"version":VERSION})
+    context.update({"daily_balance": Transaction.objects.latest().balance,"version":version})
     return context
 
 ##################
