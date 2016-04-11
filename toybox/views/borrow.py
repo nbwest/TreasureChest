@@ -198,8 +198,8 @@ def handle_payment_form(request, member_id):
             if payment_form.is_valid():
 
                 #check for submit action
-                if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
-
+                # if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
+                if any(k in ("paid","add_credit","donate","return") for k in request.POST):
 
                     #Assign borrowed toys to member if any
                     for new_toy in new_borrow_list:
@@ -394,15 +394,16 @@ def handle_payment_form(request, member_id):
                             transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee_paid-fee_due,balance_change=fee_paid)
                             break
 
-                        elif item=="return":
+                        # elif item=="return":
+                        elif item=="paid":
                             transaction=Transaction()
                             transaction.create_transaction_record(request.user,member,Transaction.CHANGE,fee_paid-fee_due,balance_change=fee_due)
                             break
 
-                        elif item=="exact":
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
-                            break
+                        # elif item=="exact":
+                        #     transaction=Transaction()
+                        #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
+                        #     break
 
             else:
                 print("invalid form " + str(payment_form.errors))

@@ -223,10 +223,11 @@
 
                     {% if field.field.widget.attrs.change_buttons %}
                        <span class="input-group-btn">
-                           <button class="btn btn-default" id="btn_return" name="return" type="submit" >Return</button>
+
+                           <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
                            <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
                            <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
-                           <button class="btn btn-default" id="btn_exact" name="exact" type="submit" >Exact</button>
+
                        </span>
                     {% endif %}
 
@@ -464,7 +465,7 @@ console.log("(!C && F && !H): "+(!C && F && !H));
     //console.log("----------------------");
     //console.log("FEES: "+fees);
     //console.log("CREDIT: "+credit);
-    //console.log("TOTAL: "+total);
+      console.log("TOTAL: "+total);
     //console.log("CHANGE: "+change);
     //console.log("PAYMENT: "+payment);
     //console.log("repair only:"+enable_exact_for_repair_only);
@@ -475,10 +476,11 @@ console.log("(!C && F && !H): "+(!C && F && !H));
     document.getElementById("id_change").value=change.toFixed(2);
     document.getElementById("id_credit").value=credit.toFixed(2);
 
-    $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
+     $("#btn_paid").prop('disabled', (isNaN(change)) ||  (!(change>=0) && !enable_exact_for_repair_only));
+   // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
     $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) || !{{credit_enable}});
     $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
-    $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
+   // $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
 
 
 }

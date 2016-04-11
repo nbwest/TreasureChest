@@ -257,9 +257,47 @@ chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 QUESTIONS:
 
-
+BUGS:
+Borrow	If you hit return after typing in the payment, it removes a toy from the list.
+Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
+Members	Add new member gets error message
+Members	update button in members isn't working. Mia tried to update partner name and got an error message
+Members	Adding member broke it KeyError at /toybox/members/ 'deposit_fee_paid' Request Method: POST Request URL: http://127.0.0.1/toybox/members/ Django Version: 1.8.3 Exception Type: KeyError Exception Value: 'deposit_fee_paid' Exception Location: C:\toylibrary\treasurechest\toybox\views\members.py in save, line 120 Python Executable: c:\python27\python.exe Python Version: 2.7.1 Python Path: ['C:\\toylibrary\\treasurechest', 'C:\\Windows\\system32\\python27.zip', 'c:\\python27\\DLLs', 'c:\\python27\\lib', 'c:\\python27\\lib\\plat-win', 'c:\\python27\\lib\\lib-tk', 'c:\\python27', 'c:\\python27\\lib\\site-packages'] Server time: Sat, 19 Mar 2016 13:06:14 +1100
+Members	Calendar not working - fixed
+Borrow	Borrow fee update didn't work
+Check admin permissions and groups - Can't select group in user admin
+Check for balance disappearing / zero?
+Top menu not working on mobile phone
 
 TASKS:
+Cap late fee to cost of toy
+Toy admin help text
+Image table in admin - Add button in toy admin missing?
+Add Comment field for member
+Check potential/active -> wed/sat icons ???
+Check member permission - toy retire
+Add help text to transaction buttons in borrow page
+
+Hide balance and all credit functions instead of disabling
+    Including credit button and Amount to pay
+Hide Loan Bond - disable with config
+Hide donate button
+Combine Exact and change button - call it Paid
+Repair fee calculation to be updated
+Link Toy history and transaction - list toy Id in transaction
+
+Login:
+    include shift volunteer names
+    Allow volunteers to enter in till amount
+logout:
+    Volunteer enters till amount
+
+    Is the till actually altered?
+
+
+
+
+
 
 Add help text to toy buttons
 Auto focus member search after clear form on borrow page
@@ -270,6 +308,11 @@ check UI alignments on return and borrow pages
 Check fee adjust for bad chars or no entry
 Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
+
+
+
+
+
 
 
 BIGGER ITEMS:
