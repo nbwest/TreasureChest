@@ -51,7 +51,11 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     <th>Toy Name</th>
                     <th>Due</th>
                     <th style="text-align: center;">Returned</th>
+
+                    {% if loan_bond_enable == "true" %}
                     <th style="text-align: center;">Bond</th>
+                    {%endif%}
+
                     <th style="text-align: center;">Late Fee</th>
                     <th style="text-align: center;">Issue Fee</th>
 

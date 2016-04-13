@@ -89,9 +89,12 @@ def returns(request, member_id=None):
 
 
 
+    try:
+        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
+    except Config.DoesNotExist:
+        loan_bond_enable= 'true'
 
-
-    context.update({"issue_list":Toy.ISSUE_TYPE_CHOICES})#[:IssueChoiceType.RETURNED_MISSING_PIECE]})
+    context.update({"issue_list":Toy.ISSUE_TYPE_CHOICES,"loan_bond_enable":loan_bond_enable})#[:IssueChoiceType.RETURNED_MISSING_PIECE]})
 
 
     # display toy in toy summary
@@ -130,12 +133,21 @@ class ReturnsForm(forms.Form):
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
                 self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])
 
+    try:
+        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
+    except Config.DoesNotExist:
+        loan_bond_enable= 'true'
 
     numeric = RegexValidator(r'^[0-9.]*$', 'Only numeric characters are allowed.')
 
     late_fee = forms.CharField(required=False,label="Late Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
     issue_fee = forms.CharField( required=False,label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
-    loan_bond_refund = forms.CharField( required=False,label="Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
+
+    #works but needs a server restart
+    if loan_bond_enable=="true":
+        loan_bond_refund = forms.CharField( required=False,label="Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
+
+
     total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly', 'done_button':'True'}))
 
 

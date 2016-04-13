@@ -174,7 +174,12 @@ def handle_payment_form(request, member_id):
     except Config.DoesNotExist:
         repair_loan_duration = "26"
 
-    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable})
+    try:
+        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
+    except Config.DoesNotExist:
+        loan_bond_enable= 'true'
+
+    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable,"loan_bond_enable":loan_bond_enable})
 
     if (request.method == "POST"):
 
@@ -483,10 +488,20 @@ class PaymentForm(forms.Form):
     except Config.DoesNotExist:
         loan_durations = "12"
 
+    try:
+        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
+    except Config.DoesNotExist:
+        loan_bond_enable= 'true'
+
     loan_choices = []
     # so choices can be easily stored in settings
     for c in loan_durations:
         loan_choices.append((c, c))
+
+     # fill in default loan duration
+
+
+
 
     #ensure any input with adjust button also has a justification field with suffix of _adjust_justification with its name
 
@@ -495,11 +510,14 @@ class PaymentForm(forms.Form):
     borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
     borrow_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
 
-    loan_bond = forms.CharField(required=False, label="Loan Bond", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
-    loan_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
 
-    loan_bond_refund = forms.CharField(required=False, label="Loan Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'negative','readonly':'readonly'}))
-    loan_bond_refund_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+    #works but needs a server restart
+    if loan_bond_enable=='true':
+        loan_bond = forms.CharField(required=False, label="Loan Bond", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
+        loan_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+
+        loan_bond_refund = forms.CharField(required=False, label="Loan Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'negative','readonly':'readonly'}))
+        loan_bond_refund_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
 
     member_bond = forms.CharField(required=False, label="Member Bond", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
     member_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))

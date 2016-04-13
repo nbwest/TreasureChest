@@ -70,10 +70,12 @@
                         <td>${{ toy.loan_cost|floatformat:2 }}</td>
                       </tr>
 
+                      {%if loan_bond_enable == 'true' %}
                       <tr>
                         <td>Bond</td>
                         <td>${{ toy.loan_bond|floatformat:2 }}</td>
                       </tr>
+                      {%endif%}
 
                        <tr>
                         <td>Purchase Cost</td>

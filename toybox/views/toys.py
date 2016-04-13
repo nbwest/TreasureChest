@@ -18,6 +18,8 @@ def toys(request, toy_id=None):
     form=ToyIssueForm(toyList=toy_list, user=request.user)
     context.update({"toy_issue_form":form})
 
+
+
     context.update({"toys":toy_list})
 
     return render(request, 'toybox/toys.html', context)
@@ -72,6 +74,14 @@ def handle_stocktake(request):
 def handle_toy_details(request, toy_id):
 
     context={}
+    try:
+        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
+    except Config.DoesNotExist:
+        loan_bond_enable= 'true'
+
+    context.update({"loan_bond_enable":loan_bond_enable})
+
+
     if request.method=="GET":
         if toy_id:
             toy = get_object_or_404(Toy, pk=toy_id)

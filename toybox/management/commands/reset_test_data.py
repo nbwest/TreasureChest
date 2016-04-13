@@ -305,9 +305,14 @@ class Command(BaseCommand):
         Config.objects.filter(key="credit_enable").delete()
         Config.objects.update_or_create(key="credit_enable",
                                           value="true",
-                                          help="Borrow toys with credit function enabled (true) or disabled (false)",
+                                          help="Borrow toys with credit function enabled (true) or disabled (false). Server restart required",
                                           )
 
+        Config.objects.filter(key="loan_bond_enable").delete()
+        Config.objects.update_or_create(key="loan_bond_enable",
+                                          value="true",
+                                          help="(true or false). Toys may have a bond set when borrowed. Server restart required",
+                                          )
 
 
 

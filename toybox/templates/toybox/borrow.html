@@ -65,7 +65,9 @@
                         	<th>Toy Name</th>
                             <th>Due</th>
                             <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
+                            {% if loan_bond_enable == "true" %}
                             <th style="text-align: center;vertical-align: middle;">Bond</th>
+                            {%endif%}
                             <th style="text-align: center;vertical-align: middle;">Lend for repair</th>
                             <th>Remove</th>
                        	</tr>
@@ -92,9 +94,11 @@
                             <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
                        </td>
 
+                       {% if loan_bond_enable == "true" %}
                         <td style="text-align: center;vertical-align: middle;">
                             <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
                        </td>
+                       {% endif %}
 
                         <td style="text-align: center;vertical-align: middle;">
                             {%if toy.state == toy.TO_BE_REPAIRED %}
@@ -149,10 +153,11 @@
                        <td style="text-align: center;vertical-align: middle;">
                            N/A
                        </td>
-
+                        {% if loan_bond_enable == "true" %}
                         <td style="text-align: center;vertical-align: middle;">
                             N/A
                         </td>
+                       {%endif%}
 
                         <td>
                             <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
@@ -368,7 +373,8 @@ function UpdateLoanBond()
 
 
    var loan_bond=document.getElementById("id_loan_bond");
-   loan_bond.value=total.toFixed(2);
+   if (loan_bond != null)
+    loan_bond.value=total.toFixed(2);
 
 }
 
