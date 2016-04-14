@@ -55,9 +55,10 @@ def handle_member_search(request):
 def handle_member_summary(request, member_id):
     context = {}
     if (member_id):
+        credit_enable=get_config("credit_enable")
         member = get_object_or_404(Member, pk=member_id)
         children = Child.objects.filter(parent=member_id)
-        context = {'member': member,'children': children}
+        context = {'member': member,'children': children,'credit_enable':credit_enable}
         #print(context["member"])
     return context
 

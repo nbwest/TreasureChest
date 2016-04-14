@@ -18,7 +18,9 @@
     </h4>
 
 
+    {% if credit_enable == "true" %}
     <p>Balance: ${{ member.balance|floatformat:2 }}</p>
+    {%endif%}
 
 
     <!--<p align="right">Phone: {{ member.phone_number1 }}</p>-->

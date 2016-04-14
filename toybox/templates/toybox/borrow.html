@@ -233,7 +233,10 @@
                            {% if donation_enable == "true" %}
                            <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
                            {%endif%}
+
+                           {% if credit_enable == "true" %}
                            <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
+                           {%endif%}
 
                        </span>
                     {% endif %}
@@ -261,11 +264,7 @@
 </form>
 
 
-    {% if credit_enable == "false" %}
- <div class="row">
-    <p>Credit function has been disabled</p>
-   </div>
-    {%endif%}
+
 
 
 <script type="text/javascript">
@@ -407,12 +406,12 @@ function CalcTotal()
    var payment=Number(document.getElementById("id_payment").value);
    var change_label=document.getElementById("label_id_change");
 
-console.log("----------------------");
-    console.log("FEES: "+fees);
-    console.log("CREDIT: "+credit);
-    console.log("TOTAL: "+total);
-    console.log("CHANGE: "+change);
-    console.log("PAYMENT: "+payment);
+//console.log("----------------------");
+    //console.log("FEES: "+fees);
+    //console.log("CREDIT: "+credit);
+    //console.log("TOTAL: "+total);
+    //console.log("CHANGE: "+change);
+    //console.log("PAYMENT: "+payment);
 
 
    var A=(fees<credit),B=(fees==credit),C=(fees>credit),D=(fees<0), E=(fees==0), F=(fees>0), G=(credit>0),H=(credit==0);
@@ -430,9 +429,9 @@ console.log("----------------------");
    var credit_eq_0 = (C && F && !H);
    var credit_eq_credit_minus_fees = (!C && F && !H);
 
-console.log("total_eq_fees: "+total_eq_fees);
-console.log("(A && !D && !H): "+(A && !D && !H));
-console.log("(!C && F && !H): "+(!C && F && !H));
+//console.log("total_eq_fees: "+total_eq_fees);
+//console.log("(A && !D && !H): "+(A && !D && !H));
+//console.log("(!C && F && !H): "+(!C && F && !H));
 
     if (total_eq_0)
         total=0;
@@ -473,20 +472,27 @@ console.log("(!C && F && !H): "+(!C && F && !H));
     //console.log("----------------------");
     //console.log("FEES: "+fees);
     //console.log("CREDIT: "+credit);
-      console.log("TOTAL: "+total);
+    //  console.log("TOTAL: "+total);
     //console.log("CHANGE: "+change);
     //console.log("PAYMENT: "+payment);
     //console.log("repair only:"+enable_exact_for_repair_only);
 
 
     document.getElementById("id_total_fee").value=fees.toFixed(2);
-    document.getElementById("id_total_to_pay").value=total.toFixed(2);
+
+    if (document.getElementById("id_total_to_pay")!=null)
+        document.getElementById("id_total_to_pay").value=total.toFixed(2);
+
     document.getElementById("id_change").value=change.toFixed(2);
-    document.getElementById("id_credit").value=credit.toFixed(2);
+
+    if (document.getElementById("id_credit")!=null)
+        document.getElementById("id_credit").value=credit.toFixed(2);
 
      $("#btn_paid").prop('disabled', (isNaN(change)) ||  (!(change>=0) && !enable_exact_for_repair_only));
    // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
-    $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) || !{{credit_enable}});
+   if ("{{credit_enable}}"=="true")
+        $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );
+
 
     if ("{{donation_enable}}" == "true")
         $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );

@@ -86,6 +86,8 @@ def get_all_members_ordered_by_name():
 
 # Form
 class MemberDetailsForm(forms.Form):
+    credit_enable=get_config("credit_enable")
+
     name = forms.CharField(label="Name", max_length=Member._meta.get_field('name').max_length)
 
     partner = forms.CharField(required=False, label="Partner Name",
@@ -103,7 +105,10 @@ class MemberDetailsForm(forms.Form):
     address = forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address = forms.EmailField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type = forms.ModelChoiceField(queryset=MemberType.objects.all(), label="Member Type")
-    balance = forms.DecimalField(required=False, label='Balance',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+    if credit_enable=="true":
+        balance = forms.DecimalField(required=False, label='Balance',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     bond_fee_paid = forms.DecimalField(required=False, label='Bond',widget=forms.TextInput(attrs={'readonly': 'readonly'}))

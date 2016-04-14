@@ -469,8 +469,8 @@ class PaymentForm(forms.Form):
 
 
     loan_durations = get_config("loan_durations")
-
     loan_bond_enable= get_config("loan_bond_enable")
+    credit_enable=get_config("credit_enable")
 
     loan_choices = []
     # so choices can be easily stored in settings
@@ -515,8 +515,10 @@ class PaymentForm(forms.Form):
     # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','enabled':'True'}))
 
     total_fee = forms.CharField(label="Total Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly'}))
-    credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
-    total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+
+    if credit_enable=='true':
+        credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+        total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
 
     payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'cancel_button':'True'}))
     change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'change_buttons':'True'}))
