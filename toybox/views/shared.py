@@ -94,3 +94,35 @@ class MemberSearchForm(forms.Form):
 class ToySearchForm(forms.Form):
     toy_search_string = forms.CharField(label="ID or name of toy to borrow", max_length=10,required=False)
 
+
+def get_config(key):
+    try:
+
+        return(Config.objects.get(key=key).value.lower())
+
+    except Config.DoesNotExist:
+
+        if key=="credit_enable":
+            return("true")
+
+        elif key=="repair_loan_duration":
+            return("26")
+
+        elif key=="loan_bond_enable":
+            return('true')
+
+        elif key=="default_loan_duration":
+            return("2")
+
+        elif key=="max_toys":
+            return(4)
+
+        elif key=="loan_durations":
+            return("12")
+
+        elif key=="donation_enable":
+            return("true")
+
+        else:
+            raise NameError('Option key not found: '+key)
+

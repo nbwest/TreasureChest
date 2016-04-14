@@ -74,10 +74,8 @@ def handle_stocktake(request):
 def handle_toy_details(request, toy_id):
 
     context={}
-    try:
-        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
-    except Config.DoesNotExist:
-        loan_bond_enable= 'true'
+
+    loan_bond_enable= get_config("loan_bond_enable")
 
     context.update({"loan_bond_enable":loan_bond_enable})
 

@@ -92,10 +92,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
                     temp_list_count=TempBorrowList.objects.filter(member__id=member_id).exclude(toy__state=Toy.TO_BE_REPAIRED).count()+1
                     prev_borrow_count=Toy.objects.filter(member_loaned=member_id).count()
 
-                    try:
-                        max_toys = int(Config.objects.get(key="max_toys").value)
-                    except Config.DoesNotExist:
-                        max_toys = 10
+
+                    max_toys = get_config("max_toys")
 
                     if temp_list_count+prev_borrow_count > max_toys:
                         error="Toy borrow limit reached"
@@ -164,22 +162,12 @@ def handle_payment_form(request, member_id):
         member = get_object_or_404(Member, pk=member_id)
 
 
-    try:
-        credit_enable = Config.objects.get(key="credit_enable").value.lower()
-    except Config.DoesNotExist:
-        credit_enable = "true"
+    credit_enable = get_config("credit_enable")
+    repair_loan_duration = get_config("repair_loan_duration")
+    loan_bond_enable= get_config("loan_bond_enable")
+    donation_enable=get_config("donation_enable")
 
-    try:
-        repair_loan_duration = Config.objects.get(key="repair_loan_duration").value
-    except Config.DoesNotExist:
-        repair_loan_duration = "26"
-
-    try:
-        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
-    except Config.DoesNotExist:
-        loan_bond_enable= 'true'
-
-    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable,"loan_bond_enable":loan_bond_enable})
+    context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable,"loan_bond_enable":loan_bond_enable,"donation_enable":donation_enable})
 
     if (request.method == "POST"):
 
@@ -415,11 +403,7 @@ def handle_payment_form(request, member_id):
 
 
 
-    # fill in default loan duration
-    try:
-        default_loan_duration = Config.objects.get(key="default_loan_duration").value
-    except Config.DoesNotExist:
-        default_loan_duration = "2"
+    default_loan_duration = get_config("default_loan_duration")
 
     #fill in other fees
 
@@ -483,15 +467,10 @@ class PaymentForm(forms.Form):
 
     numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 
-    try:
-        loan_durations = Config.objects.get(key="loan_durations").value
-    except Config.DoesNotExist:
-        loan_durations = "12"
 
-    try:
-        loan_bond_enable= Config.objects.get(key="loan_bond_enable").value.lower
-    except Config.DoesNotExist:
-        loan_bond_enable= 'true'
+    loan_durations = get_config("loan_durations")
+
+    loan_bond_enable= get_config("loan_bond_enable")
 
     loan_choices = []
     # so choices can be easily stored in settings

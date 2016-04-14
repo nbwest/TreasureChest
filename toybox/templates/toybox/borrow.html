@@ -230,7 +230,9 @@
                        <span class="input-group-btn">
 
                            <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
+                           {% if donation_enable == "true" %}
                            <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
+                           {%endif%}
                            <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
 
                        </span>
@@ -401,7 +403,7 @@ function CalcTotal()
 
 
 
-   var credit=Number({{payment_form.credit.value}});
+   var credit=Number("{{payment_form.credit.value}}");
    var payment=Number(document.getElementById("id_payment").value);
    var change_label=document.getElementById("label_id_change");
 
@@ -485,7 +487,10 @@ console.log("(!C && F && !H): "+(!C && F && !H));
      $("#btn_paid").prop('disabled', (isNaN(change)) ||  (!(change>=0) && !enable_exact_for_repair_only));
    // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
     $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) || !{{credit_enable}});
-    $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
+
+    if ("{{donation_enable}}" == "true")
+        $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
+
    // $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
 
 

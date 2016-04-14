@@ -1,5 +1,126 @@
-Toy library Questions
-==============================
+Toy library Notes
+=================
+
+BUGS:
+breaks when no transactions in table - tries to get latest one for daily balance
+chrome doesn't support exif  CSS rotation-from-image - check tablets
+Borrow	If you hit return after typing in the payment, it removes a toy from the list.
+Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
+Members	Add new member gets error message
+Members	update button in members isn't working. Mia tried to update partner name and got an error message
+Members	Adding member broke it KeyError at /toybox/members/ 'deposit_fee_paid' Request Method: POST Request URL: http://127.0.0.1/toybox/members/ Django Version: 1.8.3 Exception Type: KeyError Exception Value: 'deposit_fee_paid' Exception Location: C:\toylibrary\treasurechest\toybox\views\members.py in save, line 120 Python Executable: c:\python27\python.exe Python Version: 2.7.1 Python Path: ['C:\\toylibrary\\treasurechest', 'C:\\Windows\\system32\\python27.zip', 'c:\\python27\\DLLs', 'c:\\python27\\lib', 'c:\\python27\\lib\\plat-win', 'c:\\python27\\lib\\lib-tk', 'c:\\python27', 'c:\\python27\\lib\\site-packages'] Server time: Sat, 19 Mar 2016 13:06:14 +1100
+Borrow	Borrow fee update didn't work
+Check admin permissions and groups - Can't select group in user admin
+Check for balance disappearing / zero?
+Top menu not working on mobile phone
+Check potential/active -> wed/sat icons ???
+Check member permission - toy retire
+Image table in admin - Add button in toy admin missing?
+
+TASKS:
+TODO Hide donate button thru config
+TODO Hide balance and all credit functions instead of disabling. Including credit button and Amount to pay and total to pay
+TODO Link Toy history and transaction - list toy Id in transaction. Display toys in transaction - tricky?
+    transaction = models.ForeignKey(Transaction, null=True,blank=True)
+TODO Add Comment field for member
+
+
+TODO Cap late fee to cost of toy
+
+TODO On login include shift volunteer names. Put on Login page for successful login or new default page?.
+TODO On login allow volunteers to enter in till amount. Does this has to be on login?
+TODO On logout Volunteer enters till amount.  Is the till actually altered? - New Page
+
+TODO Repair fee calculation to be updated-waiting on Elizabeth
+
+
+MINOR:
+TODO Toy admin help text
+TODO Add help text to transaction buttons in borrow page
+TODO Add help text to toy buttons
+TODO Auto focus member search after clear form on borrow page
+TODO Auto focus member search on returns page
+
+TODO Check borrow fields for bad inputs
+TODO check UI alignments on return and borrow pages
+TODO Check fee adjust for bad chars or no entry
+TODO Check admin for fields that should be readonly and permissions
+    -Delete toy and member shouldn't be allowed
+
+BIGGER ITEMS:
+TODO migrate to production database - postgres
+TODO Backup - use other laptops for backup?
+TODO OS of server - windows 7
+
+
+
+COMPLETE:
+Members	Calendar not working - fixed
+Combine Exact and change button - call it Paid
+Hide Loan Bond - disable with config
+Add issue fees for return
+     lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
+     broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
+     missing toy fee - same as broken.
+     major missing piece fee - open - manual transaction for refund?
+Merge import data for toys - add in test_data that makes sense
+Fix double title bar in ie
+Rotated Images in toy summary
+Add loan_bond to possible fees - ok on borrow side, TODO return side
+Remove loan type table, Add loan_cost and loan_bond to toy table
+Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
+
+Add repairer membertype -
+    - "Repairer only" membertype - no annual fees
+    - member type - can repair flag - due date
+        - toy has not fees, show only repair checkbox for those with repairer flag. Not included in max toy limit
+    - Add for repair checkbox in borrow toy list
+
+Feedback - change to logged in user
+Add children to members page - birth month and year only - Almost done
+Add reporting plugin
+exclude retired toys from toy list
+Permissions for toy retire, member delete, banking and till change - member delete (not active) performed in admin
+Add logged in volunteer to multiple tables: toy history and transaction
+Member import data
+Merge volunteer login
+Add login roles? Start with volunteer and admin
+members inactive - don't display in member table
+bond fee amount for refund
+when banking set banking amount.
+Add instruction and receipt images - display with extra click from toy summary
+Enable checked checkbox function in toys for stocktake - Done
+Update till balance - done
+include balance in transactions - done
+Add transaction actions such as banking (resets till balance) and adding to till - Done
+Column filter for toy list - done
+Column filter for toy history - done
+Column filter for member list - sort by overdue colour? - Add extra character - done
+Clear temp borrow list if page is left - partially complete, fails if you open another borrow window - forces only one borrower at a time - could be issue down the track
+Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
+Add ability to update issue type, issue comment
+Add ability to set all toys to stocktake state
+Add volunteer capacity - wed and sat boolean
+
+NEXT RELEASE:
+Better toy selection - is very slow, resets filtering
+When adding toy suggest loan fee
+All Max children displayed to be change or add + button
+Dealing with low income earner
+Comment when toy is retired
+Enable donation - could be done with what we have?
+
+Add on loan >6 months sets toy as retired - include in config table
+Pagination of transactions, members, toy, toy history to be done on server side.
+Member availability-Is this useful given no scheduling? Below to do in model:
+    # roster days - bitfield?
+    # member notes/characteristics?
+Membership annual fee warning
+Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
+Link transaction to toy history some how
+Set toy add in admin in order of those fields required for adding toys manually.
+email, for receipt - later, more useful for toy reminders. Start with receipt number?
+
 
 Model
 -----
@@ -248,139 +369,3 @@ add role field to member?
     stocktaker
     admin
     
-
-
-TODO 22/12/2015
-BUGS:
-breaks when no transactions in table - tries to get latest one for daily balance
-chrome doesn't support exif  CSS rotation-from-image - check tablets
-
-QUESTIONS:
-
-BUGS:
-Borrow	If you hit return after typing in the payment, it removes a toy from the list.
-Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
-Members	Add new member gets error message
-Members	update button in members isn't working. Mia tried to update partner name and got an error message
-Members	Adding member broke it KeyError at /toybox/members/ 'deposit_fee_paid' Request Method: POST Request URL: http://127.0.0.1/toybox/members/ Django Version: 1.8.3 Exception Type: KeyError Exception Value: 'deposit_fee_paid' Exception Location: C:\toylibrary\treasurechest\toybox\views\members.py in save, line 120 Python Executable: c:\python27\python.exe Python Version: 2.7.1 Python Path: ['C:\\toylibrary\\treasurechest', 'C:\\Windows\\system32\\python27.zip', 'c:\\python27\\DLLs', 'c:\\python27\\lib', 'c:\\python27\\lib\\plat-win', 'c:\\python27\\lib\\lib-tk', 'c:\\python27', 'c:\\python27\\lib\\site-packages'] Server time: Sat, 19 Mar 2016 13:06:14 +1100
-Members	Calendar not working - fixed
-Borrow	Borrow fee update didn't work
-Check admin permissions and groups - Can't select group in user admin
-Check for balance disappearing / zero?
-Top menu not working on mobile phone
-
-TASKS:
-Cap late fee to cost of toy
-Toy admin help text
-Image table in admin - Add button in toy admin missing?
-Add Comment field for member
-Check potential/active -> wed/sat icons ???
-Check member permission - toy retire
-Add help text to transaction buttons in borrow page
-
-Hide balance and all credit functions instead of disabling
-    Including credit button and Amount to pay
-Hide Loan Bond - disable with config
-Hide donate button
-Combine Exact and change button - call it Paid
-Repair fee calculation to be updated
-Link Toy history and transaction - list toy Id in transaction
-
-Login:
-    include shift volunteer names
-    Allow volunteers to enter in till amount
-logout:
-    Volunteer enters till amount
-
-    Is the till actually altered?
-
-
-
-
-
-
-Add help text to toy buttons
-Auto focus member search after clear form on borrow page
-Auto focus member search on returns page
-
-Check borrow fields for bad inputs
-check UI alignments on return and borrow pages
-Check fee adjust for bad chars or no entry
-Check admin for fields that should be readonly and permissions
-    -Delete toy and member shouldn't be allowed
-
-
-
-
-
-
-
-BIGGER ITEMS:
-migrate to production database - postgres
-Backup - use other laptops for backup?
-OS server - windows 7
-
-COMPLETE:
-Add issue fees for return
-     lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
-     broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.
-     missing toy fee - same as broken.
-     major missing piece fee - open - manual transaction for refund?
-Merge import data for toys - add in test_data that makes sense
-Fix double title bar in ie
-Rotated Images in toy summary
-Add loan_bond to possible fees - ok on borrow side, TODO return side
-Remove loan type table, Add loan_cost and loan_bond to toy table
-Add disable of credit function in borrow page - set in config table - disable credit button, set all credit to 0
-
-Add repairer membertype -
-    - "Repairer only" membertype - no annual fees
-    - member type - can repair flag - due date
-        - toy has not fees, show only repair checkbox for those with repairer flag. Not included in max toy limit
-    - Add for repair checkbox in borrow toy list
-
-Feedback - change to logged in user
-Add children to members page - birth month and year only - Almost done
-Add reporting plugin
-exclude retired toys from toy list
-Permissions for toy retire, member delete, banking and till change - member delete (not active) performed in admin
-Add logged in volunteer to multiple tables: toy history and transaction
-Member import data
-Merge volunteer login
-Add login roles? Start with volunteer and admin
-members inactive - don't display in member table
-bond fee amount for refund
-when banking set banking amount.
-Add instruction and receipt images - display with extra click from toy summary
-Enable checked checkbox function in toys for stocktake - Done
-Update till balance - done
-include balance in transactions - done
-Add transaction actions such as banking (resets till balance) and adding to till - Done
-Column filter for toy list - done
-Column filter for toy history - done
-Column filter for member list - sort by overdue colour? - Add extra character - done
-Clear temp borrow list if page is left - partially complete, fails if you open another borrow window - forces only one borrower at a time - could be issue down the track
-Save adjustment justification comment in transactions - done. one issue that if you update it more than once the original value isn't recorded in the transaction comment
-Add ability to update issue type, issue comment
-Add ability to set all toys to stocktake state
-Add volunteer capacity - wed and sat boolean
-
-NEXT RELEASE:
-Better toy selection - is very slow, resets filtering
-When adding toy suggest loan fee
-All Max children displayed to be change or add + button
-Dealing with low income earner
-Comment when toy is retired
-Enable donation - could be done with what we have?
-
-Add on loan >6 months sets toy as retired - include in config table
-Pagination of transactions, members, toy, toy history to be done on server side.
-Member availability-Is this useful given no scheduling? Below to do in model:
-    # roster days - bitfield?
-    # member notes/characteristics?
-Membership annual fee warning
-Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
-Link transaction to toy history some how
-Set toy add in admin in order of those fields required for adding toys manually.
-email, for receipt - later, more useful for toy reminders. Start with receipt number?
-

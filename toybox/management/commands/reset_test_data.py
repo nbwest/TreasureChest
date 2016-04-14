@@ -314,7 +314,11 @@ class Command(BaseCommand):
                                           help="(true or false). Toys may have a bond set when borrowed. Server restart required",
                                           )
 
-
+        Config.objects.filter(key="donation_enable").delete()
+        Config.objects.update_or_create(key="donation_enable",
+                                          value="true",
+                                          help="(true or false). Enable giving change as donation",
+                                          )
 
     def handle(self, *args, **options):
 
