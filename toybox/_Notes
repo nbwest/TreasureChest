@@ -18,11 +18,11 @@ Check member permission - toy retire
 Image table in admin - Add button in toy admin missing?
 
 TASKS:
+TODO Add Comment field for member
 
-TODO Hide balance and all credit functions instead of disabling. Including credit button and Amount to pay and total to pay
 TODO Link Toy history and transaction - list toy Id in transaction. Display toys in transaction - tricky?
     transaction = models.ForeignKey(Transaction, null=True,blank=True)
-TODO Add Comment field for member
+
 
 
 TODO Cap late fee to cost of toy
@@ -55,6 +55,7 @@ TODO OS of server - windows 7
 
 
 COMPLETE:
+Hide balance and all credit functions instead of disabling. Including credit button and Amount to pay and total to pay
 Hide donate button thru config
 Members	Calendar not working - fixed
 Combine Exact and change button - call it Paid

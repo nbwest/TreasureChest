@@ -94,6 +94,7 @@ class Member(models.Model):
     bond_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
+    comment = models.CharField(max_length=300, blank=True)
 
     #TODO
     # roster days - bitfield
