@@ -82,7 +82,7 @@ def get_members(*fields,**kwargs):
 
 def base_data(request):
     version="V1.2.0"
-    latest_balance="0"
+    latest_balance=0
 
     context={"version":version}
 
