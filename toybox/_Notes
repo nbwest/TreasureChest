@@ -2,7 +2,7 @@ Toy library Notes
 =================
 
 BUGS:
-breaks when no transactions in table - tries to get latest one for daily balance
+
 chrome doesn't support exif  CSS rotation-from-image - check tablets
 Borrow	If you hit return after typing in the payment, it removes a toy from the list.
 Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
@@ -19,11 +19,10 @@ Image table in admin - Add button in toy admin missing?
 
 TASKS:
 
-
-TODO Link Toy history and transaction - list toy Id in transaction. Display toys in transaction - tricky?
-    transaction = models.ForeignKey(Transaction, null=True,blank=True)
-
 TODO Cap late fee to cost of toy
+TODO Add who a toy is loaned to to table and summary
+
+
 
 TODO On login include shift volunteer names. Put on Login page for successful login or new default page?.
 TODO On login allow volunteers to enter in till amount. Does this has to be on login?
@@ -31,7 +30,7 @@ TODO On logout Volunteer enters till amount.  Is the till actually altered? - Ne
 
 TODO Repair fee calculation to be updated-waiting on Elizabeth
 
-NO list to show a members toy history!!! - Add to member page
+
 
 MINOR:
 TODO Toy admin help text
@@ -54,6 +53,9 @@ TODO OS of server - windows 7
 
 
 COMPLETE:
+breaks when no transactions in table - tries to get latest one for daily balance
+Link Toy history and transaction - list toy Id in transaction. Display toys in transaction - tricky?
+Add list to show a members toy history!!! - Add to member page
 Add Comment field for member
 Hide balance and all credit functions instead of disabling. Including credit button and Amount to pay and total to pay
 Hide donate button thru config
