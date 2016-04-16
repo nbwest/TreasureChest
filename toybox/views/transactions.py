@@ -84,8 +84,7 @@ def transactions(request):
     if user.has_perm("transaction.transaction_actions"):
         context.update({"transaction_form":form})
 
-    context.update({"transactions":Transaction.objects.all().order_by('date_time').select_related('member')})
-
+    context.update({"transactions":Transaction.objects.all().order_by('date_time').select_related('member').prefetch_related("toyhistory__toy")})
 
     return render(request, 'toybox/transactions.html',context )
 

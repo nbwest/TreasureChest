@@ -71,11 +71,12 @@
              data-cookie-id-table="transaction_table">
              <thead>
                 <tr>
-                    <th data-field="id" data-sortable="true" >ID</th>
+                    <th data-field="id" data-sortable="true" data-filter-control="input">ID</th>
                     <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
 
                     <th data-field="transaction_type"  data-sortable="true" data-filter-control="select">Type</th>
                     <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
+                    <th data-field="toys"  data-filter-control="input">Toys</th>
                     <th data-field="volunteer"  data-sortable="true" data-filter-control="input">Volunteer</th>
                     <th data-field="amount" data-sortable="true"  >Amount</th>
                     <th data-field="balance" data-sortable="true">Balance</th>
@@ -99,6 +100,14 @@
                         <a name="{{transaction.member}}"{%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
                             {{transaction.member}}
                         </a></td>
+
+                    <td>
+                        {% for th in transaction.toyhistory.all %}
+                            <a href="{% url 'toybox:toys' toy_id=th.toy.id %}">
+                                {{th.toy.code}}: {{th.toy.name}}<br>
+                            </a>
+                        {%endfor%}
+                    </td>
                     <td>{{transaction.volunteer_reporting}}</td>
                     <td>{{transaction.amount}}</td>
                     <td>{{transaction.balance}}</td>

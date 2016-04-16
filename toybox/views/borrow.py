@@ -194,6 +194,23 @@ def handle_payment_form(request, member_id):
                 # if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
                 if any(k in ("paid","add_credit","donate","return") for k in request.POST):
 
+
+
+
+                    transaction=Transaction()
+                    #borrow fee transaction
+                    if "borrow_fee" in payment_form.cleaned_data:
+                        if payment_form.cleaned_data['borrow_fee']!="":
+                            fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
+                            if fee!=0:
+                                if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
+                                        comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
+                                    else:
+                                        comment=None
+                                transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
+
+
                     #Assign borrowed toys to member if any
                     for new_toy in new_borrow_list:
                         loan_duration = payment_form.cleaned_data['loan_duration']
@@ -209,24 +226,9 @@ def handle_payment_form(request, member_id):
                                 loan_duration=repair_loan_duration
 
                         # print(toy)
-                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair)
+                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
-
-
-
-                    #borrow fee transaction
-                    if "borrow_fee" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['borrow_fee']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
-                            if fee!=0:
-                                if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
-                                    else:
-                                        comment=None
-                                transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
 
                     #membership fee transaction
                     if "membership" in payment_form.cleaned_data:

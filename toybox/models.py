@@ -378,7 +378,7 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow_toy(self, member, duration, user, loaned_for_repair):
+    def borrow_toy(self, member, duration, user, loaned_for_repair, transaction):
         self.member_loaned = member
         self.borrow_date = datetime.datetime.now()
 
@@ -391,7 +391,7 @@ class Toy(models.Model):
         self.save()
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self,user)
+        toy_history.record_toy_event(self,user,transaction)
 
 
     def issue_type_to_state(self, issue_type):
@@ -572,14 +572,16 @@ class ToyHistory(models.Model):
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     member = models.ForeignKey(Member, blank=True, null=True)
     volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
+    transaction = models.ForeignKey(Transaction, null=True,blank=True,related_name="toyhistory" )
 
-    def record_toy_event(self, toy, user):
+    def record_toy_event(self, toy, user, transaction=None):
         self.toy=toy
         self.date_time=datetime.datetime.now()
         self.event_type=toy.state
         self.issue_comment=toy.issue_comment
         self.issue_type=toy.issue_type
         self.member=toy.member_loaned
+        self.transaction=transaction
 
 
         self.volunteer_reporting= format_username(user)

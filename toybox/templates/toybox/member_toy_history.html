@@ -3,10 +3,10 @@
 <!--Must filter by toy id-->
 <!--supply history item-->
 
-<span id="toy_history">
-    {% if toy_history %}
+<span id="member_toy_history">
+    {% if member_toy_history %}
     <div class="panel-default">
-    <div class="panel-heading">Toy History ID: {{toy.code}}</div>
+    <div class="panel-heading">Toy History</div>
      <table  data-classes="table table-condensed table-no-bordered"
              class="table table-condensed"
              data-toggle="table"
@@ -20,7 +20,7 @@
              data-page-size="20"
              data-page-list='[20, 50, 100, 200, 300, 500]'
              data-cookies="true"
-             data-cookie-id-table="toy_history_table"
+             data-cookie-id-table="member_toy_history_table"
              data-show-export="true"
              data-export-types="['excel','csv']"
              data-show-pagination-switch="true"
@@ -29,27 +29,29 @@
             <thead>
                 <tr>
                     <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
-
+                    <th data-field="toyCode"  data-sortable="true" data-filter-control="input">Toy ID</th>
+                    <th data-field="toyName"  data-sortable="true" data-filter-control="input">Toy Name</th>
                     <th data-field="event_type"  data-sortable="true"  data-filter-control="select">State</th>
-                    <th data-field="issue_type"  data-sortable="true"  data-filter-control="select">Issue</th>
-                    <th data-field="issue_comment"  data-sortable="true"  data-filter-control="input">Issue Comment</th>
-                    <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
-                     <th data-field="volunteer"  data-sortable="true" data-filter-control="input">Volunteer</th>
-                    <th data-field="transaction"  data-sortable="true" data-filter-control="input">Transaction ID</th>
+                    <th data-field="issue_type"  data-visible="false" data-sortable="true"  data-filter-control="select">Issue</th>
+                    <th data-field="issue_comment"  data-visible="false" data-sortable="true"  data-filter-control="input">Issue Comment</th>
+
+                     <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="input">Volunteer</th>
+                    <th data-field="transaction"  data-visible="false" data-sortable="true" data-filter-control="input">Transaction ID</th>
 
                 </tr>
             </thead>
 
-            {% for event in toy_history %}
+            {% for event in member_toy_history %}
               <tr>
                     <td>
                         <span name='{{event.date_time|date:"Y/m/d H:i"}}'></span>
                         {{event.date_time|date:"d/m/Y H:i"}}
                     </td>
+                    <td>{{event.toy.code}}</td>
+                    <td>{{event.toy.name}}</td>
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>
-                    <td>{% if event.member %}<a href="{% url 'toybox:members' event.member.id %}">{{event.member}}</a>{% endif %}</td>
                     <td>{{event.volunteer_reporting}}</td>
                     <td>{{event.transaction.id}}</td>
               </tr>
@@ -64,7 +66,7 @@
 
 
 $(document).ready(function() {
-var $table = $('#toy_history_table');
+var $table = $('#member_toy_history_table');
 $table.bootstrapTable('refreshOptions', {
     exportOptions: {
         onCellHtmlData: DoOnCellHtmlData
