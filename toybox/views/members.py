@@ -127,9 +127,10 @@ class MemberDetailsForm(forms.Form):
 
     def save(self,member_id):
         self.cleaned_data.pop("membership_end_date")
-        self.cleaned_data.pop("balance")
+        if "balance" in self.cleaned_data:
+            self.cleaned_data.pop("balance")
         self.cleaned_data.pop("join_date")
-        self.cleaned_data.pop("deposit_fee_paid")
+        self.cleaned_data.pop("bond_fee_paid")
         #
         # type=self.cleaned_data.pop("type")
         #
