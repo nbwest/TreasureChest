@@ -8,10 +8,10 @@ Borrow	If you hit return after typing in the payment, it removes a toy from the 
 
 Check admin permissions and groups - Can't select group in user admin
 Check for balance disappearing / zero?
-Top menu not working on mobile phone
+
 Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
-Image table in admin - Add button in toy admin missing?
+
 
 TASKS:
 
@@ -52,6 +52,8 @@ TODO OS of server - windows 7
 
 
 COMPLETE:
+Image table in admin - Add button in toy admin missing? Also no image table
+Top menu not working on mobile phone - could not reproduce
 Members	Add new member gets error message
 Members	update button in members isn't working. Mia tried to update partner name and got an error message
 Members	Adding member broke it KeyError at /toybox/members/ 'deposit_fee_paid' Request Method: POST Request URL: http://127.0.0.1/toybox/members/ Django Version: 1.8.3 Exception Type: KeyError Exception Value: 'deposit_fee_paid' Exception Location: C:\toylibrary\treasurechest\toybox\views\members.py in save, line 120 Python Executable: c:\python27\python.exe Python Version: 2.7.1 Python Path: ['C:\\toylibrary\\treasurechest', 'C:\\Windows\\system32\\python27.zip', 'c:\\python27\\DLLs', 'c:\\python27\\lib', 'c:\\python27\\lib\\plat-win', 'c:\\python27\\lib\\lib-tk', 'c:\\python27', 'c:\\python27\\lib\\site-packages'] Server time: Sat, 19 Mar 2016 13:06:14 +1100

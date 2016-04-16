@@ -35,10 +35,14 @@ class ToyHistoryAdmin(admin.ModelAdmin):
 class ChildAdmin(admin.ModelAdmin):
     list_display=('parent','date_of_birth')
 
+class ImageAdmin(admin.ModelAdmin):
+    list_display=('file','type','admin_image')
+
 # User space lists
 admin.site.register(Member)
 admin.site.register(Child,ChildAdmin)
 admin.site.register(Toy, ToyAdmin)
+admin.site.register(Image, ImageAdmin)
 
 # Issues added when returning or from toy list (stocktake)
 # used for toy history

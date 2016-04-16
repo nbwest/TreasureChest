@@ -215,6 +215,13 @@ class Image(models.Model):
     def __str__(self):
         return unicode(self.file.name+" ["+self.IMAGE_TYPE_CHOICES[self.type][1]+"]")
 
+    def admin_image(self):
+        if self.file != None:
+            return u'<img src="%s" style="max-height:150px;image-orientation:from-image;" />' % self.file.url
+        else:
+            return "NO IMAGE"
+
+    admin_image.allow_tags = True
 
 class Toy(models.Model):
     AVAILABLE = 0
@@ -372,7 +379,7 @@ class Toy(models.Model):
 
     def admin_image(self):
         if self.image != None:
-            return u'<img src="%s" style="max-height:150px;" />' % self.image.file.url
+            return u'<img src="%s" style="max-height:150px;image-orientation:from-image;" />' % self.image.file.url
         else:
             return "NO IMAGE"
 
