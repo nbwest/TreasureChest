@@ -20,6 +20,11 @@ def handle_returns(request,member_id):
 @login_required
 def returns(request, member_id=None):
 
+
+    if (request.method == "GET"):
+         if "success" in request.GET:
+             context={"success":True}
+
     context={}
     context.update(base_data(request))
     context.update(handle_returns(request,member_id))
@@ -86,6 +91,7 @@ def returns(request, member_id=None):
 
                 context.pop("toy_list",None)
                 context.pop("member",None)
+                context.update({"success":True})
 
 
 
@@ -111,7 +117,7 @@ def returns(request, member_id=None):
     returns_form = ReturnsForm(toyList=toyList)
 
     context.update({"returns_form":returns_form})
-    print(context)
+    #print(context)
 
     return render(request, 'toybox/returns.html', context)
 

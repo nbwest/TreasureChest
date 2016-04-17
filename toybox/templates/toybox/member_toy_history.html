@@ -47,7 +47,11 @@
                         <span name='{{event.date_time|date:"Y/m/d H:i"}}'></span>
                         {{event.date_time|date:"d/m/Y H:i"}}
                     </td>
-                    <td>{{event.toy.code}}</td>
+                    <td>
+                        <a name="{{toy.code}}" href="{% url 'toybox:toys' toy_id=event.toy.id %}">
+                            {{event.toy.code}}
+                        </a>
+                    </td>
                     <td>{{event.toy.name}}</td>
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>

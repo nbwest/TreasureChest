@@ -19,6 +19,9 @@
 
 </style>
 
+{%if success%}
+    {% include "toybox/success_message.html" with success_message="Member sucessfully updated" %}
+{%endif%}
 
 <h1  class="page-header">Members</h1>
 
@@ -257,15 +260,7 @@
 
 </div>
 
-<div class="modal  fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <!--<div class="modal-content">-->
-                <div class="alert alert-success">
-                    <strong>Success!</strong> Member details were committed successfully
-                </div>
-            <!--</div>-->
-        </div>
-</div>
+
 
 <script>
 $(document).ready(function() {
@@ -281,18 +276,6 @@ $(document).ready(function() {
 
         })
 
-
-{% if success %}
-
-function hide_modal(){
-    $('#successModal').modal('hide');
-}
-
-$(window).load(function(){
-    $('#successModal').modal('show');
-    window.setTimeout(hide_modal, 2000);
-});
-{% endif %}
 });
 
 

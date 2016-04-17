@@ -5,6 +5,11 @@
 
 {% include "toybox/change_fee.html" %}
 
+{%if success%}
+    {% include "toybox/success_message.html" with success_message="Transaction sucessful" %}
+{%endif%}
+
+
 <h1  id="page_table" class="page-header">Borrow Toy</h1>
 
 <div id="member" class="row" >
@@ -109,9 +114,9 @@
                         </td>
 
                         <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger" aria-label="Left Align">
+                            <a title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                            </button>
+                            </a>
                         </td>
 
                      </tr>
@@ -266,23 +271,19 @@
 
 
 
-
 <script type="text/javascript">
 
 var enable_exact_for_repair_only=false;
 
 $( document ).ready(function()
 {
-     //UpdateBorrowFee();
-     //CalcTotal();
-     //UpdateLoanBond();
      UpdateFee();
+
 });
 
 function UpdateFee()
 {
     UpdateBorrowFee();
-   // CalcChange();
     UpdateLoanBond();
     CalcTotal();
 }
@@ -488,7 +489,7 @@ function CalcTotal()
     if (document.getElementById("id_credit")!=null)
         document.getElementById("id_credit").value=credit.toFixed(2);
 
-     $("#btn_paid").prop('disabled', (isNaN(change)) ||  (!(change>=0) && !enable_exact_for_repair_only));
+     $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
    // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
    if ("{{credit_enable}}"=="true")
         $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );

@@ -3,15 +3,13 @@ Toy library Notes
 
 BUGS:
 
-chrome doesn't support exif  CSS rotation-from-image - check tablets
-Borrow	If you hit return after typing in the payment, it removes a toy from the list.
-
 Check admin permissions and groups - Can't select group in user admin
 Check for balance disappearing / zero?
 
 Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
 
+Toy page takes too long to load
 
 TASKS:
 
@@ -30,6 +28,9 @@ Toys	Search function in Toys not limiting enough. If you put "I" in it will sear
 
 Borrow	Borrow fee update didn't work
     Can't reproduce, assume loan duration change
+
+KNOWN LIMITATIONS:
+chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 MINOR:
 TODO Toy admin help text
@@ -52,6 +53,7 @@ TODO OS of server - windows 7
 
 
 COMPLETE:
+Borrow	If you hit return after typing in the payment, it removes a toy from the list.
 Image table in admin - Add button in toy admin missing? Also no image table
 Top menu not working on mobile phone - could not reproduce
 Members	Add new member gets error message

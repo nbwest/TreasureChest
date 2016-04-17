@@ -14,6 +14,7 @@ urlpatterns = [
                   url(r'^$', borrow, kwargs=dict(member_id=None), name='home'),
                   url(r'^borrow/$', borrow, kwargs=dict(member_id=None), name='borrow'),
                   url(r'^borrow/(?P<member_id>[0-9]+)/$', borrow, name='borrow'),
+                  # url(r'^borrow/success/$', borrow, kwargs=dict(member_id=None), name='borrow'),
                   url(r'^returns/$', returns, name='returns'),
                   url(r'^returns/(?P<member_id>[0-9]+)/$',  returns, name='returns'),
                   url(r'^members/$', members, name='members'),

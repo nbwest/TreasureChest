@@ -23,8 +23,8 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def borrow(request, member_id):
-    context = {}
 
+    context = {}
 
     context.update(base_data(request))
 
@@ -52,11 +52,14 @@ def borrow(request, member_id):
     else:
         context["member_search_form"].fields["member_name_fragment"].widget.attrs.update({"autofocus":"true"})
 
-
     if "clear_form" in context:
-         return redirect('/toybox/borrow/')
-    else:
-        return render(request, 'toybox/borrow.html', context)
+        context.pop("toy_list",None)
+        context.pop("member",None)
+        context.pop("toy_search_results",None)
+        context.pop("toy",None)
+        context.pop("new_borrow_toy_list",None)
+
+    return render(request, 'toybox/borrow.html', context)
 
 
 # also adds toy to temp list in DB via POST
@@ -353,7 +356,8 @@ def handle_payment_form(request, member_id):
                     #issue fee transation completion
 
 
-                    context.update({"clear_form":True})
+                    context.update({"clear_form":True,"success":True})
+                    #context.update({"success":True})
 
 
 
@@ -522,7 +526,7 @@ class PaymentForm(forms.Form):
         credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
         total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
 
-    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'cancel_button':'True'}))
-    change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'change_buttons':'True'}))
+    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'change_buttons':'True'}))
+    change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'cancel_button':'True'}))
 
 

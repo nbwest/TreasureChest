@@ -22,6 +22,7 @@ def toys(request, toy_id=None):
 
     context.update({"toys":toy_list})
 
+
     return render(request, 'toybox/toys.html', context)
 
 def handle_stocktake(request):
