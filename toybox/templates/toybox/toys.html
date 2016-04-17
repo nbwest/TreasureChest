@@ -61,6 +61,7 @@
 
                             <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
                             <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
+                            <th data-field="member"  data-sortable="true" data-filter-control="input">Borrowed by</th>
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
                             <th data-field="loan_fee" data-sortable="true" data-visible="false">Loan Fee</th>
                             <th data-field="bond" data-sortable="true" data-visible="false">Bond</th>
@@ -70,6 +71,7 @@
                             <th data-field="last_stock_take"  data-visible="false" data-sortable="true">Last<br>Stocktake</th>
                             <th data-field="issue_type"  data-visible="false" data-width="200px">Issue Type</th>
                             <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment</th>
+
                        	</tr>
                     </thead>
 
@@ -92,6 +94,12 @@
                         </td>
                         <td>{{toy.get_state_display}}</td>
                         <td>{{toy.category.name}}</td>
+                        <td>
+                            <a name="{{toy.member_loaned}}"{%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
+                                {{toy.member_loaned.name}}
+                            </a>
+                        </td>
+
                         <td>{{toy.borrow_counter}}</td>
 
                        <td>${{toy.loan_cost|floatformat:2}}</td>

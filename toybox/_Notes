@@ -14,7 +14,7 @@ Toy page takes too long to load
 TASKS:
 
 
-TODO Add who a toy is loaned to to table and summary???
+TODO Add who a toy is loaned to toy table
 
 TODO On login include shift volunteer names. Put on Login page for successful login or new default page?.
 TODO On login allow volunteers to enter in till amount. Does this has to be on login?
@@ -22,7 +22,7 @@ TODO On logout Volunteer enters till amount.  Is the till actually altered? - Ne
 
 TODO Repair fee calculation to be updated-waiting on Elizabeth
 
-CANT FIX:
+CANT FIX:Re
 Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
     Can't reproduce in toys page - I shows all toy ids with I - all imagination - Can also use category dropdown.
 
@@ -33,7 +33,7 @@ KNOWN LIMITATIONS:
 chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 MINOR:
-TODO Cap late fee to cost of toy
+
 TODO Toy admin help text
 TODO Add help text to transaction buttons in borrow page
 TODO Add help text to toy buttons
@@ -54,6 +54,7 @@ TODO OS of server - windows 7
 
 
 COMPLETE:
+Cap late fee to cost of toy
 Borrow	If you hit return after typing in the payment, it removes a toy from the list.
 Image table in admin - Add button in toy admin missing? Also no image table
 Top menu not working on mobile phone - could not reproduce
@@ -69,6 +70,7 @@ Hide donate button thru config
 Members	Calendar not working - fixed
 Combine Exact and change button - call it Paid
 Hide Loan Bond - disable with config
+
 Add issue fees for return
      lost toy fee - just a hint? how many weeks has it been borrowed - earned back its cost?
      broken fee - has to be repaired - donation - calculate suggestion?? 10% of cost, sliding scale from 50% reducing every borrow.

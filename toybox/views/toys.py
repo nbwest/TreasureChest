@@ -11,7 +11,7 @@ def toys(request, toy_id=None):
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))
 
-    toy_list=Toy.objects.filter(~Q(state=Toy.RETIRED)).select_related('category')
+    toy_list=Toy.objects.filter(~Q(state=Toy.RETIRED)).select_related('category').select_related('member_loaned')
 
     context.update(handle_stocktake(request))
 
