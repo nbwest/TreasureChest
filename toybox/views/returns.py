@@ -110,6 +110,8 @@ def returns(request, member_id=None):
         for toy in toyList:
             if toy.weeks_overdue()>0:
                 toy.fine=toy.weeks_overdue()* toy.loan_cost
+                if toy.fine>0 and toy.fine > toy.purchase_cost:
+                    toy.fine=toy.purchase_cost
             else:
                 toy.fine=0
 
