@@ -2,6 +2,7 @@ from django import forms
 from django.shortcuts import get_object_or_404
 from toybox.models import *
 from django.db.models import Q
+from django.conf import settings
 
 
 
@@ -81,10 +82,9 @@ def get_members(*fields,**kwargs):
 
 
 def base_data(request):
-    version="V1.2.0"
     latest_balance=0
 
-    context={"version":version}
+    context={"version":settings.VERSION}
 
     if Transaction.objects.count() >0:
         latest_balance=Transaction.objects.latest().balance
