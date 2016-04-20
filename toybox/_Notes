@@ -2,21 +2,14 @@ Toy library Notes
 =================
 
 BUGS:
-
 Check admin permissions and groups - Can't select group in user admin
 Check for balance disappearing / zero?
-
 Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
-
 Toy page takes too long to load
 Toy remove doesn't work anymore -set remove back to button,break up forms
 
 TASKS:
-
-
-
-
 TODO On login include shift volunteer names. Put on Login page for successful login or new default page?.
 TODO On login allow volunteers to enter in till amount. Does this has to be on login?
 TODO On logout Volunteer enters till amount.  Is the till actually altered? - New Page
@@ -50,7 +43,7 @@ TODO Check admin for fields that should be readonly and permissions
 BIGGER ITEMS:
 TODO migrate to production database - postgres
 TODO Backup - use other laptops for backup?
-TODO OS of server - windows 7
+OS of server - windows 7
 
 
 

@@ -78,7 +78,10 @@ def handle_toy_borrow(request, member_id, ignore_error):
             if "search_toy" in request.POST:
                 toy_search_string = form.cleaned_data['toy_search_string'].strip()
                 if toy_search_string != "":
-                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__contains=toy_search_string)).order_by("code")
+
+                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
+                    #toy_search_results=Toy.objects.filter(Q(code__istartswith=toy_search_string)|Q(name__icontains=" "+toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
+
                     if toy_search_results.count() == 1:
                         toy=toy_search_results[0]
                     elif toy_search_results.count() == 0:
@@ -96,7 +99,9 @@ def handle_toy_borrow(request, member_id, ignore_error):
                     prev_borrow_count=Toy.objects.filter(member_loaned=member_id).count()
 
 
-                    max_toys = get_config("max_toys")
+
+                    max_toys = int(get_config("max_toys"))
+
 
                     if temp_list_count+prev_borrow_count > max_toys:
                         error="Toy borrow limit reached"
