@@ -40,6 +40,11 @@ For page html use the following template tags:
       $(document).ready(function()
       {
         $("#duplicate-menu").html($("#menu").html());
+
+        {% if request.session.logout == True %}
+                window.location.href = {%url 'logout' %}
+        {%endif%}
+
       });
 
 
@@ -75,7 +80,31 @@ function DoOnCellHtmlData(cell, row, col, data)
     //console.log("------------------------------------");
     return result;
 }
+
+function logout()
+{
+    console.log("logout");
+    $('#setTillModal').modal('show');
+
+}
 </script>
+
+
+{% include "toybox/till_popup.html" %}
+
+{%if request.session.first_login == True %}
+      <script type="text/javascript">
+
+        $( document ).ready(function()
+        {
+            $(window).load(function(){
+                $('#setTillModal').modal('show');
+            });
+
+        });
+
+    </script>
+{%endif%}
 
 
 <!-- top nav bar -->
@@ -96,7 +125,7 @@ function DoOnCellHtmlData(cell, row, col, data)
             <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
             <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
 
-            <p class="navbar-text navbar-left">{{version}}</a></p>
+            <p class="navbar-text navbar-left">{{version}} {{request.session.first_login}}</a></p>
 
             {% if daily_balance %}
                 <ul class="nav navbar-nav hidden-xs ">
@@ -115,7 +144,8 @@ function DoOnCellHtmlData(cell, row, col, data)
 
                 <li>
                     <p class="navbar-btn" style="margin-right: 10px; margin-left: 10px; ">
-                        <a href="{%url 'logout' %}" class="btn btn-default">Logout</a>
+                        <a onclick="logout();"  class="btn btn-default">Logout</a>
+                        <!--href="{%url 'logout' %}"-->
                     </p>
                 </li>
 

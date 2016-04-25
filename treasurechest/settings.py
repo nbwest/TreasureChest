@@ -56,7 +56,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'debug_toolbar',
-    # 'template_timings_panel',
+    #'template_timings_panel',
     'report_builder',
     'toybox',
     'widget_tweaks',

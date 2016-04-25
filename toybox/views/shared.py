@@ -1,3 +1,4 @@
+
 from django import forms
 from django.shortcuts import get_object_or_404
 from toybox.models import *
@@ -10,7 +11,7 @@ from django.conf import settings
 # general helpers
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(Q(name__contains=fragment)|Q(partner__contains=fragment)).order_by("name")
+        return Member.objects.filter(Q(name__icontains=fragment)|Q(partner__icontains=fragment)).order_by("name")
     else:
         return []
 
@@ -79,17 +80,41 @@ def handle_borrowed_toy_list(request, member_id):
 def get_members(*fields,**kwargs):
     return {"members":Member.objects.filter(kwargs).values(fields)}
 
-
+def updateDailyBalance():
+    latest_balance=0
+    if Transaction.objects.count() >0:
+        latest_balance=Transaction.objects.latest().balance
+    return {"daily_balance":latest_balance}
 
 def base_data(request):
-    latest_balance=0
+
 
     context={"version":settings.VERSION}
 
-    if Transaction.objects.count() >0:
-        latest_balance=Transaction.objects.latest().balance
 
-    context.update({"daily_balance":latest_balance})
+    context.update(updateDailyBalance())
+
+    if 'first_login' not in request.session:
+        request.session.update({'first_login':True})
+
+    if (request.method == "POST"):
+        if "till_value" in request.POST:
+
+            if "till_set" in request.POST:
+
+                from toybox.views.transactions import setTill
+                till_value_error = setTill(request.POST['till_value'],context['daily_balance'],request)
+                if till_value_error:
+                    context.update({"till_value_error":till_value_error})
+                else:
+                    context.update(updateDailyBalance())
+                       # elif "till_cancel" in request.POST:
+
+            if 'first_login' in request.session:
+                if request.session['first_login']==True:
+                    request.session.update({'first_login':False})
+                else:
+                     request.session.update({'logout':True})
 
     return context
 
@@ -99,7 +124,7 @@ class MemberSearchForm(forms.Form):
     member_name_fragment = forms.CharField(label="Member Name", max_length=20,required=False)
 
 class ToySearchForm(forms.Form):
-    toy_search_string = forms.CharField(label="ID or name of toy to borrow", max_length=10,required=False)
+    toy_search_string = forms.CharField(label="Exact ID or name fragment of toy to borrow", max_length=10,required=False)
 
 
 def get_config(key):

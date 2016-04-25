@@ -8,20 +8,31 @@ Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
 Toy page takes too long to load
 Toy remove doesn't work anymore -set remove back to button,break up forms
+Borrow	Borrow fee adjust didn't work
 
 TASKS:
-TODO On login include shift volunteer names. Put on Login page for successful login or new default page?.
-TODO On login allow volunteers to enter in till amount. Does this has to be on login?
-TODO On logout Volunteer enters till amount.  Is the till actually altered? - New Page
 
-TODO Repair fee calculation to be updated-waiting on Elizabeth
+
+
+TODO Repair fee calculation - add minor and major issue multiplier into config
+
+toy issue type to be sorted
+When no member selected show full toy history???
+
+
+
+
+buy router
+
+
+14th May first test
 
 CANT FIX:
 Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
     Can't reproduce in toys page - I shows all toy ids with I - all imagination - Can also use category dropdown.
 
-Borrow	Borrow fee update didn't work
-    Can't reproduce, assume loan duration change
+
+
 
 KNOWN LIMITATIONS:
 chrome doesn't support exif  CSS rotation-from-image - check tablets
@@ -48,6 +59,9 @@ OS of server - windows 7
 
 
 COMPLETE:
+put toy details above toy list
+On login allow volunteers to enter in till amount. Does this has to be on login?
+On logout Volunteer enters till amount.  Is the till actually altered? - New Page
 Add who a toy is loaned to toy table
 Cap late fee to cost of toy
 Borrow	If you hit return after typing in the payment, it removes a toy from the list.
@@ -111,6 +125,7 @@ Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+On login include shift volunteer names. Put on Login page for successful login or new default page?.
 Better toy selection - is very slow, resets filtering
 When adding toy suggest loan fee
 All Max children displayed to be change or add + button

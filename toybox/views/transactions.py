@@ -24,27 +24,29 @@ def transactions(request):
 
                 if "button_set_till" in request.POST:
                     if "till_value" in form.cleaned_data:
-                        if form.cleaned_data['till_value']!="":
-                            value=decimal.Decimal(form.cleaned_data['till_value'])
-                            current_till=context['daily_balance']
-                            if value>=0:
-                                if current_till!=value:
-                                    #TODO set volunteer
+                        till_value_error = setTill(form.cleaned_data['till_value'],context['daily_balance'],request)
 
-                                     transaction=Transaction()
-
-                                     if value>current_till:
-                                         type=Transaction.ADJUSTMENT_CREDIT
-                                         adj=value-current_till
-                                     else:
-                                         type=Transaction.ADJUSTMENT_DEBIT
-                                         adj=-(current_till-value)
-
-                                     transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
-                                else:
-                                    till_value_error="Value must be different to balance"
-                            else:
-                                till_value_error="Negative numbers not accepted"
+                        # if form.cleaned_data['till_value']!="":
+                        #     value=decimal.Decimal(form.cleaned_data['till_value'])
+                        #     current_till=context['daily_balance']
+                        #     if value>=0:
+                        #         if current_till!=value:
+                        #             #TODO set volunteer
+                        #
+                        #              transaction=Transaction()
+                        #
+                        #              if value>current_till:
+                        #                  type=Transaction.ADJUSTMENT_CREDIT
+                        #                  adj=value-current_till
+                        #              else:
+                        #                  type=Transaction.ADJUSTMENT_DEBIT
+                        #                  adj=-(current_till-value)
+                        #
+                        #              transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
+                        #         else:
+                        #             till_value_error="Value must be different to balance"
+                        #     else:
+                        #         till_value_error="Negative numbers not accepted"
 
 
                 if "button_bank_amount" in request.POST:
@@ -87,6 +89,36 @@ def transactions(request):
     context.update({"transactions":Transaction.objects.all().order_by('date_time').select_related('member').prefetch_related("toyhistory__toy")})
 
     return render(request, 'toybox/transactions.html',context )
+
+def setTill(till_value, daily_balance, request):
+
+    till_value_error=None
+
+    if till_value!="":
+        value=decimal.Decimal(till_value)
+        current_till=daily_balance
+        if value>=0:
+            if current_till!=value:
+                 transaction=Transaction()
+
+                 if value>current_till:
+                     type=Transaction.ADJUSTMENT_CREDIT
+                     adj=value-current_till
+                 else:
+                     type=Transaction.ADJUSTMENT_DEBIT
+                     adj=-(current_till-value)
+
+                 transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
+            else:
+                till_value_error="Value must be different to balance"
+        else:
+            till_value_error="Negative numbers not accepted"
+    else:
+        till_value_error="Value required"
+
+
+    return till_value_error
+
 
 
 class TransactionForm(forms.Form):
