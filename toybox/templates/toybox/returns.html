@@ -134,7 +134,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 </tr>
                 <tr>
                     <td colspan="9" style="border-top: none !important;">
-                         {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments"%}
+                         {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" onchange="handleCheckbox();"%}
 
                     </td>
                 </tr>
@@ -227,38 +227,39 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             var fine=0.0;
             var issue_fee=document.getElementById("issue_fee_"+toy_id);
 
-           // console.log("-----------------");
-           // console.log("CB: "+returned_checkbox);
-           // console.log("BOND: "+bond_return);
-           // console.log("ID: "+toy_id);
-           // console.log("Issue #: "+issue_type.value);
-           // console.log("minor: "+issue_fines.getAttribute("issue_fine_minor"));
-           // console.log("major: "+issue_fines.getAttribute("issue_fine_major"));
-           // console.log("allocation: "+issue_fines.getAttribute("issue_fine_allocation"));
-           // console.log("result: "+issue_fines.getAttribute("issue_fine_allocation")[issue_type.value]);
+            //console.log("-----------------");
+            //console.log("CB: "+returned_checkbox);
+            //console.log("BOND: "+bond_return);
+            //console.log("ID: "+toy_id);
+            //console.log("Issue #: "+issue_type.value);
+            //console.log("minor: "+issue_fines.getAttribute("issue_fine_minor"));
+            //console.log("major: "+issue_fines.getAttribute("issue_fine_major"));
+            //console.log("allocation: "+issue_fines.getAttribute("issue_fine_allocation"));
+            //console.log("result: "+issue_fines.getAttribute("issue_fine_allocation")[issue_type.value]);
 
             if (returned_checkbox!=null)
             {
+
+               total_fine+=parseFloat(this.getAttribute("value"));
+
+               {% if bond_enable %}
+               if (total_bond_return!=null)
+                  total_bond_return+=parseFloat(bond_return.getAttribute("value"));
+               {%endif%}
+
+               var fine_type=issue_fines.getAttribute("issue_fine_allocation")[issue_type.value];
+
+               if (fine_type=="2")
+                    fine=Number(issue_fines.getAttribute("issue_fine_major"));
+               else if (fine_type=="1")
+                    fine=Number(issue_fines.getAttribute("issue_fine_minor"));
+               else
+                    fine=0;
+
+               issue_fee.innerHTML="$"+fine.toFixed(2);
+               
                 if (returned_checkbox.checked)
                 {
-                   total_fine+=parseFloat(this.getAttribute("value"));
-
-                   {% if bond_enable %}
-                   if (total_bond_return!=null)
-                      total_bond_return+=parseFloat(bond_return.getAttribute("value"));
-                   {%endif%}
-
-                   var fine_type=issue_fines.getAttribute("issue_fine_allocation")[issue_type.value];
-
-                   if (fine_type=="2")
-                        fine=Number(issue_fines.getAttribute("issue_fine_major"));
-                   else if (fine_type=="1")
-                        fine=Number(issue_fines.getAttribute("issue_fine_minor"));
-                   else
-                        fine=0;
-
-                   issue_fee.innerHTML="$"+fine.toFixed(2);
-
                    total_issue_fine+=fine;
 
                   //console.log("fine type: "+fine_type);

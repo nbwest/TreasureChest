@@ -128,33 +128,72 @@ class ToySearchForm(forms.Form):
 
 
 def get_config(key):
-    try:
 
-        return(Config.objects.get(key=key).value.lower())
+    try:
+        value=Config.objects.get(key=key).value.lower()
+        value_type=Config.objects.get(key=key).value_type
+
+        # return value
+
+        if value_type == Config.NUMBER:
+            try:
+                return Decimal(value)
+            except:
+                raise NameError("Value: "+value+" is not type: "+Config.CONFIG_TYPES[value_type][1])
+                return None
+
+        elif value_type == Config.BOOLEAN:
+            if value in set(["0","no","n","false"]):
+                return False
+            elif value in set(["1","yes","y","true"]):
+                return True
+            else:
+                raise NameError("Value: "+value+" is not type: "+Config.CONFIG_TYPES[value_type][1])
+                return None
+
+        elif value_type == Config.STRING:
+            return value
+
+        else:
+            raise NameError("Invalid type")
+
 
     except Config.DoesNotExist:
 
         if key=="credit_enable":
-            return("true")
+            return(True)
 
         elif key=="repair_loan_duration":
-            return("26")
+            return(26)
 
         elif key=="loan_bond_enable":
-            return('true')
+            return(True)
 
         elif key=="default_loan_duration":
-            return("2")
+            return(2)
 
         elif key=="max_toys":
             return(4)
 
         elif key=="loan_durations":
-            return("12")
+            return(12)
 
         elif key=="donation_enable":
-            return("true")
+            return(True)
+
+        elif key=="major_issue_multiplier_min":
+            return(0.1)
+
+        elif key=="minor_issue_multiplier_min":
+            return(0.0)
+
+        elif key=="major_issue_multiplier_max":
+            return(0.5)
+
+        elif key=="minor_issue_multiplier_max":
+            return(0.0)
 
         else:
             raise NameError('Option key not found: '+key)
+            return None
 

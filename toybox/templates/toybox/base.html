@@ -125,7 +125,7 @@ function logout()
             <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
             <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
 
-            <p class="navbar-text navbar-left">{{version}} {{request.session.first_login}}</a></p>
+            <p class="navbar-text navbar-left">{{version}}</a></p>
 
             {% if daily_balance %}
                 <ul class="nav navbar-nav hidden-xs ">

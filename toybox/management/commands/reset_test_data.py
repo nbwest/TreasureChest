@@ -281,44 +281,76 @@ class Command(BaseCommand):
         Config.objects.filter(key="loan_durations").delete()
         Config.objects.update_or_create(key="loan_durations",
                                             value="12",
-                                            help="Single digit number of weeks in a string, eg 126 for 1, 2 and 6 weeks",
+                                            value_type=Config.NUMBER,
+                                            help="Single digit number of weeks in a row, eg 126 for 1, 2 and 6 weeks",
                                             )
 
         Config.objects.filter(key="default_loan_duration").delete()
         Config.objects.update_or_create(key="default_loan_duration",
                                             value="2",
+                                            value_type=Config.NUMBER,
                                             help="Default time a toy is borrowed in weeks eg 2",
                                             )
 
         Config.objects.filter(key="max_toys").delete()
         Config.objects.update_or_create(key="max_toys",
                                           value="4",
+                                          value_type=Config.NUMBER,
                                           help="Maximum number of toys a member can borrow at once eg 4",
                                           )
 
         Config.objects.filter(key="repair_loan_duration").delete()
         Config.objects.update_or_create(key="repair_loan_duration",
                                           value="26",
+                                          value_type=Config.NUMBER,
                                           help="Maximum duration a repair agent can have a toy in weeks. eg 26",
                                           )
 
         Config.objects.filter(key="credit_enable").delete()
         Config.objects.update_or_create(key="credit_enable",
                                           value="true",
+                                          value_type=Config.BOOLEAN,
                                           help="Borrow toys with credit function enabled (true) or disabled (false). Server restart required",
                                           )
 
         Config.objects.filter(key="loan_bond_enable").delete()
         Config.objects.update_or_create(key="loan_bond_enable",
                                           value="true",
+                                          value_type=Config.BOOLEAN,
                                           help="(true or false). Toys may have a bond set when borrowed. Server restart required",
                                           )
 
         Config.objects.filter(key="donation_enable").delete()
         Config.objects.update_or_create(key="donation_enable",
                                           value="true",
+                                          value_type=Config.BOOLEAN,
                                           help="(true or false). Enable giving change as donation",
                                           )
+        Config.objects.filter(key="major_issue_multiplier_min").delete()
+        Config.objects.update_or_create(key="major_issue_multiplier_min",
+                                          value="0.1",
+                                          value_type=Config.NUMBER,
+                                          help="0 to 1. Maximum fine as percentage of toy value",
+                                          )
+        Config.objects.filter(key="minor_issue_multiplier_min").delete()
+        Config.objects.update_or_create(key="minor_issue_multiplier_min",
+                                          value="0.0",
+                                          value_type=Config.NUMBER,
+                                          help="0 to 1. Maximum fine as percentage of toy value",
+                                          )
+        Config.objects.filter(key="major_issue_multiplier_max").delete()
+        Config.objects.update_or_create(key="major_issue_multiplier_max",
+                                          value="0.5",
+                                          value_type=Config.NUMBER,
+                                          help="0 to 1. Maximum fine as percentage of toy value",
+                                          )
+        Config.objects.filter(key="minor_issue_multiplier_max").delete()
+        Config.objects.update_or_create(key="minor_issue_multiplier_max",
+                                          value="0.0",
+                                          value_type=Config.NUMBER,
+                                          help="0 to 1. Maximum fine as percentage of toy value",
+                                          )
+
 
     def handle(self, *args, **options):
 
