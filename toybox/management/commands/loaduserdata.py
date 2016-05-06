@@ -73,7 +73,6 @@ class Command(BaseCommand):
             raise
    
     def load_members (self, members_file):
-        next_year = date(date.today().year, 1, 1)  # 1st Jan next year
         annual_member = MemberType.objects.get(name = "Public")
 
         members_file_column_names = [
@@ -96,11 +95,11 @@ class Command(BaseCommand):
         ]
         members_reader = csv.DictReader(members_file, fieldnames=members_file_column_names, restkey='CHILDREN', delimiter=',', quotechar='"')
         for member in members_reader:
-            try:
+            #try:
                 first_name = member['FIRST_NAME'].title()
                 last_name = member['LAST_NAME'].title()
                 name = first_name+" "+last_name
-                print "Processing "+name
+                print "Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
 
                 address = member['ADDR_STREET']+" "+ \
                           member['ADDR_SUBURB']+" "+ \
@@ -109,41 +108,57 @@ class Command(BaseCommand):
 
                 join_date = self.try_date(member['DATE_JND'])
                 if join_date is None:
-                    print "Unable to parse joined date, or none set.  Setting joined to now"
+                    #print "Unable to parse joined date, or none set.  Setting joined to now"
                     join_date = date.today()
 
+                membership_end_date = date(int(member["MEMBERSHIP_PD"])+1, 1, 1)
                 try:
-                    member_record, created = Member.objects.get_or_create(
-                        name = name,
-                        address = address,
-                        phone_number1 = member['PHONE_AH'],
-                        email_address = member['EMAIL'],
-                        membership_end_date = next_year,
-                        type = annual_member,
-                    )
+                    member_records = Member.objects.filter( name = name )
+                    num_records = member_records.count()
+                    created = False
+                    if num_records > 1:
+                        raise MultipleObjectsReturned
+                    elif num_records == 1:
+                        member_record = member_records[0]
+                    else:
+                        member_record = Member(name = name)
+                        created = True
 
-                    member_record.phone_number2 = member['PHONE_BH']
-                    member_record.deposit_fee = member['DEPOSIT_PD']
-                    member_record.potential_volunteer = False
-                    member_record.volunteer = self.parse_bool(member['VOL'])
-                    member_record.join_date = join_date
-                    member_record.active=True
+                    # If it's a new member, or more recent data (based on MEMBERSHIP_PD) populate
+                    if created or membership_end_date > member_record.membership_end_date:
+                        member_record.address = address
+                        member_record.phone_number1 = member['PHONE_AH']
+                        member_record.email_address = member['EMAIL']
+                        member_record.membership_end_date = membership_end_date
+                        member_record.type = annual_member
+                        member_record.phone_number2 = member['PHONE_BH']
+                        member_record.bond_fee_paid = member['DEPOSIT_PD']
+                        member_record.potential_volunteer = False
+                        member_record.volunteer = self.parse_bool(member['VOL'])
+                        member_record.join_date = join_date
+                        if membership_end_date > date.today():
+                            member_record.active=True
+                        else:
+                            member_record.active=False
 
-                    member_record.volunteer_capacity_wed=self.parse_contains(member['DAYS'],['WED','BOTH','EITHER','WEDNESDAY'])
-                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
-                    member_record.volunteer_capacity_sat=self.parse_contains(member['DAYS'],['SAT','BOTH','EITHER','SATURDAY'])
-                    # print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
+                        member_record.volunteer_capacity_wed=self.parse_contains(member['DAYS'],['WED','BOTH','EITHER','WEDNESDAY'])
+                        # print member[DAYS] +"->"+str(member_record.volunteer_capacity_wed)
+                        member_record.volunteer_capacity_sat=self.parse_contains(member['DAYS'],['SAT','BOTH','EITHER','SATURDAY'])
+                        # print member[DAYS] +"->"+str(member_record.volunteer_capacity_sat)
 
-                    member_record.save()
+                        member_record.save()
+
+                        if (created):
+                            print "  New member added."
+                        else:
+                            print "  Found existing record.  Member data updated."
+                    else:
+                        print "   Old data.  Not updating"
+
 
                 except MultipleObjectsReturned:
                     print "Multiple entries found for "+name+".  Skipping."
                     continue
-
-                if (created):
-                    print "New member added."
-                else:
-                    print "Found existing record.  Member data updated."
 
                 num_children = member['NUM_CHILDREN']
                 if num_children != '':
@@ -163,8 +178,8 @@ class Command(BaseCommand):
                             if created:
                                 #print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
                                 print "Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
-            except Exception as e:
-                print "Exception processing: "+member.__str__()+": "+str(e)
+            #except Exception as e:
+            #    print "Exception processing: "+member.__str__()+": "+str(e)
 
     def load_toys (self, toys_file):
         # Identify the toys category by its toy_id prefix

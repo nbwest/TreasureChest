@@ -19,7 +19,7 @@
       "membership_period": 1,
       "name": "Public",
       "fee": 30,
-      "deposit": 30
+      "bond": 30
     }
   },
 
