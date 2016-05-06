@@ -11,34 +11,16 @@ Toy remove doesn't work anymore -set remove back to button,break up forms
 Borrow	Borrow fee adjust didn't work
 
 TASKS:
-
-
-
-TODO Repair fee calculation - add minor and major issue multiplier into config
-
 toy issue type to be sorted
 When no member selected show full toy history???
-
-
-
-
 buy router
 
 
-14th May first test
-
-CANT FIX:
-Toys	Search function in Toys not limiting enough. If you put "I" in it will search on all toys that have the letter "I" in the title. It doesn't search on just imagination toys.
-    Can't reproduce in toys page - I shows all toy ids with I - all imagination - Can also use category dropdown.
+Note: 14th May first test
 
 
-
-
-KNOWN LIMITATIONS:
-chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 MINOR:
-
 TODO Toy admin help text
 TODO Add help text to transaction buttons in borrow page
 TODO Add help text to toy buttons
@@ -56,9 +38,14 @@ TODO migrate to production database - postgres
 TODO Backup - use other laptops for backup?
 OS of server - windows 7
 
+CANT FIX:
+
+KNOWN LIMITATIONS:
+chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 
 COMPLETE:
+Repair fee calculation - add minor and major issue multiplier into config
 put toy details above toy list
 On login allow volunteers to enter in till amount. Does this has to be on login?
 On logout Volunteer enters till amount.  Is the till actually altered? - New Page
