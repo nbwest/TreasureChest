@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib.auth.models import Permission, User
 import os.path
 
+
 def format_username(user):
 
     if user.first_name=="":
@@ -19,8 +20,21 @@ def format_username(user):
 
 
 class Config(models.Model):
+
+    STRING =0
+    NUMBER=1
+    BOOLEAN=2
+
+    CONFIG_TYPES = (
+        (STRING,"String"),
+        (NUMBER,"Number"),
+        (BOOLEAN,"Boolean"),
+    )
+
+
     key = models.CharField(max_length=30, unique=True)
     value = models.CharField(max_length=100)
+    value_type =  models.IntegerField(default=STRING, choices=CONFIG_TYPES)
     help = models.CharField(max_length=1024, default="")
 
     def __unicode__(self):
@@ -276,10 +290,10 @@ class Toy(models.Model):
     )
 
     #percentage of toy cost
-    ISSUE_FINE_MAJOR_MIN=Decimal(0.1)
-    ISSUE_FINE_MAJOR_MAX=Decimal(0.5)
-    ISSUE_FINE_MINOR_MIN=Decimal(0.1)
-    ISSUE_FINE_MINOR_MAX=Decimal(0.3)
+    # ISSUE_FINE_MAJOR_MIN=Decimal(0.1)
+    # ISSUE_FINE_MAJOR_MAX=Decimal(0.5)
+    # ISSUE_FINE_MINOR_MIN=Decimal(0.1)
+    # ISSUE_FINE_MINOR_MAX=Decimal(0.3)
 
     ISSUE_FINE_NONE =0
     ISSUE_FINE_MINOR =1
@@ -344,10 +358,14 @@ class Toy(models.Model):
     @property
     def issue_fine_major(self):
 
-        fine=(self.ISSUE_FINE_MAJOR_MAX * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+        from views.shared import get_config
+        issue_fine_major_max=Decimal(get_config("major_issue_multiplier_max"))
+        issue_fine_major_min=Decimal(get_config("major_issue_multiplier_min"))
+
+        fine=(issue_fine_major_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
-            fine=self.ISSUE_FINE_MAJOR_MIN * self.loan_cost
+            fine=issue_fine_major_min * self.loan_cost
 
         fine=round(fine,0)
 
@@ -356,10 +374,14 @@ class Toy(models.Model):
     @property
     def issue_fine_minor(self):
 
-        fine=(self.ISSUE_FINE_MINOR_MAX * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+        from views.shared import get_config
+        issue_fine_minor_max=Decimal(get_config("minor_issue_multiplier_max"))
+        issue_fine_minor_min=Decimal(get_config("minor_issue_multiplier_min"))
+
+        fine=(issue_fine_minor_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
-            fine=self.ISSUE_FINE_MINOR_MIN * self.loan_cost
+            fine=issue_fine_minor_min * self.loan_cost
 
         fine=round(fine,0)
 
