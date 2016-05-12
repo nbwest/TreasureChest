@@ -2,7 +2,13 @@ from django.shortcuts import render
 from django.forms import ModelForm
 from shared import *
 from django.contrib.auth.decorators import login_required
+from math import ceil
 
+# Provide estimate of borrow cost based on purchase cost
+# Calculates 1% of purchase cost rounded up to nearest $0.50
+def estimate_borrow_cost(purchase_cost):
+    onepc = float(purchase_cost)/100.0
+    return 0.5 * ceil(2.0 * onepc)
 
 @login_required()
 def toys(request, toy_id=None):

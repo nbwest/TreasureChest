@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from toybox.views.toys import estimate_borrow_cost
 from django.core.exceptions import MultipleObjectsReturned
 from toybox.models import *
 from datetime import datetime, date
@@ -17,6 +18,7 @@ class Command(BaseCommand):
     # Try all the examples of date formats used in the data
     # 1-Mar-15, 1/03/2015, 1/3/15, 03/01/2015
     def try_date(self, date_txt):
+
         for fmt in ('%d-%b-%y',
                     '%d/%m/%Y',
                     '%d.%m.%Y',
@@ -71,6 +73,10 @@ class Command(BaseCommand):
             return ToyCategory.objects.get(code_prefix=toy_code_prefix)
         except AttributeError as e:
             raise
+
+    # Lots of typos in member names on toy sheets so try a fuzzy
+    # match
+    #def get_fuzzy_member(self, name):
    
     def load_members (self, members_file):
         annual_member = MemberType.objects.get(name = "Public")
@@ -99,6 +105,9 @@ class Command(BaseCommand):
                 first_name = member['FIRST_NAME'].title()
                 last_name = member['LAST_NAME'].title()
                 name = first_name+" "+last_name
+                if name == " ":
+                    continue
+
                 print "Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
 
                 address = member['ADDR_STREET']+" "+ \
@@ -111,7 +120,13 @@ class Command(BaseCommand):
                     #print "Unable to parse joined date, or none set.  Setting joined to now"
                     join_date = date.today()
 
-                membership_end_date = date(int(member["MEMBERSHIP_PD"])+1, 1, 1)
+                # Parse membership end date
+                m = re.search('^\s?(\d+)\s?$', member['MEMBERSHIP_PD'])
+                if m:
+                    membership_end_date = date(int(m.group(1))+1, 1, 1)
+                else:
+                    membership_end_date = date.today()
+
                 try:
                     member_records = Member.objects.filter( name = name )
                     num_records = member_records.count()
@@ -124,6 +139,16 @@ class Command(BaseCommand):
                         member_record = Member(name = name)
                         created = True
 
+                    # Validate DpPd
+                    deposit = 0
+                    if member['DEPOSIT_PD']:
+                        m = re.search('^\$?(\d+(\.\d+)?)$', member['DEPOSIT_PD'])
+                        if m:
+                            deposit = float(m.group(1))
+                        else:
+                            print "Unable to determine deposit for "+ \
+                            member_record.name+".  Setting to 0"
+
                     # If it's a new member, or more recent data (based on MEMBERSHIP_PD) populate
                     if created or membership_end_date > member_record.membership_end_date:
                         member_record.address = address
@@ -132,7 +157,7 @@ class Command(BaseCommand):
                         member_record.membership_end_date = membership_end_date
                         member_record.type = annual_member
                         member_record.phone_number2 = member['PHONE_BH']
-                        member_record.bond_fee_paid = member['DEPOSIT_PD']
+                        member_record.bond_fee_paid = deposit
                         member_record.potential_volunteer = False
                         member_record.volunteer = self.parse_bool(member['VOL'])
                         member_record.join_date = join_date
@@ -190,73 +215,158 @@ class Command(BaseCommand):
             'COST',
             'DATE',
             'NUM_PIECES',
-            'FEE'
+            'FEE',
+            'BORROWS',
+            'PARTS_LIST',
+            'NOTES',
+            'STATUS',
+            'BORROWED_BY',
+            'DUE_BACK',
+            'RECODE'  # should be the same code as at the start of the line
         ]
-        toy_reader = csv.DictReader(toys_file, fieldnames=toys_file_column_names, delimiter=',', quotechar='"')
+        toy_reader = csv.DictReader(toys_file, fieldnames=toys_file_column_names, delimiter=',', quotechar='"', restkey='OTHER')
         for toy in toy_reader:
             try:
                 code = toy['CODE']
                 try:
                     category = self.get_category_from_code(code)
-                except Exception as e:
-                    print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
+                except ValueError as e:
+                    #print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
                     continue
 
                 description = toy['DESCRIPTION']
 
                 # Check for currently unused toy codes
                 if description == '':
+                    print "Unused toy code: "+code
                     recycled_toy_id, created = RecycledToyId.objects.get_or_create(toy_id=code,
                                                                           category=category)
                     recycled_toy_id.save()
-                    if created:
-                        print "Toy code "+code+" unused.  Added to available toy codes for "+str(category)
                     continue
 
+                # Find or create toy record
+                toy_records = Toy.objects.filter( code = code,
+                                                  name = description)
+                num_records = toy_records.count()
+                created = False
+                if num_records > 1:
+                    raise MultipleObjectsReturned
+                elif num_records == 1:
+                    toy_record = toy_records[0]
+                else:
+                    toy_record = Toy(code = code)
+                    toy_record.name = description
+                    created = True
+
+                # Add/Update the category
+                toy_record.category = category
+
+                # Add/Update purchase cost
                 purchase_cost = None
                 m = re.search('\$?([\d\.]+)', toy['COST'])
                 if m:
                     purchase_cost = m.group(1)
+                else:
+                    print "Failed to extract purchase cost of "+code+" from "+toy['COST']
+                    purchase_cost = 0
+                toy_record.purchase_cost = purchase_cost
+
+                # Add/Update vendor
                 vendor = toy['PURCHASED_FROM']
-                toy_vendor, created = ToyVendor.objects.get_or_create(
+                toy_vendor, created_vendor = ToyVendor.objects.get_or_create(
                     defaults={'name': vendor},
                     name__iexact = vendor
                 )
-                if created:
+                if created_vendor:
                     toy_vendor.save()
                     print "Added new toy vendor '"+str(toy_vendor)+"'"
-                purchase_date = self.try_date(toy['DATE'])
+                toy_record.purchased_from = toy_vendor
 
+                # Add/Update purchase date
+                purchase_date = self.try_date(toy['DATE'])
+                toy_record.purchase_date = purchase_date
+
+                # Add/Update number of pieces
                 # default to 1 piece if not specified
                 num_pieces = 1 if toy['NUM_PIECES'] == '' else int(toy['NUM_PIECES'])
+                toy_record.num_pieces = num_pieces
 
-                # Extract load fee
+                # Add/Update loan fee
+                # Defaults to 1% of purchase cost rounded up to nearest $0.50
+                loan_fee = estimate_borrow_cost (toy_record.purchase_cost)
                 m = re.search('\$?\s?([\d\.]+)', toy['FEE'])
                 if m:
-                    loan_fee = m.group(1)
-                try:
-                    toy_record, created = Toy.objects.get_or_create(
-                        code = code,
-                        name = description,
-                        purchased_from = toy_vendor,
-                        purchase_cost = purchase_cost,
-                        purchase_date = purchase_date,
-                        num_pieces = num_pieces,
-                        category = category
-                    )
-                    if loan_fee:
-                        toy_record.loan_cost = loan_fee
-                    toy_record.loan_deposit = 0
-                    toy_record.save()
+                    loan_fee = float(m.group(1))
+                toy_record.loan_cost = loan_fee
+                toy_record.loan_deposit = 0
 
-                except MultipleObjectsReturned:
-                    print "Multiple objects found for "+description
-                    continue
+                # Add/Update number of borrows
+                m = re.search('(\d)+\+?', toy['BORROWS'])
+                borrows = 0
+                if m:
+                    borrows = int(m.group(1))
+                toy_record.borrow_counter = borrows
+
+                # Add/Update parts list
+                toy_record.parts_list = toy['PARTS_LIST']
+
+                # Add/Update notes
+                toy_record.comment = toy['NOTES']
+
+                # Add/Update toy status.  default to AVAILABLE
+                toy_status = Toy.AVAILABLE
+                status = toy['STATUS'].upper()
+                if status == 'OUT':
+                    toy_status = Toy.ON_LOAN
+                elif status == 'MISSING':
+                    toy_status = Toy.MISSING
+                elif status == 'REPAIR CUPBOARD':
+                    toy_status = Toy.TO_BE_REPAIRED
+                elif status == 'REPAIR':
+                    toy_status = Toy.BEING_REPAIRED
+                elif status == 'NOT CATALOGUED':
+                    toy_status = Toy.TO_BE_CATALOGED
+                toy_record.state = toy_status
+
+                # Add/Update current borrower
+                # extract First initial (if present) and surname from J. Smith
+                if toy_record.state == Toy.ON_LOAN:
+                    borrowed_by = toy['BORROWED_BY']
+                    m = re.search('([a-zA-Z]?)[\. ]{0,2}([-\' a-zA-Z]+)', borrowed_by)
+                    if m:
+                        initial = ''
+                        if m.group(1):
+                            initial = m.group(1)
+                        try:
+                            member_record = Member.objects.get(name__icontains = m.group(2),
+                                                               name__istartswith = initial)
+                            toy_record.member_loaned = member_record
+                        except Member.DoesNotExist:
+                            print "Ambiguous member name "+borrowed_by+" (member does not exist)"+ \
+                                  ".  Leaving borrowed_by blank but adding name to notes."
+                            toy_record.comment = toy_record.comment + "\n" +\
+                                                 "Borrowed by: "+borrowed_by
+                        except MultipleObjectsReturned:
+                            print "Ambiguous member name "+borrowed_by+"(multiple members match)"+ \
+                                  ".  Leaving borrowed_by blank but adding name to notes."
+                            toy_record.comment = toy_record.comment + "\n" +\
+                                                 "Borrowed by: "+borrowed_by
+                    else:
+                        print "Toy "+toy_record.code+\
+                              " marked as out, but member name '"+ borrowed_by+"' didn't match"
+                        toy_record.comment = toy_record.comment + "\n" +\
+                                             "Borrowed by: "+borrowed_by
+
+                    # Add/Update due date if toy is on loan
+                    toy_record.due_date = self.try_date(toy["DUE_BACK"])
+
+                # Update the DB record
+                toy_record.save()
 
                 if (created):
-                    print "New toy added: "+description
+                    print "New toy: "+code+" - "+description
                 else:
-                    print "Found existing record.  Update toy "+code
+                    print "Update toy: "+code
 
             except AttributeError as e:
                 print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)

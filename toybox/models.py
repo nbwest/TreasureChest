@@ -231,6 +231,8 @@ class Toy(models.Model):
     BEING_REPAIRED = 4
     RETIRED = 5
     TO_BE_RETIRED = 6
+    MISSING = 7
+    TO_BE_CATALOGED = 8
 
     TOY_STATE_CHOICES = (
         (AVAILABLE, 'Available'),
@@ -240,6 +242,8 @@ class Toy(models.Model):
         (BEING_REPAIRED, 'Being Repaired'),
         (RETIRED, 'Retired'),
         (TO_BE_RETIRED, 'To Be Retired'),
+        (MISSING, 'Missing'),
+        (TO_BE_CATALOGED, 'To Be Cataloged'),
     )
 
     ISSUE_NONE = 0
@@ -309,6 +313,7 @@ class Toy(models.Model):
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
     purchased_from = models.ForeignKey(ToyVendor, null=True)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
+    parts_list = models.CharField(blank=True, null=True, max_length=200)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ForeignKey(Image, null=True)
