@@ -479,7 +479,7 @@ class PaymentForm(forms.Form):
     numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 
 
-    loan_durations = get_config("loan_durations")
+    loan_durations = str(get_config("loan_durations"))
     loan_bond_enable= get_config("loan_bond_enable")
     credit_enable=get_config("credit_enable")
 
