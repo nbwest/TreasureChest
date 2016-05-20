@@ -100,7 +100,7 @@ class Member(models.Model):
     volunteer = models.BooleanField('Active volunteer', default=False)
     potential_volunteer = models.BooleanField(default=False)
     committee_member = models.BooleanField('Current committee member', default=False)
-    membership_end_date = models.DateField('Membership due', auto_now_add=True, blank=True)
+    membership_end_date = models.DateField('Membership due', default=date.today, blank=True)
     balance = models.DecimalField('Balance', decimal_places=2, max_digits=6, default=0)
     active = models.BooleanField(default=True)
     type = models.ForeignKey(MemberType)
