@@ -65,14 +65,14 @@ class Command(BaseCommand):
         return False
     
     def get_category_from_code(self, toy_code):
-        try:
-            if toy_code == '' or toy_code == None:
-                raise ValueError("Empty toy code or 'None' provided")
-            m = re.search('^([A-Z]{1,2})\d+$', toy_code)
+        if toy_code == '' or toy_code == None:
+            raise ValueError("Empty toy code or 'None' provided")
+        m = re.search('^\s*([A-Z]{1,2})\d+\s*$', toy_code)
+        if m:
             toy_code_prefix = m.group(1)
-            return ToyCategory.objects.get(code_prefix=toy_code_prefix)
-        except AttributeError as e:
-            raise
+        else:
+            raise ValueError("Unknown toy code %s" % toy_code)
+        return ToyCategory.objects.get(code_prefix=toy_code_prefix)
 
     # Lots of typos in member names on toy sheets so try a fuzzy
     # match
@@ -228,10 +228,12 @@ class Command(BaseCommand):
         for toy in toy_reader:
             try:
                 code = toy['CODE']
+                if code == None or code == '':
+                    continue
                 try:
                     category = self.get_category_from_code(code)
                 except ValueError as e:
-                    #print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
+                    print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
                     continue
 
                 description = toy['DESCRIPTION']
@@ -370,6 +372,7 @@ class Command(BaseCommand):
 
             except AttributeError as e:
                 print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
+                raise
 
     @staticmethod
     def parse_image_name(file):
