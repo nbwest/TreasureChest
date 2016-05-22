@@ -10,7 +10,7 @@ Toy page takes too long to load
 Toy remove doesn't work anymore -set remove back to button,break up forms
 Borrow	Borrow fee adjust didn't work
 
-Return	Toy needs borrow date to return toy
+Return	Toy needs borrow date to return toy - data error
 Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong
 Admin	Added search for member  class MemberAdmin(admin.ModelAdmin): search_fields = ('name', )  admin.site.register(Member,MemberAdmin)
 
