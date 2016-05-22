@@ -11,11 +11,12 @@ Toy remove doesn't work anymore -set remove back to button,break up forms
 Borrow	Borrow fee adjust didn't work
 
 Return	Toy needs borrow date to return toy - data error
-Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong
-Admin	Added search for member  class MemberAdmin(admin.ModelAdmin): search_fields = ('name', )  admin.site.register(Member,MemberAdmin)
+
 
 
 TASKS:
+Add list of volunteers for session?
+Add borrow date to borrow screen - default on current date
 toy issue type to be sorted
 When no member selected show full toy history???
 remove lost password - doesn't work without internet access
@@ -47,9 +48,11 @@ CANT FIX:
 
 KNOWN LIMITATIONS:
 chrome doesn't support exif  CSS rotation-from-image - check tablets
-
+borrow page: must add all toys before changing weeks etc
 
 COMPLETE:
+Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong - capped at purchase cost which is 0. remove cap for toys with no cost
+Admin	Added search for member  class MemberAdmin(admin.ModelAdmin): search_fields = ('name', )  admin.site.register(Member,MemberAdmin)
 Login	no error when setting till to same value
 Borrow	membership date hasn't been set and can't be seen in the member admin area - temporarily enabled
 Toys	Parts list field is too short - make 1024
