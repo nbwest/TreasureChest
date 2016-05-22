@@ -103,9 +103,11 @@ def base_data(request):
             if "till_set" in request.POST:
 
                 from toybox.views.transactions import setTill
-                till_value_error = setTill(request.POST['till_value'],context['daily_balance'],request)
-                if till_value_error:
-                    context.update({"till_value_error":till_value_error})
+                try:
+                    setTill(request.POST['till_value'],context['daily_balance'],request)
+                except ValueError as e:
+                    context.update({"till_value_error":e.message})
+                    return context
                 else:
                     context.update(updateDailyBalance())
                        # elif "till_cancel" in request.POST:

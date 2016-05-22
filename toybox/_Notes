@@ -10,10 +10,15 @@ Toy page takes too long to load
 Toy remove doesn't work anymore -set remove back to button,break up forms
 Borrow	Borrow fee adjust didn't work
 
+Return	Toy needs borrow date to return toy
+Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong
+Admin	Added search for member  class MemberAdmin(admin.ModelAdmin): search_fields = ('name', )  admin.site.register(Member,MemberAdmin)
+
+
 TASKS:
 toy issue type to be sorted
 When no member selected show full toy history???
-buy router
+remove lost password - doesn't work without internet access
 
 
 Note: 14th May first test
@@ -45,6 +50,9 @@ chrome doesn't support exif  CSS rotation-from-image - check tablets
 
 
 COMPLETE:
+Login	no error when setting till to same value
+Borrow	membership date hasn't been set and can't be seen in the member admin area - temporarily enabled
+Toys	Parts list field is too short - make 1024
 Repair fee calculation - add minor and major issue multiplier into config
 put toy details above toy list
 On login allow volunteers to enter in till amount. Does this has to be on login?

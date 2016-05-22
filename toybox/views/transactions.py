@@ -92,32 +92,38 @@ def transactions(request):
 
 def setTill(till_value, daily_balance, request):
 
-    till_value_error=None
 
-    if till_value!="":
+    if till_value=="":
+        raise ValueError( "Value required")
+
+    try:
         value=decimal.Decimal(till_value)
-        current_till=daily_balance
-        if value>=0:
-            if current_till!=value:
-                 transaction=Transaction()
+    except:
+        raise ValueError("Value not a number")
 
-                 if value>current_till:
-                     type=Transaction.ADJUSTMENT_CREDIT
-                     adj=value-current_till
-                 else:
-                     type=Transaction.ADJUSTMENT_DEBIT
-                     adj=-(current_till-value)
+    try:
+        current_till=decimal.Decimal(daily_balance)
+    except:
+        raise ValueError("Daily balance not a number")
 
-                 transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
-            else:
-                till_value_error="Value must be different to balance"
-        else:
-            till_value_error="Negative numbers not accepted"
+    if value<0:
+        raise ValueError("Negative numbers not accepted")
+
+    if current_till==value:
+        raise ValueError("Value must be different to balance")
+
+    transaction=Transaction()
+
+    if value>current_till:
+         type=Transaction.ADJUSTMENT_CREDIT
+         adj=value-current_till
     else:
-        till_value_error="Value required"
+         type=Transaction.ADJUSTMENT_DEBIT
+         adj=-(current_till-value)
+
+    transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
 
 
-    return till_value_error
 
 
 

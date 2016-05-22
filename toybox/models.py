@@ -327,7 +327,7 @@ class Toy(models.Model):
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
     purchased_from = models.ForeignKey(ToyVendor, null=True)
     num_pieces = models.IntegerField('Number of Pieces', default=1)
-    parts_list = models.CharField(blank=True, null=True, max_length=200)
+    parts_list = models.CharField(blank=True, null=True, max_length=1024)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
     image = models.ForeignKey(Image, null=True)
@@ -577,10 +577,11 @@ class Transaction(models.Model):
         self.amount=amount
         self.complete=complete
 
-        latest_transaction= Transaction.objects.latest()
-
-        self.balance = latest_transaction.balance + Decimal(balance_change)
-
+        if Transaction.objects.count()>0:
+            latest_transaction= Transaction.objects.latest()
+            self.balance = latest_transaction.balance + Decimal(balance_change)
+        else:
+            self.balance=amount
 
         self.volunteer_reporting=format_username(user)
 

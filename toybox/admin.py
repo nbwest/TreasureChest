@@ -37,11 +37,11 @@ class ChildAdmin(admin.ModelAdmin):
 class ImageAdmin(admin.ModelAdmin):
     list_display=('file','type','admin_image')
 
-class MemberAdmin(admin.ModelAdmin):
-    readonly_fields = ('membership_end_date',)
+#class MemberAdmin(admin.ModelAdmin):
+   # readonly_fields = ('membership_end_date',)
 
 # User space lists
-admin.site.register(Member, MemberAdmin)
+admin.site.register(Member)#, MemberAdmin)
 admin.site.register(Child,ChildAdmin)
 admin.site.register(Toy, ToyAdmin)
 admin.site.register(Image, ImageAdmin)
