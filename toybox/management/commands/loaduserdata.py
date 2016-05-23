@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from toybox.views.toys import estimate_borrow_cost
 from django.core.exceptions import MultipleObjectsReturned
 from toybox.models import *
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import os.path
 from django.core.files import File
 import re
@@ -34,7 +34,7 @@ class Command(BaseCommand):
             else:
                 break
         else:
-            print "Unable to parse date: "+date_txt
+            print "ERROR  |Unable to parse date: "+date_txt
             date_obj = None
 
         return date_obj
@@ -108,7 +108,7 @@ class Command(BaseCommand):
                 if name == " ":
                     continue
 
-                print "Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
+                print "INFO   |    Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
 
                 address = member['ADDR_STREET']+" "+ \
                           member['ADDR_SUBURB']+" "+ \
@@ -146,7 +146,7 @@ class Command(BaseCommand):
                         if m:
                             deposit = float(m.group(1))
                         else:
-                            print "Unable to determine deposit for "+ \
+                            print "ERROR  |Unable to determine deposit for "+ \
                             member_record.name+".  Setting to 0"
 
                     # If it's a new member, or more recent data (based on MEMBERSHIP_PD) populate
@@ -174,15 +174,15 @@ class Command(BaseCommand):
                         member_record.save()
 
                         if (created):
-                            print "  New member added."
+                            print "INFO   |New member added."
                         else:
-                            print "  Found existing record.  Member data updated."
+                            print "INFO   |Found existing record.  Member data updated."
                     else:
-                        print "   Old data.  Not updating"
+                        print "INFO   |Old data.  Not updating"
 
 
                 except MultipleObjectsReturned:
-                    print "Multiple entries found for "+name+".  Skipping."
+                    print "ERROR  |Multiple entries found for "+name+".  Skipping."
                     continue
 
                 num_children = member['NUM_CHILDREN']
@@ -202,7 +202,7 @@ class Command(BaseCommand):
                             c.save()
                             if created:
                                 #print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
-                                print "Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
+                                print "INFO   |    Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
             #except Exception as e:
             #    print "Exception processing: "+member.__str__()+": "+str(e)
 
@@ -221,11 +221,21 @@ class Command(BaseCommand):
             'NOTES',
             'STATUS',
             'BORROWED_BY',
-            'DUE_BACK',
+            'BORROW_DATE',
+            'DUE_DATE',
             'RECODE'  # should be the same code as at the start of the line
         ]
-        toy_reader = csv.DictReader(toys_file, fieldnames=toys_file_column_names, delimiter=',', quotechar='"', restkey='OTHER')
+        try:
+            toy_reader = csv.DictReader(toys_file, fieldnames=toys_file_column_names, delimiter=',', quotechar='"', restkey='OTHER')
+        except csv.error as e:
+            print "ERROR  |Issue Converting to Dict "+e.message
+
+
+
         for toy in toy_reader:
+
+           # print toy
+
             try:
                 code = toy['CODE']
                 if code == None or code == '':
@@ -233,14 +243,14 @@ class Command(BaseCommand):
                 try:
                     category = self.get_category_from_code(code)
                 except ValueError as e:
-                    print "Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
+                    print "ERROR  |Unable to extract toy code prefix ("+code+"), skipping: "+str(e)
                     continue
 
                 description = toy['DESCRIPTION']
 
                 # Check for currently unused toy codes
                 if description == '':
-                    print "Unused toy code: "+code
+                    print "WARNING|Unused toy code: "+code
                     recycled_toy_id, created = RecycledToyId.objects.get_or_create(toy_id=code,
                                                                           category=category)
                     recycled_toy_id.save()
@@ -269,7 +279,7 @@ class Command(BaseCommand):
                 if m:
                     purchase_cost = m.group(1)
                 else:
-                    print "Failed to extract purchase cost of "+code+" from "+toy['COST']
+                    print "ERROR  |Failed to extract purchase cost of "+code+" from "+toy['COST']
                     purchase_cost = 0
                 toy_record.purchase_cost = purchase_cost
 
@@ -281,7 +291,7 @@ class Command(BaseCommand):
                 )
                 if created_vendor:
                     toy_vendor.save()
-                    print "Added new toy vendor '"+str(toy_vendor)+"'"
+                    print "INFO   |    Added new toy vendor '"+str(toy_vendor)+"'"
                 toy_record.purchased_from = toy_vendor
 
                 # Add/Update purchase date
@@ -344,34 +354,46 @@ class Command(BaseCommand):
                                                                name__istartswith = initial)
                             toy_record.member_loaned = member_record
                         except Member.DoesNotExist:
-                            print "Ambiguous member name "+borrowed_by+" (member does not exist)"+ \
+                            print "ERROR  |Ambiguous member name "+borrowed_by+" (member does not exist)"+ \
                                   ".  Leaving borrowed_by blank but adding name to notes."
                             toy_record.comment = toy_record.comment + "\n" +\
                                                  "Borrowed by: "+borrowed_by
                         except MultipleObjectsReturned:
-                            print "Ambiguous member name "+borrowed_by+"(multiple members match)"+ \
+                            print "ERROR  |Ambiguous member name "+borrowed_by+"(multiple members match)"+ \
                                   ".  Leaving borrowed_by blank but adding name to notes."
                             toy_record.comment = toy_record.comment + "\n" +\
                                                  "Borrowed by: "+borrowed_by
                     else:
-                        print "Toy "+toy_record.code+\
+                        print "ERROR  |Toy "+toy_record.code+\
                               " marked as out, but member name '"+ borrowed_by+"' didn't match"
                         toy_record.comment = toy_record.comment + "\n" +\
                                              "Borrowed by: "+borrowed_by
 
+
+                    toy_record.borrow_date = self.try_date(toy["BORROW_DATE"])
+                    if toy_record.borrow_date == None:
+                        print "ERROR  |No borrow date, assuming 2 weeks if valid due date"
+
                     # Add/Update due date if toy is on loan
-                    toy_record.due_date = self.try_date(toy["DUE_BACK"])
+                    toy_record.due_date = self.try_date(toy["DUE_DATE"])
+
+                    if toy_record.due_date == None:
+                        print "ERROR  |No due date"
+
+                    #assume 2 weeks borrow time if not available
+                    if toy_record.borrow_date==None and toy_record.due_date != None:
+                        toy_record.borrow_date=toy_record.due_date - timedelta(days=14)
 
                 # Update the DB record
                 toy_record.save()
 
                 if (created):
-                    print "New toy: "+code+" - "+description
+                    print "INFO   |    New toy: "+code+" - "+description
                 else:
-                    print "Update toy: "+code
+                    print "INFO   |    Update toy: "+code
 
             except AttributeError as e:
-                print "Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
+                print "ERROR  |Exception loading toy "+toy['DESCRIPTION']+": "+str(e)
                 raise
 
     @staticmethod
@@ -395,7 +417,7 @@ class Command(BaseCommand):
                 # Extract details from image name
                 toy_category, toy_code, image_id, image_extension = Command.parse_image_name(file)
                 if (toy_code == None):
-                    print "File not a toy image ("+file+"). Skipping"
+                    print "ERROR  |File not a toy image ("+file+"). Skipping"
                     continue
 
 
@@ -405,13 +427,13 @@ class Command(BaseCommand):
                     toy = Toy.objects.get(category=toy_category, code=toy_code)
 
                 except Toy.DoesNotExist as e:
-                    print "No associated toy record for image "+file_path+".  Skipping"
+                    print "ERROR  |No associated toy record for image "+file_path+".  Skipping"
                     # TODO this currently leaves the image in the DB and media dir.
                     # What should we do with this?
                     continue
 
                 except MultipleObjectsReturned:
-                    print "Multiple toys found with code: "+toy_code+". Skipping"
+                    print "ERROR  |Multiple toys found with code: "+toy_code+". Skipping"
                     continue
 
                 # Add image to the DB and copy to the media directory
@@ -424,7 +446,7 @@ class Command(BaseCommand):
                             file_name += "_"+str.lower(image_id)
                         file_name += "."+image_extension
 
-                        print "Loading "+file_path+" as "+file_name+" for "+toy_code
+                        print "INFO   |    Loading "+file_path+" as "+file_name+" for "+toy_code
 
                         # Add the image to the DB and media directory
                         image, created = Image.objects.get_or_create(file=file_name,
@@ -438,7 +460,7 @@ class Command(BaseCommand):
                     toy.save()
 
                 except MultipleObjectsReturned:
-                    print "Multiple image records found for: "+file+". Skipping"
+                    print "ERROR  |Multiple image records found for: "+file+". Skipping"
                     continue
 
 
@@ -468,14 +490,14 @@ class Command(BaseCommand):
                 if line.startswith(data_type[self.HEADER_MATCH]):
                     return data_type[self.HEADER_FUNC]
         else:
-            print "Unable to find callback for file "+file_path
+            print "ERROR  |Unable to find callback for file "+file_path
             print "\n".join(read_lines)
             raise ValueError("No callback for "+file_path)
 
     def handle(self, *args, **options):
         file_paths = options['file']
         if len(file_paths) == 0:
-            print "Must supply one or more valid files to load data from"
+            print "ERROR  |Must supply one or more valid files to load data from"
             exit(1)
 
         for file_path in file_paths:
@@ -487,6 +509,6 @@ class Command(BaseCommand):
                     callback = self.parse_header(data_file, file_path)
                     callback(self, data_file)
             else:
-                print "Invalid file path: "+file_path
+                print "ERROR  |Invalid file path: "+file_path
                 continue
 

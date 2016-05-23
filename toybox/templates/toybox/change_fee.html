@@ -11,17 +11,20 @@
                 <div class="modal-body">
 
                     <label for="new_fee">Fee adjustment</label>
-                    <input type="text" id="new_fee" class="form-control" value="old value" >
+                    <input type="text" id="new_fee" class="form-control" >
+                    <label id="new_fee_error" class="label label-danger"></label>
 
                     <br>
 
                     <label for="justification">Please enter a justification for the fee adjustment</label>
-                    <input type="text" id="justification" class="form-control" name="new_fee_justification" >
+                    <input type="text" id="justification" class="form-control" name="new_fee_justification" value="">
+                    <label id="justification_error" class="label label-danger" ></label>
                 </div>
                 <div class="modal-footer">
+                     <button id="clear_button" type="button" class="btn btn-default" onclick='revert()' data-dismiss="modal">Revert</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 
-                    <button type="button" class="btn btn-default" onclick='setNewValue()' data-dismiss="modal">Ok</button>
+                    <button id="ok_button" type="button" class="btn btn-default" onclick='setNewValue(event)' data-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
@@ -33,25 +36,79 @@
          {
             document.getElementById("new_fee").value=document.getElementById(elementID).value;
             document.getElementById("new_fee").setAttribute("source",elementID);
+
+            document.getElementById("justification").value= document.getElementById(elementID+"_adjust_justification").getAttribute("rawValue");
+            document.getElementById("new_fee_error").innerHTML="";
+            document.getElementById("justification_error").innerHTML="";
          }
 
-         function setNewValue()
+         function revert()
          {
+            var sourceElementID = document.getElementById("new_fee").getAttribute("source");
+
+            sourceElementJustification=document.getElementById(sourceElementID+"_adjust_justification")
+            sourceElementJustification.value = "";
+            sourceElementJustification.setAttribute("rawValue","");
+
+            var sourceElement = document.getElementById(sourceElementID);
+            sourceElement.value= sourceElement.getAttribute('value');
+
+            $('#'+sourceElementID).trigger('input');
+         }
+
+         function setNewValue(event)
+         {
+
             var sourceElementID = document.getElementById("new_fee").getAttribute("source");
             var sourceElement = document.getElementById(sourceElementID);
             var sourceElementJustification = document.getElementById(sourceElementID+"_adjust_justification");
             var newValue = document.getElementById("new_fee").value;
             var justification = document.getElementById("justification").value;
 
-            if (sourceElementJustification!=null)
-                sourceElementJustification.value = "[Adjust from $"+sourceElement.value+"] "+justification;
+            document.getElementById("new_fee_error").innerHTML="";
+            document.getElementById("justification_error").innerHTML="";
 
-            sourceElement.value = newValue;
+            if (sourceElementJustification!=null)
+            {
+                var error=false;
+
+                if (newValue == "")
+                {
+                    document.getElementById("new_fee_error").innerHTML="Please enter a new value";
+                    error=true;
+                }
+                else if (isNaN(newValue))
+                {
+                    document.getElementById("new_fee_error").innerHTML="Please enter a number";
+                    error=true;
+                }
+                else if(Number(newValue)==Number(sourceElement.getAttribute('value')))
+                {
+                    document.getElementById("new_fee_error").innerHTML="New value must be different to original value";
+                    error=true;
+                }
+
+                if (justification == "")
+                {
+                    document.getElementById("justification_error").innerHTML="Please include a justification";
+                    error=true;
+                }
+
+                if (error)
+                {
+                    document.getElementById("ok_button").setAttribute("data-dismiss","");
+                    return false;
+                }
+                else
+                {
+                    ok_button.setAttribute("data-dismiss","modal");
+                    sourceElementJustification.value = "[Adjust from $"+sourceElement.value+"] "+justification;
+                    sourceElementJustification.setAttribute("rawValue",justification);
+                    sourceElement.value = Number(newValue).toFixed(2);
+                }
+            }
 
             $('#'+sourceElementID).trigger('input');
-
-
-
          }
 
      </script>

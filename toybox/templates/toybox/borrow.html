@@ -300,7 +300,11 @@ function preventSubmit()
 
 function UpdateFee()
 {
-    UpdateBorrowFee();
+
+    //Only recalculate if fee hasn't been adjusted
+    if (document.getElementById("id_borrow_fee_adjust_justification").value == "")
+        UpdateBorrowFee();
+
     UpdateLoanBond();
     CalcTotal();
 }
@@ -311,6 +315,8 @@ function UpdateBorrowFee()
     var total=0.0;
     var toys_checked=0;
     var total_new_toys={{new_borrow_toy_list|length}};
+
+
 
    $("span[name='fee']","#toy_table")
    .each(

@@ -77,6 +77,8 @@
                             <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
                             <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
                             <th data-field="member"  data-sortable="true" data-filter-control="input">Borrowed by</th>
+                            <th data-field="borrow_date" data-sortable="true" data-visible="false" >Borrow Date</th>
+                            <th data-field="due_date" data-sortable="true" data-visible="false" >Due Date</th>
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
                             <th data-field="loan_fee" data-sortable="true" data-visible="false">Loan Fee</th>
                             <th data-field="bond" data-sortable="true" data-visible="false">Bond</th>
@@ -113,6 +115,15 @@
                             <a name="{{toy.member_loaned}}"{%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
                                 {{toy.member_loaned.name}}
                             </a>
+                        </td>
+
+                       <td>
+                            <span name="{{toy.borrow_date|date:'Y/m/d'}}"></span>
+                            {{toy.borrow_date|date:"d/m/Y"}}
+                        </td>
+                        <td>
+                            <span name="{{toy.due_date|date:'Y/m/d'}}"></span>
+                            {{toy.due_date|date:"d/m/Y"}}
                         </td>
 
                         <td>{{toy.borrow_counter}}</td>

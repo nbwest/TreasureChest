@@ -6,8 +6,7 @@ Check admin permissions and groups - Can't select group in user admin
 Check for balance disappearing / zero?
 Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
-Toy page takes too long to load
-Toy remove doesn't work anymore -set remove back to button,break up forms
+
 Borrow	Borrow fee adjust didn't work
 
 Return	Toy needs borrow date to return toy - data error
@@ -49,6 +48,7 @@ CANT FIX:
 KNOWN LIMITATIONS:
 chrome doesn't support exif  CSS rotation-from-image - check tablets
 borrow page: must add all toys before changing weeks etc
+Toy page takes too long to load
 
 COMPLETE:
 Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong - capped at purchase cost which is 0. remove cap for toys with no cost
@@ -58,6 +58,7 @@ Borrow	membership date hasn't been set and can't be seen in the member admin are
 Toys	Parts list field is too short - make 1024
 Repair fee calculation - add minor and major issue multiplier into config
 put toy details above toy list
+Toy remove doesn't work anymore -set remove back to button,break up forms
 On login allow volunteers to enter in till amount. Does this has to be on login?
 On logout Volunteer enters till amount.  Is the till actually altered? - New Page
 Add who a toy is loaned to toy table
