@@ -10,6 +10,9 @@ from django.contrib.auth.models import Permission, User
 import os.path
 
 
+def thisDateTime():
+    return timezone.make_aware(datetime.datetime.now(),timezone.get_default_timezone())
+
 def format_username(user):
 
     if user.first_name=="":
@@ -126,7 +129,7 @@ class Member(models.Model):
     #     return datetime.datetime.now().date + datetime.timedelta(days=60) <= self.membership_end_date
 
     def membership_valid(self):
-        return (datetime.datetime.now().date() < self.membership_end_date) or (self.type.fee==0)
+        return (thisDateTime().now().date() < self.membership_end_date) or (self.type.fee==0)
 
 
     def bond_paid(self):
@@ -136,12 +139,12 @@ class Member(models.Model):
         return  self.membership_valid() and self.bond_paid()
 
     def update_membership_date(self):
-        self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
+        self.membership_end_date = thisDateTime().now().date()+timedelta(days=self.type.membership_period)
         self.save()
 
 
     def update_membership_date(self):
-        self.membership_end_date = datetime.datetime.now().date()+timedelta(days=self.type.membership_period)
+        self.membership_end_date = thisDateTime().now().date()+timedelta(days=self.type.membership_period)
         self.save()
 
 
@@ -412,16 +415,16 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow_toy(self, member, duration, user, loaned_for_repair, transaction):
+    def borrow_toy(self, member, duration, user, loaned_for_repair, transaction, borrow_date):
         self.member_loaned = member
-        self.borrow_date = datetime.datetime.now()
+        self.borrow_date = borrow_date
 
         if loaned_for_repair:
             self.state=self.BEING_REPAIRED
         else:
             self.state = self.ON_LOAN
 
-        self.due_date = datetime.datetime.now() + datetime.timedelta(days=duration * 7)
+        self.due_date = self.borrow_date + datetime.timedelta(days=duration * 7)
         self.save()
 
         toy_history=ToyHistory()
@@ -461,7 +464,7 @@ class Toy(models.Model):
         self.member_loaned = None
         time_borrowed = date.today() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
-        self.last_check = datetime.datetime.now().date()
+        self.last_check = thisDateTime().now().date()
 
         self.save()
 
@@ -472,7 +475,7 @@ class Toy(models.Model):
     def weeks_overdue(self):
 
         if (self.due_date):
-            monday2 = (datetime.datetime.now().date() - timedelta(days=datetime.datetime.now().date().weekday()))
+            monday2 = (thisDateTime().now().date() - timedelta(days=thisDateTime().now().date().weekday()))
             monday1 = (self.due_date - timedelta(days=self.due_date.weekday()))
 
             return (monday2 - monday1).days / 7
@@ -481,7 +484,7 @@ class Toy(models.Model):
 
 
     def is_current(self):
-        return datetime.datetime.now().date() >= self.due_date
+        return thisDateTime().now().date() >= self.due_date
 
         # def admin_image(self):
         #     return '<a href="/media/{0}"><img src="/media/{0}"></a>'.format(self.image)
@@ -571,7 +574,7 @@ class Transaction(models.Model):
         self.member = member
 
         self.transaction_type = transaction_type
-        self.date_time = datetime.datetime.now()
+        self.date_time = thisDateTime().now()
         self.comment = comment
 
         self.amount=amount
@@ -611,7 +614,7 @@ class ToyHistory(models.Model):
 
     def record_toy_event(self, toy, user, transaction=None):
         self.toy=toy
-        self.date_time=datetime.datetime.now()
+        self.date_time=thisDateTime().now()
         self.event_type=toy.state
         self.issue_comment=toy.issue_comment
         self.issue_type=toy.issue_type

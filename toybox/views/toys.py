@@ -44,9 +44,9 @@ def handle_stocktake(request):
                       toy=Toy.objects.get(pk=int(item))
 
                       if "btn_stocktake_checked" in request.POST:
-                         toy.last_stock_take=datetime.datetime.now()
+                         toy.last_stock_take=thisDateTime()
 
-                      toy.last_check==datetime.datetime.now()
+                      toy.last_check=thisDateTime()
 
                       if toy.state==Toy.ON_LOAN:
                          toy.state=Toy.AVAILABLE

@@ -8,6 +8,16 @@
 {%if success%}
     {% include "toybox/success_message.html" with success_message="Transaction sucessful" %}
 {%endif%}
+<!--<style>-->
+<!--[class*="col-"] {-->
+  <!--padding-top: 15px;-->
+  <!--padding-bottom: 15px;-->
+  <!--background-color: #eee;-->
+  <!--background-color: rgba(86,61,124,.15);-->
+  <!--border: 1px solid #ddd;-->
+  <!--border: 1px solid rgba(86,61,124,.2);-->
+<!--}-->
+<!--</style>-->
 
 
 <h1  id="page_table" class="page-header">Borrow Toy</h1>
@@ -51,7 +61,7 @@
 {% if toy %}
       {% include "toybox/toy_summary.html" %}
 {%else%}
-     <div class="row panel-fluid panel-default" ></div>
+     <div class="row" ></div>
 {% endif %}
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
@@ -191,18 +201,43 @@
         </div>
     </div>
 
+<div class="panel-default col-xs-12 col-sm-10 ">
     <div class="row" style=" min-height: 80px;margin-left: 0px;" >
-        <div class="input-group  col-xs-12 col-sm-10 ">
+        <div class="col-md-6">
+            <div class="input-group">
 
-            <span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
+                <span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
 
-              <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup">
-                  {% for item in payment_form.loan_duration %}
-                    <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
-                  {% endfor %}
-              </div>
+                  <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup">
+                      {% for item in payment_form.loan_duration %}
+                        <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
+                      {% endfor %}
+                  </div>
+            </div>
         </div>
+
+
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-addon " id="label_{{payment_form.borrow_date.auto_id}}">{{payment_form.borrow_date.label_tag|striptags}}</span>
+                {% render_field payment_form.borrow_date class+="form-control" id="borrow_date"%}
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $(function () {
+                    $('#borrow_date').datepicker({
+                    format: "dd/mm/yyyy",
+                    endDate: "{{payment_form.borrow_date.value|date:"d/m/Y"}}",
+                    todayBtn: true,
+                    todayHighlight: true
+                });
+            });
+        </script>
+
     </div>
+</div>
+
 
 
     {% for field in payment_form %}
@@ -281,7 +316,12 @@ $( document ).ready(function()
 
 
     preventSubmit();
+
+
+
 });
+
+
 
 
 function preventSubmit()

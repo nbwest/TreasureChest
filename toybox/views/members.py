@@ -48,7 +48,7 @@ def handle_member_details(request, member_id):
 
         # get number of loans for each member
         overdue = Toy.objects.filter(
-            due_date__lt=datetime.datetime.now().date())  # .annotate(dcount=Count('member_loaned'))
+            due_date__lt=thisDateTime().date())  # .annotate(dcount=Count('member_loaned'))
         loans_overdue = {}
         for toy_due in overdue:
             if toy_due.member_loaned_id in loans_overdue:

@@ -222,6 +222,7 @@ def handle_payment_form(request, member_id):
                     #Assign borrowed toys to member if any
                     for new_toy in new_borrow_list:
                         loan_duration = payment_form.cleaned_data['loan_duration']
+
                         # if payment_form.cleaned_data['loan_duration']
                         print("LOAN_DURATION: "+loan_duration)
                         toy = get_object_or_404(Toy, id=new_toy.toy.id)
@@ -234,7 +235,8 @@ def handle_payment_form(request, member_id):
                                 loan_duration=repair_loan_duration
 
                         # print(toy)
-                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction)
+                        borrow_date=payment_form.cleaned_data['borrow_date']
+                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction, borrow_date)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
 
@@ -425,6 +427,8 @@ def handle_payment_form(request, member_id):
     membership_fee=0
     member_bond=0
     loan_bond_refund=0
+    borrow_date=thisDateTime().date()
+
 
     if member and not "clear_form" in context:
         balance=member.balance
@@ -444,7 +448,7 @@ def handle_payment_form(request, member_id):
             member_bond=member.type.bond
 
     new_borrow_list=TempBorrowList.objects.filter(member=member_id)
-    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund})
+    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date})
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
@@ -494,6 +498,8 @@ class PaymentForm(forms.Form):
 
 
     #ensure any input with adjust button also has a justification field with suffix of _adjust_justification with its name
+
+    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly'}))
 
     loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect())
 

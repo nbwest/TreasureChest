@@ -75,7 +75,8 @@ def handle_borrowed_toy_list(request, member_id):
 
     return context
 
-
+def thisDateTime():
+    return timezone.make_aware(datetime.datetime.now(),timezone.get_default_timezone())
 
 def get_members(*fields,**kwargs):
     return {"members":Member.objects.filter(kwargs).values(fields)}
