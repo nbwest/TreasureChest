@@ -9,15 +9,11 @@ Check member permission - toy retire
 
 
 
-
-
-
-
 TASKS:
-Add list of volunteers for session?
-Add borrow date to borrow screen - default on current date
-toy issue type to be sorted
-When no member selected show full toy history???
+Add list of volunteers for session? who logs on - transaction records?
+
+
+When no member selected show full toy history list??? - slow, new page or button to load all history?
 remove lost password - doesn't work without internet access
 
 
@@ -53,6 +49,8 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+toy issue type to be sorted - sort of, added extra column, no choice.
+Add borrow date to borrow screen - default on current date
 Return	Toy needs borrow date to return toy - data error
 Borrow	Borrow fee adjust didn't work
 Return	B24 CAT bulldozer and truck no late fee, weekly fee 0.5 Note image wrong - capped at purchase cost which is 0. remove cap for toys with no cost

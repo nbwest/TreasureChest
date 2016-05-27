@@ -36,7 +36,7 @@
 
 <div class="row">
 
-    <span class="panel-fluid panel-default col-xs-11">
+    <div class="panel-fluid panel-default col-xs-11">
         <div class="panel-heading">Toy List</div>
         <div id="toolbar">
             <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
@@ -86,8 +86,9 @@
                             <th data-field="toy_purchase_date"   data-visible="false" data-sortable="true" >Purchase<br>Date</th>
                             <th data-field="last_check"  data-visible="false" data-sortable="true">Last<br>Check</th>
                             <th data-field="last_stock_take"  data-visible="false" data-sortable="true">Last<br>Stocktake</th>
-                            <th data-field="issue_type"  data-visible="false" data-width="200px">Issue Type</th>
-                            <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment</th>
+                            <th data-field="issue_type_data" data-visible="false" data-sortable="true" data-filter-control="select">Issue Type</th>
+                            <th data-field="issue_type" data-visible="false" data-width="200px">Issue Type Edit</th>
+                            <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment Edit</th>
 
                        	</tr>
                     </thead>
@@ -142,6 +143,9 @@
                         <td>
                             <span name="{{toy.last_stock_take|date:'Y/m/d'}}"></span>
                             {{toy.last_stock_take|date:"d/m/Y"}}
+                        </td>
+                          <td>
+                            {{toy.get_issue_type_display}}
                         </td>
                         <td>
                             {% form_field_concat_id toy_issue_form "issue_type_" toy.id class="form-control" onchange="this.name='issue_type_^suffix^';"%}
