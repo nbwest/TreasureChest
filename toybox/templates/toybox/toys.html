@@ -65,6 +65,8 @@
                     data-show-pagination-switch="true"
                     data-escape="false">
 
+                <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" >Date</th>
+
                     <thead>
                         <tr>
 
@@ -77,15 +79,15 @@
                             <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
                             <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
                             <th data-field="member"  data-sortable="true" data-filter-control="input">Borrowed by</th>
-                            <th data-field="borrow_date" data-sortable="true" data-visible="false" >Borrow Date</th>
-                            <th data-field="due_date" data-sortable="true" data-visible="false" >Due Date</th>
+                            <th data-field="borrow_date" data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Borrow Date</th>
+                            <th data-field="due_date" data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Due Date</th>
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
                             <th data-field="loan_fee" data-sortable="true" data-visible="false">Loan Fee</th>
                             <th data-field="bond" data-sortable="true" data-visible="false">Bond</th>
                             <th data-field="toy_purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
-                            <th data-field="toy_purchase_date"   data-visible="false" data-sortable="true" >Purchase<br>Date</th>
-                            <th data-field="last_check"  data-visible="false" data-sortable="true">Last<br>Check</th>
-                            <th data-field="last_stock_take"  data-visible="false" data-sortable="true">Last<br>Stocktake</th>
+                            <th data-field="toy_purchase_date"   data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Purchase<br>Date</th>
+                            <th data-field="last_check"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Check</th>
+                            <th data-field="last_stock_take"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Stocktake</th>
                             <th data-field="issue_type_data" data-visible="false" data-sortable="true" data-filter-control="select">Issue Type</th>
                             <th data-field="issue_type" data-visible="false" data-width="200px">Issue Type Edit</th>
                             <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment Edit</th>
