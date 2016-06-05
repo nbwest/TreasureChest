@@ -97,6 +97,8 @@ def base_data(request):
 
     if 'first_login' not in request.session:
         request.session.update({'first_login':True})
+    else:
+        context.update({"enable_logout_button":"true"})
 
     if (request.method == "POST"):
         if "till_value" in request.POST:

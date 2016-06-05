@@ -142,12 +142,13 @@ function logout()
                 <li><a href="/admin">Logged in as: {{ request.user.username }} {% if request.user.first_name %}({{request.user.first_name}} {{request.user.last_name}}){%endif%} </a></li>
                 {% endif %}
 
+                {% if enable_logout_button %}
                 <li>
                     <p class="navbar-btn" style="margin-right: 10px; margin-left: 10px; ">
                         <a onclick="logout();"  class="btn btn-default">Logout</a>
-                        <!--href="{%url 'logout' %}"-->
                     </p>
                 </li>
+                {%endif%}
 
 
                 <!-- these are hidden until used for collapsed menu-->
