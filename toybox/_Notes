@@ -11,7 +11,7 @@ Check member permission - toy retire
 
 TASKS:
 Add list of volunteers for session? who logs on - transaction records?
-hide lost password - doesn't work without internet access
+select member with no toy history should say no toy history, currently no table.
 
 
 Note: 14th May first test
@@ -46,6 +46,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+hide lost password - doesn't work without internet access
 toy issue type to be sorted - sort of, added extra column, no choice.
 Add borrow date to borrow screen - default on current date
 Return	Toy needs borrow date to return toy - data error
@@ -141,6 +142,8 @@ Add member delete (change status to removed, all member queries will have to exc
 Link transaction to toy history some how
 Set toy add in admin in order of those fields required for adding toys manually.
 email, for receipt - later, more useful for toy reminders. Start with receipt number?
+issue fines can't be determined when paying for them in borrow. either allow adjustment in return or more details in borrow.
+
 
 
 Model
