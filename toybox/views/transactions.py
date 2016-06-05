@@ -112,6 +112,9 @@ def setTill(till_value, daily_balance, request):
     if current_till==value:
         raise ValueError("Value must be different to balance")
 
+    if value>1000:
+        raise ValueError("Value must be less than or equal to $1000")
+
     transaction=Transaction()
 
     if value>current_till:
