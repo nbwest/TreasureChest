@@ -80,7 +80,7 @@
                         	<th>Toy Name</th>
                             <th>Due</th>
                             <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
-                            {% if loan_bond_enable == "true" %}
+                            {% if loan_bond_enable == True %}
                             <th style="text-align: center;vertical-align: middle;">Bond</th>
                             {%endif%}
                             <th style="text-align: center;vertical-align: middle;">Lend for repair</th>
@@ -109,7 +109,7 @@
                             <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
                        </td>
 
-                       {% if loan_bond_enable == "true" %}
+                       {% if loan_bond_enable == True %}
                         <td style="text-align: center;vertical-align: middle;">
                             <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
                        </td>
@@ -168,7 +168,7 @@
                        <td style="text-align: center;vertical-align: middle;">
                            N/A
                        </td>
-                        {% if loan_bond_enable == "true" %}
+                        {% if loan_bond_enable == True %}
                         <td style="text-align: center;vertical-align: middle;">
                             N/A
                         </td>
@@ -270,11 +270,11 @@
                        <span class="input-group-btn">
 
                            <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
-                           {% if donation_enable == "true" %}
+                           {% if donation_enable == True %}
                            <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
                            {%endif%}
 
-                           {% if credit_enable == "true" %}
+                           {% if credit_enable == True %}
                            <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
                            {%endif%}
 
@@ -554,11 +554,11 @@ function CalcTotal()
 
      $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
    // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
-   if ("{{credit_enable}}"=="true")
+   if ("{{credit_enable}}" == "True")
         $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );
 
 
-    if ("{{donation_enable}}" == "true")
+    if ("{{donation_enable}}" == "True")
         $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
 
    // $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );

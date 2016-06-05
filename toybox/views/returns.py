@@ -148,7 +148,7 @@ class ReturnsForm(forms.Form):
     issue_fee = forms.CharField( required=False,label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
 
     #works but needs a server restart
-    if loan_bond_enable=="true":
+    if loan_bond_enable==True:
         loan_bond_refund = forms.CharField( required=False,label="Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
 
 

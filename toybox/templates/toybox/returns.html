@@ -58,7 +58,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     <th>Due</th>
                     <th style="text-align: center;">Returned</th>
 
-                    {% if loan_bond_enable == "true" %}
+                    {% if loan_bond_enable == True %}
                     <th style="text-align: center;">Bond</th>
                     {%endif%}
 
@@ -98,7 +98,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();"%}
                     </td>
 
-                     {% if loan_bond_enable == "true" %}
+                     {% if loan_bond_enable == True %}
                      <td style="text-align: center;vertical-align: middle;">
                          {% if toy.state == toy.BEING_REPAIRED %}
                              <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
