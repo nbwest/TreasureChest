@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def feedback(request):
-    context={}
+    context = {"title":"Feedback"}
+
     context.update(base_data(request))
 
     form=FeedbackForm()

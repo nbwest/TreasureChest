@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 
 
 def handle_member_details(request, member_id):
-    context = {}
+    context = {"title":"Members"}
     form = None
     # context.update(handle_member_search(request))
 

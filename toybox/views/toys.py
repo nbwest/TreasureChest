@@ -12,7 +12,7 @@ def estimate_borrow_cost(purchase_cost):
 
 @login_required()
 def toys(request, toy_id=None):
-    context={}
+    context = {"title":"Toys"}
     context.update(base_data(request))
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))

@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 def transactions(request):
     till_value_error=""
     bank_value_error=""
-    context={}
+    context = {"title":"Transactions"}
     form=None
     context.update(base_data(request))
 

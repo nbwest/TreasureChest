@@ -19,13 +19,13 @@ def handle_returns(request,member_id):
 
 @login_required
 def returns(request, member_id=None):
+    context = {"title":"Return Toy"}
+
+    # if (request.method == "GET"):
+    #      if "success" in request.GET:
+    #          context.update({"success":True})
 
 
-    if (request.method == "GET"):
-         if "success" in request.GET:
-             context={"success":True}
-
-    context={}
     context.update(base_data(request))
     context.update(handle_returns(request,member_id))
 

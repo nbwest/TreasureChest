@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse
 
 urlpatterns = [
-    url(r'^login/', auth_views.login),
+    url(r'^login/', auth_views.login,{'extra_context':{'title': 'Login'}}),
     url(r'^logout/$', auth_views.logout_then_login),
     url(r'^$', views.base, name='base'),
     url(r'^toybox/', include('toybox.urls', namespace="toybox")),

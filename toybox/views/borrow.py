@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def borrow(request, member_id):
 
-    context = {}
+    context = {"title":"Borrow Toy"}
 
     context.update(base_data(request))
 
