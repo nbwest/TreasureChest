@@ -412,7 +412,7 @@ def handle_payment_form(request, member_id):
                         #     break
 
             else:
-                print("invalid form " + str(payment_form.errors))
+                print("invalid form "+ str(payment_form))
 
 
 

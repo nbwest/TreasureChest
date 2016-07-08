@@ -51,7 +51,10 @@
             sourceElementJustification.setAttribute("rawValue","");
 
             var sourceElement = document.getElementById(sourceElementID);
+
+
             sourceElement.value= sourceElement.getAttribute('value');
+
 
             $('#'+sourceElementID).trigger('input');
          }
@@ -61,12 +64,14 @@
 
             var sourceElementID = document.getElementById("new_fee").getAttribute("source");
             var sourceElement = document.getElementById(sourceElementID);
+            var sourceElementValue=sourceElement.getAttribute('value');
             var sourceElementJustification = document.getElementById(sourceElementID+"_adjust_justification");
             var newValue = document.getElementById("new_fee").value;
             var justification = document.getElementById("justification").value;
 
             document.getElementById("new_fee_error").innerHTML="";
             document.getElementById("justification_error").innerHTML="";
+
 
             if (sourceElementJustification!=null)
             {
@@ -82,11 +87,17 @@
                     document.getElementById("new_fee_error").innerHTML="Please enter a number";
                     error=true;
                 }
-                else if(Number(newValue)==Number(sourceElement.getAttribute('value')))
+                else if(Number(newValue)>=Number(sourceElement.getAttribute('calc')))
                 {
-                    document.getElementById("new_fee_error").innerHTML="New value must be different to original value";
+                    document.getElementById("new_fee_error").innerHTML="New value must be less than original value: "+sourceElement.getAttribute('calc');
                     error=true;
                 }
+                else if(Number(newValue)<0)
+                {
+                    document.getElementById("new_fee_error").innerHTML="New value can't be negative";
+                    error=true;
+                }
+
 
                 if (justification == "")
                 {

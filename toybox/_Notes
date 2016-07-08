@@ -124,6 +124,7 @@ Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
 NEXT RELEASE:
+Move logic of adjust fee to server side
 On login include shift volunteer names. Put on Login page for successful login or new default page?.
 Better toy selection - is very slow, resets filtering
 When adding toy suggest loan fee

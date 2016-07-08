@@ -317,12 +317,36 @@ $( document ).ready(function()
 
     preventSubmit();
 
-
+    SetAdjustOriginalValues();
 
 });
 
 
+function SetAdjustOriginalValues()
+{
+ elements_to_set=document.querySelectorAll("[adjust_button='True']");
 
+    nodes = Array.prototype.slice.call(elements_to_set,0);
+
+    nodes.forEach(function(node)
+    {
+
+        //if (!isNaN(Number(node.value)))
+        //{
+            //console.log(node.attributes.getNamedItem("total_me").value+", VAL: "+node.value);
+            //if (node.attributes.getNamedItem("total_me").value=='positive')
+            //    fees+= Number(node.value);
+            //else
+            //    fees-= Number(node.value);
+
+            console.log(node.getAttribute("id"));
+
+            if (node.attributes.getNamedItem("id")!="id_borrow_fee")
+                node.setAttribute("calc",node.value);
+
+       // }
+    });
+}
 
 function preventSubmit()
 {
@@ -406,7 +430,7 @@ function UpdateBorrowFee()
    );
 
    document.getElementById("id_borrow_fee").value=total.toFixed(2);
-
+   document.getElementById("id_borrow_fee").setAttribute("calc",total.toFixed(2));
 
 }
 
@@ -461,6 +485,8 @@ function CalcTotal()
                 fees+= Number(node.value);
             else
                 fees-= Number(node.value);
+
+
         }
     });
 
