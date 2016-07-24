@@ -64,6 +64,7 @@
                             <th data-field="sat"  data-visible="false" data-sortable="true" data-filter-control="select">Sat</th>
                             <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
                             <th data-field="committee"  data-visible="false" data-sortable="true" data-filter-control="select">Committee<br>Member</th>
+                            <th data-field="bond"  data-visible="false" data-sortable="true">Bond</th>
                        	</tr>
                     </thead>
 
@@ -165,6 +166,9 @@
                                         <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
                                     {% endif %}
                             {% endspaceless %}
+                        </td>
+                        <td class="text-center">
+                            ${{m.bond_fee_paid|floatformat:2}}
                         </td>
                        </tr>
                     {% endfor %}

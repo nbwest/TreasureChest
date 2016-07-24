@@ -133,7 +133,7 @@ class Member(models.Model):
 
 
     def bond_paid(self):
-         return self.bond_fee_paid == self.type.bond;
+         return self.bond_fee_paid >0;
 
     def is_current(self):
         return  self.membership_valid() and self.bond_paid()
