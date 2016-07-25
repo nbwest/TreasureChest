@@ -130,9 +130,9 @@
 
                         <td>{{toy.borrow_counter}}</td>
 
-                       <td>${{toy.loan_cost|floatformat:2}}</td>
-                       <td>${{toy.loan_bond|floatformat:2}}</td>
-                        <td>{%if toy.purchase_cost%}${%endif%}{{toy.purchase_cost|floatformat:2}}</td>
+                       <td>{{toy.loan_cost|floatformat:2}}</td>
+                       <td>{{toy.loan_bond|floatformat:2}}</td>
+                        <td>{{toy.purchase_cost|floatformat:2}}</td>
                        <td>
                             <span name="{{toy.purchase_date|date:'Y/m/d'}}"></span>
                             {{toy.purchase_date|date:"d/m/Y"}}
