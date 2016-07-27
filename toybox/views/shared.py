@@ -95,16 +95,17 @@ def base_data(request):
 
     context.update(updateDailyBalance())
 
+
     if 'first_login' not in request.session:
         request.session.update({'first_login':True})
     else:
         context.update({"enable_logout_button":"true"})
 
+    #set till popup for login and kogoff
     if (request.method == "POST"):
         if "till_value" in request.POST:
 
             if "till_set" in request.POST:
-
                 from toybox.views.transactions import setTill
                 try:
                     setTill(request.POST['till_value'],context['daily_balance'],request)
@@ -113,13 +114,14 @@ def base_data(request):
                     return context
                 else:
                     context.update(updateDailyBalance())
-                       # elif "till_cancel" in request.POST:
 
+
+            #for tilll set on login
             if 'first_login' in request.session:
                 if request.session['first_login']==True:
                     request.session.update({'first_login':False})
                 else:
-                     request.session.update({'logout':True})
+                     request.session.update({'logout':True})#issue here for transaction page, needs this to set till on logout
 
     return context
 
