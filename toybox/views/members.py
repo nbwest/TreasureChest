@@ -39,8 +39,9 @@ def handle_member_details(request, member_id):
 
         if form.is_valid():
             form.save(member_id)
+            context.update({"success":"true"})
 
-        context.update({'member_details_form': form,"success":"true"})
+        context.update({'member_details_form': form})
 
 
     # if no members have been searched for display all members
