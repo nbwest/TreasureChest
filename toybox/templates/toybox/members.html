@@ -218,7 +218,7 @@
                             </button>
                         </div>
                 <br>
-                        <div class="collapse collapse-class" id="{{key}}_{{value}}">
+                        <div class="collapse {% if field.errors %} in {%endif%} collapse-class" id="{{key}}_{{value}}">
                     {%endif%}
                 {%endfor%}
 
