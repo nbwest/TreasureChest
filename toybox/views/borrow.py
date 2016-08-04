@@ -499,7 +499,7 @@ class PaymentForm(forms.Form):
 
     #ensure any input with adjust button also has a justification field with suffix of _adjust_justification with its name
 
-    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly'}))
+    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today'}))
 
     loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect())
 
@@ -537,7 +537,7 @@ class PaymentForm(forms.Form):
         credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
         total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
 
-    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'change_buttons':'True'}))
+    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'change_buttons':'True','title':'Enter the amount the member has paid'}))
     change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'cancel_button':'True'}))
 
 
