@@ -98,6 +98,7 @@ class Command(BaseCommand):
             'DAYS',
             'STOCKTAKE',
             'NUM_CHILDREN',
+            'COMMENT',
         ]
         members_reader = csv.DictReader(members_file, fieldnames=members_file_column_names, restkey='CHILDREN', delimiter=',', quotechar='"')
         for member in members_reader:
@@ -161,6 +162,7 @@ class Command(BaseCommand):
                         member_record.potential_volunteer = False
                         member_record.volunteer = self.parse_bool(member['VOL'])
                         member_record.join_date = join_date
+                        member_record.comment = member['COMMENT']
                         if membership_end_date > date.today():
                             member_record.active=True
                         else:
