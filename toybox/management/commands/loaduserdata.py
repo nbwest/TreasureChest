@@ -92,13 +92,14 @@ class Command(BaseCommand):
             'PHONE_BH',
             'MEMBERSHIP_PD',
             'DEPOSIT_PD',
+            'DEPOSIT_REFUNDED',
             'DATE_JND',
             'EMAIL',
             'VOL',
             'DAYS',
             'STOCKTAKE',
-            'NUM_CHILDREN',
             'COMMENT',
+            'NUM_CHILDREN',
         ]
         members_reader = csv.DictReader(members_file, fieldnames=members_file_column_names, restkey='CHILDREN', delimiter=',', quotechar='"')
         for member in members_reader:
@@ -194,17 +195,20 @@ class Command(BaseCommand):
                         child_index = child * 2
 
                         #gender = Child.get_gender(children['child_index+1'])
-                        bday = self.try_date(children[child_index])
-                        if (bday is not None):
-                            c, created = Child.objects.get_or_create(
-                                date_of_birth = bday,
-                                #gender = gender,
-                                parent = member_record
-                            )
-                            c.save()
-                            if created:
-                                #print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
-                                print "INFO   |    Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
+                        try:
+                            bday = self.try_date(children[child_index])
+                            if (bday is not None):
+                                c, created = Child.objects.get_or_create(
+                                    date_of_birth = bday,
+                                    #gender = gender,
+                                    parent = member_record
+                                )
+                                c.save()
+                                if created:
+                                    #print "Added "+name+"'s child ("+gender+") born "+bday.strftime('%d/%m/%Y')
+                                    print "INFO   |    Added "+name+"'s child born "+bday.strftime('%d/%m/%Y')
+                        except IndexError: # Listed as having more children than data provided
+                            continue       # Just add the data we have
             #except Exception as e:
             #    print "Exception processing: "+member.__str__()+": "+str(e)
 
