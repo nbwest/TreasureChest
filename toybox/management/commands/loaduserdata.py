@@ -110,7 +110,7 @@ class Command(BaseCommand):
                 if name == " ":
                     continue
 
-                print "INFO   |    Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
+                print "INFO   |Processing "+name+" ("+member["MEMBERSHIP_PD"]+")"
 
                 address = member['ADDR_STREET']+" "+ \
                           member['ADDR_SUBURB']+" "+ \
@@ -141,12 +141,20 @@ class Command(BaseCommand):
                         member_record = Member(name = name)
                         created = True
 
-                    # Validate DpPd
+                    # Validate DpPd/Deposit Refunded/Absorbed
                     deposit = 0
+                    bond_refunded = None
+                    bond_absorbed = None
                     if member['DEPOSIT_PD']:
                         m = re.search('^\$?(\d+(\.\d+)?)$', member['DEPOSIT_PD'])
                         if m:
                             deposit = float(m.group(1))
+                        elif member['DEPOSIT_PD'].upper() == 'R':
+                            bond_refunded = self.try_date(member['DEPOSIT_REFUNDED'])
+                            print "INFO   |    Deposit refunded "+bond_refunded.strftime('%d/%m/%Y')
+                        elif member['DEPOSIT_PD'].upper() == 'A':
+                            bond_absorbed = self.try_date(member['DEPOSIT_REFUNDED'])
+                            print "INFO   |    Deposit absorbed "+bond_absorbed.strftime('%d/%m/%Y')
                         else:
                             print "ERROR  |Unable to determine deposit for "+ \
                             member_record.name+".  Setting to 0"
@@ -160,6 +168,8 @@ class Command(BaseCommand):
                         member_record.type = annual_member
                         member_record.phone_number2 = member['PHONE_BH']
                         member_record.bond_fee_paid = deposit
+                        member_record.bond_refunded = bond_refunded
+                        member_record.bond_absorbed = bond_absorbed
                         member_record.potential_volunteer = False
                         member_record.volunteer = self.parse_bool(member['VOL'])
                         member_record.join_date = join_date
@@ -177,11 +187,11 @@ class Command(BaseCommand):
                         member_record.save()
 
                         if (created):
-                            print "INFO   |New member added."
+                            print "INFO   |    New member added."
                         else:
-                            print "INFO   |Found existing record.  Member data updated."
+                            print "INFO   |    Found existing record.  Member data updated."
                     else:
-                        print "INFO   |Old data.  Not updating"
+                        print "INFO   |    Old data.  Not updating"
 
 
                 except MultipleObjectsReturned:

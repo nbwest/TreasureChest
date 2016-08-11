@@ -109,6 +109,8 @@ class Member(models.Model):
     type = models.ForeignKey(MemberType)
     join_date = models.DateField(auto_now_add=True, blank=True)
     bond_fee_paid = models.DecimalField(decimal_places=2, max_digits=5, default=0)
+    bond_refunded = models.DateField('Deposit refunded', null=True, blank=True)
+    bond_absorbed = models.DateField('Deposit absorbed', null=True, blank=True)
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
     comment = models.CharField(max_length=1024, blank=True)
