@@ -29,6 +29,15 @@
                       </tr>
 
                       <tr>
+                        <td>Borrowed By</td>
+                        <td>
+                            <a {%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
+                                {{toy.member_loaned.name}}
+                            </a>
+                        </td>
+                      </tr>
+
+                      <tr>
                         <td>Comment</td>
                         <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
                       </tr>
