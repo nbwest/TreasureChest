@@ -279,21 +279,21 @@ class Command(BaseCommand):
 
         Config.objects.filter(key="credit_enable").delete()
         Config.objects.update_or_create(key="credit_enable",
-                                          value="true",
+                                          value="false",
                                           value_type=Config.BOOLEAN,
                                           help="Borrow toys with credit function enabled (true) or disabled (false). Server restart required",
                                           )
 
         Config.objects.filter(key="loan_bond_enable").delete()
         Config.objects.update_or_create(key="loan_bond_enable",
-                                          value="true",
+                                          value="false",
                                           value_type=Config.BOOLEAN,
                                           help="(true or false). Toys may have a bond set when borrowed. Server restart required",
                                           )
 
         Config.objects.filter(key="donation_enable").delete()
         Config.objects.update_or_create(key="donation_enable",
-                                          value="true",
+                                          value="false",
                                           value_type=Config.BOOLEAN,
                                           help="(true or false). Enable giving change as donation",
                                           )
@@ -330,9 +330,9 @@ class Command(BaseCommand):
             self.tc_out, created = ToyCategory.objects.update_or_create(name="Music", code_prefix="M")
             self.tc_out, created = ToyCategory.objects.update_or_create(name="Games", code_prefix="G")
             self.tc_out, created = ToyCategory.objects.update_or_create(name="Transport", code_prefix="T")
-            self.tc_out, created = ToyCategory.objects.update_or_create(name="Baby Toys", code_prefix="B")
-            self.tc_out, created = ToyCategory.objects.update_or_create(name="Water and Sand", code_prefix="W")
-
+            self.tc_out, created = ToyCategory.objects.update_or_create(name="Baby", code_prefix="B")
+            self.tc_out, created = ToyCategory.objects.update_or_create(name="Water & Sand", code_prefix="W")
+            self.tc_out, created = ToyCategory.objects.update_or_create(name="Party Pack", code_prefix="PP")
 
     def _reset_membertype(self):
 
