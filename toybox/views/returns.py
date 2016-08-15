@@ -58,7 +58,8 @@ def returns(request, member_id=None):
 
                 if 'returned_checkbox_'+str(toy.id) in returns_form.cleaned_data:
                     if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]:
-                        toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user)
+                        return_date=returns_form.cleaned_data['return_date']
+                        toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user,return_date)
                     # toy.return_toy()
 
 
@@ -98,6 +99,7 @@ def returns(request, member_id=None):
 
     loan_bond_enable= get_config("loan_bond_enable")
 
+
     context.update({"issue_list":Toy.ISSUE_TYPE_CHOICES,"loan_bond_enable":loan_bond_enable})#[:IssueChoiceType.RETURNED_MISSING_PIECE]})
 
 
@@ -115,8 +117,8 @@ def returns(request, member_id=None):
             else:
                 toy.fine=0
 
-
-    returns_form = ReturnsForm(toyList=toyList)
+    return_date=thisDateTime().date()
+    returns_form = ReturnsForm(toyList=toyList,initial={'return_date':return_date})
 
     context.update({"returns_form":returns_form})
     #print(context)
@@ -138,6 +140,8 @@ class ReturnsForm(forms.Form):
                 self.fields['returned_checkbox_%s' % toy.id]=forms.BooleanField(required=False)
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
                 self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])
+
+    return_date = forms.DateField(label="Return Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) have been returned, defaults to today'}))
 
 
     loan_bond_enable= get_config("loan_bond_enable")

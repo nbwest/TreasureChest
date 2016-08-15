@@ -156,7 +156,25 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
     </div>
 
+    <div class="row" style=" min-height: 50px;">
+    <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
+                {% render_field returns_form.return_date class+="form-control" id="return_date"%}
+            </div>
+    </div>
+        </div>
 
+    <script type="text/javascript">
+        $(function () {
+                $('#return_date').datepicker({
+                format: "dd/mm/yyyy",
+                endDate: "{{returns_form.return_date.value|date:"d/m/Y"}}",
+                todayBtn: true,
+                todayHighlight: true
+            });
+        });
+    </script>
 
     {% for field in returns_form %}
         {%if field.field.widget.attrs.enabled%}
@@ -192,6 +210,8 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         {% endif %}
 
     {% endfor %}
+
+
 
 </form>
 

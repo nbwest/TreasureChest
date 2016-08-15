@@ -430,7 +430,7 @@ class Toy(models.Model):
         self.save()
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self,user,transaction)
+        toy_history.record_toy_event(self,user,borrow_date, transaction)
 
 
     def issue_type_to_state(self, issue_type):
@@ -452,7 +452,7 @@ class Toy(models.Model):
             
         return state    
 
-    def return_toy(self, issue, comment, user):
+    def return_toy(self, issue, comment, user, return_date):
 
         self.issue_type = int(issue)
 
@@ -461,12 +461,12 @@ class Toy(models.Model):
         self.issue_comment = comment
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self,user)
+        toy_history.record_toy_event(self,user, return_date)
 
         self.member_loaned = None
-        time_borrowed = date.today() - self.borrow_date
+        time_borrowed = return_date - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
-        self.last_check = thisDateTime().now().date()
+        self.last_check = return_date
 
         self.save()
 
@@ -607,7 +607,7 @@ class Transaction(models.Model):
 # add none=0?
 class ToyHistory(models.Model):
     toy = models.ForeignKey(Toy)
-    date_time = models.DateTimeField('Event date and time', auto_now_add=True)
+    date_time = models.DateTimeField('Event date and time')
     event_type = models.IntegerField(choices=Toy.TOY_STATE_CHOICES, null=True)
     issue_type = models.IntegerField(choices=Toy.ISSUE_TYPE_CHOICES, default=Toy.ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
@@ -615,9 +615,9 @@ class ToyHistory(models.Model):
     volunteer_reporting = models.CharField(blank=True, null=True, max_length=60)
     transaction = models.ForeignKey(Transaction, null=True,blank=True,related_name="toyhistory" )
 
-    def record_toy_event(self, toy, user, transaction=None):
+    def record_toy_event(self, toy, user, date_time, transaction=None):
         self.toy=toy
-        self.date_time=thisDateTime().now()
+        self.date_time=date_time
         self.event_type=toy.state
         self.issue_comment=toy.issue_comment
         self.issue_type=toy.issue_type

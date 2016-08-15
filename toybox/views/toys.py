@@ -61,7 +61,7 @@ def handle_stocktake(request):
                     toy.issue_type=int(value)
                     toy.state=toy.issue_type_to_state(toy.issue_type)
                     toy_history=ToyHistory()
-                    toy_history.record_toy_event(toy, request.user)
+                    toy_history.record_toy_event(toy, thisDateTime().now(),request.user)
                     if "issue_comment_"+id in request.POST:
                         toy.issue_comment=request.POST["issue_comment_"+id]
                     toy.save()
@@ -72,7 +72,7 @@ def handle_stocktake(request):
                         toy=Toy.objects.get(pk=id)
                         toy.issue_comment=value
                         toy_history=ToyHistory()
-                        toy_history.record_toy_event(toy, request.user)
+                        toy_history.record_toy_event(toy,thisDateTime().now(), request.user)
                         toy.save()
 
     return(context)
