@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from shared import *
+from django.conf import settings
 from django.forms import ModelForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def feedback(request):
-    context = {"title":"Feedback"}
+    context = {"title":"Feedback", "contact":settings.CONTACT}
 
     context.update(base_data(request))
 
