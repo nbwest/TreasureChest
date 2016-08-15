@@ -30,8 +30,9 @@ def borrow(request, member_id):
 
     #clears templist if there are temp toys in any other name than the current member. Ensures temp toys
     # aren't persistent when leaving borrow page
-    if TempBorrowList.objects.exclude(member=member_id).count()>0:
-        TempBorrowList.objects.all().delete()
+    # this means only one member can be serviced at a time. optional???
+    #if TempBorrowList.objects.exclude(member=member_id).count()>0:
+     #   TempBorrowList.objects.filter().delete()
 
 
     # handle member search
@@ -115,7 +116,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                         error = "ERROR - Toy is retired!"
                     elif toy.state == Toy.AVAILABLE or toy.state == Toy.TO_BE_REPAIRED:
                         #available, check it hasn't alredy been borrowed already
-                        in_temp_list = TempBorrowList.objects.filter(toy=toy)
+                        in_temp_list = TempBorrowList.objects.filter(toy=toy,member__id=member_id)
 
                         if not in_temp_list:
                             #OK to add to temp borrow list
@@ -180,7 +181,7 @@ def handle_payment_form(request, member_id):
 
     if (request.method == "POST"):
 
-        new_borrow_list = TempBorrowList.objects.filter(member=member_id)
+        new_borrow_list = TempBorrowList.objects.filter(member__id=member_id)
         payment_form = PaymentForm(request.POST,temp_toy_list=new_borrow_list)
 
         if "cancel" in request.POST:
@@ -211,13 +212,14 @@ def handle_payment_form(request, member_id):
                     if "borrow_fee" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['borrow_fee']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
-                            if fee!=0:
-                                if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
-                                        adjustment_found=True;
-                                    else:
-                                        comment=None
+
+                            if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
+                                comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
+                                adjustment_found=True
+                            else:
+                                comment=None
+
+                            if fee!=0 or comment!=None:
                                 transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
 
 
@@ -462,7 +464,7 @@ def handle_payment_form(request, member_id):
         if not member.bond_paid():
             member_bond=member.type.bond
 
-    new_borrow_list=TempBorrowList.objects.filter(member=member_id)
+    new_borrow_list=TempBorrowList.objects.filter(member__id=member_id)
     payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date})
 
     # if form charfield has an amount in it make it visible.

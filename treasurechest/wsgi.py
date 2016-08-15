@@ -13,4 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "treasurechest.settings")
 
+from toybox.models import TempBorrowList
+TempBorrowList.objects.all().delete()
+
 application = get_wsgi_application()
