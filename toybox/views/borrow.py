@@ -164,6 +164,7 @@ def handle_payment_form(request, member_id):
 
     context = {}
     member=None
+    adjustment_found=False
 
 
     if member_id:
@@ -214,6 +215,7 @@ def handle_payment_form(request, member_id):
                                 if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
                                     if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
                                         comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
+                                        adjustment_found=True;
                                     else:
                                         comment=None
                                 transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
@@ -244,13 +246,15 @@ def handle_payment_form(request, member_id):
                     if "membership" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['membership']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['membership'])
-                            if fee!=0:
-                                if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['membership_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['membership_adjust_justification']
-                                    else:
-                                        comment=None
 
+                            if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
+                                if payment_form.cleaned_data['membership_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['membership_adjust_justification']
+                                    adjustment_found=True;
+                                else:
+                                    comment=None
+
+                            if fee!=0 or comment!=None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBERSHIP_FEE,fee,comment)
 
@@ -262,12 +266,15 @@ def handle_payment_form(request, member_id):
                     if "loan_bond" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['loan_bond']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['loan_bond'])
-                            if fee!=0:
-                                if "loan_bond_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['loan_bond_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['loan_bond_adjust_justification']
-                                    else:
-                                        comment=None
+
+                            if "loan_bond_adjust_justification" in payment_form.cleaned_data:
+                                if payment_form.cleaned_data['loan_bond_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['loan_bond_adjust_justification']
+                                    adjustment_found=True;
+                                else:
+                                    comment=None
+
+                            if fee!=0 or comment!=None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND,fee,comment)
 
@@ -292,12 +299,15 @@ def handle_payment_form(request, member_id):
                     if "member_bond" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['member_bond']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['member_bond'])
-                            if fee!=0:
-                                if "member_bond_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['member_bond_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['member_bond_adjust_justification']
-                                    else:
-                                        comment=None
+
+                            if "member_bond_adjust_justification" in payment_form.cleaned_data:
+                                if payment_form.cleaned_data['member_bond_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['member_bond_adjust_justification']
+                                    adjustment_found=True;
+                                else:
+                                    comment=None
+
+                            if fee!=0 or comment!=None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBER_BOND,fee,comment)
                                 member.bond_fee_paid=fee
@@ -308,12 +318,15 @@ def handle_payment_form(request, member_id):
                     if "late_fee" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['late_fee']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['late_fee'])
-                            if fee!=0:
-                                if "late_fee_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['late_fee_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['late_fee_adjust_justification']
-                                    else:
-                                        comment=None
+
+                            if "late_fee_adjust_justification" in payment_form.cleaned_data:
+                                if payment_form.cleaned_data['late_fee_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['late_fee_adjust_justification']
+                                    adjustment_found=True;
+                                else:
+                                    comment=None
+
+                            if fee!=0 or comment!=None:
                                 fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LATE_FEE)
 
                                 for item in fees_records:
@@ -325,13 +338,15 @@ def handle_payment_form(request, member_id):
                     if "issue_fee" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['issue_fee']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['issue_fee'])
-                            if fee!=0:
-                                if "issue_fee_adjust_justification" in payment_form.cleaned_data:
-                                    if payment_form.cleaned_data['issue_fee_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['issue_fee_adjust_justification']
-                                    else:
-                                        comment=None
 
+                            if "issue_fee_adjust_justification" in payment_form.cleaned_data:
+                                if payment_form.cleaned_data['issue_fee_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['issue_fee_adjust_justification']
+                                    adjustment_found=True;
+                                else:
+                                    comment=None
+
+                            if fee!=0 or comment!=None:
                                 fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
 
                                 for item in fees_records:
@@ -348,7 +363,7 @@ def handle_payment_form(request, member_id):
                         if payment_form.cleaned_data['payment']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['payment'])
                             fee_paid=fee
-                            if fee!=0:
+                            if fee!=0 or adjustment_found:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.PAYMENT,fee)
 
