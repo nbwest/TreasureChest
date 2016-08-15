@@ -586,7 +586,8 @@ class Transaction(models.Model):
             latest_transaction= Transaction.objects.latest()
             self.balance = latest_transaction.balance + Decimal(balance_change)
         else:
-            self.balance=amount
+            self.balance=balance_change
+
 
         self.volunteer_reporting=format_username(user)
 
