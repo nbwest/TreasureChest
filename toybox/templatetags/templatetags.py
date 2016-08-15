@@ -6,7 +6,7 @@ import datetime
 from django.utils.html import avoid_wrapping
 from django.utils.timezone import is_aware, utc
 from django.utils.translation import ugettext, ungettext_lazy
-
+from django.utils import timezone
 from django import template
 from django.template import Variable, VariableDoesNotExist
 register = template.Library()
@@ -27,6 +27,10 @@ TIMESINCE_CHUNKS = (
     (7, ungettext_lazy('%d week', '%d weeks')),
     (1, ungettext_lazy('%d day', '%d days')),
 )
+
+def thisDateTime():
+    return timezone.make_aware(datetime.datetime.now(),timezone.get_default_timezone())
+
 
 @register.filter("dict", is_safe=False)
 def dict_filter(value, arg=None):
@@ -64,7 +68,8 @@ def timebetween(d, now=None):
         now = datetime.datetime(now.year, now.month, now.day)
 
     if not now:
-        now = datetime.datetime.now(utc if is_aware(d) else None)
+        today=thisDateTime()
+        now=datetime.datetime(today.year, today.month, today.day)
 
     delta = (d - now)
 
