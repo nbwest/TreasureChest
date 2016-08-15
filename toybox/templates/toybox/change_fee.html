@@ -53,7 +53,7 @@
             var sourceElement = document.getElementById(sourceElementID);
 
 
-            sourceElement.value= sourceElement.getAttribute('value');
+            sourceElement.value= sourceElement.defaultValue;
 
 
             $('#'+sourceElementID).trigger('input');
@@ -87,9 +87,9 @@
                     document.getElementById("new_fee_error").innerHTML="Please enter a number";
                     error=true;
                 }
-                else if(Number(newValue)>=Number(sourceElement.getAttribute('calc')))
+                else if(Number(newValue)>=Number(sourceElement.defaultValue))
                 {
-                    document.getElementById("new_fee_error").innerHTML="New value must be less than original value: "+sourceElement.getAttribute('calc');
+                    document.getElementById("new_fee_error").innerHTML="New value must be less than original value: "+sourceElement.defaultValue;
                     error=true;
                 }
                 else if(Number(newValue)<0)

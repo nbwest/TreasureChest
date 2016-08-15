@@ -8,16 +8,7 @@
 {%if success%}
     {% include "toybox/success_message.html" with success_message="Transaction sucessful" %}
 {%endif%}
-<!--<style>-->
-<!--[class*="col-"] {-->
-  <!--padding-top: 15px;-->
-  <!--padding-bottom: 15px;-->
-  <!--background-color: #eee;-->
-  <!--background-color: rgba(86,61,124,.15);-->
-  <!--border: 1px solid #ddd;-->
-  <!--border: 1px solid rgba(86,61,124,.2);-->
-<!--}-->
-<!--</style>-->
+
 
 
 <h1  id="page_table" class="page-header">{{title}}</h1>
@@ -312,41 +303,12 @@ var enable_exact_for_repair_only=false;
 
 $( document ).ready(function()
 {
-     UpdateFee();
-
-
+    UpdateFee();
     preventSubmit();
-
-    SetAdjustOriginalValues();
 
 });
 
 
-function SetAdjustOriginalValues()
-{
- elements_to_set=document.querySelectorAll("[adjust_button='True']");
-
-    nodes = Array.prototype.slice.call(elements_to_set,0);
-
-    nodes.forEach(function(node)
-    {
-
-        //if (!isNaN(Number(node.value)))
-        //{
-            //console.log(node.attributes.getNamedItem("total_me").value+", VAL: "+node.value);
-            //if (node.attributes.getNamedItem("total_me").value=='positive')
-            //    fees+= Number(node.value);
-            //else
-            //    fees-= Number(node.value);
-
-            console.log(node.getAttribute("id"));
-
-            if (node.attributes.getNamedItem("id")!="id_borrow_fee")
-                node.setAttribute("calc",node.value);
-
-       // }
-    });
-}
 
 function preventSubmit()
 {
@@ -379,7 +341,6 @@ function UpdateBorrowFee()
     var total=0.0;
     var toys_checked=0;
     var total_new_toys={{new_borrow_toy_list|length}};
-
 
 
    $("span[name='fee']","#toy_table")
@@ -430,7 +391,7 @@ function UpdateBorrowFee()
    );
 
    document.getElementById("id_borrow_fee").value=total.toFixed(2);
-   document.getElementById("id_borrow_fee").setAttribute("calc",total.toFixed(2));
+   document.getElementById("id_borrow_fee").defaultValue=total.toFixed(2);
 
 }
 
@@ -471,22 +432,24 @@ function UpdateLoanBond()
 function CalcTotal()
 {
     var elements_to_total;
-    var total=0.0, fees=0.0, change=0.0, payment=0.0;
+    var total=0.0, fees=0.0, change=0.0, payment=0.0,original_fees=0.0;
     elements_to_total=document.querySelectorAll("[total_me=positive],[total_me=negative]");
 
     nodes = Array.prototype.slice.call(elements_to_total,0);
-//console.log("----------------------");
-    nodes.forEach(function(node){
 
+    nodes.forEach(function(node){
         if (!isNaN(Number(node.value)))
         {
-            //console.log(node.attributes.getNamedItem("total_me").value+", VAL: "+node.value);
+
             if (node.attributes.getNamedItem("total_me").value=='positive')
                 fees+= Number(node.value);
             else
                 fees-= Number(node.value);
 
-
+            if (node.attributes.getNamedItem("total_me").value=='positive')
+                original_fees+= Number(node.defaultValue);
+            else
+                original_fees-= Number(node.defaultValue);
         }
     });
 
@@ -495,14 +458,6 @@ function CalcTotal()
    var credit=Number("{{payment_form.credit.value}}");
    var payment=Number(document.getElementById("id_payment").value);
    var change_label=document.getElementById("label_id_change");
-
-//console.log("----------------------");
-    //console.log("FEES: "+fees);
-    //console.log("CREDIT: "+credit);
-    //console.log("TOTAL: "+total);
-    //console.log("CHANGE: "+change);
-    //console.log("PAYMENT: "+payment);
-
 
    var A=(fees<credit),B=(fees==credit),C=(fees>credit),D=(fees<0), E=(fees==0), F=(fees>0), G=(credit>0),H=(credit==0);
 
@@ -519,18 +474,12 @@ function CalcTotal()
    var credit_eq_0 = (C && F && !H);
    var credit_eq_credit_minus_fees = (!C && F && !H);
 
-//console.log("total_eq_fees: "+total_eq_fees);
-//console.log("(A && !D && !H): "+(A && !D && !H));
-//console.log("(!C && F && !H): "+(!C && F && !H));
-
     if (total_eq_0)
         total=0;
     else if (total_eq_fees)
         total=fees;
     else if (total_eq_fees_minus_credit)
         total=fees-credit;
-
-
 
    if (change_eq_pay_minus_total)
         change=payment-total;
@@ -559,15 +508,6 @@ function CalcTotal()
     else if (credit_eq_credit_minus_fees)
         credit=credit-fees;
 
-    //console.log("----------------------");
-    //console.log("FEES: "+fees);
-    //console.log("CREDIT: "+credit);
-    //  console.log("TOTAL: "+total);
-    //console.log("CHANGE: "+change);
-    //console.log("PAYMENT: "+payment);
-    //console.log("repair only:"+enable_exact_for_repair_only);
-
-
     document.getElementById("id_total_fee").value=fees.toFixed(2);
 
     if (document.getElementById("id_total_to_pay")!=null)
@@ -578,17 +518,14 @@ function CalcTotal()
     if (document.getElementById("id_credit")!=null)
         document.getElementById("id_credit").value=credit.toFixed(2);
 
-     $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
-   // $("#btn_exact").prop('disabled', (isNaN(change)) || (!(payment==total && total!=0) && !enable_exact_for_repair_only));
+     $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0 && original_fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
+
    if ("{{credit_enable}}" == "True")
         $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );
 
 
     if ("{{donation_enable}}" == "True")
         $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
-
-   // $("#btn_return").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
-
 
 }
 
