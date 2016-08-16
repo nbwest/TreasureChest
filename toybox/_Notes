@@ -1,16 +1,46 @@
 Toy library Notes
 =================
 
+NEXT RELEASE:
+Move logic of adjust fee to server side
+On login include shift volunteer names. Put on Login page for successful login or new default page?.
+Better toy selection - is very slow, resets filtering
+When adding toy suggest loan fee
+All Max children displayed to be change or add + button
+Dealing with low income earner
+Comment when toy is retired
+Enable donation - could be done with what we have?
+
+Add on loan >6 months sets toy as retired - include in config table
+Pagination of transactions, members, toy, toy history to be done on server side.
+Member availability-Is this useful given no scheduling? Below to do in model:
+    # roster days - bitfield?
+    # member notes/characteristics?
+Membership annual fee warning
+Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
+Link transaction to toy history some how
+Set toy add in admin in order of those fields required for adding toys manually.
+email, for receipt - later, more useful for toy reminders. Start with receipt number?
+issue fines can't be determined when paying for them in borrow. add more details in borrow.
+receipt reference number required as field
+ability to search for toy in return?
+Volunteers don't pay on their shift.
+No help on where to put the toy after setting an issue
+Can't edit toy comment anywhere only issue comment
+email support
+    send out late reminders
+    send out toy receipts
+    export tables to email
+
+
 BUGS:
 Check admin permissions and groups - Can't select group in user admin
-Check for balance disappearing / zero?
 Check potential/active -> wed/sat icons ???
 Check member permission - toy retire
 
 
 
 TASKS:
-Add list of volunteers for session? who logs on - transaction records?
 select member with no toy history should say no toy history, currently no table.
 
 
@@ -20,25 +50,29 @@ Note: 14th May first test
 
 MINOR:
 TODO Toy admin help text
-TODO Add help text to transaction buttons in borrow page
-TODO Add help text to toy buttons
 TODO Auto focus member search after clear form on borrow page
 TODO Auto focus member search on returns page
-
-TODO Check borrow fields for bad inputs
 TODO check UI alignments on return and borrow pages
-TODO Check fee adjust for bad chars or no entry
 TODO Check admin for fields that should be readonly and permissions
     -Delete toy and member shouldn't be allowed
+
+excel format can't open in newer excel, old excel says it's the wrong format, looks like xml???	bug
+
+Is null doesn't seem to work	bug
+
 
 BIGGER ITEMS:
 TODO migrate to production database - postgres
 TODO Backup - use other laptops for backup?
-OS of server - windows 7
+
 
 CANT FIX:
 
 KNOWN LIMITATIONS:
+Check borrow fields for bad inputs
+Check fee adjust for bad chars or no entry
+Add help text to transaction buttons in borrow page
+Add help text to toy buttons
 chrome doesn't support exif  CSS rotation-from-image - check tablets
 borrow page: must add all toys before changing weeks etc
 Toy page takes too long to load
@@ -123,27 +157,6 @@ Add ability to update issue type, issue comment
 Add ability to set all toys to stocktake state
 Add volunteer capacity - wed and sat boolean
 
-NEXT RELEASE:
-Move logic of adjust fee to server side
-On login include shift volunteer names. Put on Login page for successful login or new default page?.
-Better toy selection - is very slow, resets filtering
-When adding toy suggest loan fee
-All Max children displayed to be change or add + button
-Dealing with low income earner
-Comment when toy is retired
-Enable donation - could be done with what we have?
-
-Add on loan >6 months sets toy as retired - include in config table
-Pagination of transactions, members, toy, toy history to be done on server side.
-Member availability-Is this useful given no scheduling? Below to do in model:
-    # roster days - bitfield?
-    # member notes/characteristics?
-Membership annual fee warning
-Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
-Link transaction to toy history some how
-Set toy add in admin in order of those fields required for adding toys manually.
-email, for receipt - later, more useful for toy reminders. Start with receipt number?
-issue fines can't be determined when paying for them in borrow. either allow adjustment in return or more details in borrow.
 
 
 
