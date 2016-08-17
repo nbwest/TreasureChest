@@ -110,10 +110,16 @@ def returns(request, member_id=None):
 
     if toyList!=None:
         for toy in toyList:
-            if toy.weeks_overdue()>0:
-                toy.fine=toy.weeks_overdue()* toy.loan_cost
+            weeks_over=toy.weeks_overdue()
+            days_over=(thisDateTime().now().date()-toy.due_date).days
+
+            if days_over>6:
+
+                toy.fine=weeks_over * toy.loan_cost
+
                 if toy.fine > 0 and toy.fine > toy.purchase_cost and toy.purchase_cost > 0:
                     toy.fine=toy.purchase_cost
+
             else:
                 toy.fine=0
 
