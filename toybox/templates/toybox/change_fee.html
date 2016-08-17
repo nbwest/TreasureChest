@@ -87,9 +87,9 @@
                     document.getElementById("new_fee_error").innerHTML="Please enter a number";
                     error=true;
                 }
-                else if(Number(newValue)>=Number(sourceElement.defaultValue))
+                else if(Number(newValue)==Number(sourceElement.defaultValue))
                 {
-                    document.getElementById("new_fee_error").innerHTML="New value must be less than original value: "+sourceElement.defaultValue;
+                    document.getElementById("new_fee_error").innerHTML="New value must be different to original value: "+sourceElement.defaultValue;
                     error=true;
                 }
                 else if(Number(newValue)<0)
