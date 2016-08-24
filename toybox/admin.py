@@ -42,7 +42,7 @@ class ToyForm(forms.ModelForm):
 
 class ToyAdmin(admin.ModelAdmin):
     form=ToyForm
-    list_display = ('code', 'name', 'admin_image','image')
+    list_display = ('code', 'name', 'state','admin_image','image')
     search_fields = ('code','name' )
 
 
