@@ -6,7 +6,7 @@
 {% include "toybox/change_fee.html" %}
 
 {%if success%}
-    {% include "toybox/success_message.html" with success_message="Transaction sucessful" %}
+    {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction sucessful" %}
 {%endif%}
 
 

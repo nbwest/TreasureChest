@@ -1,0 +1,29 @@
+
+<span id="toy_search">
+
+    <div class="modal  fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+            <div class="modal-dialog">
+                    <div class="alert alert-{{type}}">
+                        <strong>{{title}}</strong> {{message}}
+                    </div>
+            </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+        $( document ).ready(function()
+        {
+            function hide_modal(){
+                $('#notificationModal').modal('hide');
+            }
+
+            $(window).load(function(){
+                $('#notificationModal').modal('show');
+                window.setTimeout(hide_modal, 1500);
+            });
+        });
+
+    </script>
+
+</span>

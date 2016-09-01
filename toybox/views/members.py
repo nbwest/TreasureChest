@@ -40,6 +40,8 @@ def handle_member_details(request, member_id):
         if form.is_valid():
             form.save(member_id)
             context.update({"success":"true"})
+        else:
+            context.update({"failure":"true"})
 
         context.update({'member_details_form': form})
 

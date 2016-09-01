@@ -20,7 +20,11 @@
 </style>
 
 {%if success%}
-    {% include "toybox/success_message.html" with success_message="Member sucessfully updated" %}
+    {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction sucessful" %}
+{%endif%}
+
+{%if failure%}
+    {% include "toybox/notification_message.html" with type="danger" title="Failure!" message="Check for invalid field entries" %}
 {%endif%}
 
 <h1  class="page-header">{{title}}</h1>
