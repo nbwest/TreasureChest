@@ -15,7 +15,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 {% block content %}
 
 {%if success%}
-    {% include "toybox/notification_message.html" withtype="success" title="Success!" message="Transaction sucessful" %}
+    {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction sucessful" %}
 {%endif%}
 
  {% include "toybox/change_fee.html" %}
