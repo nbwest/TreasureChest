@@ -228,7 +228,7 @@ def handle_payment_form(request, member_id):
                         loan_duration = payment_form.cleaned_data['loan_duration']
 
                         # if payment_form.cleaned_data['loan_duration']
-                        print("LOAN_DURATION: "+loan_duration)
+                       # print("LOAN_DURATION: "+loan_duration)
                         toy = get_object_or_404(Toy, id=new_toy.toy.id)
 
                         loaned_for_repair=False
@@ -252,7 +252,7 @@ def handle_payment_form(request, member_id):
                             if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['membership_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['membership_adjust_justification']
-                                    adjustment_found=True;
+                                    adjustment_found=True
                                 else:
                                     comment=None
 
@@ -272,7 +272,7 @@ def handle_payment_form(request, member_id):
                             if "loan_bond_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['loan_bond_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['loan_bond_adjust_justification']
-                                    adjustment_found=True;
+                                    adjustment_found=True
                                 else:
                                     comment=None
 
@@ -305,14 +305,17 @@ def handle_payment_form(request, member_id):
                             if "member_bond_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['member_bond_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['member_bond_adjust_justification']
-                                    adjustment_found=True;
+                                    adjustment_found=True
                                 else:
                                     comment=None
 
                             if fee!=0 or comment!=None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBER_BOND,fee,comment)
-                                member.bond_fee_paid=fee
+                                if fee==0 and comment!=None:
+                                    member.bond_fee_paid=member.type.bond
+                                else:
+                                    member.bond_fee_paid=fee
                                 member.save()
 
 
@@ -324,7 +327,7 @@ def handle_payment_form(request, member_id):
                             if "late_fee_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['late_fee_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['late_fee_adjust_justification']
-                                    adjustment_found=True;
+                                    adjustment_found=True
                                 else:
                                     comment=None
 
@@ -344,7 +347,7 @@ def handle_payment_form(request, member_id):
                             if "issue_fee_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['issue_fee_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['issue_fee_adjust_justification']
-                                    adjustment_found=True;
+                                    adjustment_found=True
                                 else:
                                     comment=None
 
@@ -398,7 +401,7 @@ def handle_payment_form(request, member_id):
 
                             if change>0: #add credit
                                 member.balance = member.balance - fee_due + fee_paid
-                                print(member.balance)
+                                #print(member.balance)
                                 member.save()
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,balance_change=fee_paid)
@@ -428,8 +431,8 @@ def handle_payment_form(request, member_id):
                         #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
                         #     break
 
-            else:
-                print("invalid form "+ str(payment_form))
+            #else:
+                #print("invalid form "+ str(payment_form))
 
 
 
