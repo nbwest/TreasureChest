@@ -72,7 +72,7 @@ def handle_stocktake(request):
                         toy=Toy.objects.get(pk=id)
                         toy.issue_comment=value
                         toy_history=ToyHistory()
-                        toy_history.record_toy_event(toy,thisDateTime().now(), request.user)
+                        toy_history.record_toy_event(toy,request.user,thisDateTime().now())
                         toy.save()
 
     return(context)
