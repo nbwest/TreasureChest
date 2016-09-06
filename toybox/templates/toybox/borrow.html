@@ -149,7 +149,7 @@
                         <td>{{ toy.name }}</td>
 
                         <td>
-                            <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween}}</span>
+                            <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}">{{ toy.due_date|timebetween}}</span>
                         </td>
 
                        <td style="text-align: center;vertical-align: middle;">

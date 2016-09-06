@@ -18,6 +18,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction sucessful" %}
 {%endif%}
 
+
  {% include "toybox/change_fee.html" %}
 
 <h1 class="page-header">{{title}}</h1>
@@ -41,7 +42,37 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-    {% csrf_token %}
+        {% csrf_token %}
+
+    <div class="row" style=" min-height: 50px;">
+    <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
+                {% render_field returns_form.return_date class+="form-control" id="return_date"%}
+                <!--<span class="input-group-btn">-->
+                       <!--<button class="btn btn-default" id="btn_refresh_fees" name="btn_refresh_fees" type="submit" >Refresh fees</button>-->
+                   <!--</span>-->
+
+            </div>
+    </div>
+        </div>
+
+    <script type="text/javascript">
+        $(function ()
+        {
+                $('#return_date').datepicker(
+                {
+                    format: "dd/mm/yyyy",
+                    endDate: "{{todays_date|date:"d/m/Y"}}",
+                    todayBtn: true,
+                    todayHighlight: true
+                }).on('changeDate',function(event)
+                {
+                     $(this).closest("form").submit();
+                });
+        });
+    </script>
+
     <div class="row">
         <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
             <!-- Default panel contents -->
@@ -88,7 +119,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
 
                     <td>
-                        <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge">{{ toy.due_date|timebetween }}</span>
+                        <span class="label {% if toy.due_date|timebetween:return_date|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}"> {{toy.due_date|timebetween:return_date }}</span>
                          {% if toy.state == toy.BEING_REPAIRED %}
                         <span class="label label-danger label-as-badge">Being Repaired</span>
                         {%endif%}
@@ -156,25 +187,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 
     </div>
 
-    <div class="row" style=" min-height: 50px;">
-    <div class="col-xs-12 col-sm-10">
-            <div class="input-group">
-                <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
-                {% render_field returns_form.return_date class+="form-control" id="return_date"%}
-            </div>
-    </div>
-        </div>
 
-    <script type="text/javascript">
-        $(function () {
-                $('#return_date').datepicker({
-                format: "dd/mm/yyyy",
-                endDate: "{{returns_form.return_date.value|date:"d/m/Y"}}",
-                todayBtn: true,
-                todayHighlight: true
-            });
-        });
-    </script>
 
     {% for field in returns_form %}
         {%if field.field.widget.attrs.enabled%}
@@ -193,9 +206,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                    </span>
                 {% endif %}
 
-                {% if field.field.widget.attrs.done_button %}
+                {% if field.field.widget.attrs.button %}
                    <span class="input-group-btn">
-                       <button class="btn btn-default" id="btn_done" name="done" type="submit" >Done</button>
+                       <button class="btn btn-default" id="btn_{{field.field.widget.attrs.button}}" name="{{field.field.widget.attrs.button}}" type="submit" {% if not member %} disabled="true" {%endif%}>{{field.field.widget.attrs.button}}</button>
                    </span>
                 {% endif %}
                 </div>
@@ -220,7 +233,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
     $( document ).ready(function()
     {
         CalcTotal();
-
+        $("#btn_Done").prop('disabled',true);
     });
 
 
@@ -231,12 +244,14 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         {%endif%}
         var total_fine= 0.0;
         var total_issue_fine=0.0;
+        var found_returned_toy=false;
 
         //console.log(total);
 
 
         $("span[name='toy_fine']","#toy_table").each(function()
         {
+
             var toy_id=this.getAttribute("toy_id");
             var returned_checkbox=document.getElementById("returned_checkbox_"+toy_id);
             {% if bond_enable %}
@@ -262,7 +277,10 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             {
 
                if (returned_checkbox.checked)
+               {
                   total_fine+=parseFloat(this.getAttribute("value"));
+                  found_returned_toy=true;
+               }
 
                //console.log("fine: "+this.getAttribute("value"));
 
@@ -285,15 +303,15 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 if (returned_checkbox.checked)
                 {
                    total_issue_fine+=fine;
-
-                  //console.log("fine type: "+fine_type);
-                  //console.log("fine = "+fine);
-                  //console.log("total = "+total_issue_fine);
                 }
             }
 
         });
-        console.log("total fines: "+total_fine);
+
+
+        $("#btn_Done").prop('disabled',!found_returned_toy);
+
+
         document.getElementById("id_late_fee").value=total_fine.toFixed(2);
         {% if bond_enable %}
         document.getElementById("id_loan_bond_refund").value=total_bond_return.toFixed(2);

@@ -21,6 +21,7 @@ def handle_returns(request,member_id):
 def returns(request, member_id=None):
     context = {"title":"Return Toy"}
 
+
     # if (request.method == "GET"):
     #      if "success" in request.GET:
     #          context.update({"success":True})
@@ -39,60 +40,70 @@ def returns(request, member_id=None):
         toyList=context["toy_list"]
 
 
-
+    return_date=thisDateTime().date()
+    context.update({"return_date":return_date,"todays_date":return_date})
 
     if (request.method == "POST"):
         returns_form = ReturnsForm(request.POST,toyList=toyList)
 
         if returns_form.is_valid():
 
-            for toy in toyList:
-                # print(returns_form.cleaned_data['issue_type_'+toy.code])
-                # print(returns_form.cleaned_data['issue_comment_'+toy.code])
-                # print(returns_form.cleaned_data['returned_checkbox_'+toy.code])
+            past_return_date=returns_form.cleaned_data['return_date']
+            todays_date=thisDateTime().date()
 
-                # toy.return_toy_with_issue()
-                # toy.issue_type=returns_form.cleaned_data['issue_type_'+toy.code]
-                # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
+            if past_return_date != todays_date and 'Done' not in request.POST:
+                return_date=past_return_date
+                context.update({"return_date":past_return_date})
+            else:
+                for toy in toyList:
+                    # print(returns_form.cleaned_data['issue_type_'+toy.code])
+                    # print(returns_form.cleaned_data['issue_comment_'+toy.code])
+                    # print(returns_form.cleaned_data['returned_checkbox_'+toy.code])
 
-
-                if 'returned_checkbox_'+str(toy.id) in returns_form.cleaned_data:
-                    if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]:
-                        return_date=returns_form.cleaned_data['return_date']
-                        toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user,return_date)
-                    # toy.return_toy()
-
-
-
-            if (member_id):
-
-                member = get_object_or_404(Member, pk=member_id)
-
-                if 'issue_fee' in returns_form.cleaned_data:
-                    if returns_form.cleaned_data['issue_fee']!="":
-                        fee=float(returns_form.cleaned_data['issue_fee'])
-                        if fee!=0:
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,fee,None,False)
-
-                if 'late_fee' in returns_form.cleaned_data:
-                    if returns_form.cleaned_data['late_fee']!="":
-                        fee=float(returns_form.cleaned_data['late_fee'])
-                        if fee!=0:
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user, member,Transaction.LATE_FEE,fee,None,False)
-
-                if 'loan_bond_refund' in returns_form.cleaned_data:
-                    if returns_form.cleaned_data['loan_bond_refund']!="":
-                        fee=float(returns_form.cleaned_data['loan_bond_refund'])
-                        if fee!=0:
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user, member,Transaction.LOAN_BOND_REFUND,fee,None,False)
+                    # toy.return_toy_with_issue()
+                    # toy.issue_type=returns_form.cleaned_data['issue_type_'+toy.code]
+                    # toy.issue_comment=returns_form.cleaned_data['issue_comment_'+toy.code]
 
 
-                context.pop("toy_list",None)
-                context.pop("member",None)
-                context.update({"success":True})
+                    if 'returned_checkbox_'+str(toy.id) in returns_form.cleaned_data:
+                        if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]:
+                            # return_date=returns_form.cleaned_data['return_date']
+                            toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user,return_date)
+
+                        # toy.return_toy()
+
+
+
+                if (member_id):
+
+                    member = get_object_or_404(Member, pk=member_id)
+
+                    if 'issue_fee' in returns_form.cleaned_data:
+                        if returns_form.cleaned_data['issue_fee']!="":
+                            fee=float(returns_form.cleaned_data['issue_fee'])
+                            if fee!=0:
+                                transaction=Transaction()
+                                transaction.create_transaction_record(request.user,member,Transaction.ISSUE_FEE,fee,None,False)
+
+                    if 'late_fee' in returns_form.cleaned_data:
+                        if returns_form.cleaned_data['late_fee']!="":
+                            fee=float(returns_form.cleaned_data['late_fee'])
+                            if fee!=0:
+                                transaction=Transaction()
+                                transaction.create_transaction_record(request.user, member,Transaction.LATE_FEE,fee,None,False)
+
+                    if 'loan_bond_refund' in returns_form.cleaned_data:
+                        if returns_form.cleaned_data['loan_bond_refund']!="":
+                            fee=float(returns_form.cleaned_data['loan_bond_refund'])
+                            if fee!=0:
+                                transaction=Transaction()
+                                transaction.create_transaction_record(request.user, member,Transaction.LOAN_BOND_REFUND,fee,None,False)
+
+
+                    context.pop("toy_list",None)
+                    context.pop("member",None)
+
+                    context.update({"success":True})
 
 
 
@@ -111,7 +122,7 @@ def returns(request, member_id=None):
     if toyList!=None:
         for toy in toyList:
             weeks_over=toy.weeks_overdue()
-            days_over=(thisDateTime().now().date()-toy.due_date).days
+            days_over=(return_date-toy.due_date).days
 
             if days_over>6:
 
@@ -123,7 +134,7 @@ def returns(request, member_id=None):
             else:
                 toy.fine=0
 
-    return_date=thisDateTime().date()
+
     returns_form = ReturnsForm(toyList=toyList,initial={'return_date':return_date})
 
     context.update({"returns_form":returns_form})
@@ -147,7 +158,7 @@ class ReturnsForm(forms.Form):
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
                 self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])
 
-    return_date = forms.DateField(label="Return Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) have been returned, defaults to today'}))
+    return_date = forms.DateField(label="Return Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) have been returned, defaults to today','button':'Refresh fees'}))
 
 
     loan_bond_enable= get_config("loan_bond_enable")
@@ -162,7 +173,7 @@ class ReturnsForm(forms.Form):
         loan_bond_refund = forms.CharField( required=False,label="Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'enabled':'True','readonly':'readonly'}))
 
 
-    total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly', 'done_button':'True'}))
+    total = forms.CharField(required=False,label="Total", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly', 'button':'Done'}))
 
 
 

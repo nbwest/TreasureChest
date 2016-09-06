@@ -2,9 +2,9 @@ Toy library Notes
 =================
 
 HIGH PRIORITY
-transaction issues 566,751,579,586,589,600,602,608,612
-need return late fee adjusted with manual return date. eg lindy kanan
-toylist - update toy issue with no issue type - crash
+transaction issues 566,751,579,586,589,600,602,608,612 - maybe fixed!!
+need return late fee adjusted with manual return date. eg lindy kanan - fixed
+toylist - update toy issue with no issue type - crash - fixed
 
 
 NOT HIGH PRIORITY
@@ -18,25 +18,10 @@ sort toy search selection by availability
 borrow toy search often has invalid form error - press enter on toy search or
 
 common reset
----------------------------------------- Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
+Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
 
-spare computer - sony, needs testing
+spare computer - sony, needs testing - done
 
- if Transaction.objects.count()>0:
-            latest_transaction= Transaction.objects.latest()
-            print "-------------------------------"
-            print "MEMBER    : "+member.name
-            print "COMMENT   : "+str(comment)
-            print "TYPE      : "+Transaction.TRANSACTION_TYPE_CHOICES[transaction_type][1]
-            print "LAST BAL  : "+str(latest_transaction.balance)
-            print "TR AMOUNT : "+str(amount)
-            print "BAL CHANGE: "+str(balance_change)
-
-            self.balance = latest_transaction.balance + Decimal(balance_change)
-            print "NEW BAL   : "+str(self.balance)
-            print "COMPLETE  : "+str(complete)
-        else:
-            self.balance=balance_change
 BUGS:
 Check admin permissions and groups - Can't select group in user admin
 Check potential/active -> wed/sat icons ???
@@ -48,13 +33,14 @@ TASKS:
 select member with no toy history should say no toy history, currently no table.
 NEXT RELEASE:
 Move logic of adjust fee to server side
-On login include shift volunteer names. Put on Login page for successful login or new default page?.
-Better toy selection - is very slow, resets filtering
+On login include shift volunteer names. Put on Login page for successful login or new default page?. volunteer toys are free
+Better toy selection - is very slow, resets filtering - pop up toy+history?
 When adding toy suggest loan fee
 All Max children displayed to be change or add + button
 Dealing with low income earner
 Comment when toy is retired
 Enable donation - could be done with what we have?
+
 
 Add on loan >6 months sets toy as retired - include in config table
 Pagination of transactions, members, toy, toy history to be done on server side.
