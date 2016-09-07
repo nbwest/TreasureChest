@@ -8,6 +8,7 @@ toylist - update toy issue with no issue type - crash - fixed
 
 
 NOT HIGH PRIORITY
+user permission groups not working, needed superuser for transaction actions
 member details on left? - works better for small screen
 test for unique name?
 Bug - select member then hit clear fields - B1 pops up

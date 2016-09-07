@@ -587,7 +587,8 @@ class Transaction(models.Model):
             print "-------------------------------"
 
             print "TIMESTAMP : "+str(thisDateTime().now())
-            print "MEMBER    : "+member.name
+            if member:
+                print "MEMBER    : "+member.name
             print "COMMENT   : "+str(comment)
             print "TYPE      : "+Transaction.TRANSACTION_TYPE_CHOICES[transaction_type][1]
             print "LAST B ID : "+str(latest_transaction.id)
