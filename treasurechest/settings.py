@@ -25,10 +25,10 @@ SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-VERSION="V1.5.3"
+VERSION="V1.5.4"
 CONTACT='For assistance with this software contact Jess Benning [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -56,8 +56,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'debug_toolbar',
-    #'template_timings_panel',
+    # 'debug_toolbar',
+    # 'template_timings_panel',
     'report_builder',
     'toybox',
     'widget_tweaks',
@@ -81,7 +81,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -93,7 +93,11 @@ TEMPLATES = [
                 'django.core.context_processors.static',
                 'django.core.context_processors.media',
             ],
-
+            'loaders': [
+            ('django.template.loaders.cached.Loader', [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ])],
         },
     },
 ]

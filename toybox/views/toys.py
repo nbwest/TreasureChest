@@ -12,12 +12,18 @@ def estimate_borrow_cost(purchase_cost):
 
 @login_required()
 def toys(request, toy_id=None):
+
     context = {"title":"Toys"}
     context.update(base_data(request))
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))
 
+
+
+
     toy_list=Toy.objects.filter(~Q(state=Toy.RETIRED)).select_related('category').select_related('member_loaned')
+
+
 
     context.update(handle_stocktake(request))
 
@@ -29,7 +35,12 @@ def toys(request, toy_id=None):
     context.update({"toys":toy_list})
 
 
-    return render(request, 'toybox/toys.html', context)
+    import time
+    start = time.time()
+    rendered=render(request, 'toybox/toys.html', context)
+    end = time.time()
+    print("TOY QUERY: "+str(end - start))
+    return rendered
 
 def handle_stocktake(request):
     context={}
