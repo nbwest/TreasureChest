@@ -584,21 +584,21 @@ class Transaction(models.Model):
 
         if Transaction.objects.count()>0:
             latest_transaction= Transaction.objects.last()
-            print "-------------------------------"
-
-            print "TIMESTAMP : "+str(thisDateTime().now())
-            if member:
-                print "MEMBER    : "+member.name
-            print "COMMENT   : "+str(comment)
-            print "TYPE      : "+Transaction.TRANSACTION_TYPE_CHOICES[transaction_type][1]
-            print "LAST B ID : "+str(latest_transaction.id)
-            print "LAST BAL  : "+str(latest_transaction.balance)
-            print "TR AMOUNT : "+str(amount)
-            print "BAL CHANGE: "+str(balance_change)
+            # print "-------------------------------"
+            #
+            # print "TIMESTAMP : "+str(thisDateTime().now())
+            # if member:
+            #     print "MEMBER    : "+member.name
+            # print "COMMENT   : "+str(comment)
+            # print "TYPE      : "+Transaction.TRANSACTION_TYPE_CHOICES[transaction_type][1]
+            # print "LAST B ID : "+str(latest_transaction.id)
+            # print "LAST BAL  : "+str(latest_transaction.balance)
+            # print "TR AMOUNT : "+str(amount)
+            # print "BAL CHANGE: "+str(balance_change)
 
             self.balance = latest_transaction.balance + Decimal(balance_change)
-            print "NEW BAL   : "+str(self.balance)
-            print "COMPLETE  : "+str(complete)
+            # print "NEW BAL   : "+str(self.balance)
+            # print "COMPLETE  : "+str(complete)
         else:
             self.balance=balance_change
 

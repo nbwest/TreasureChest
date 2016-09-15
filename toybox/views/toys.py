@@ -35,11 +35,11 @@ def toys(request, toy_id=None):
     context.update({"toys":toy_list})
 
 
-    import time
-    start = time.time()
+    # import time
+    # start = time.time()
     rendered=render(request, 'toybox/toys.html', context)
-    end = time.time()
-    print("TOY QUERY: "+str(end - start))
+    # end = time.time()
+    # print("TOY QUERY: "+str(end - start))
     return rendered
 
 def handle_stocktake(request):

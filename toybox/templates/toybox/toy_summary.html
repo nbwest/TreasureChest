@@ -29,6 +29,23 @@
                       </tr>
 
                       <tr>
+                        <td>Issue</td>
+
+                          <td>
+                              {% if toy.issue_type != toy.ISSUE_NONE %}
+                               <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
+                              {%else%}
+                                  {{toy.get_issue_type_display}}
+                              {%endif%}
+                          </td>
+                      </tr>
+
+                      <tr>
+                        <td>Issue Comment</td>
+                        <td>{{toy.issue_comment}}</td>
+                      </tr>
+
+                      <tr>
                         <td>Borrowed By</td>
                         <td>
                             <a {%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
@@ -107,22 +124,7 @@
                          <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
                       </tr>
 
-                      <tr>
-                        <td>Issue</td>
 
-                          <td>
-                              {% if toy.issue_type != toy.ISSUE_NONE %}
-                               <span class="label label-danger label-as-badge"> {{toy.get_issue_type_display}}</span>
-                              {%else%}
-                                  {{toy.get_issue_type_display}}
-                              {%endif%}
-                          </td>
-                      </tr>
-
-                      <tr>
-                        <td>Issue Comment</td>
-                        <td>{{toy.issue_comment}}</td>
-                      </tr>
 
 
 
