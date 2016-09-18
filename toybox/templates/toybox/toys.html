@@ -86,7 +86,7 @@
                       <td>{{toy.id|safe}}</td>
 
                         <td>
-                            <button type="button" class="get-toy btn btn-link" name="show_toy" value="{{toy.id}}">
+                            <button type="button" class="btn btn-link" onclick="getToy(this);" value="{{toy.id}}">
                                     {{toy.code|safe}}
                             </button>
 
@@ -174,23 +174,7 @@ $(document).ready(function()
     });
 
 
-    //console.log("start");
-    $('.get-toy').click(function()
-    {
-        //console.log("clicked "+$(this));
-        $.ajax(
-        {
-            type: "GET",
-            url: "{{ request.get_full_path }}"+"?toy_id="+$(this).attr("value"),
-            success: function(data)
-            {
 
-                $('#toyPopupModal').modal('show');
-                document.getElementById("toy_summary").innerHTML=data;
-
-            }
-        });
-    });
 
 
 
@@ -203,7 +187,22 @@ $(document).ready(function()
 
 });
 
+function getToy(element)
+{
+     console.log("clicked "+element);
+        $.ajax(
+        {
+            type: "GET",
+            url: "{{ request.get_full_path }}"+"?toy_id="+element.value,
+            success: function(data)
+            {
 
+                $('#toyPopupModal').modal('show');
+                document.getElementById("toy_summary").innerHTML=data;
+
+            }
+        });
+ }
 
 
 function parseDate(input)
