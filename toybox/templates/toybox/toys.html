@@ -5,34 +5,15 @@
 
 
 {% block content %}
-
+{% include "toybox/toy_popup.html" %}
 
 <h1  class="page-header">{{title}}</h1>
-
-
-
-
-
 
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
 
-<div class="row">
-    <div class="panel-fluid panel-default col-xs-11">
-        {% if toy %}
-            <div class="panel-heading">Selected Toy</div>
-            <br>
-        {%endif%}
-        {% include "toybox/toy_summary.html" %}
-    </div>
-</div>
 
-<div class="row">
-    <div class="panel-fluid panel-default col-xs-11">
-        {% include "toybox/toy_history.html" %}
-    </div>
-</div>
 
 <div class="row">
 
@@ -105,15 +86,12 @@
                       <td>{{toy.id|safe}}</td>
 
                         <td>
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.code|safe}}
-                            </a>
+                            <button type="button" class="get-toy btn btn-link" name="show_toy" value="{{toy.id}}">
+                                    {{toy.code|safe}}
+                            </button>
+
                         </td>
-                        <td>
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.name|safe}}
-                            </a>
-                        </td>
+                        <td>{{toy.name|safe}}</td>
                         <td>{{toy.get_state_display|safe}}</td>
                         <td>{{toy.category.name|safe}}</td>
                         <td>{{toy.comment|safe}}</td>
@@ -184,14 +162,49 @@
 <script>
 
 
-$(document).ready(function() {
-var $table = $('#toys_table');
-$table.bootstrapTable('refreshOptions', {
-    exportOptions: {
-        onCellHtmlData: DoOnCellHtmlData
-    }
+$(document).ready(function()
+{
+    var $table = $('#toys_table');
+    $table.bootstrapTable('refreshOptions',
+    {
+        exportOptions:
+        {
+            onCellHtmlData: DoOnCellHtmlData
+        }
+    });
+
+
+    //console.log("start");
+    $('.get-toy').click(function()
+    {
+        //console.log("clicked "+$(this));
+        $.ajax(
+        {
+            type: "GET",
+            url: "{{ request.get_full_path }}"+"?toy_id="+$(this).attr("value"),
+            success: function(data)
+            {
+
+                $('#toyPopupModal').modal('show');
+                document.getElementById("toy_summary").innerHTML=data;
+
+            }
+        });
+    });
+
+
+
+   // $('#form').submit(function(e){
+    //$.post('/url/', $(this).serialize(), function(data){
+    //   $('.message').html(data.message);
+
+   // });
+   // e.preventDefault();
+
 });
-});
+
+
+
 
 function parseDate(input)
 {

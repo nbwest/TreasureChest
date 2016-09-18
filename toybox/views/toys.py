@@ -3,6 +3,11 @@ from django.forms import ModelForm
 from shared import *
 from django.contrib.auth.decorators import login_required
 from math import ceil
+from decimal import Decimal
+import json
+from django.shortcuts import *
+from django.template import RequestContext
+from django.template.loader import render_to_string
 
 # Provide estimate of borrow cost based on purchase cost
 # Calculates 1% of purchase cost rounded up to nearest $0.50
@@ -10,37 +15,52 @@ def estimate_borrow_cost(purchase_cost):
     onepc = float(purchase_cost)/100.0
     return 0.5 * ceil(2.0 * onepc)
 
+# def json_default(obj):
+#     if isinstance(obj, Decimal):
+#         return float(obj)
+#
+#     if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
+#         return obj.isoformat()
+#
+#
+#
+#     raise TypeError
+
+
 @login_required()
 def toys(request, toy_id=None):
 
     context = {"title":"Toys"}
+
+    loan_bond_enable= get_config("loan_bond_enable")
+    context.update({"loan_bond_enable":loan_bond_enable})
+
     context.update(base_data(request))
     context.update(handle_toy_details(request, toy_id))
     context.update(handle_toy_history(request,toy_id))
 
+    if request.is_ajax():
+        #send back rendered toy summary, just data would need to be rendered so it is useless
+         context.update({"MEDIA_URL":settings.MEDIA_URL})
+         rendered=render_to_string('toybox/toy_summary.html', context)
+         return HttpResponse(rendered)
+
+    else:
+        toy_list=Toy.objects.filter(~Q(state=Toy.RETIRED)).select_related('category').select_related('member_loaned')
+        context.update(handle_stocktake(request))
+        form=ToyIssueForm(toyList=toy_list, user=request.user)
+        context.update({"toy_issue_form":form})
+        context.update({"toys":toy_list})
+
+        # import time
+        # start = time.time()
+        rendered=render(request, 'toybox/toys.html', context)
+        # end = time.time()
+        # print("TOY QUERY: "+str(end - start))
+
+        return rendered
 
 
-
-    toy_list=Toy.objects.filter(~Q(state=Toy.RETIRED)).select_related('category').select_related('member_loaned')
-
-
-
-    context.update(handle_stocktake(request))
-
-    form=ToyIssueForm(toyList=toy_list, user=request.user)
-    context.update({"toy_issue_form":form})
-
-
-
-    context.update({"toys":toy_list})
-
-
-    # import time
-    # start = time.time()
-    rendered=render(request, 'toybox/toys.html', context)
-    # end = time.time()
-    # print("TOY QUERY: "+str(end - start))
-    return rendered
 
 def handle_stocktake(request):
     context={}
@@ -93,15 +113,11 @@ def handle_toy_details(request, toy_id):
 
     context={}
 
-    loan_bond_enable= get_config("loan_bond_enable")
-
-    context.update({"loan_bond_enable":loan_bond_enable})
-
-
     if request.method=="GET":
-        if toy_id:
-            toy = get_object_or_404(Toy, pk=toy_id)
-            context.update({"toy":toy})
+       if "toy_id" in request.GET:
+          id=request.GET["toy_id"]
+          toy=Toy.objects.get(id=id)
+          context.update({"toy":toy})
 
     return context
 

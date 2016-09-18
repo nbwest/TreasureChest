@@ -1,0 +1,52 @@
+ <span id="toy_popup">
+
+
+
+  <div class="modal" id="toyPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
+
+        <div class="modal-dialog" style="width: 800px;" >
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel">Toy</h3>
+                </div>
+
+                <div class="modal-body">
+
+                <div class="row">
+                    <div class="panel-fluid panel-default col-xs-11">
+                        {% include "toybox/toy_summary.html" %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="panel-fluid panel-default col-xs-11">
+                        {% include "toybox/toy_history.html" %}
+                    </div>
+                </div>
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button name="till_cancel" type="button" data-dismiss="modal" class="btn btn-default" >Dismiss</button>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+     <script type="text/javascript">
+
+        $( document ).ready(function()
+        {
+            $(window).load(function()
+            {
+                $('#toyPopupModal').modal('hide');
+            });
+        });
+    </script>
+
+</span>
