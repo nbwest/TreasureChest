@@ -1,12 +1,7 @@
-from django.shortcuts import render
-from django.forms import ModelForm
 from shared import *
 from django.contrib.auth.decorators import login_required
 from math import ceil
-from decimal import Decimal
-import json
 from django.shortcuts import *
-from django.template import RequestContext
 from django.template.loader import render_to_string
 
 # Provide estimate of borrow cost based on purchase cost
@@ -14,17 +9,6 @@ from django.template.loader import render_to_string
 def estimate_borrow_cost(purchase_cost):
     onepc = float(purchase_cost)/100.0
     return 0.5 * ceil(2.0 * onepc)
-
-# def json_default(obj):
-#     if isinstance(obj, Decimal):
-#         return float(obj)
-#
-#     if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
-#         return obj.isoformat()
-#
-#
-#
-#     raise TypeError
 
 
 @login_required()
