@@ -1,6 +1,9 @@
 {% extends "toybox/base.html" %}
 {% load widget_tweaks %}
 {% block content %}
+
+{% include "toybox/toy_summary_popup.html" %}
+
 <span id="transactions">
 
 <h1  class="page-header">{{title}}</h1>
@@ -103,9 +106,11 @@
 
                     <td>
                         {% for th in transaction.toyhistory.all %}
-                            <a href="{% url 'toybox:toys' toy_id=th.toy.id %}">
-                                {{th.toy.code}}: {{th.toy.name}}<br>
-                            </a>
+
+                            <button title="Toy details and image" type="button" class="btn btn-link" onclick="getToy(this);" value="{{th.toy.id}}">
+                                    {{th.toy.code}}: {{th.toy.name}}<br>
+                            </button>
+
                         {%endfor%}
                     </td>
                     <td>{{transaction.volunteer_reporting}}</td>

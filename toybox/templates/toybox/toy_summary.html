@@ -9,8 +9,8 @@
 
 
                 <div class="panel-default">
-                <div class="panel-heading"><a href="{% url 'toybox:toys' toy_id=toy.id %}">Toy Details  ID: {{ toy.code }}</a></div>
-                  <table class="table table-condensed ">
+                <div class="panel-heading">Toy Details  ID: {{ toy.code }}</div>
+                  <table class="table table-condensed">
                     <tbody>
                       <tr>
                         <td>Name</td>
@@ -163,3 +163,18 @@
 
 </span>
 
+<script>
+    function getToy(element)
+{
+    $.ajax(
+    {
+        type: "GET",
+        url: "{{ request.get_full_path }}"+"?toy_id="+element.value,
+        success: function(data)
+        {
+            document.getElementById("toy_summary").innerHTML=data;
+            $('#toyPopupModal').modal('show');
+        }
+    });
+ }
+</script>

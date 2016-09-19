@@ -77,7 +77,14 @@ def handle_member_details(request, member_id):
 @login_required
 def members(request, member_id=None):
     context = {}
+
+    rendered=render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
     context.update(base_data(request))
+
+
     context.update(handle_member_details(request, member_id))
     return render(request, 'toybox/members.html', context)
 

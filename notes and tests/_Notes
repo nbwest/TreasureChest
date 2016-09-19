@@ -21,13 +21,13 @@ Check admin for fields that should be readonly and permissions
 
 TASKS:
 member details on left? - works better for small screen
+popup member editing and toy history
 test for unique name?
 change "partner" to "alternate borrower"
 sort toy search selection modal by availability
 select member with no toy history should say no toy history, currently no table.
 Move logic of adjust fee to server side
 On login include shift volunteer names. Put on Login page for successful login or new default page?. volunteer toys are free
-Better toy selection - is very slow, resets filtering - pop up toy+history or server side - what about sorting?
 When adding toy suggest loan fee
 All Max children displayed to be change or add + button
 Dealing with low income earner
@@ -77,6 +77,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Better toy selection - is very slow, resets filtering - pop up toy+history or server side - what about sorting?
 Link transaction to toy history some how
 transaction issues 566,751,579,586,589,600,602,608,612 - maybe fixed!!
 need return late fee adjusted with manual return date. eg lindy kanan - fixed

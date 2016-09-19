@@ -6,7 +6,7 @@
 <span id="toy_history">
     {% if toy_history %}
     <div class="panel-default">
-    <div class="panel-heading">Toy History ID: {{toy.code}}</div>
+     <div class="panel-heading"><strong>{{toy.code}}</strong> {{toy.name}}</div>
      <table  data-classes="table table-condensed table-no-bordered"
              class="table table-condensed"
              data-toggle="table"
@@ -71,4 +71,20 @@ $table.bootstrapTable('refreshOptions', {
     }
 });
 });
+
+function getToyHistory(element)
+{
+    $.ajax(
+    {
+        type: "GET",
+        url: "{{ request.get_full_path }}"+"?toy_history_id="+element.value,
+        success: function(data)
+        {
+            document.getElementById("toy_history").innerHTML=data;
+            $('#toy_history_table').bootstrapTable();
+            $('#toyHistoryPopupModal').modal('show');
+        }
+    });
+ }
+
 </script>

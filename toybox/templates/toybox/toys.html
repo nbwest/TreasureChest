@@ -5,9 +5,12 @@
 
 
 {% block content %}
-{% include "toybox/toy_popup.html" %}
 
-<h1  class="page-header">{{title}}</h1>
+{% include "toybox/toy_summary_popup.html" %}
+{% include "toybox/toy_history_popup.html" %}
+
+
+
 
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
@@ -52,10 +55,8 @@
 <!--https://github.com/wenzhixin/bootstrap-table-examples/blob/master/issues/177.html-->
                             <th data-field="checked"  data-checkbox="true" data-check-box-header="false" data-align="center" ></th>
                             <th data-field="id" data-sortable="true" data-visible="false" data-filter-control="input" >DB ID</th>
-
                             <th data-field="code"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">ID</th>
                             <th data-field="name"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">Name</th>
-
                             <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
                             <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
                             <th data-field="comment" data-visible="false" data-width="300px" data-sortable="true" data-filter-control="input" >Comment</th>
@@ -81,16 +82,19 @@
 
                   {% for toy in toys %}
                   <tr>
-
-                      <td></td>
-                      <td>{{toy.id|safe}}</td>
+                        <td></td>
+                        <td>{{toy.id|safe}}</td>
 
                         <td>
-                            <button type="button" class="btn btn-link" onclick="getToy(this);" value="{{toy.id}}">
-                                    {{toy.code|safe}}
+                            <button title="Toy History" type="button" class="btn btn-link" onclick="getToyHistory(this);" value="{{toy.id}}">
+                                 <span class="glyphicon glyphicon-time " aria-hidden="true"></span>
                             </button>
 
+                            <button title="Toy details and image" type="button" class="btn btn-link" onclick="getToy(this);" value="{{toy.id}}">
+                                    {{toy.code|safe}}
+                            </button>
                         </td>
+
                         <td>{{toy.name|safe}}</td>
                         <td>{{toy.get_state_display|safe}}</td>
                         <td>{{toy.category.name|safe}}</td>
@@ -103,49 +107,26 @@
                             </a>
                         </td>
 
-                       <td>
-
-                            {{toy.borrow_date|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.due_date|date:"d/m/Y"|safe}}
-                        </td>
-
-                        <td>{{toy.borrow_counter|safe}}</td>
-
+                       <td>{{toy.borrow_date|date:"d/m/Y"|safe}}</td>
+                       <td>{{toy.due_date|date:"d/m/Y"|safe}}</td>
+                       <td>{{toy.borrow_counter|safe}}</td>
                        <td>{{toy.loan_cost|floatformat:2|safe}}</td>
                        <td>{{toy.loan_bond|floatformat:2|safe}}</td>
-                        <td>{{toy.purchase_cost|floatformat:2|safe}}</td>
+                       <td>{{toy.purchase_cost|floatformat:2|safe}}</td>
+                       <td>{{toy.purchase_date|date:"d/m/Y"|safe}}</td>
+                       <td>{{toy.last_check|date:"d/m/Y"|safe}}</td>
+                       <td>{{toy.last_stock_take|date:"d/m/Y"|safe}}</td>
+                       <td>{{toy.get_issue_type_display|safe}}</td>
+                       <td>{{toy.issue_comment|safe}}</td>
+
                        <td>
-
-                            {{toy.purchase_date|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.last_check|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.last_stock_take|date:"d/m/Y"|safe}}
-                        </td>
-                          <td>
-                            {{toy.get_issue_type_display|safe}}
-                        </td>
-                       <td>
-                            {{toy.issue_comment|safe}}
-                        </td>
-                        <td>
                             {% form_field_concat_id toy_issue_form "issue_type_" toy.id class="form-control" onchange="this.name='issue_type_^suffix^';"%}
-                        </td>
-                        <td>
+                       </td>
+                       <td>
                             {% form_field_concat_id toy_issue_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" oninput="this.name='issue_comment_^suffix^';"%}
-                        </td>
-
+                       </td>
 
                     </tr>
-
-
                   {% endfor %}
             </table>
         </span>
@@ -172,37 +153,12 @@ $(document).ready(function()
             onCellHtmlData: DoOnCellHtmlData
         }
     });
-
-
-
-
-
-
-   // $('#form').submit(function(e){
-    //$.post('/url/', $(this).serialize(), function(data){
-    //   $('.message').html(data.message);
-
-   // });
-   // e.preventDefault();
-
 });
 
-function getToy(element)
-{
-     console.log("clicked "+element);
-        $.ajax(
-        {
-            type: "GET",
-            url: "{{ request.get_full_path }}"+"?toy_id="+element.value,
-            success: function(data)
-            {
 
-                $('#toyPopupModal').modal('show');
-                document.getElementById("toy_summary").innerHTML=data;
 
-            }
-        });
- }
+
+
 
 
 function parseDate(input)

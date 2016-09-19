@@ -12,6 +12,11 @@ def transactions(request):
     bank_value_error=""
     context = {"title":"Transactions"}
     form=None
+
+    rendered=render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
     context.update(base_data(request))
 
     user = User.objects.get(username=request.user.username)
