@@ -5,6 +5,7 @@
 {% block content %}
 
 {% include "toybox/toy_summary_popup.html" %}
+{% include "toybox/member_toy_history_popup.html" %}
 
 <style>
 .glyphicon.glyphicon-ok, .glyphicon.glyphicon-remove, .glyphicon.glyphicon-ban-circle
@@ -78,6 +79,8 @@
 
                     <tr>
                             <td>
+
+
                                 <a  name="{{ m.name }}" href="{% url 'toybox:members' member_id=m.id %}{{action}}">
                                     {{ m.name }}
                                 </a>
@@ -93,6 +96,10 @@
 
 
                            <td class="text-center">
+                               <button title="Toy History" type="button" class="btn btn-link" onclick="getMemberToyHistory(this);" value="{{m.id}}">
+                                    <span class="glyphicon glyphicon-time " aria-hidden="true"></span>
+                                </button>
+
                                {% spaceless %}
                                    {% if m.id not in loan_counts %}
                                         <a name="0" href="{% url 'toybox:returns' member_id=m.id %}">
@@ -179,11 +186,6 @@
                        </tr>
                     {% endfor %}
             </table>
-
-
-            {% include "toybox/member_toy_history.html" %}
-
-
 
       </div>
 

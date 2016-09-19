@@ -21,7 +21,7 @@ def handle_member_details(request, member_id):
     # context.update(handle_member_search(request))
 
     context.update({"members": get_all_members_ordered_by_name()})
-    context.update({"member_toy_history":handle_member_toy_history(request,member_id)})
+    # context.update({"member_toy_history":handle_member_toy_history(request,member_id)})
 
     if (request.method == "GET"):
         if (member_id):
@@ -94,10 +94,10 @@ def get_all_members_ordered_by_name():
     members = Member.objects.filter(active=True).order_by('name')
     return members
 
-def handle_member_toy_history(request, member_id):
-
-    return ToyHistory.objects.filter(member__id=member_id).order_by('date_time').select_related('toy')
-
+# def handle_member_toy_history(request, member_id):
+#
+#     return ToyHistory.objects.filter(member__id=member_id).order_by('date_time').select_related('toy')
+#
 
 # Form
 class MemberDetailsForm(forms.Form):

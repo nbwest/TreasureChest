@@ -162,7 +162,6 @@ def handle_toy_history(request):
 
     return context
 
-
 def render_toy_history(request):
 
     rendered=None
@@ -173,6 +172,30 @@ def render_toy_history(request):
 
     return rendered
 
+def render_member_toy_history(request):
+
+    rendered=None
+    context=handle_member_toy_history(request)
+
+    if "member_toy_history" in context:
+         rendered=render_to_string('toybox/member_toy_history.html', context)
+
+    return rendered
+def handle_member_toy_history(request):
+
+    context={}
+
+    if request.method=="GET":
+         if "toy_history_member_id" in request.GET:
+            member_id=request.GET["toy_history_member_id"]
+            member_toy_history= ToyHistory.objects.filter(member__id=member_id).order_by('date_time').select_related('toy')
+            member=Member.objects.get(id=member_id)
+            context.update({"member_toy_history":member_toy_history})
+            context.update({"member":member})
+
+    return context
+
+
 def render_ajax_request(request):
 
     if request.is_ajax():
@@ -180,6 +203,8 @@ def render_ajax_request(request):
 
          if "toy_history_id" in request.GET:
              rendered=render_toy_history(request)
+         elif "toy_history_member_id" in request.GET:
+             rendered=render_member_toy_history(request)
          else:
              rendered=render_toy_details(request)
 

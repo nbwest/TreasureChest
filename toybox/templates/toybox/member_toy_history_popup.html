@@ -1,24 +1,23 @@
- <span id="toy_popup">
+ <span id="member_toy_history_popup">
 
 
 
-  <div class="modal" id="toyPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" data-backdrop="static">
+  <div class="modal" id="memberToyHistoryPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
 
-        <div class="modal-dialog" style="width: 800px;" >
+        <div class="modal-dialog" style="width: 80%;" >
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h3 class="modal-title" id="myModalLabel">Toy</h3>
+                    <h2 class="modal-title" >Toy History</h2>
                 </div>
 
                 <div class="modal-body">
 
-                <div class="row">
-                    <div class="panel-fluid panel-default col-xs-11">
-                        {% include "toybox/toy_summary.html" %}
+                    <div class="row">
+                        <div class="panel-fluid panel-default col-xs-12">
+                            {% include "toybox/member_toy_history.html" %}
+                        </div>
                     </div>
-                </div>
-
 
                 </div>
 
@@ -40,7 +39,7 @@
         {
             $(window).load(function()
             {
-                $('#toyPopupModal').modal('hide');
+                $('#memberToyHistoryPopupModal').modal('hide');
             });
         });
     </script>
