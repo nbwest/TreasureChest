@@ -1,0 +1,68 @@
+
+{% load widget_tweaks %}
+<span id="member_details">
+    <div class="panel-heading">{{member.name}}</div>
+
+
+        <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post' onsubmit="postMember(this);">
+            {% csrf_token %}
+
+
+
+            <div class="fieldWrapper" >
+            {% for field in member_details_form %}
+                <br>
+                 {% for key, value in field.field.widget.attrs.items %}
+                    {% if key == "group" %}
+                        <div class="text-center">
+                            <button class="btn btn-primary " type="button" data-toggle="collapse" data-target="#{{key}}_{{value}}">
+                                <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                                {{value}}
+                            </button>
+                        </div>
+                <br>
+                        <div class="collapse {% if field.errors %} in {%endif%} collapse-class" id="{{key}}_{{value}}">
+                    {%endif%}
+                {%endfor%}
+
+                {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
+
+                {% if 'datepicker' in field.field.widget.attrs %}
+                    <div class="input-group input-append date" >
+                        {% render_field field class+="form-control" %}
+                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {%endif%}
+
+                {% if field.errors %}
+                    <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                        {% for error in field.errors  %}
+                            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if "endgroup" in field.field.widget.attrs %}
+                    </div>
+                {%endif%}
+
+            {% endfor %}
+
+            </div>
+
+    </form>
+
+</span>
+
+<script>
+
+
+
+
+
+
+
+
+</script>

@@ -1,11 +1,12 @@
 
 from django import forms
-from django.shortcuts import get_object_or_404
+
 from toybox.models import *
 from django.db.models import Q
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.shortcuts import *
+
 
 #################
 # general helpers
@@ -125,8 +126,10 @@ def base_data(request):
 
     return context
 
-def handle_toy_details(request):
 
+def render_toy_details(request):
+
+    rendered=None
     context={}
 
     if request.method=="GET":
@@ -135,21 +138,15 @@ def handle_toy_details(request):
           toy=Toy.objects.get(id=toy_id)
           context.update({"toy":toy})
           context.update({"MEDIA_URL":settings.MEDIA_URL})
-
-    return context
-
-def render_toy_details(request):
-
-    rendered=None
-    context=handle_toy_details(request)
-
-    if "toy" in context:
-         rendered=render_to_string('toybox/toy_summary.html', context)
+          rendered=render_to_string('toybox/toy_summary.html', context)
 
     return rendered
 
-def handle_toy_history(request):
 
+
+def render_toy_history(request):
+
+    rendered=None
     context={}
 
     if request.method=="GET":
@@ -158,31 +155,14 @@ def handle_toy_history(request):
             context.update({"toy_history":ToyHistory.objects.filter(toy__id=toy_id).order_by('date_time')})
             toy=Toy.objects.get(id=toy_id)
             context.update({"toy":toy})
-
-
-    return context
-
-def render_toy_history(request):
-
-    rendered=None
-    context=handle_toy_history(request)
-
-    if "toy" in context:
-         rendered=render_to_string('toybox/toy_history.html', context)
+            rendered=render_to_string('toybox/toy_history.html', context)
 
     return rendered
+
 
 def render_member_toy_history(request):
 
     rendered=None
-    context=handle_member_toy_history(request)
-
-    if "member_toy_history" in context:
-         rendered=render_to_string('toybox/member_toy_history.html', context)
-
-    return rendered
-def handle_member_toy_history(request):
-
     context={}
 
     if request.method=="GET":
@@ -192,23 +172,31 @@ def handle_member_toy_history(request):
             member=Member.objects.get(id=member_id)
             context.update({"member_toy_history":member_toy_history})
             context.update({"member":member})
+            rendered=render_to_string('toybox/member_toy_history.html', context)
 
-    return context
+    return rendered
+
+
 
 
 def render_ajax_request(request):
 
-    if request.is_ajax():
+
+    if request.method=="GET" and request.is_ajax():
         #send back rendered toy summary, just data would need to be rendered so it is useless
 
          if "toy_history_id" in request.GET:
              rendered=render_toy_history(request)
          elif "toy_history_member_id" in request.GET:
              rendered=render_member_toy_history(request)
-         else:
+         elif "toy_id" in request.GET:
              rendered=render_toy_details(request)
+         else:
+             return None
 
          return HttpResponse(rendered)
+
+    return None
 
 ##################
 # Shared form classes

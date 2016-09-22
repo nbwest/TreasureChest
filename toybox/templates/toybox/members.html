@@ -6,6 +6,7 @@
 
 {% include "toybox/toy_summary_popup.html" %}
 {% include "toybox/member_toy_history_popup.html" %}
+{% include "toybox/member_details_popup.html" %}
 
 <style>
 .glyphicon.glyphicon-ok, .glyphicon.glyphicon-remove, .glyphicon.glyphicon-ban-circle
@@ -34,11 +35,22 @@
 
 
 
+
+
+
 <div class="row">
 
     <div class="panel-fluid panel-default col-xs-11 col-sm-8">
               <!-- Default panel contents -->
          <div class="panel-heading">Member List</div>
+
+        <div id="toolbar">
+
+            <button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align" onclick="getMemberDetails(this);" value="add">
+            <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span> Add new member</button>
+        </div>
+
+
 
             <table  id="member_table"
                     data-show-export="true"
@@ -47,6 +59,7 @@
                     class="table table-condensed"
                     data-filter-control="true"
                     data-toggle="table"
+                    data-toolbar="#toolbar"
                     data-sort-name="name"
                     data-sort-order="asc"
                     row-height="20"
@@ -63,14 +76,16 @@
 
                     <thead>
                         <tr>
+                            <th data-field="loans"  data-sortable="true" >Loans</th>
                         	<th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
                             <th data-field="status"  data-sortable="true" data-filter-control="select">Status</th>
-                            <th data-field="loans"  data-sortable="true">Loans</th>
+                            <th data-field="phone"  data-sortable="true" data-filter-control="input">Phone</th>
+                            <th data-field="email"  data-sortable="true"data-filter-control="input">Email</th>
                             <th data-field="balance"  data-visible="false" data-sortable="true">Balance</th>
-                            <th data-field="wed"  data-visible="false" data-sortable="true" data-filter-control="select">Wed</th>
-                            <th data-field="sat"  data-visible="false" data-sortable="true" data-filter-control="select">Sat</th>
-                            <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
-                            <th data-field="committee"  data-visible="false" data-sortable="true" data-filter-control="select">Committee<br>Member</th>
+                            <th data-field="wed"   data-visible="false" data-sortable="true" data-filter-control="select">Wed</th>
+                            <th data-field="sat"   data-visible="false" data-sortable="true" data-filter-control="select">Sat</th>
+                            <th data-field="volunteer"   data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
+                            <th data-field="committee"   data-visible="false" data-sortable="true" data-filter-control="select">Committee<br>Member</th>
                             <th data-field="bond"  data-visible="false" data-sortable="true">Bond</th>
                        	</tr>
                     </thead>
@@ -78,12 +93,44 @@
                     {% for m in members %}
 
                     <tr>
+                         <td class="text-center">
+
+
+                               {% spaceless %}
+                                   {% if m.id not in loan_counts %}
+                                        <a name="0" href="{% url 'toybox:returns' member_id=m.id %}">
+                                            <span class="label label-default label-as-badge" title="No loans">0</span>
+                                        </a>
+                                   {%else%}
+                                        {% for key, value in loan_counts.items %}
+                                            {% if key == m.id %}
+                                                    {% if m.id in loans_overdue %}
+                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
+                                                            <span class="label label-danger label-as-badge" title="Overdue loans - click to go to returns">{{ value }}</span>
+                                                        </a>
+                                                    {%else%}
+                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
+                                                            <span class="label label-success label-as-badge" title="Loans - click to go to returns">{{ value }}</span>
+                                                        </a>
+                                                    {% endif %}
+
+                                            {% endif %}
+                                        {% endfor %}
+                                   {%endif%}
+                               {% endspaceless %}
+
+                             <button title="Toy History" type="button" class="btn btn-link" onclick="getMemberToyHistory(this);" value="{{m.id}}">
+                                    <span class="glyphicon glyphicon-time " aria-hidden="true"></span>
+                                </button>
+                           </td>
+
                             <td>
 
-
-                                <a  name="{{ m.name }}" href="{% url 'toybox:members' member_id=m.id %}{{action}}">
-                                    {{ m.name }}
-                                </a>
+                                <button title="Edit member details" type="button" class="btn btn-link" onclick="getMemberDetails(this);" value="{{m.id}}">
+                                        {{ m.name }}
+                                </button>
+                                <!--<a  name="{{ m.name }}" href="{% url 'toybox:members' member_id=m.id %}{{action}}">-->
+                                <!--</a>-->
                             </td>
 
                             <td class="text-center">
@@ -95,34 +142,11 @@
                             </td>
 
 
-                           <td class="text-center">
-                               <button title="Toy History" type="button" class="btn btn-link" onclick="getMemberToyHistory(this);" value="{{m.id}}">
-                                    <span class="glyphicon glyphicon-time " aria-hidden="true"></span>
-                                </button>
 
-                               {% spaceless %}
-                                   {% if m.id not in loan_counts %}
-                                        <a name="0" href="{% url 'toybox:returns' member_id=m.id %}">
-                                            <span class="label label-default label-as-badge">0</span>
-                                        </a>
-                                   {%else%}
-                                        {% for key, value in loan_counts.items %}
-                                            {% if key == m.id %}
-                                                    {% if m.id in loans_overdue %}
-                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
-                                                            <span class="label label-danger label-as-badge">{{ value }}</span>
-                                                        </a>
-                                                    {%else%}
-                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
-                                                            <span class="label label-success label-as-badge">{{ value }}</span>
-                                                        </a>
-                                                    {% endif %}
 
-                                            {% endif %}
-                                        {% endfor %}
-                                   {%endif%}
-                               {% endspaceless %}
-                           </td>
+
+                        <td>{{m.phone_number1}}</td>
+                        <td>{{m.email_address}}</td>
 
                         <td class="text-center">
                             ${{m.balance|floatformat:2}}
@@ -191,83 +215,10 @@
 
 
 
-    <div class="panel-fluid panel-default col-xs-12 col-sm-4 " style="text-align: left; vertical-align: middle; border-left: 1px solid #ccc ">
-        <div class="panel-heading">Member Details</div>
+    <!--<div class="panel-fluid panel-default col-xs-12 col-sm-4 " style="text-align: left; vertical-align: middle; border-left: 1px solid #ccc ">-->
+        <!-- -->
 
-
-        <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post'>
-            {% csrf_token %}
-
-            <div class="text-center">
-                <br>
-                <a href="{% url 'toybox:members' %}">
-                    <button title="Clear fields to add New Member" type="button" class="btn btn-success" aria-label="Left Align">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    <span class="glyphicon glyphicon-user " aria-hidden="true"></span>
-                    </button>
-                </a>
-                &nbsp
-                {%if member_detail_submit_button_label == "Add" %}
-                    <button type="submit" name="add" class="btn btn-success" title="Commit new member to the database"><strong>Add</strong></button>
-                {%else%}
-                    <button type="submit" name="update" class="btn btn-success" title="Commit member changes to the database"><strong>Update</strong></button>
-                {%endif%}
-            </div>
-
-            <div class="fieldWrapper" >
-            {% for field in member_details_form %}
-                <br>
-                 {% for key, value in field.field.widget.attrs.items %}
-                    {% if key == "group" %}
-                        <div class="text-center">
-                            <button class="btn btn-primary " type="button" data-toggle="collapse" data-target="#{{key}}_{{value}}">
-                                <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-                                {{value}}
-                            </button>
-                        </div>
-                <br>
-                        <div class="collapse {% if field.errors %} in {%endif%} collapse-class" id="{{key}}_{{value}}">
-                    {%endif%}
-                {%endfor%}
-
-                {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
-
-                {% if 'datepicker' in field.field.widget.attrs %}
-                    <div class="input-group input-append date" >
-                        {% render_field field class+="form-control" %}
-                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
-                    </div>
-                {% else %}
-                    {% render_field field class+="form-control" %}
-                {%endif%}
-
-                {% if field.errors %}
-                    <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                        {% for error in field.errors  %}
-                            <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-
-                {% if "endgroup" in field.field.widget.attrs %}
-                    </div>
-                {%endif%}
-
-            {% endfor %}
-
-            </div>
-             <div class="text-center">
-                <br>
-                {%if member_detail_submit_button_label == "Add" %}
-                    <button type="submit" name="add" class="btn btn-success" title="Commit new member to the database"><strong>Add</strong></button>
-                {%else%}
-                    <button type="submit" name="update" class="btn btn-success" title="Commit member changes to the database"><strong>Update</strong></button>
-                {%endif%}
-            </div>
-
-        </form>
-
-    </div>
+    <!--</div>-->
 
 
 </div>
