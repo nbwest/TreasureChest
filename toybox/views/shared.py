@@ -204,3 +204,18 @@ def get_config(key):
             raise NameError('Option key not found: '+key)
             return None
 
+
+def handle_shift(request):
+
+     context={}
+
+     todays_shift=Shift.objects.filter(shift_date=thisDateTime().date()).select_related('member')
+
+     shift_form = ShiftForm(request.POST)
+
+     context.update({"shift":todays_shift, "shift_form":shift_form})
+
+     return context
+
+class ShiftForm(forms.Form):
+    members = forms.ModelChoiceField(queryset=Member.objects.all().order_by("name"))

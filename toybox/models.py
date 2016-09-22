@@ -684,3 +684,14 @@ class Feedback(models.Model):
 
      def __str__(self):
         return self.name + ": " + self.comment
+
+class Shift(models.Model):
+
+    shift_date = models.DateField()
+    member = models.ForeignKey(Member, blank=True, null=True)
+
+    def __unicode__(self):
+        return str(self.shift_date)
+
+    def __str__(self):
+        return str(self.shift_date)

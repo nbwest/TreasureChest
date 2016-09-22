@@ -11,7 +11,8 @@ class FeedbackAdmin(admin.ModelAdmin):
     list_display=('id','date','name','page','comment')
     readonly_fields=('id',)
 
-
+class ShiftAdmin(admin.ModelAdmin):
+    list_display=('shift_date','member')
 
 # Admin space lists
 admin.site.register(MemberType, MemberTypeAdmin)
@@ -22,7 +23,7 @@ admin.site.register(ToyVendor)
 admin.site.register(RecycledToyId)
 admin.site.register(TempBorrowList) #to hide
 admin.site.register(Feedback,FeedbackAdmin)
-
+admin.site.register(Shift, ShiftAdmin)
 
 class ToyForm(forms.ModelForm):
     class Meta:
@@ -48,6 +49,7 @@ class ToyAdmin(admin.ModelAdmin):
 
 
     #readonly_fields = ('member_loaned','due_date','borrow_date','state')
+
 
 
 

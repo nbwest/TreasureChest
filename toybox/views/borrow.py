@@ -28,6 +28,8 @@ def borrow(request, member_id):
 
     context.update(base_data(request))
 
+    context.update(handle_shift(request))
+
     #clears templist if there are temp toys in any other name than the current member. Ensures temp toys
     # aren't persistent when leaving borrow page
     # this means only one member can be serviced at a time. optional???
