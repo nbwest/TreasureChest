@@ -98,7 +98,7 @@ class MemberDetailsForm(forms.Form):
 
     name = forms.CharField(label="Name", max_length=Member._meta.get_field('name').max_length)
 
-    partner = forms.CharField(required=False, label="Partner Name",
+    partner = forms.CharField(required=False, label="Alternate Borrower Name",
                               max_length=Member._meta.get_field('partner').max_length)
     # TODO all the number of max children to change
     child1 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 1 Birthday",widget=forms.DateInput(format='%d/%m/%Y',attrs={"datepicker": "True", 'group': 'Children'}))

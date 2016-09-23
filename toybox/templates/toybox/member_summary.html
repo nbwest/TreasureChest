@@ -6,7 +6,7 @@
 
 
     <a href="{% url 'toybox:members' member.id %}"><strong>{{ member.name }}</strong></a>
-    <p>Partner: {{ member.partner }}</p>
+    <p>Alternate Borrower: {{ member.partner }}</p>
     <h4>
         <!--<p >-->
         {% if member.is_current %}
