@@ -68,59 +68,31 @@
              data-export-types="['excel','csv']"
              data-escape="false"
              data-cookie="true"
-             data-cookie-id-table="transaction_table">
+             data-cookie-id-table="transaction_table"
+             data-url="{{ request.get_full_path }}"
+             data-pagination="true"
+             data-side-pagination="server">
+
+
              <thead>
                 <tr>
-                    <th data-field="id" data-sortable="true" data-filter-control="input">ID</th>
-                    <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
-
-                    <th data-field="transaction_type"  data-sortable="true" data-filter-control="select">Type</th>
-                    <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
-                    <th data-field="toys"  data-filter-control="input">Toys</th>
-                    <th data-field="volunteer"  data-sortable="true" data-filter-control="input">Volunteer</th>
+                    <th data-field="id" data-filter-control="input" data-sortable="true">ID</th>
+                    <th data-field="date_time" data-sortable="true" data-sorter="dateSorter" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                    <th data-field="transaction_type"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=transaction_type">Type</th>
+                    <th data-field="member_id"  data-sortable="true" data-filter-control="input">Member</th>
+                    <th data-field="toys" >Toys</th>
+                    <th data-field="volunteer_reporting"  data-sortable="true" data-filter-control="input">Volunteer</th>
                     <th data-field="amount" data-sortable="true"  >Amount</th>
                     <th data-field="balance" data-sortable="true">Balance</th>
-                    <th data-field="comment"  data-filter-control="select" data-sortable="true">Comment</th>
+                    <th data-field="comment"  data-filter-control="input" data-sortable="true">Comment</th>
                     <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true">Complete</th>
                 </tr>
             </thead>
 
-            {% for transaction in transactions %}
-              <tr>
-                    <td>{{transaction.id}}</td>
 
-                    <td>
-                        <span name='{{transaction.date_time|date:"Y/m/d H:i:s"}}'></span>
-                        {{transaction.date_time|date:"d/m/Y H:i"}}
-                    </td>
-                    <td>{{transaction.get_transaction_type_display}}</td>
-
-
-                    <td>
-                        <a name="{{transaction.member}}"{%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
-                            {{transaction.member}}
-                        </a></td>
-
-                    <td>
-                        {% for th in transaction.toyhistory.all %}
-                            <a href="{% url 'toybox:toys' toy_id=th.toy.id %}">
-                                {{th.toy.code}}: {{th.toy.name}}<br>
-                            </a>
-                        {%endfor%}
-                    </td>
-                    <td>{{transaction.volunteer_reporting}}</td>
-                    <td>{{transaction.amount}}</td>
-                    <td>{{transaction.balance}}</td>
-                    <td>{{transaction.comment}}</td>
-                    <td>{{transaction.complete}}</td>
-
-
-              </tr>
-            {% endfor %}
-
-            </table>
-        </div>
+        </table>
     </div>
+</div>
 
 
 </span>
@@ -128,14 +100,37 @@
 <script>
 
 
-$(document).ready(function() {
-var $table = $('#transaction_table');
-$table.bootstrapTable('refreshOptions', {
-    exportOptions: {
-        onCellHtmlData: DoOnCellHtmlData
+$(document).ready(function()
+{
+    var $table = $('#transaction_table');
+    $table.bootstrapTable('refreshOptions',
+    {
+        exportOptions:
+        {
+            onCellHtmlData: DoOnCellHtmlData
+        }
+    });
+
+
+
+    function parseDate(input)
+    {
+      var parts = input.split('/');
+      return new Date(parts[2], parts[1]-1, parts[0]);
     }
+
+     function dateSorter(a, b)
+     {
+            dateA=parseDate(a);
+            dateB=parseDate(b);
+
+            if (dateA > dateB) return 1;
+            if (dateA < dateB) return -1;
+            return 0;
+ }
+
 });
-});
+
 </script>
 
 

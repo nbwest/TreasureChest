@@ -5,74 +5,178 @@ from django.core.validators import *
 import decimal
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import JsonResponse
+import ast
 
+
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
 
 @login_required()
 def transactions(request):
-    bank_value_error=""
+
     context = {"title":"Transactions"}
-    form=None
     context.update(base_data(request))
+    context.update(handlePOST(context,request))
 
-    user = User.objects.get(username=request.user.username)
-
-    if user.has_perm("transaction.transaction_actions"):
-        if (request.method == "POST"):
-            form=TransactionForm(request.POST)
-            if form.is_valid():
-
-                if "button_set_till" in request.POST:
-                    if "new_till_value" in form.cleaned_data:
-                        try:
-                            setTill(form.cleaned_data['new_till_value'],context['daily_balance'],request)
-                        except ValueError as e:
-                            form.add_error("new_till_value", e.message)
-
-
-
-                if "button_bank_amount" in request.POST:
-                    if "bank_value" in form.cleaned_data:
-                        if form.cleaned_data['bank_value']!="":
-                            value=decimal.Decimal(form.cleaned_data['bank_value'])
-                            current_till=context['daily_balance']
-                            if value>=0:
-                                if current_till-value>0:
-                                        #TODO set volunteer
-                                     transaction=Transaction()
-                                     type=Transaction.ADJUSTMENT_CREDIT
-                                     transaction.create_transaction_record(request.user,None,type,-value,comment="BANK TILL",balance_change=-value)
-                                else:
-                                    bank_value_error="Invalid amount - Till less than zero"
-                            else:
-                                bank_value_error="Negative numbers not accepted"
-
-
-                if "button_bank_all" in request.POST:
-                    transaction=Transaction()
-                    transaction.create_transaction_record(request.user,None,Transaction.ADJUSTMENT_DEBIT,-context['daily_balance'],comment="BANK ALL TILL",balance_change=-context['daily_balance'])
-
-                #call to update current balance after transactions
-                context.update(base_data(request))
-
-
-    if form:
-        if bank_value_error!="" or len(form.errors)>0:
-            form.add_error("bank_value", bank_value_error)
-    #else:
-    form=TransactionForm(daily_balance=context['daily_balance'])
-
-
-    user = User.objects.get(username=request.user.username)
-    if user.has_perm("transaction.transaction_actions"):
-        context.update({"transaction_form":form})
-
-    context.update({"transactions":Transaction.objects.all().order_by('date_time').select_related('member')})#.prefetch_related("toyhistory__toy")})
+    GETresult=handleGET(request)
+    if GETresult:
+        return GETresult
 
     return render(request, 'toybox/transactions.html',context )
 
-def setTill(till_value, daily_balance, request):
+def handlePOST(context, request):
+
+    form=None
+
+    user = User.objects.get(username=request.user.username)
+    if user.has_perm("transaction.transaction_actions"):
+        if (request.method == "POST"):
+                form=TransactionForm(request.POST)
+                if form.is_valid():
+
+                    if "button_set_till" in request.POST:
+                        if "new_till_value" in form.cleaned_data:
+                            try:
+                                setTill(form.cleaned_data['new_till_value'],context['daily_balance'],request)
+                            except ValueError as e:
+                                form.add_error("new_till_value", e.message)
 
 
+
+                    if "button_bank_amount" in request.POST:
+                        if "bank_value" in form.cleaned_data:
+                            try:
+                                setBanking(form.cleaned_data['bank_value'],context['daily_balance'],request)
+                            except ValueError as e:
+                                form.add_error("bank_value", e.message)
+
+
+
+                    if "button_bank_all" in request.POST:
+                        transaction=Transaction()
+                        transaction.create_transaction_record(request.user,None,Transaction.ADJUSTMENT_DEBIT,-context['daily_balance'],comment="BANK ALL TILL",balance_change=-context['daily_balance'])
+
+                    #call to update current balance after transactions
+                    context.update(base_data(request))
+
+
+        if not form or len(form.errors)==0:
+             form=TransactionForm(daily_balance=context['daily_balance'])
+
+        if user.has_perm("transaction.transaction_actions"):
+            context.update({"transaction_form":form})
+
+
+    return context
+
+def handleGET(request):
+
+    if (request.method == "GET" and request.GET):
+
+        if "filter_data" in request.GET:
+
+            listed_tr_types=Transaction.objects.all().values_list("transaction_type", flat=True).distinct()
+
+            result={}
+            for element in listed_tr_types:
+                result.update({Transaction.TRANSACTION_TYPE_CHOICES[element][1]:Transaction.TRANSACTION_TYPE_CHOICES[element][1]})
+
+            return JsonResponse(result)
+
+        if "sort" in request.GET:
+
+            #data select need to show all possibilities, not just those in the current page
+
+            all_transactions=Transaction.objects.all()
+            total=all_transactions.count()
+
+            sort = request.GET.get('sort', 'id')
+            order = request.GET.get('order', 'asc')
+            limit = int(request.GET.get('limit',total))
+            offset = int(request.GET.get('offset',0))
+            filters = request.GET.get('filter',None)
+
+
+            if order=="desc":
+                dir="-"
+            else:
+                dir=""
+
+
+            toy_historys=ToyHistory.objects.all().order_by("transaction").exclude(transaction__isnull=True).values("toy","toy__code","toy__name","transaction")
+            member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
+
+
+            if filters:
+                filters=ast.literal_eval(filters)
+                if "transaction_type" in filters:
+                    for choice in Transaction.TRANSACTION_TYPE_CHOICES:
+                        if filters["transaction_type"]==choice[1]:
+                            filters.update({"transaction_type":choice[0]})
+
+
+
+                if "member_id" in filters:
+                     filters.update({"member__name__icontains":filters["member_id"]})
+                     filters.pop("member_id")
+
+                if "volunteer_reporting" in filters:
+                     filters.update({"volunteer_reporting__icontains":filters["volunteer_reporting"]})
+                     filters.pop("volunteer_reporting")
+
+                if "comment" in filters:
+                     filters.update({"comment__icontains":filters["comment"]})
+                     filters.pop("comment")
+
+                if "date_time" in filters:
+                    dt=datetime.datetime.strptime( filters["date_time"], "%d/%m/%y")# %H:%M" )
+                    filters.update({"date_time__startswith":dt.date})
+                    filters.pop("date_time")
+
+                if "id" in filters:
+                    filters.update({"id__contains":filters["id"]})
+                    filters.pop("id")
+
+                if "complete" in filters:
+                    filters.update({"complete":str2bool(filters["complete"])})
+
+                transactions=all_transactions.filter(**filters).order_by(dir+sort)[offset:offset+limit]
+                total=transactions.count()
+            else:
+                transactions=all_transactions.order_by(dir+sort)[offset:offset+limit]
+
+            rows=list(transactions.values())
+
+            for row in rows:
+
+                row["transaction_type"]=Transaction.TRANSACTION_TYPE_CHOICES[row["transaction_type"]][1]
+
+                if row["member_id"]:
+                    row["member_id"]=member_names[row["member_id"]]
+
+                row["date_time"]=row["date_time"].strftime('%d/%m/%y %H:%M')
+
+                row["complete"]=str(row["complete"])
+
+                matching=filter(lambda th: th['transaction'] == row["id"], toy_historys)
+                if matching:
+                    toys=""
+
+                    for toy in matching:
+                        toy_url=reverse("toybox:toys",kwargs={'toy_id':toy["toy"]})
+                        toys+="<a href=\""+toy_url+"\">"+toy["toy__code"]+", "+toy["toy__name"]+"</a> <br>"
+
+                    row.update({"toys":toys})
+
+            result={"total":total,"rows":rows}
+
+            return JsonResponse(result)
+    else:
+        return None
+
+def checkAmount(till_value):
     if till_value=="":
         raise ValueError( "Value required")
 
@@ -81,19 +185,51 @@ def setTill(till_value, daily_balance, request):
     except:
         raise ValueError("Value not a number")
 
+    if value<0:
+        raise ValueError("Negative numbers not accepted")
+
+    if value>1000:
+        raise ValueError("Value must be less than or equal to $1000")
+
+    return value
+
+
+def setBanking(till_value, daily_balance, request):
+
+    try:
+        value=checkAmount(till_value)
+    except:
+        raise
+
+    if value>=0:
+        if daily_balance-value>=0:
+                #TODO set volunteer
+             transaction=Transaction()
+             type=Transaction.ADJUSTMENT_CREDIT
+             transaction.create_transaction_record(request.user,None,type,-value,comment="BANK TILL",balance_change=-value)
+        else:
+            raise ValueError("Invalid amount - Till less than zero")
+    else:
+       raise ValueError("Negative numbers not accepted")
+
+
+
+
+def setTill(till_value, daily_balance, request):
+
+
+    try:
+        value=checkAmount(till_value)
+    except:
+        raise
+
     try:
         current_till=decimal.Decimal(daily_balance)
     except:
         raise ValueError("Daily balance not a number")
 
-    if value<0:
-        raise ValueError("Negative numbers not accepted")
-
     if current_till==value:
         raise ValueError("Value must be different to balance")
-
-    if value>1000:
-        raise ValueError("Value must be less than or equal to $1000")
 
     transaction=Transaction()
 
