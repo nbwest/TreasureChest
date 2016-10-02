@@ -83,11 +83,20 @@ function DoOnCellHtmlData(cell, row, col, data)
 
 function logout()
 {
-    //console.log("logout");
+
     $('#setTillModal').modal('show');
+}
+
+function setshift()
+{
+    $('#setShift').modal('show');
 
 }
+
 </script>
+
+
+{% include "toybox/shift_popup.html" %}
 
 
 {% include "toybox/till_popup.html" %}
@@ -146,6 +155,7 @@ function logout()
                 <li>
                     <p class="navbar-btn" style="margin-right: 10px; margin-left: 10px; ">
                         <a onclick="logout();"  class="btn btn-default">Logout</a>
+                        <a onclick="setshift();" class="btn btn-default">Set Shift</a>
                     </p>
                 </li>
                 {%endif%}

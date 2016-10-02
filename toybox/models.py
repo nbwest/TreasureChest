@@ -145,11 +145,6 @@ class Member(models.Model):
         self.save()
 
 
-    def update_membership_date(self):
-        self.membership_end_date = thisDateTime().now().date()+timedelta(days=self.type.membership_period)
-        self.save()
-
-
 
 
 class Child(models.Model):
@@ -688,7 +683,7 @@ class Feedback(models.Model):
 class Shift(models.Model):
 
     shift_date = models.DateField()
-    member = models.ForeignKey(Member, blank=True, null=True)
+    volunteer = models.ForeignKey(Member)
 
     def __unicode__(self):
         return str(self.shift_date)

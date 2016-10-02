@@ -208,14 +208,41 @@ def get_config(key):
 def handle_shift(request):
 
      context={}
+     form=None
 
-     todays_shift=Shift.objects.filter(shift_date=thisDateTime().date()).select_related('member')
+     if request.method=="POST":
+        form=ShiftForm(request.POST)
+        if form.is_valid():
 
-     shift_form = ShiftForm(request.POST)
+            if "remove_volunteer" in form.data:
+                id=int(form.data["remove_volunteer"])
+                Shift.objects.get(shift_date=thisDateTime().date(),volunteer=id).delete()
 
-     context.update({"shift":todays_shift, "shift_form":shift_form})
+            elif "member" in form.data:
+                # add volunteer
+                new_volunteer=form.cleaned_data["member"]
+                if new_volunteer:
+                    in_shift=Shift.objects.filter(shift_date=thisDateTime().date(),volunteer=new_volunteer)
+
+                    if in_shift.count()==0:
+                        shift=Shift(volunteer=new_volunteer,shift_date=thisDateTime().date())
+                        shift.save()
+                    else:
+                        form.add_error("member","volunteer already added")
+                else:
+                    form.add_error("member","volunteer not selected")
+
+     else:
+        form = ShiftForm(request.POST)
+
+     todays_shift=Shift.objects.filter(shift_date=thisDateTime().date()).select_related('volunteer')
+
+     if todays_shift.count()==0:
+         todays_shift=None
+
+     context.update({"shift":todays_shift, "shift_form":form})
 
      return context
 
 class ShiftForm(forms.Form):
-    members = forms.ModelChoiceField(queryset=Member.objects.all().order_by("name"))
+    member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))

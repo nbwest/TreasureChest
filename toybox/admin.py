@@ -12,7 +12,7 @@ class FeedbackAdmin(admin.ModelAdmin):
     readonly_fields=('id',)
 
 class ShiftAdmin(admin.ModelAdmin):
-    list_display=('shift_date','member')
+    list_display=('shift_date','volunteer')
 
 # Admin space lists
 admin.site.register(MemberType, MemberTypeAdmin)
