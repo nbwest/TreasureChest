@@ -127,7 +127,7 @@ class ToyIssueForm(forms.Form):
         if toyList:
             for toy in toyList:
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
-                if current_user.has_perm("toy.retire_toy"):
+                if current_user.has_perm("toybox.retire_toy"):
                     self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)
                 else:
                     self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])

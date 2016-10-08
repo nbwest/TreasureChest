@@ -30,8 +30,15 @@ def handlePOST(context, request):
 
     form=None
 
+
+
     user = User.objects.get(username=request.user.username)
-    if user.has_perm("transaction.transaction_actions"):
+    # perm=user.user_permissions.all()
+    #
+    # for p in perm:
+    #     print p,",", p.codename,",", p.name
+
+    if user.has_perm("toybox.transaction_actions"):
         if (request.method == "POST"):
                 form=TransactionForm(request.POST)
                 if form.is_valid():
@@ -65,7 +72,7 @@ def handlePOST(context, request):
         if not form or len(form.errors)==0:
              form=TransactionForm(daily_balance=context['daily_balance'])
 
-        if user.has_perm("transaction.transaction_actions"):
+        if user.has_perm("toybox.transaction_actions"):
             context.update({"transaction_form":form})
 
 
