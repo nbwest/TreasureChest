@@ -80,8 +80,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                 toy_search_string = form.cleaned_data['toy_search_string'].strip()
                 if toy_search_string != "":
 
-                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
-                    #toy_search_results=Toy.objects.filter(Q(code__istartswith=toy_search_string)|Q(name__icontains=" "+toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
+                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("state")
 
                     if toy_search_results.count() == 1:
                         toy=toy_search_results[0]
