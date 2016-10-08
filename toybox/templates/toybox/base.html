@@ -34,6 +34,9 @@ For page html use the following template tags:
 
 <body>
 
+{% include "toybox/shift_popup.html" %}
+{% include "toybox/till_popup.html" %}
+
 
 <script type="text/javascript">
     //used to duplicate the side menu from the top menu (top menu hidden until collapsed)
@@ -89,20 +92,20 @@ function logout()
 
 function setshift()
 {
-    $('#setShift').modal('show');
-
+    $('#setShiftModal').modal('show');
 }
 
-</script>
+{%if setting_shift %}
+    $( document ).ready(function()
+    {
+        $(window).load(function(){
+            setshift();
+        });
 
-
-{% include "toybox/shift_popup.html" %}
-
-
-{% include "toybox/till_popup.html" %}
+    });
+{%endif%}
 
 {%if request.session.first_login == True %}
-      <script type="text/javascript">
 
         $( document ).ready(function()
         {
@@ -112,8 +115,14 @@ function setshift()
 
         });
 
-    </script>
 {%endif%}
+
+</script>
+
+
+
+
+
 
 
 <!-- top nav bar -->

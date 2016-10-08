@@ -2,7 +2,7 @@
 
 <span id="set_shift_volunteers">
 
-  <div class="modal" id="setShift" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal" id="setShiftModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
       <form  action="{{ request.get_full_path }}"  method='post'>
         {% csrf_token %}
         <div class="modal-dialog">
@@ -60,7 +60,7 @@
 
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                    <button name="done" type="submit" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
 
             </div>
@@ -71,12 +71,12 @@
 
      <script type="text/javascript">
 
-        $( document ).ready(function()
-        {
-            $(window).load(function(){
-                $('#setShift').modal('hide');
-            });
-        });
+       // $( document ).ready(function()
+       // {
+        //    $(window).load(function(){
+        //        $('#setShiftModal').modal('hide');
+        //    });
+      //  });
 
     </script>
 

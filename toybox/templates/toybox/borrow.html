@@ -117,7 +117,7 @@
                         </td>
 
                         <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
+                            <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
@@ -253,9 +253,10 @@
 
                     {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
+
                      {% if field.field.widget.attrs.adjust_button %}
                     <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
                     </span>
                     {% endif %}
 
@@ -287,6 +288,9 @@
                      {% for error in field.errors  %}
                         <li><label class="label label-danger">{{ error|striptags }}</label></li>
                      {% endfor %}
+                     {%if field.field.widget.attrs.message %}
+                        <label class="label label-info">{{ field.field.widget.attrs.message }}</label></li>
+                     {% endif %}
                  </ul>
 
              </div>

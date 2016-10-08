@@ -28,13 +28,14 @@ def borrow(request, member_id):
 
     context.update(base_data(request))
 
-    context.update(handle_shift(request))
+ #TODO check volunteers set borrow fee to zero. include message under borrow fee
 
     #clears templist if there are temp toys in any other name than the current member. Ensures temp toys
     # aren't persistent when leaving borrow page
     # this means only one member can be serviced at a time. optional???
     #if TempBorrowList.objects.exclude(member=member_id).count()>0:
      #   TempBorrowList.objects.filter().delete()
+
 
 
     # handle member search
@@ -82,7 +83,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                 toy_search_string = form.cleaned_data['toy_search_string'].strip()
                 if toy_search_string != "":
 
-                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
+                    toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("state")
                     #toy_search_results=Toy.objects.filter(Q(code__istartswith=toy_search_string)|Q(name__icontains=" "+toy_search_string)|Q(name__icontains=toy_search_string)).order_by("code")
 
                     if toy_search_results.count() == 1:
@@ -192,8 +193,8 @@ def handle_payment_form(request, member_id):
         elif member:
             #check remove toy submit action
             for item in request.POST:
-                if item.startswith("remove_toy_"):
-                    toy_to_remove = item[len("remove_toy_"):]
+                if item=="remove_toy":
+                    toy_to_remove = item["remove_toy"]
                     TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                     context.update({"toy_removed":True})
 
@@ -470,12 +471,27 @@ def handle_payment_form(request, member_id):
             member_bond=member.type.bond
 
     new_borrow_list=TempBorrowList.objects.filter(member__id=member_id)
-    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date})
+
+
+
+
+    payment_initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date}
+
+    if member_id:
+        try:
+            Shift.objects.get(volunteer=member_id, shift_date=thisDateTime().date())
+            payment_initial.update({"volunteering":"true"})
+        except:
+            pass
+
+
+
+    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial=payment_initial)
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
         if field.html_name in payment_form.initial and field.field.__class__.__name__=="CharField":
-            if float(payment_form.initial[field.html_name]) != 0:
+            if payment_form.initial[field.html_name]:
                     field.field.widget.attrs.update({'enabled':'True'})
 
 
@@ -496,11 +512,22 @@ class PaymentForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         toyList=kwargs.pop("temp_toy_list", 0)
+
         super(PaymentForm, self).__init__(*args, **kwargs)
 
         if toyList:
             for toy in toyList:
                 self.fields['repair_checkbox_%s' % toy.toy.id]=forms.BooleanField(required=False)
+
+        if "initial" in kwargs:
+            if "volunteering" in kwargs["initial"]:
+                self.fields['borrow_fee'].widget.attrs.update({"message":"Volunteering today - Borrow fees will be ignored"})
+                self.fields['borrow_fee'].widget.attrs.pop("total_me",0)
+                self.fields['borrow_fee_adjust_justification'].widget.attrs.update({"rawValue":"VOLUNTEER"})
+
+
+
+
 
     numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 

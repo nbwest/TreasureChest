@@ -95,6 +95,7 @@ def base_data(request):
 
     context.update(updateDailyBalance())
 
+    context.update(handle_shift(request))
 
     if 'first_login' not in request.session:
         request.session.update({'first_login':True})
@@ -217,9 +218,11 @@ def handle_shift(request):
             if "remove_volunteer" in form.data:
                 id=int(form.data["remove_volunteer"])
                 Shift.objects.get(shift_date=thisDateTime().date(),volunteer=id).delete()
+                context.update({"setting_shift":"true"})
 
             elif "member" in form.data:
                 # add volunteer
+                context.update({"setting_shift":"true"})
                 new_volunteer=form.cleaned_data["member"]
                 if new_volunteer:
                     in_shift=Shift.objects.filter(shift_date=thisDateTime().date(),volunteer=new_volunteer)
