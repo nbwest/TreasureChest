@@ -2,10 +2,9 @@ Toy library Notes
 =================
 
 BUGS:
-Check admin permissions and groups - Can't select group in user admin. user permission groups not working, needed superuser for transaction actions
 common reset
     Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
-select member then hit clear fields - B1 pops up
+select member then hit clear fields - B1 pops up - not an issue with member page restructuring and popups
 logging in to transaction page causes jump back to login
 borrow toy search often has invalid form error - press enter on toy search or
 excel format can't open in newer excel, old excel says it's the wrong format, looks like xml???	bug
@@ -20,44 +19,37 @@ Check admin for fields that should be readonly and permissions
 
 
 TASKS:
-member details on left? - works better for small screen
-test for unique name?
-change "partner" to "alternate borrower"
-sort toy search selection modal by availability
-select member with no toy history should say no toy history, currently no table.
-Move logic of adjust fee to server side
-On login include shift volunteer names. Put on Login page for successful login or new default page?. volunteer toys are free
-Better toy selection - is very slow, resets filtering - pop up toy+history or server side - what about sorting?
-When adding toy suggest loan fee
-All Max children displayed to be change or add + button
+[Started] Volunteers don't pay on their shift. Add shift table. On login include shift volunteer names. Allow Link to transaction and toy history table for that date
+[Started] Popups for toy page: toy details, toy history. member page:edit member details, borrow history
+Server side pagination of tables: toys, members
+Allow toy comment edit in toy summary
+Receipt reference number required as field - toy purchase receipt?
+Test for unique member name when adding/updating
+Include member full details in summary - make a drop down.
+Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions for fine
+
 Dealing with low income earner
 Comment when toy is retired
 Enable donation - could be done with what we have? to check
 Add on loan >6 months sets toy as retired - include in config table
-Pagination of transactions, members, toy, toy history to be done on server side.
+Add notification help for where to put the toy after setting an issue
+Set toy add in admin in order of those fields required for adding toys manually. state, member loans, borrow date, due date
+ability to search for toy in return?
+Toy admin help text
+Move logic of adjust fee to server side
+When adding toy suggest loan fee
+All Max children displayed to be change or add + button
+Membership annual fee warning. might cause people to want to pay before due
+Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
 Member availability-Is this useful given no scheduling? Below to do in model:
     # roster days - bitfield?
     # member notes/characteristics?
-Membership annual fee warning. might cause people to want to pay before due
-Add member delete (change status to removed, all member queries will have to exclude removed members) - need to add status or removed flag
-Set toy add in admin in order of those fields required for adding toys manually. state, member loans, borrow date, due date
-issue or late fines deatils can't be determined when paying for them in borrow. add more details in borrow. Include in transactions?
-receipt reference number required as field
-ability to search for toy in return?
-Volunteers don't pay on their shift. Add shift volunteers table - link to toy history? Transactions?
-No help on where to put the toy after setting an issue
-Can't edit toy comment anywhere only issue comment
-Toy admin help text
 Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
 
-
-
-
-
 BIGGER ITEMS:
 migrate to production database - postgres. Migrate when web hosted
-Backup - use other laptops for backup? Currently USB drivver, cloud when get internet
+Backup - use other laptops for backup? Currently USB drive, cloud when get internet
 email support
     send out late reminders
     send out toy receipts
@@ -77,6 +69,9 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+sort toy search selection modal by availability
+change "partner" to "alternate borrower"
+Check admin permissions and groups - Can't select group in user admin. user permission groups not working, needed superuser for transaction actions
 Link transaction to toy history some how
 transaction issues 566,751,579,586,589,600,602,608,612 - maybe fixed!!
 need return late fee adjusted with manual return date. eg lindy kanan - fixed
