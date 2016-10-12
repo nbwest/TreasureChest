@@ -84,7 +84,7 @@
                     <th data-field="amount" data-sortable="true"  >Amount</th>
                     <th data-field="balance" data-sortable="true">Balance</th>
                     <th data-field="comment"  data-filter-control="input" data-sortable="true">Comment</th>
-                    <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true">Complete</th>
+                    <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true" data-filter-data="url:{{ request.get_full_path }}?filter_data=complete">Complete</th>
                 </tr>
             </thead>
 

@@ -84,13 +84,24 @@ def handleGET(request):
 
         if "filter_data" in request.GET:
 
-            listed_tr_types=Transaction.objects.all().values_list("transaction_type", flat=True).distinct()
+            if "transaction_type" in request.GET["filter_data"]:
 
-            result={}
-            for element in listed_tr_types:
-                result.update({Transaction.TRANSACTION_TYPE_CHOICES[element][1]:Transaction.TRANSACTION_TYPE_CHOICES[element][1]})
+                listed_unique_values=Transaction.objects.all().values_list("transaction_type", flat=True).distinct()
 
-            return JsonResponse(result)
+                result={}
+                for element in listed_unique_values:
+                    result.update({Transaction.TRANSACTION_TYPE_CHOICES[element][1]:Transaction.TRANSACTION_TYPE_CHOICES[element][1]})
+
+                return JsonResponse(result)
+
+            if "complete" in request.GET["filter_data"]:
+                listed_unique_values = Transaction.objects.all().values_list("complete", flat=True).distinct()
+
+                result = {}
+                for element in listed_unique_values:
+                    result.update({str(element):str(element)})
+
+                return JsonResponse(result)
 
         if "sort" in request.GET:
 
