@@ -11,7 +11,7 @@ from django.conf import settings
 # general helpers
 def fragment_search(fragment):
     if fragment != '':
-        return Member.objects.filter(Q(name__icontains=fragment)|Q(partner__icontains=fragment)).order_by("name")
+        return Member.objects.filter(Q(name__icontains=fragment)|Q(partner__icontains=fragment)).exclude(active=False).order_by("name")
     else:
         return []
 

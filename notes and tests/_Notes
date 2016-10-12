@@ -2,8 +2,6 @@ Toy library Notes
 =================
 
 BUGS:
-setting member inactive - still comes up in borrow and return
-
 Check browser back on toy borrow - can you borrow twice?
 toy history can't be sorted by date - no time recorded, add time to time+date and id column
 control-c on backup script didn't work to cancel
@@ -83,6 +81,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+setting member inactive - still comes up in borrow and return
 Transaction date filter didn't come up with more than 20 results
 Bank Till transaction is set as credit adjustment - should be debit
 sort toy search selection modal by availability
