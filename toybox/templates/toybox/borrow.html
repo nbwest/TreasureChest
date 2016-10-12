@@ -306,6 +306,7 @@
 <script type="text/javascript">
 
 var enable_exact_for_repair_only=false;
+var enable_paid_for_volunteer = false;
 
 $( document ).ready(function()
 {
@@ -375,7 +376,7 @@ function UpdateBorrowFee()
            }
    );
 
-   enable_exact_for_repair_only=(total_new_toys==toys_checked) && (total_new_toys>0);
+   enable_exact_for_repair_only=((total_new_toys==toys_checked) && (total_new_toys>0)) ;
 
    $("span[name='new_toy_due']","#toy_table")
    .each(
@@ -396,8 +397,18 @@ function UpdateBorrowFee()
         }
    );
 
-   document.getElementById("id_borrow_fee").value=total.toFixed(2);
+
+
    document.getElementById("id_borrow_fee").defaultValue=total.toFixed(2);
+
+   if ("{{volunteering}}"!=""  && total !=0.0)
+   {
+    total=0.0;
+    enable_paid_for_volunteer=true;
+   }
+
+   document.getElementById("id_borrow_fee").value=total.toFixed(2);
+
 
 }
 
@@ -524,7 +535,9 @@ function CalcTotal()
     if (document.getElementById("id_credit")!=null)
         document.getElementById("id_credit").value=credit.toFixed(2);
 
-     $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0 && original_fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
+
+
+     $("#btn_paid").prop('disabled', ( (isNaN(change)) || (total==0 && fees==0 && original_fees==0) || (!(change>=0) && !enable_exact_for_repair_only)) && !enable_paid_for_volunteer);
 
    if ("{{credit_enable}}" == "True")
         $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );

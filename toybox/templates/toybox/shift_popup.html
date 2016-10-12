@@ -47,7 +47,7 @@
                             {% for volunteer in shift %}
                                 <div class="list-group-item">
 
-                                    <button name="remove_volunteer" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn"  >
+                                    <button name="remove_volunteer" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn btn-danger remove-button"  >
                                         <span class="glyphicon glyphicon-trash " aria-hidden="true" ></span>
                                     </button>
                                     &nbsp{{volunteer.volunteer.name}}
