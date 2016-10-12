@@ -96,8 +96,8 @@ def handleGET(request):
 
             #data select need to show all possibilities, not just those in the current page
 
-            all_transactions=Transaction.objects.all()
-            total=all_transactions.count()
+            all_transactions = Transaction.objects.all()
+            total = all_transactions.count()
 
             sort = request.GET.get('sort', 'id')
             order = request.GET.get('order', 'asc')
@@ -149,8 +149,8 @@ def handleGET(request):
                 if "complete" in filters:
                     filters.update({"complete":str2bool(filters["complete"])})
 
-                transactions=all_transactions.filter(**filters).order_by(dir+sort)[offset:offset+limit]
-                total=transactions.count()
+                total=all_transactions.filter(**filters).count()
+                transactions=all_transactions.filter(**filters).order_by(dir + sort)[offset:offset + limit]
             else:
                 transactions=all_transactions.order_by(dir+sort)[offset:offset+limit]
 

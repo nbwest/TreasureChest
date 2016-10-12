@@ -2,11 +2,10 @@ Toy library Notes
 =================
 
 BUGS:
+Transaction date filter didn't come up with more than 20 results
 Check browser back on toy borrow - can you borrow twice?
-Bank Till transaction is set as credit adjustment - should be debit
 True/false weren't right for transaction table complete field
 toy history can't be sorted by date - no time recorded, add time to time+date and id column
-Transaction date filter didn't come up with more than 20 results
 control-c on backup script didn't work to cancel
 setting member inactive - still comes up in borrow and return
 
@@ -83,6 +82,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Bank Till transaction is set as credit adjustment - should be debit
 sort toy search selection modal by availability
 change "partner" to "alternate borrower"
 Check admin permissions and groups - Can't select group in user admin. user permission groups not working, needed superuser for transaction actions
