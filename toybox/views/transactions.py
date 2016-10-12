@@ -210,9 +210,9 @@ def setBanking(till_value, daily_balance, request):
 
     if value>=0:
         if daily_balance-value>=0:
-                #TODO set volunteer
+
              transaction=Transaction()
-             type=Transaction.ADJUSTMENT_CREDIT
+             type=Transaction.ADJUSTMENT_DEBIT
              transaction.create_transaction_record(request.user,None,type,-value,comment="BANK TILL",balance_change=-value)
         else:
             raise ValueError("Invalid amount - Till less than zero")
