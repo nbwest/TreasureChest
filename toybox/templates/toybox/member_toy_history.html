@@ -28,6 +28,7 @@
 
             <thead>
                 <tr>
+                    <th data-field="id"  data-sortable="true" data-visible="false" data-filter-control="input">ID</th>
                     <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
                     <th data-field="toyCode"  data-sortable="true" data-filter-control="input">Toy ID</th>
                     <th data-field="toyName"  data-sortable="true" data-filter-control="input">Toy Name</th>
@@ -43,6 +44,7 @@
 
             {% for event in member_toy_history %}
               <tr>
+                  <td>{{event.id}}</td>
                     <td>
                         <span name='{{event.date_time|date:"Y/m/d H:i"}}'></span>
                         {{event.date_time|date:"d/m/Y H:i"}}

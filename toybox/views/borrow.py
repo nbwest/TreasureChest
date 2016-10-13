@@ -2,7 +2,7 @@ from django.shortcuts import render
 from shared import *
 from django.db.models import *
 from django.core.validators import *
-from django.shortcuts import redirect
+from datetime import datetime
 
 import decimal
 from django.contrib.auth.decorators import login_required
@@ -238,8 +238,14 @@ def handle_payment_form(request, member_id):
                                 loan_duration=repair_loan_duration
 
                         # print(toy)
-                        borrow_date=payment_form.cleaned_data['borrow_date']
-                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction, borrow_date)
+                        borrow_datetime_from_form=payment_form.cleaned_data['borrow_date']
+
+                        if borrow_datetime_from_form==thisDateTime().date():
+                            borrow_datetime = thisDateTime()
+                        else:
+                            borrow_datetime = datetime(borrow_datetime_from_form.year,borrow_datetime_from_form.month,borrow_datetime_from_form.day,0,0,0)
+
+                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction, borrow_datetime)
                         remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
                         remove_toys_temp.delete()
 

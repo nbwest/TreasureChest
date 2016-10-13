@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from shared import *
 from django.core.validators import *
-from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 @login_required
 def handle_returns(request,member_id):
@@ -40,8 +40,8 @@ def returns(request, member_id=None):
         toyList=context["toy_list"]
 
 
-    return_date=thisDateTime().date()
-    context.update({"return_date":return_date,"todays_date":return_date})
+    return_datetime=thisDateTime()
+    context.update({"return_date":return_datetime.date(),"todays_date":return_datetime.date()})
 
     if (request.method == "POST"):
         returns_form = ReturnsForm(request.POST,toyList=toyList)
@@ -49,12 +49,15 @@ def returns(request, member_id=None):
         if returns_form.is_valid():
 
             past_return_date=returns_form.cleaned_data['return_date']
-            todays_date=thisDateTime().date()
 
-            if past_return_date != todays_date and 'Done' not in request.POST:
-                return_date=past_return_date
+
+            if past_return_date != return_datetime.date():
+                return_datetime = datetime(past_return_date.year, past_return_date.month, past_return_date.day, 0, 0, 0)
+
+            if 'Done' not in request.POST:
                 context.update({"return_date":past_return_date})
             else:
+
                 for toy in toyList:
                     # print(returns_form.cleaned_data['issue_type_'+toy.code])
                     # print(returns_form.cleaned_data['issue_comment_'+toy.code])
@@ -68,7 +71,7 @@ def returns(request, member_id=None):
                     if 'returned_checkbox_'+str(toy.id) in returns_form.cleaned_data:
                         if returns_form.cleaned_data['returned_checkbox_'+str(toy.id)]:
                             # return_date=returns_form.cleaned_data['return_date']
-                            toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user,return_date)
+                            toy.return_toy(returns_form.cleaned_data['issue_type_'+str(toy.id)],returns_form.cleaned_data['issue_comment_'+str(toy.id)],request.user,return_datetime)
 
                         # toy.return_toy()
 
@@ -122,7 +125,7 @@ def returns(request, member_id=None):
     if toyList!=None:
         for toy in toyList:
             weeks_over=toy.weeks_overdue()
-            days_over=(return_date-toy.due_date).days
+            days_over=(return_datetime.date()-toy.due_date).days
 
             if days_over>6:
 
@@ -135,7 +138,7 @@ def returns(request, member_id=None):
                 toy.fine=0
 
 
-    returns_form = ReturnsForm(toyList=toyList,initial={'return_date':return_date})
+    returns_form = ReturnsForm(toyList=toyList,initial={'return_date':return_datetime.date()})
 
     context.update({"returns_form":returns_form})
     #print(context)

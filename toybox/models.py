@@ -417,9 +417,9 @@ class Toy(models.Model):
 
     admin_image.allow_tags = True
 
-    def borrow_toy(self, member, duration, user, loaned_for_repair, transaction, borrow_date):
+    def borrow_toy(self, member, duration, user, loaned_for_repair, transaction, borrow_datetime):
         self.member_loaned = member
-        self.borrow_date = borrow_date
+        self.borrow_date = borrow_datetime.date()
 
         if loaned_for_repair:
             self.state=self.BEING_REPAIRED
@@ -430,7 +430,7 @@ class Toy(models.Model):
         self.save()
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self,user,borrow_date, transaction)
+        toy_history.record_toy_event(self,user,borrow_datetime, transaction)
 
 
     def issue_type_to_state(self, issue_type):
@@ -452,7 +452,7 @@ class Toy(models.Model):
             
         return state    
 
-    def return_toy(self, issue, comment, user, return_date):
+    def return_toy(self, issue, comment, user, return_datetime):
 
         self.issue_type = int(issue)
 
@@ -461,12 +461,12 @@ class Toy(models.Model):
         self.issue_comment = comment
 
         toy_history=ToyHistory()
-        toy_history.record_toy_event(self,user, return_date)
+        toy_history.record_toy_event(self,user, return_datetime)
 
         self.member_loaned = None
-        time_borrowed = return_date - self.borrow_date
+        time_borrowed = return_datetime.date() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
-        self.last_check = return_date
+        self.last_check = return_datetime
 
         self.save()
 
