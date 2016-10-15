@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 import ast
+from django.db.models import Sum
 
 
 def str2bool(v):
@@ -18,6 +19,7 @@ def transactions(request):
 
     context = {"title":"Transactions"}
     context.update(base_data(request))
+
     context.update(handlePOST(context,request))
 
     GETresult=handleGET(request)
@@ -28,55 +30,94 @@ def transactions(request):
 
 def handlePOST(context, request):
 
-    form=None
-
-
-
     user = User.objects.get(username=request.user.username)
-    # perm=user.user_permissions.all()
-    #
-    # for p in perm:
-    #     print p,",", p.codename,",", p.name
 
     if user.has_perm("toybox.transaction_actions"):
-        if (request.method == "POST"):
-                form=TransactionForm(request.POST)
-                if form.is_valid():
+         context.update(handleTransactionActionForm(request, context['daily_balance']))
 
-                    if "button_set_till" in request.POST:
-                        if "new_till_value" in form.cleaned_data:
-                            try:
-                                setTill(form.cleaned_data['new_till_value'],context['daily_balance'],request)
-                            except ValueError as e:
-                                form.add_error("new_till_value", e.message)
+    context.update(handleTotalsForm(request))
+
+    return context
+
+def handleTransactionActionForm(request, till):
+    context={}
+    form=None
+    if (request.method == "POST"):
+        form = TransactionActionForm(request.POST)
+        if form.is_valid():
+
+            if "button_set_till" in request.POST:
+                if "new_till_value" in form.cleaned_data:
+                    try:
+                        setTill(form.cleaned_data['new_till_value'], till, request)
+                    except ValueError as e:
+                        form.add_error("new_till_value", e.message)
+
+            if "button_bank_amount" in request.POST:
+                if "bank_value" in form.cleaned_data:
+                    try:
+                        setBanking(form.cleaned_data['bank_value'], till, request)
+                    except ValueError as e:
+                        form.add_error("bank_value", e.message)
+
+            if "button_bank_all" in request.POST:
+                transaction = Transaction()
+                transaction.create_transaction_record(request.user, None, Transaction.ADJUSTMENT_DEBIT,
+                                                      -till, comment="BANK ALL TILL",
+                                                      balance_change=-till)
+
+            # call to update current balance after transactions
+            context.update({"transaction_form": form})
+            context.update(base_data(request))
 
 
-
-                    if "button_bank_amount" in request.POST:
-                        if "bank_value" in form.cleaned_data:
-                            try:
-                                setBanking(form.cleaned_data['bank_value'],context['daily_balance'],request)
-                            except ValueError as e:
-                                form.add_error("bank_value", e.message)
-
-
-
-                    if "button_bank_all" in request.POST:
-                        transaction=Transaction()
-                        transaction.create_transaction_record(request.user,None,Transaction.ADJUSTMENT_DEBIT,-context['daily_balance'],comment="BANK ALL TILL",balance_change=-context['daily_balance'])
-
-                    #call to update current balance after transactions
-                    context.update(base_data(request))
-
-
-        if not form or len(form.errors)==0:
-             form=TransactionForm(daily_balance=context['daily_balance'])
-
-        if user.has_perm("toybox.transaction_actions"):
-            context.update({"transaction_form":form})
+    if not form or len(form.errors) == 0:
+        context.update({"transaction_form": TransactionActionForm(daily_balance=till)})
 
 
     return context
+
+
+def handleTotalsForm(request):
+    context = {}
+    form=None
+    if request.method == "POST" and "totals_date_submit" in request.POST:
+        form = TransactionTotalsForm(request.POST)
+        if form.is_valid():
+            if "query_date" in request.POST:
+
+                d = datetime.datetime.strptime(request.POST["query_date"], "%d/%m/%Y").date()
+                tr=Transaction.objects.filter(date_time__startswith=d)
+
+                results={}
+                if tr.count()!=0:
+                    till_end=tr.last().balance
+                    till_start=tr.first().balance
+
+                    context.update({"total_takings":till_end-till_start})
+                    context.update({"till_start": till_start})
+                    context.update({"till_end": till_end})
+
+
+
+                    for choice in Transaction.TRANSACTION_TYPE_CHOICES:
+
+                       if choice[0] not in [Transaction.CHANGE,Transaction.PAYMENT]:
+                           total=tr.filter(transaction_type=choice[0]).aggregate(Sum('amount'))["amount__sum"]
+                           if total:
+                               results.update({choice[1]:total})
+
+                context.update({"totals":results, "query_date":d})
+
+        context.update({"totals_form":form})
+    else:
+        context.update({"totals_form": TransactionTotalsForm()})
+
+
+
+    return context
+
+
 
 def handleGET(request):
 
@@ -114,7 +155,7 @@ def handleGET(request):
             order = request.GET.get('order', 'asc')
             limit = int(request.GET.get('limit',total))
             offset = int(request.GET.get('offset',0))
-            filters = request.GET.get('filter',None)
+            col_filters = request.GET.get('filter',None)
 
 
             if order=="desc":
@@ -127,41 +168,41 @@ def handleGET(request):
             member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
 
 
-            if filters:
-                filters=ast.literal_eval(filters)
-                if "transaction_type" in filters:
+            if col_filters:
+                col_filters=ast.literal_eval(col_filters)
+                if "transaction_type" in col_filters:
                     for choice in Transaction.TRANSACTION_TYPE_CHOICES:
-                        if filters["transaction_type"]==choice[1]:
-                            filters.update({"transaction_type":choice[0]})
+                        if col_filters["transaction_type"]==choice[1]:
+                            col_filters.update({"transaction_type":choice[0]})
 
 
 
-                if "member_id" in filters:
-                     filters.update({"member__name__icontains":filters["member_id"]})
-                     filters.pop("member_id")
+                if "member_id" in col_filters:
+                     col_filters.update({"member__name__icontains":col_filters["member_id"]})
+                     col_filters.pop("member_id")
 
-                if "volunteer_reporting" in filters:
-                     filters.update({"volunteer_reporting__icontains":filters["volunteer_reporting"]})
-                     filters.pop("volunteer_reporting")
+                if "volunteer_reporting" in col_filters:
+                     col_filters.update({"volunteer_reporting__icontains":col_filters["volunteer_reporting"]})
+                     col_filters.pop("volunteer_reporting")
 
-                if "comment" in filters:
-                     filters.update({"comment__icontains":filters["comment"]})
-                     filters.pop("comment")
+                if "comment" in col_filters:
+                     col_filters.update({"comment__icontains":col_filters["comment"]})
+                     col_filters.pop("comment")
 
-                if "date_time" in filters:
-                    dt=datetime.datetime.strptime( filters["date_time"], "%d/%m/%y")# %H:%M" )
-                    filters.update({"date_time__startswith":dt.date})
-                    filters.pop("date_time")
+                if "date_time" in col_filters:
+                    dt=datetime.datetime.strptime( col_filters["date_time"], "%d/%m/%y")# %H:%M" )
+                    col_filters.update({"date_time__startswith":dt.date})
+                    col_filters.pop("date_time")
 
-                if "id" in filters:
-                    filters.update({"id__contains":filters["id"]})
-                    filters.pop("id")
+                if "id" in col_filters:
+                    col_filters.update({"id__contains":col_filters["id"]})
+                    col_filters.pop("id")
 
-                if "complete" in filters:
-                    filters.update({"complete":str2bool(filters["complete"])})
+                if "complete" in col_filters:
+                    col_filters.update({"complete":str2bool(col_filters["complete"])})
 
-                total=all_transactions.filter(**filters).count()
-                transactions=all_transactions.filter(**filters).order_by(dir + sort)[offset:offset + limit]
+                total=all_transactions.filter(**col_filters).count()
+                transactions=all_transactions.filter(**col_filters).order_by(dir + sort)[offset:offset + limit]
             else:
                 transactions=all_transactions.order_by(dir+sort)[offset:offset+limit]
 
@@ -188,9 +229,9 @@ def handleGET(request):
 
                     row.update({"toys":toys})
 
-            result={"total":total,"rows":rows}
+            context={"total":total,"rows":rows}
 
-            return JsonResponse(result)
+            return JsonResponse(context)
     else:
         return None
 
@@ -264,13 +305,13 @@ def setTill(till_value, daily_balance, request):
 
 
 
-class TransactionForm(forms.Form):
+class TransactionActionForm(forms.Form):
 
     balance=0.0
 
     def __init__(self, *args, **kwargs):
             self.balance=kwargs.pop("daily_balance", 0)
-            super(TransactionForm, self).__init__(*args, **kwargs)
+            super(TransactionActionForm, self).__init__(*args, **kwargs)
             numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 
             self.fields['bank_value']= forms.CharField(required=False, label="Remove from Till $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'button_bank_amount':'Bank Amount','button_bank_all':'Bank '+'${:,.2f}'.format(self.balance) }))
@@ -280,3 +321,8 @@ class TransactionForm(forms.Form):
     new_till_value = forms.CharField()
     bank_value = forms.CharField()
 
+
+
+
+class TransactionTotalsForm(forms.Form):
+    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date to display totals for'}))

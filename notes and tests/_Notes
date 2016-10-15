@@ -24,19 +24,18 @@ Check admin for fields that should be readonly and permissions
 
 
 TASKS:
-ability to set member as inactive in member page
-add images to toy list
+
 Add comment text field for Till adjust on transaction page
 Add new section in transaction page to give totals of all the types returned for a date. Also include unpaid, grand total, start and end till
-
 [Started] Volunteers don't pay on their shift. Add shift table. On login include shift volunteer names. Allow Link to transaction and toy history table for that date
 [Started] Popups for toy page: toy details, toy history. member page:edit member details, borrow history
 Server side pagination of tables: toys, members
 Allow toy comment edit in toy summary
-Member bond Receipt reference number required as field?
+Member bond Receipt reference number required as field
 Test for unique member name when adding/updating
 Include member full details in summary - make a drop down.
-Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions for fine
+Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
+add images to toy list
 
 Dealing with low income earner
 Comment when toy is retired

@@ -13,7 +13,7 @@
 
          {%if transaction_form %}
             <div class="panel-heading">Actions</div>
-         {%endif%}
+
 
          {% for field in transaction_form%}
               <br>
@@ -28,10 +28,7 @@
                             {% endif %}
                         {% endfor %}
                     </span>
-
-
                 </div>
-
 
                  <ul  style="list-style-type:none;list-style:none;padding-left:0;">
                 {% for error in field.errors  %}
@@ -39,10 +36,56 @@
                 {% endfor %}
                 </ul>
             {% endfor %}
+         {%endif%}
      </div>
 
     <div class="row col-xs-12" style=" min-height: 20px;"  >
     </div>
+
+    {% if totals_form %}
+    <div class="row panel-default col-xs-12 col-sm-11 ">
+
+            <div class="panel-heading">Totals</div>
+            <br>
+            <div class="row panel-default col-xs-6 ">
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="label_{{totals_form.query_date.auto_id}}">{{totals_form.query_date.label_tag|striptags}}</span>
+                    {% render_field totals_form.query_date class+="form-control" id="query_date"%}
+                    <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit" name="totals_date_submit">Submit</button>
+                    </span>
+                </div>
+
+                <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                {% for error in totals_form.query_date.errors  %}
+                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                {% endfor %}
+                </ul>
+
+                {%if not totals and query_date %}
+                    <label class="label label-danger">No results</label>
+                {%endif%}
+
+                <br>
+
+                {%if totals %}
+                <ul  class="list-group" >
+
+                    {% for key, value in totals.items  %}
+                        <li class="list-group-item">{{key}} <span class="badge">${{value|floatformat:2}}</span></li>
+                    {% endfor %}
+                    <li class="list-group-item"></li>
+                     <li class="list-group-item">Till Start<span class="badge">${{till_start|floatformat:2}}</span></li>
+                     <li class="list-group-item">Till End<span class="badge">${{till_end|floatformat:2}}</span></li>
+                    <li class="list-group-item">Total Takings<span class="badge">${{total_takings|floatformat:2}}</span></li>
+                </ul>
+                {%endif%}
+
+            </div>
+
+    </div>
+    {%endif%}
 
 </form>
 
@@ -97,6 +140,18 @@
 </span>
 
 <script>
+
+$(function () {
+        $('#query_date').datepicker({
+        format: "dd/mm/yyyy",
+        endDate: "{{totals_form.query_date.value|date:"d/m/Y"}}",
+        todayBtn: true,
+        todayHighlight: true,
+        autoclose:true,
+        clearBtn:true
+
+    });
+});
 
 
 $(document).ready(function()
