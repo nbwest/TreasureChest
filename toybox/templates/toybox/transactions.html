@@ -6,7 +6,7 @@
 <h1  class="page-header">{{title}}</h1>
 
 
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' onsubmit="return validate(this);">
+<form id="transaction_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
 
      <div class="row panel-default col-xs-12 col-sm-11 ">
@@ -17,6 +17,10 @@
 
          {% for field in transaction_form%}
               <br>
+                {% if field.field.widget.attrs.hr %}
+                    <hr>
+                 {%endif%}
+
                 <div class=" input-group" >
                     <span class="input-group-addon">{{field.label_tag|striptags}}</span>
                     {% render_field field class+="form-control" id=field.auto_id %}
@@ -24,11 +28,12 @@
                     <span class="input-group-btn">
                         {% for key, value in field.field.widget.attrs.items %}
                             {% if "button" in key %}
-                                <button type="submit" class="btn btn-default" value="{{key}}" name="{{key}}" data-toggle="modal" >{{value}}</button>
+                                <button type="submit" class="btn btn-default" value="{{key}}" name="{{key}}"  >{{value}}</button>
                             {% endif %}
                         {% endfor %}
                     </span>
                 </div>
+
 
                  <ul  style="list-style-type:none;list-style:none;padding-left:0;">
                 {% for error in field.errors  %}
@@ -47,14 +52,13 @@
 
             <div class="panel-heading">Totals</div>
             <br>
-            <div class="row panel-default col-xs-6 ">
+            <div class="row panel-default col-xs-12 col-sm-6 ">
+
+
 
                 <div class="input-group">
                     <span class="input-group-addon" id="label_{{totals_form.query_date.auto_id}}">{{totals_form.query_date.label_tag|striptags}}</span>
                     {% render_field totals_form.query_date class+="form-control" id="query_date"%}
-                    <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit" name="totals_date_submit">Submit</button>
-                    </span>
                 </div>
 
                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
@@ -65,6 +69,7 @@
 
                 {%if not totals and query_date %}
                     <label class="label label-danger">No results</label>
+                    <br>
                 {%endif%}
 
                 <br>
@@ -156,6 +161,15 @@ $(function () {
 
 $(document).ready(function()
 {
+
+    $('#query_date').datepicker()
+        .on
+        ('changeDate',function(event)
+            {
+                $( "#transaction_form" ).submit();
+            }
+        );
+
     var $table = $('#transaction_table');
     $table.bootstrapTable('refreshOptions',
     {

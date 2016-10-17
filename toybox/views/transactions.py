@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 import ast
 from django.db.models import Sum
+import pytz
 
 
 def str2bool(v):
@@ -48,8 +49,13 @@ def handleTransactionActionForm(request, till):
 
             if "button_set_till" in request.POST:
                 if "new_till_value" in form.cleaned_data:
+                    if "new_till_value_comment" in form.cleaned_data:
+                        comment=form.cleaned_data["new_till_value_comment"]
+                    else:
+                        comment=None
+
                     try:
-                        setTill(form.cleaned_data['new_till_value'], till, request)
+                        setTill(form.cleaned_data['new_till_value'], till, request,comment)
                     except ValueError as e:
                         form.add_error("new_till_value", e.message)
 
@@ -77,17 +83,27 @@ def handleTransactionActionForm(request, till):
 
     return context
 
+def date_string_to_utc(str_dt, fmt):
+    local = datetime.datetime.strptime(str_dt, fmt)
+    timezoneLocal = pytz.timezone(settings.TIME_ZONE)
+    local_dt = timezoneLocal.localize(local, is_dst=None)
+    utc_dt = local_dt.astimezone(pytz.utc)
+
+    return utc_dt
 
 def handleTotalsForm(request):
     context = {}
     form=None
-    if request.method == "POST" and "totals_date_submit" in request.POST:
+    if request.method == "POST" and "query_date" in request.POST and request.POST["query_date"]:
         form = TransactionTotalsForm(request.POST)
         if form.is_valid():
-            if "query_date" in request.POST:
+            # if "button_date_submit" in request.POST:
 
                 d = datetime.datetime.strptime(request.POST["query_date"], "%d/%m/%Y").date()
-                tr=Transaction.objects.filter(date_time__startswith=d)
+
+                # utc_dt = date_string_to_utc(request.POST["query_date"], "%d/%m/%Y")
+
+                tr=Transaction.objects.filter(date_time__startswith=d, complete=True)
 
                 results={}
                 if tr.count()!=0:
@@ -102,7 +118,7 @@ def handleTotalsForm(request):
 
                     for choice in Transaction.TRANSACTION_TYPE_CHOICES:
 
-                       if choice[0] not in [Transaction.CHANGE,Transaction.PAYMENT]:
+                       # if choice[0] not in [Transaction.CHANGE]:
                            total=tr.filter(transaction_type=choice[0]).aggregate(Sum('amount'))["amount__sum"]
                            if total:
                                results.update({choice[1]:total})
@@ -190,8 +206,8 @@ def handleGET(request):
                      col_filters.pop("comment")
 
                 if "date_time" in col_filters:
-                    dt=datetime.datetime.strptime( col_filters["date_time"], "%d/%m/%y")# %H:%M" )
-                    col_filters.update({"date_time__startswith":dt.date})
+                    dt = datetime.datetime.strptime(col_filters["date_time"], "%d/%m/%y")
+                    col_filters.update({"date_time__startswith": dt.date()})
                     col_filters.pop("date_time")
 
                 if "id" in col_filters:
@@ -215,7 +231,8 @@ def handleGET(request):
                 if row["member_id"]:
                     row["member_id"]=member_names[row["member_id"]]
 
-                row["date_time"]=row["date_time"].strftime('%d/%m/%y %H:%M')
+                dt=timezone.localtime(row["date_time"])
+                row["date_time"]=dt.strftime('%d/%m/%y %H:%M')
 
                 row["complete"]=str(row["complete"])
 
@@ -274,7 +291,7 @@ def setBanking(till_value, daily_balance, request):
 
 
 
-def setTill(till_value, daily_balance, request):
+def setTill(till_value, daily_balance, request,comment):
 
 
     try:
@@ -299,7 +316,7 @@ def setTill(till_value, daily_balance, request):
          type=Transaction.ADJUSTMENT_DEBIT
          adj=-(current_till-value)
 
-    transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ",balance_change=adj)
+    transaction.create_transaction_record(request.user,None,type,adj,comment="TILL ADJ "+comment,balance_change=adj)
 
 
 
@@ -314,15 +331,16 @@ class TransactionActionForm(forms.Form):
             super(TransactionActionForm, self).__init__(*args, **kwargs)
             numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 
-            self.fields['bank_value']= forms.CharField(required=False, label="Remove from Till $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'button_bank_amount':'Bank Amount','button_bank_all':'Bank '+'${:,.2f}'.format(self.balance) }))
+            self.fields['bank_value']= forms.CharField(required=False, label="Remove from Till $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'true','button_bank_amount':'Bank Amount','button_bank_all':'Bank '+'${:,.2f}'.format(self.balance) }))
             self.fields['new_till_value']= forms.CharField(required=False, label="New Till value $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={ 'button_set_till':'Set Till'}))
 
 
     new_till_value = forms.CharField()
+    new_till_value_comment = forms.CharField(required=False, label="New Till value comment", max_length=200)
     bank_value = forms.CharField()
 
 
 
 
 class TransactionTotalsForm(forms.Form):
-    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date to display totals for'}))
+    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'button_date_submit':'Get totals','readonly':'readonly','title':'Date to display totals for'}))
