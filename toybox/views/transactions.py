@@ -291,7 +291,7 @@ def setBanking(till_value, daily_balance, request):
 
 
 
-def setTill(till_value, daily_balance, request,comment):
+def setTill(till_value, daily_balance, request,comment=""):
 
 
     try:
