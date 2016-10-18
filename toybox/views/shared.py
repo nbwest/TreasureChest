@@ -108,7 +108,7 @@ def base_data(request):
             if "till_set" in request.POST:
                 from toybox.views.transactions import setTill
                 try:
-                    setTill(request.POST['till_value'],context['daily_balance'],request)
+                    setTill(request.POST['till_value'],context['daily_balance'],request,"Logon, Logoff")
                 except ValueError as e:
                     context.update({"till_value_error":e.message})
                     return context
