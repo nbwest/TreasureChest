@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 import ast
 from django.db.models import Sum
-import pytz
+#import pytz
 
 
 def str2bool(v):
@@ -83,13 +83,13 @@ def handleTransactionActionForm(request, till):
 
     return context
 
-def date_string_to_utc(str_dt, fmt):
-    local = datetime.datetime.strptime(str_dt, fmt)
-    timezoneLocal = pytz.timezone(settings.TIME_ZONE)
-    local_dt = timezoneLocal.localize(local, is_dst=None)
-    utc_dt = local_dt.astimezone(pytz.utc)
-
-    return utc_dt
+# def date_string_to_utc(str_dt, fmt):
+#     local = datetime.datetime.strptime(str_dt, fmt)
+#     timezoneLocal = pytz.timezone(settings.TIME_ZONE)
+#     local_dt = timezoneLocal.localize(local, is_dst=None)
+#     utc_dt = local_dt.astimezone(pytz.utc)
+#
+#     return utc_dt
 
 def handleTotalsForm(request):
     context = {}
