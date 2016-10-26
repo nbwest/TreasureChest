@@ -6,7 +6,7 @@ from shared import get_config
 from django.template.loader import render_to_string
 from django.shortcuts import HttpResponse
 
-def handle_member_details(request, member_id):
+def handle_member_edit(request, member_id):
     context = {"title":"Members"}
     form = None
     # context.update(handle_member_search(request))
@@ -22,7 +22,7 @@ def handle_member_details(request, member_id):
             context.update({"member_detail_submit_button_label": "Add"})
             form = MemberDetailsForm(label_suffix="")
 
-        context.update({'member_details_form': form})
+        context.update({'member_edit_form': form})
 
     # add or update member details
     if (request.method == "POST"):
@@ -34,7 +34,7 @@ def handle_member_details(request, member_id):
         else:
             context.update({"failure":"true"})
 
-        context.update({'member_details_form': form})
+        context.update({'member_edit_form': form})
 
 
 
@@ -135,22 +135,16 @@ class MemberDetailsForm(forms.Form):
             kwargs.update({"initial":self.form_initial(member_id)})
         super(MemberDetailsForm, self).__init__(*args, **kwargs)
 
-def render_member_details(request):
+def render_member_edit(request):
 
     rendered=None
     context={}
 
     if request.method=="GET":
-         if "member_details_id" in request.GET:
-            member_id=request.GET["member_details_id"]
-            # member= Member.objects.get(id=member_id)
-            # context.update({"member_details":member})
-
-            # broken here
-
-
-            context.update(handle_member_details(request,member_id))
-            rendered=render_to_string('toybox/member_details.html', context)
+         if "member_edit_id" in request.GET:
+            member_id=request.GET["member_edit_id"]
+            context.update(handle_member_edit(request,member_id))
+            rendered=render_to_string('toybox/member_edit.html', context)
 
     return rendered
 
@@ -158,9 +152,8 @@ def render_member_details(request):
 def render_ajax_request(request):
 
     if request.method=="GET" and request.is_ajax():
-
-         if "member_details_id" in request.GET:
-             rendered=render_member_details(request)
+         if "member_edit_id" in request.GET:
+             rendered=render_member_edit(request)
 
          return HttpResponse(rendered)
 

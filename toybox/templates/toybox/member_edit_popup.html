@@ -1,8 +1,8 @@
- <span id="member_details_popup">
+ <span id="member_edit_popup">
 
 
 
-  <div class="modal" id="memberDetailsPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
+  <div class="modal" id="memberEditPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
 
         <div class="modal-dialog" style="width: 800px;" >
             <div class="modal-content">
@@ -21,7 +21,7 @@
 
                         <div class="row">
                             <div class="panel-fluid panel-default col-xs-12">
-                                {% include "toybox/member_details.html" %}
+                                {% include "toybox/member_edit.html" with cat="dog" %}
                             </div>
                         </div>
 
@@ -50,7 +50,7 @@
 
             $(window).load(function()
             {
-                $('#memberDetailsPopupModal').modal('hide');
+                $('#memberEditPopupModal').modal('hide');
             });
 
             $('#update').click(function(e)
@@ -145,11 +145,11 @@
 
 
                 type: "GET",
-                url: "{{ request.get_full_path }}"+"?member_details_id="+element.value,
+                url: "{{ request.get_full_path }}"+"?member_edit_id="+element.value,
                 success: function(data)
                 {
-                    document.getElementById("member_details").innerHTML=data;
-                    $('#memberDetailsPopupModal').modal('show');
+                    document.getElementById("member_edit").innerHTML=data;
+                    $('#memberEditPopupModal').modal('show');
                 }
             });
          }

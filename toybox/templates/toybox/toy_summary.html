@@ -6,8 +6,6 @@
 
             <div class="panel-fluid panel-default col-xs-12 col-sm-6 " style="text-align: left; vertical-align: middle; ">
 
-
-
                 <div class="panel-default">
                 <div class="panel-heading">Toy Details  ID: {{ toy.code }}</div>
                   <table class="table table-condensed">
@@ -48,9 +46,7 @@
                       <tr>
                         <td>Borrowed By</td>
                         <td>
-                            <a {%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
                                 {{toy.member_loaned.name}}
-                            </a>
                         </td>
                       </tr>
 
@@ -123,10 +119,6 @@
                         <td>Purchase Date</td>
                          <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
                       </tr>
-
-
-
-
 
                     </tbody>
                   </table>

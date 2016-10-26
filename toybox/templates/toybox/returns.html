@@ -19,14 +19,16 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 {%endif%}
 
 
- {% include "toybox/change_fee.html" %}
+{% include "toybox/change_fee.html" %}
+{% include "toybox/member_edit_popup.html" %}
+
 
 <h1 class="page-header">{{title}}</h1>
 
 <div class="row">
     <div class="col-xs-12 col-sm-10 ">
         {% include "toybox/member_search.html" with return_page="/toybox/returns" %}
-        {% include "toybox/member_search_select.html" with return_page="/toybox/returns"%}
+        {% include "toybox/member_search_select.html" with return_page="/toybox/returns" test="test2"%}
     </div>
 </div>
 
@@ -49,9 +51,6 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             <div class="input-group">
                 <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
                 {% render_field returns_form.return_date class+="form-control" id="return_date"%}
-                <!--<span class="input-group-btn">-->
-                       <!--<button class="btn btn-default" id="btn_refresh_fees" name="btn_refresh_fees" type="submit" >Refresh fees</button>-->
-                   <!--</span>-->
 
             </div>
     </div>
@@ -108,7 +107,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     </td>
 
                     <td>
-                        <a href="{% url 'toybox:toys' toy_id=toy.id %}">{{ toy.code }}</a>
+                        {{ toy.code }}
                         <span class="hidden" id="issue_fines_{{toy.id}}" issue_fine_major="{{toy.issue_fine_major}}" issue_fine_minor="{{toy.issue_fine_minor}}" issue_fine_allocation="{{toy.issue_fine_allocation}}"></span>
 
                     </td>
@@ -154,10 +153,6 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         $0.00
                     </td>
 
-
-
-
-
                     <td>
                         {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();"%}
 
@@ -179,9 +174,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                         </td>
                     </tr>
 
-
-
-                {% endfor %}
+               {% endfor %}
             </table>
         </div>
 

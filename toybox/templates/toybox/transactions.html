@@ -3,23 +3,28 @@
 {% block content %}
 
 {% include "toybox/toy_summary_popup.html" %}
+{% include "toybox/member_summary_popup.html"%}
 
 <span id="transactions">
 
 <h1  class="page-header">{{title}}</h1>
 
 
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' onsubmit="return validate(this);">
+<form id="transaction_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
 
      <div class="row panel-default col-xs-12 col-sm-11 ">
 
          {%if transaction_form %}
             <div class="panel-heading">Actions</div>
-         {%endif%}
+
 
          {% for field in transaction_form%}
               <br>
+                {% if field.field.widget.attrs.hr %}
+                    <hr>
+                 {%endif%}
+
                 <div class=" input-group" >
                     <span class="input-group-addon">{{field.label_tag|striptags}}</span>
                     {% render_field field class+="form-control" id=field.auto_id %}
@@ -27,12 +32,10 @@
                     <span class="input-group-btn">
                         {% for key, value in field.field.widget.attrs.items %}
                             {% if "button" in key %}
-                                <button type="submit" class="btn btn-default" value="{{key}}" name="{{key}}" data-toggle="modal" >{{value}}</button>
+                                <button type="submit" class="btn btn-default" value="{{key}}" name="{{key}}"  >{{value}}</button>
                             {% endif %}
                         {% endfor %}
                     </span>
-
-
                 </div>
 
 
@@ -42,10 +45,56 @@
                 {% endfor %}
                 </ul>
             {% endfor %}
+         {%endif%}
      </div>
 
     <div class="row col-xs-12" style=" min-height: 20px;"  >
     </div>
+
+    {% if totals_form %}
+    <div class="row panel-default col-xs-12 col-sm-11 ">
+
+            <div class="panel-heading">Totals</div>
+            <br>
+            <div class="row panel-default col-xs-12 col-sm-6 ">
+
+
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="label_{{totals_form.query_date.auto_id}}">{{totals_form.query_date.label_tag|striptags}}</span>
+                    {% render_field totals_form.query_date class+="form-control" id="query_date"%}
+                </div>
+
+                <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                {% for error in totals_form.query_date.errors  %}
+                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                {% endfor %}
+                </ul>
+
+                {%if not totals and query_date %}
+                    <label class="label label-danger">No results</label>
+                    <br>
+                {%endif%}
+
+                <br>
+
+                {%if totals %}
+                <ul  class="list-group" >
+
+                    {% for key, value in totals.items  %}
+                        <li class="list-group-item">{{key}} <span class="badge">${{value|floatformat:2}}</span></li>
+                    {% endfor %}
+                    <li class="list-group-item"></li>
+                     <li class="list-group-item">Till Start<span class="badge">${{till_start|floatformat:2}}</span></li>
+                     <li class="list-group-item">Till End<span class="badge">${{till_end|floatformat:2}}</span></li>
+                    <li class="list-group-item">Total Takings<span class="badge">${{total_takings|floatformat:2}}</span></li>
+                </ul>
+                {%endif%}
+
+            </div>
+
+    </div>
+    {%endif%}
 
 </form>
 
@@ -61,7 +110,6 @@
              id="transaction_table"
              data-sort-name="id"
              data-sort-order="desc"
-             data-search="true"
              data-show-columns="true"
              data-pagination="true"
              data-page-size="20"
@@ -71,76 +119,71 @@
              data-export-types="['excel','csv']"
              data-escape="false"
              data-cookie="true"
-             data-cookie-id-table="transaction_table">
+             data-cookie-id-table="transaction_table"
+             data-url="{{ request.get_full_path }}"
+             data-pagination="true"
+             data-side-pagination="server">
+
+
              <thead>
                 <tr>
-                    <th data-field="id" data-sortable="true" data-filter-control="input">ID</th>
-                    <th data-field="date_time" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
-
-                    <th data-field="transaction_type"  data-sortable="true" data-filter-control="select">Type</th>
-                    <th data-field="member"  data-sortable="true" data-filter-control="input">Member</th>
-                    <th data-field="toys"  data-filter-control="input">Toys</th>
-                    <th data-field="volunteer"  data-sortable="true" data-filter-control="input">Volunteer</th>
+                    <th data-field="id" data-filter-control="input" data-sortable="true">ID</th>
+                    <th data-field="date_time" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                    <th data-field="transaction_type"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=transaction_type">Type</th>
+                    <th data-field="member_id"  data-sortable="true" data-filter-control="input">Member</th>
+                    <th data-field="toys" >Toys</th>
+                    <th data-field="volunteer_reporting"  data-sortable="true" data-filter-control="input">Volunteer</th>
                     <th data-field="amount" data-sortable="true"  >Amount</th>
                     <th data-field="balance" data-sortable="true">Balance</th>
-                    <th data-field="comment"  data-filter-control="select" data-sortable="true">Comment</th>
-                    <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true">Complete</th>
+                    <th data-field="comment"  data-filter-control="input" data-sortable="true">Comment</th>
+                    <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true" data-filter-data="url:{{ request.get_full_path }}?filter_data=complete">Complete</th>
                 </tr>
             </thead>
 
-            {% for transaction in transactions %}
-              <tr>
-                    <td>{{transaction.id}}</td>
 
-                    <td>
-                        <span name='{{transaction.date_time|date:"Y/m/d H:i:s"}}'></span>
-                        {{transaction.date_time|date:"d/m/Y H:i"}}
-                    </td>
-                    <td>{{transaction.get_transaction_type_display}}</td>
-
-
-                    <td>
-                        <a name="{{transaction.member}}"{%if transaction.member %} href="{% url 'toybox:members' transaction.member.id %}" {%endif%}>
-                            {{transaction.member}}
-                        </a></td>
-
-                    <td>
-                        {% for th in transaction.toyhistory.all %}
-
-                            <button title="Toy details and image" type="button" class="btn btn-link" onclick="getToy(this);" value="{{th.toy.id}}">
-                                    {{th.toy.code}}: {{th.toy.name}}<br>
-                            </button>
-
-                        {%endfor%}
-                    </td>
-                    <td>{{transaction.volunteer_reporting}}</td>
-                    <td>{{transaction.amount}}</td>
-                    <td>{{transaction.balance}}</td>
-                    <td>{{transaction.comment}}</td>
-                    <td>{{transaction.complete}}</td>
-
-
-              </tr>
-            {% endfor %}
-
-            </table>
-        </div>
+        </table>
     </div>
+</div>
 
 
 </span>
 
 <script>
 
+$(function () {
+        $('#query_date').datepicker({
+        format: "dd/mm/yyyy",
+        endDate: "{{totals_form.query_date.value|date:"d/m/Y"}}",
+        todayBtn: true,
+        todayHighlight: true,
+        autoclose:true,
+        clearBtn:true
 
-$(document).ready(function() {
-var $table = $('#transaction_table');
-$table.bootstrapTable('refreshOptions', {
-    exportOptions: {
-        onCellHtmlData: DoOnCellHtmlData
-    }
+    });
 });
+
+
+$(document).ready(function()
+{
+
+    $('#query_date').datepicker()
+        .on
+        ('changeDate',function(event)
+            {
+                $( "#transaction_form" ).submit();
+            }
+        );
+
+    var $table = $('#transaction_table');
+    $table.bootstrapTable('refreshOptions',
+    {
+        exportOptions:
+        {
+            onCellHtmlData: DoOnCellHtmlData
+        }
+    });
 });
+
 </script>
 
 

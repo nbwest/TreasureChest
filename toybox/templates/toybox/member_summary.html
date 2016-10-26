@@ -1,41 +1,80 @@
-<!--<head>-->
-    <!--<link rel="stylesheet" type="text/css" href="/static/toybox/tc.css">-->
-<!--</head>-->
 <div id="member_summary">
-{% if member %}
 
+{%if member %}
 
-    <a href="{% url 'toybox:members' member.id %}"><strong>{{ member.name }}</strong></a>
-    <p>Partner: {{ member.partner }}</p>
-    <h4>
-        <!--<p >-->
-        {% if member.is_current %}
-        <span class="label label-success label-as-badge"> Member Status: VALID</span>
+        {% if popup %}
+        <strong>{{ member.name }}</strong>
         {% else %}
-        <span class="label label-danger label-as-badge"> Member Status: NOT CURRENT</span>
-        {% endif %}
-        <!--</p>-->
-    </h4>
+        <button style="margin-left:-13px;" type="button" class="btn btn-link" title="Edit member" onclick="getMemberDetails(this);" value="{{member.id}}" ><strong>{{ member.name }}</strong></button>
+        {%endif%}
+        <p>Partner: {{ member.partner }}</p>
+        <h4>
+
+            {% if member.is_current %}
+            <span class="label label-success label-as-badge"> Member Status: VALID</span>
+            {% else %}
+            <span class="label label-danger label-as-badge"> Member Status: MEMBERSHIP DUE</span>
+            {% endif %}
+
+        </h4>
 
 
-    {% if credit_enable == "true" %}
-    <p>Balance: ${{ member.balance|floatformat:2 }}</p>
-    {%endif%}
+        {% if credit_enable == "true" %}
+        <p>Balance: ${{ member.balance|floatformat:2 }}</p>
+        {%endif%}
+
+            {% if not popup %}
+            <br>
+            <button type="button" class="btn" data-toggle="collapse" data-target="#member_accordion" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Member Details</button>
+            <br>
+            {%endif%}
 
 
-    <!--<p align="right">Phone: {{ member.phone_number1 }}</p>-->
-    <!--<p align="right">Joined: {{ member.join_date }}</p>-->
+            <div id="member_accordion" {% if not popup %}class="collapse"{%endif%}>
 
-{% else %}
-    <!--<br><br><br><br>-->
-{% endif %}
-    <!--{% if member %}-->
-        <!--<h3>{{ member.name }}</h3>-->
-    <!--{% else %}-->
-        <!--<h3><i>select member</i></h3>-->
-    <!--{% endif %}-->
-<!--Partner: {{ member.partner }}<br>-->
+                  <table class="table table-condensed">
+                    <tbody>
+                        <tr><td>Comment </td><td>{{member.comment }}</td></tr>
+                        <tr><td>Address </td><td>{{member.address }}</td></tr>
+                        <tr><td>Phone Number Primary </td><td>{{member.phone_number1 }}</td></tr>
+                        <tr><td>Phone Number Secondary </td><td>{{member.phone_number2 }}</td></tr>
+                        <tr><td>Email Address </td><td>{{member.email_address }}</td></tr>
+                        <tr><td>Type </td><td>{{member.type }}</td></tr>
+                        <tr><td>Join Date </td><td>{{member.join_date }}</td></tr>
+                        <tr><td>Membership End Date </td><td>{{member.membership_end_date }}</td></tr>
+                        <tr><td>Committee Member? </td><td>{{member.committee_member|yesno:"Yes,No" }}</td></tr>
+                        <tr><td>Volunteer? </td><td>{{member.volunteer|yesno:"Yes,No" }}</td></tr>
+                        <tr><td>Potential Volunteer? </td><td>{{member.potential_volunteer|yesno:"Yes,No" }}</td></tr>
+                        <tr><td>Volunteer Capacity - Wed? </td><td>{{member.volunteer_capacity_wed|yesno:"Yes,No" }}</td></tr>
+                        <tr><td>Volunteer Capacity - Sat? </td><td>{{member.volunteer_capacity_sat|yesno:"Yes,No" }}</td></tr>
+                        <tr><td>Bond Fee Paid </td><td>{{member.bond_fee_paid }}</td></tr>
 
-<!--Balance: ${{ member.balance }}<br>-->
+                    </tbody>
+                  </table>
+            </div>
+
+
+{%endif%}
+
+
+
+
+<script>
+function getMemberSummary(element)
+{
+    $.ajax(
+    {
+        type: "GET",
+        url: "{{ request.get_full_path }}"+"?member_id="+element.value,
+        success: function(data)
+        {
+            document.getElementById("member_summary").innerHTML=data;
+            $('#member_summary_table').bootstrapTable();
+            $('#memberSummaryPopupModal').modal('show');
+        }
+    });
+ }
+</script>
+
 
 </div>

@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 
 import decimal
 from django.contrib.auth.decorators import login_required
-
+import member_edit
 
 # work flow
 # member is searched for and once selected displays user stats
@@ -23,6 +23,17 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def borrow(request, member_id):
+
+    rendered = render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
+    rendered = member_edit.render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
+    if request.method == "POST":
+        member_edit.handle_member_edit(request, member_id)
 
     context = {"title":"Borrow Toy"}
 

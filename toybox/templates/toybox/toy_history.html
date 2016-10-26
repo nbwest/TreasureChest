@@ -49,7 +49,7 @@
                     <td>{{event.get_event_type_display}}</td>
                     <td>{{event.get_issue_type_display}}</td>
                     <td>{{event.issue_comment}}</td>
-                    <td>{% if event.member %}<a href="{% url 'toybox:members' event.member.id %}">{{event.member}}</a>{% endif %}</td>
+                    <td>{{event.member}}</td>
                     <td>{{event.volunteer_reporting}}</td>
                     <td>{{event.transaction.id}}</td>
               </tr>

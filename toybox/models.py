@@ -606,7 +606,7 @@ class Transaction(models.Model):
         self.volunteer_reporting=format_username(user)
 
         self.save()
-        print "ID        : "+str(self.id)
+        # print "ID        : "+str(self.id)
 
 
     class Meta:

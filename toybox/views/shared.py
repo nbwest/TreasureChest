@@ -176,6 +176,18 @@ def render_member_toy_history(request):
 
     return rendered
 
+def render_member_summary(request):
+    rendered = None
+    context = {"popup":"true"}
+
+    if request.method == "GET":
+        if "member_id" in request.GET:
+            member_id = request.GET["member_id"]
+            member = Member.objects.get(id=member_id)
+            context.update({"member": member})
+            rendered = render_to_string('toybox/member_summary.html', context)
+
+    return rendered
 
 
 
@@ -191,6 +203,8 @@ def render_ajax_request(request):
              rendered=render_member_toy_history(request)
          elif "toy_id" in request.GET:
              rendered=render_toy_details(request)
+         elif "member_id" in request.GET:
+             rendered=render_member_summary(request)
          else:
              return None
 
@@ -277,3 +291,5 @@ def get_config(key):
             raise NameError('Option key not found: '+key)
             return None
 
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")

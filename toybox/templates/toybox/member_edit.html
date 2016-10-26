@@ -1,6 +1,7 @@
 
 {% load widget_tweaks %}
-<span id="member_details">
+<span id="member_edit">
+    {{cat}}
     <div class="panel-heading">{{member.name}}</div>
 
 
@@ -10,7 +11,7 @@
 
 
             <div class="fieldWrapper" >
-            {% for field in member_details_form %}
+            {% for field in member_edit_form %}
                 <br>
                  {% for key, value in field.field.widget.attrs.items %}
                     {% if key == "group" %}
