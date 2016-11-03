@@ -67,7 +67,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 class MemberAdmin(admin.ModelAdmin):
     search_fields = ('name', )
-    list_display=('name','phone_number1','email_address','membership_end_date')
+    list_display=('name','phone_number1','email_address','membership_end_date','active')
     # readonly_fields = ('membership_end_date',)
 
 # User space lists

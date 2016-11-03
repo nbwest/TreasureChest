@@ -5,13 +5,13 @@
 
 <span id="member_toy_history">
     {% if member_toy_history %}
-    <div class="panel-default">
-    <div class="panel-heading">Toy History</div>
+     <div class="panel-default">
+     <div class="panel-heading">{{member.name}} Toy History</div>
      <table  data-classes="table table-condensed table-no-bordered"
              class="table table-condensed"
              data-toggle="table"
              data-filter-control="true"
-             id="toy_history_table"
+             id="member_toy_history_table"
              data-sort-name="date_time"
              data-sort-order="desc"
              data-search="true"
@@ -35,10 +35,8 @@
                     <th data-field="event_type"  data-sortable="true"  data-filter-control="select">State</th>
                     <th data-field="issue_type"  data-visible="false" data-sortable="true"  data-filter-control="select">Issue</th>
                     <th data-field="issue_comment"  data-visible="false" data-sortable="true"  data-filter-control="input">Issue Comment</th>
-
-                     <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="input">Volunteer</th>
+                    <th data-field="volunteer"  data-visible="false" data-sortable="true" data-filter-control="input">Volunteer</th>
                     <th data-field="transaction"  data-visible="false" data-sortable="true" data-filter-control="input">Transaction ID</th>
-
                 </tr>
             </thead>
 
@@ -50,9 +48,9 @@
                         {{event.date_time|date:"d/m/Y H:i"}}
                     </td>
                     <td>
-                        <a name="{{toy.code}}" href="{% url 'toybox:toys' toy_id=event.toy.id %}">
-                            {{event.toy.code}}
-                        </a>
+                        <button title="Toy details and image" type="button" class="btn btn-link" onclick="getToy(this);" value="{{event.toy.id}}">
+                                    {{event.toy.code|safe}}
+                            </button>
                     </td>
                     <td>{{event.toy.name}}</td>
                     <td>{{event.get_event_type_display}}</td>
@@ -79,4 +77,20 @@ $table.bootstrapTable('refreshOptions', {
     }
 });
 });
+
+function getMemberToyHistory(element)
+{
+    $.ajax(
+    {
+        type: "GET",
+        url: "{{ request.get_full_path }}"+"?toy_history_member_id="+element.value,
+        success: function(data)
+        {
+            document.getElementById("member_toy_history").innerHTML=data;
+            $('#member_toy_history_table').bootstrapTable();
+            $('#memberToyHistoryPopupModal').modal('show');
+        }
+    });
+ }
+
 </script>

@@ -6,11 +6,9 @@
 
 {% block content %}
 
-
-<h1  class="page-header">{{title}}</h1>
-
-
-
+{% include "toybox/toy_summary_popup.html" %}
+{% include "toybox/toy_history_popup.html" %}
+{% include "toybox/member_summary_popup.html"%}
 
 
 
@@ -18,21 +16,7 @@
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
 
-<div class="row">
-    <div class="panel-fluid panel-default col-xs-11">
-        {% if toy %}
-            <div class="panel-heading">Selected Toy</div>
-            <br>
-        {%endif%}
-        {% include "toybox/toy_summary.html" %}
-    </div>
-</div>
 
-<div class="row">
-    <div class="panel-fluid panel-default col-xs-11">
-        {% include "toybox/toy_history.html" %}
-    </div>
-</div>
 
 <div class="row">
 
@@ -55,7 +39,7 @@
                     id="toys_table"
                     data-sort-name="code"
                     data-sort-order="asc"
-                    data-search="true"
+                    data-search="false"
                     data-show-columns="true"
                     data-pagination="true"
                     data-page-size="20"
@@ -63,7 +47,9 @@
                     data-cookie="true"
                     data-cookie-id-table="toys_table"
                     data-show-pagination-switch="true"
-                    data-escape="false">
+                    data-escape="false"
+                    data-url="{{ request.get_full_path }}"
+                    data-side-pagination="server">
 
 
                     <thead>
@@ -71,154 +57,51 @@
 <!--https://github.com/wenzhixin/bootstrap-table-examples/blob/master/issues/177.html-->
                             <th data-field="checked"  data-checkbox="true" data-check-box-header="false" data-align="center" ></th>
                             <th data-field="id" data-sortable="true" data-visible="false" data-filter-control="input" >DB ID</th>
-
-                            <th data-field="code"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">ID</th>
-                            <th data-field="name"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">Name</th>
-
-                            <th data-field="state"  data-sortable="true" data-filter-control="select">State</th>
-                            <th data-field="category"  data-sortable="true" data-filter-control="select">Category</th>
+                            <th data-field="code"   data-sortable="true" data-filter-control="input">ID</th>
+                            <th data-field="image_id" data-width="200px" >Image</th>
+                            <th data-field="name"   data-sortable="true" data-filter-control="input">Name</th>
+                            <th data-field="state"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=state">State</th>
+                            <th data-field="category_id"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=category_id">Category</th>
                             <th data-field="comment" data-visible="false" data-width="300px" data-sortable="true" data-filter-control="input" >Comment</th>
                             <th data-field="parts_list" data-visible="false" data-width="300px" data-sortable="true" data-filter-control="input" >Pieces</th>
-                            <th data-field="member"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">Borrowed by</th>
-                            <th data-field="borrow_date" data-sorter="dateSorter" data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Borrow Date</th>
-                            <th data-field="due_date" data-sorter="dateSorter" data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Due Date</th>
+                            <th data-field="member_loaned_id"   data-sortable="true" data-filter-control="input">Borrowed by</th>
+                            <th data-field="borrow_date" data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Borrow Date</th>
+                            <th data-field="due_date"  data-sortable="true" data-visible="false" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Due Date</th>
                             <th data-field="borrow_counter"  data-sortable="true" >Usage<br> (Wks)</th>
-                            <th data-field="loan_fee" data-sortable="true" data-visible="false">Loan Fee</th>
-                            <th data-field="bond" data-sortable="true" data-visible="false">Bond</th>
-                            <th data-field="toy_purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
-                            <th data-field="toy_purchase_date" data-sorter="dateSorter"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Purchase<br>Date</th>
+                            <th data-field="loan_cost" data-sortable="true" data-visible="false">Loan Fee</th>
+                            <th data-field="loan_bond" data-sortable="true" data-visible="false">Bond</th>
+                            <th data-field="purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
+                            <th data-field="purchase_date"   data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Purchase<br>Date</th>
                             <th data-field="last_check"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Check</th>
-                            <th data-field="last_stock_take"  data-sorter="dateSorter" data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Stocktake</th>
-                            <th data-field="issue_type_data" data-sorter="dateSorter" data-visible="false" data-sortable="true" data-filter-control="select">Issue Type</th>
-                            <th data-field="issue_comment_data" data-visible="false" data-sortable="true" data-width="300px" >Issue Comment</th>
-                            <th data-field="issue_type" data-visible="false" data-width="200px">Issue Type Edit</th>
-                            <th data-field="issue_comment" data-visible="false" data-width="300px" >Issue Comment Edit</th>
-
+                            <th data-field="last_stock_take"   data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Stocktake</th>
+                            <th data-field="issue_type"  data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=issue_type">Issue Type</th>
+                            <th data-field="issue_comment" data-visible="false" data-sortable="true" data-width="300px" >Issue Comment</th>
+                            <th data-field="comment_edit" data-visible="false" data-width="300px" >Comment Edit</th>
+                            <th data-field="issue_type_edit" data-visible="false" data-width="200px">Issue Type Edit</th>
+                            <th data-field="issue_comment_edit" data-visible="false" data-width="300px" >Issue Comment Edit</th>
                        	</tr>
                     </thead>
-
-
-                  {% for toy in toys %}
-                  <tr>
-
-                      <td></td>
-                      <td>{{toy.id|safe}}</td>
-
-                        <td>
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.code|safe}}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{% url 'toybox:toys' toy_id=toy.id %}">
-                                {{toy.name|safe}}
-                            </a>
-                        </td>
-                        <td>{{toy.get_state_display|safe}}</td>
-                        <td>{{toy.category.name|safe}}</td>
-                        <td>{{toy.comment|safe}}</td>
-                        <td>{{toy.parts_list|safe}}</td>
-
-                        <td>
-                            <a {%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
-                                {{toy.member_loaned.name|safe}}
-                            </a>
-                        </td>
-
-                       <td>
-
-                            {{toy.borrow_date|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.due_date|date:"d/m/Y"|safe}}
-                        </td>
-
-                        <td>{{toy.borrow_counter|safe}}</td>
-
-                       <td>{{toy.loan_cost|floatformat:2|safe}}</td>
-                       <td>{{toy.loan_bond|floatformat:2|safe}}</td>
-                        <td>{{toy.purchase_cost|floatformat:2|safe}}</td>
-                       <td>
-
-                            {{toy.purchase_date|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.last_check|date:"d/m/Y"|safe}}
-                        </td>
-                        <td>
-
-                            {{toy.last_stock_take|date:"d/m/Y"|safe}}
-                        </td>
-                          <td>
-                            {{toy.get_issue_type_display|safe}}
-                        </td>
-                       <td>
-                            {{toy.issue_comment|safe}}
-                        </td>
-                        <td>
-                            {% form_field_concat_id toy_issue_form "issue_type_" toy.id class="form-control" onchange="this.name='issue_type_^suffix^';"%}
-                        </td>
-                        <td>
-                            {% form_field_concat_id toy_issue_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" oninput="this.name='issue_comment_^suffix^';"%}
-                        </td>
-
-
-                    </tr>
-
-
-                  {% endfor %}
             </table>
         </span>
       </div>
     </div>
 </form>
 
-
-
-
-
-
-
 <script>
 
-
-$(document).ready(function() {
-var $table = $('#toys_table');
-$table.bootstrapTable('refreshOptions', {
-    exportOptions: {
-        onCellHtmlData: DoOnCellHtmlData
-    }
-});
-});
-
-function parseDate(input)
+$(document).ready(function()
 {
-  var parts = input.split('/');
-  return new Date(parts[2], parts[1]-1, parts[0]);
-}
+    var $table = $('#toys_table');
+    $table.bootstrapTable('refreshOptions',
+    {
+        exportOptions:
+        {
+            onCellHtmlData: DoOnCellHtmlData
+        }
+    });
+});
 
- function dateSorter(a, b)
- {
-        dateA=parseDate(a);
-        dateB=parseDate(b);
 
-        if (dateA > dateB) return 1;
-        if (dateA < dateB) return -1;
-        return 0;
- }
-
- function aTagSorter(a,b)
- {
-    var textA = $(a).text();
-    var textB = $(b).text();
-
-    if (textA > textB) return 1;
-    if (textA < textB) return -1;
-    return 0;
-
- }
 
 </script>
 

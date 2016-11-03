@@ -1,0 +1,47 @@
+ <span id="member_toy_history_popup">
+
+
+
+  <div class="modal" id="memberToyHistoryPopupModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
+
+        <div class="modal-dialog" style="width: 80%;" >
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h2 class="modal-title" >Toy History</h2>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="panel-fluid panel-default col-xs-12">
+                            {% include "toybox/member_toy_history.html" %}
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button name="till_cancel" type="button" data-dismiss="modal" class="btn btn-default" >Dismiss</button>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+     <script type="text/javascript">
+
+        $( document ).ready(function()
+        {
+            $(window).load(function()
+            {
+                $('#memberToyHistoryPopupModal').modal('hide');
+            });
+        });
+    </script>
+
+</span>

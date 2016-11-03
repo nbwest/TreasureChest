@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from shared import *
 from django.core.validators import *
+from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
+import member_edit
 from datetime import datetime
 
 @login_required
@@ -19,6 +21,13 @@ def handle_returns(request,member_id):
 
 @login_required
 def returns(request, member_id=None):
+    rendered = member_edit.render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
+    if request.method == "POST":
+        member_edit.handle_member_edit(request, member_id)
+
     context = {"title":"Return Toy"}
 
 

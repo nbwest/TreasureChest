@@ -1,6 +1,10 @@
 {% extends "toybox/base.html" %}
 {% load widget_tweaks %}
 {% block content %}
+
+{% include "toybox/toy_summary_popup.html" %}
+{% include "toybox/member_summary_popup.html"%}
+
 <span id="transactions">
 
 <h1  class="page-header">{{title}}</h1>
@@ -124,7 +128,7 @@
              <thead>
                 <tr>
                     <th data-field="id" data-filter-control="input" data-sortable="true">ID</th>
-                    <th data-field="date_time" data-sortable="true" data-sorter="dateSorter" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                    <th data-field="date_time" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
                     <th data-field="transaction_type"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=transaction_type">Type</th>
                     <th data-field="member_id"  data-sortable="true" data-filter-control="input">Member</th>
                     <th data-field="toys" >Toys</th>
@@ -178,25 +182,6 @@ $(document).ready(function()
             onCellHtmlData: DoOnCellHtmlData
         }
     });
-
-
-
-    function parseDate(input)
-    {
-      var parts = input.split('/');
-      return new Date(parts[2], parts[1]-1, parts[0]);
-    }
-
-     function dateSorter(a, b)
-     {
-            dateA=parseDate(a);
-            dateB=parseDate(b);
-
-            if (dateA > dateB) return 1;
-            if (dateA < dateB) return -1;
-            return 0;
-    }
-
 });
 
 </script>

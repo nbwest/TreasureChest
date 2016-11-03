@@ -4,13 +4,11 @@
 
         <div class="row">
 
-            <div class="panel-fluid panel-default col-xs-12 col-sm-5 " style="text-align: left; vertical-align: middle; ">
-
-
+            <div class="panel-fluid panel-default col-xs-12 col-sm-6 " style="text-align: left; vertical-align: middle; ">
 
                 <div class="panel-default">
-                <div class="panel-heading"><a href="{% url 'toybox:toys' toy_id=toy.id %}">Toy Details  ID: {{ toy.code }}</a></div>
-                  <table class="table table-condensed ">
+                <div class="panel-heading">Toy Details  ID: {{ toy.code }}</div>
+                  <table class="table table-condensed">
                     <tbody>
                       <tr>
                         <td>Name</td>
@@ -48,9 +46,7 @@
                       <tr>
                         <td>Borrowed By</td>
                         <td>
-                            <a {%if toy.member_loaned %} href="{% url 'toybox:members' toy.member_loaned.id %}" {%endif%}>
                                 {{toy.member_loaned.name}}
-                            </a>
                         </td>
                       </tr>
 
@@ -124,10 +120,6 @@
                          <td>{{toy.purchase_date|date:"d/m/Y"}}</td>
                       </tr>
 
-
-
-
-
                     </tbody>
                   </table>
                 </div>
@@ -163,3 +155,18 @@
 
 </span>
 
+<script>
+    function getToy(element)
+{
+    $.ajax(
+    {
+        type: "GET",
+        url: "{{ request.get_full_path }}"+"?toy_id="+element.value,
+        success: function(data)
+        {
+            document.getElementById("toy_summary").innerHTML=data;
+            $('#toyPopupModal').modal('show');
+        }
+    });
+ }
+</script>

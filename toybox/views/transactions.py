@@ -9,14 +9,17 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 import ast
 from django.db.models import Sum
+
 #import pytz
 
 
-def str2bool(v):
-  return v.lower() in ("yes", "true", "t", "1")
+
 
 @login_required()
 def transactions(request):
+    rendered = render_ajax_request(request)
+    if rendered != None:
+        return rendered
 
     context = {"title":"Transactions"}
     context.update(base_data(request))
@@ -141,110 +144,58 @@ def handleGET(request):
 
         if "filter_data" in request.GET:
 
-            if "transaction_type" in request.GET["filter_data"]:
-
-                listed_unique_values=Transaction.objects.all().values_list("transaction_type", flat=True).distinct()
-
-                result={}
-                for element in listed_unique_values:
-                    result.update({Transaction.TRANSACTION_TYPE_CHOICES[element][1]:Transaction.TRANSACTION_TYPE_CHOICES[element][1]})
-
+            result = get_filter_data_from_choices("transaction_type", request, Transaction.objects.all(), Transaction.TRANSACTION_TYPE_CHOICES)
+            if result:
                 return JsonResponse(result)
 
-            if "complete" in request.GET["filter_data"]:
-                listed_unique_values = Transaction.objects.all().values_list("complete", flat=True).distinct()
-
-                result = {}
-                for element in listed_unique_values:
-                    result.update({str(element):str(element)})
-
+            result = get_filter_data_from_list_lookup("complete", request, Transaction.objects.all(), [True,False])
+            if result:
                 return JsonResponse(result)
+
 
         if "sort" in request.GET:
-
-            #data select need to show all possibilities, not just those in the current page
-
             all_transactions = Transaction.objects.all()
-            total = all_transactions.count()
 
-            sort = request.GET.get('sort', 'id')
-            order = request.GET.get('order', 'asc')
-            limit = int(request.GET.get('limit',total))
-            offset = int(request.GET.get('offset',0))
             col_filters = request.GET.get('filter',None)
-
-
-            if order=="desc":
-                dir="-"
-            else:
-                dir=""
-
 
             toy_historys=ToyHistory.objects.all().order_by("transaction").exclude(transaction__isnull=True).values("toy","toy__code","toy__name","transaction")
             member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
 
-
             if col_filters:
-                col_filters=ast.literal_eval(col_filters)
-                if "transaction_type" in col_filters:
-                    for choice in Transaction.TRANSACTION_TYPE_CHOICES:
-                        if col_filters["transaction_type"]==choice[1]:
-                            col_filters.update({"transaction_type":choice[0]})
+                col_filters = ast.literal_eval(col_filters)
+                filter_by_choice_lookup('transaction_type', Transaction.TRANSACTION_TYPE_CHOICES, col_filters)
+                filter_by_general('member_id', 'member__name', col_filters)
+                filter_by_contains('volunteer_reporting', col_filters)
+                filter_by_contains('comment', col_filters)
+                filter_by_date('date_time', col_filters)
+                filter_by_contains('id', col_filters)
+                filter_by_choice_lookup('complete', ((False,'False'),(True,'True')), col_filters)
+
+            rows, total = sort_slice_to_rows(request, all_transactions, col_filters, Transaction)
 
 
-
-                if "member_id" in col_filters:
-                     col_filters.update({"member__name__icontains":col_filters["member_id"]})
-                     col_filters.pop("member_id")
-
-                if "volunteer_reporting" in col_filters:
-                     col_filters.update({"volunteer_reporting__icontains":col_filters["volunteer_reporting"]})
-                     col_filters.pop("volunteer_reporting")
-
-                if "comment" in col_filters:
-                     col_filters.update({"comment__icontains":col_filters["comment"]})
-                     col_filters.pop("comment")
-
-                if "date_time" in col_filters:
-                    dt = datetime.datetime.strptime(col_filters["date_time"], "%d/%m/%y")
-                    col_filters.update({"date_time__startswith": dt.date()})
-                    col_filters.pop("date_time")
-
-                if "id" in col_filters:
-                    col_filters.update({"id__contains":col_filters["id"]})
-                    col_filters.pop("id")
-
-                if "complete" in col_filters:
-                    col_filters.update({"complete":str2bool(col_filters["complete"])})
-
-                total=all_transactions.filter(**col_filters).count()
-                transactions=all_transactions.filter(**col_filters).order_by(dir + sort)[offset:offset + limit]
-            else:
-                transactions=all_transactions.order_by(dir+sort)[offset:offset+limit]
-
-            rows=list(transactions.values())
 
             for row in rows:
 
-                row["transaction_type"]=Transaction.TRANSACTION_TYPE_CHOICES[row["transaction_type"]][1]
+                format_by_choice_lookup("transaction_type", Transaction.TRANSACTION_TYPE_CHOICES, row)
 
                 if row["member_id"]:
-                    row["member_id"]=member_names[row["member_id"]]
+                    link = '<button title = "Member details" type = "button" class ="btn btn-link" onclick="getMemberSummary(this);" value="{0}" >{1}</button>'.format(
+                        row["member_id"], member_names[row["member_id"]])
+                    row["member_id"] = link
 
-                dt=timezone.localtime(row["date_time"])
-                row["date_time"]=dt.strftime('%d/%m/%y %H:%M')
+                format_by_date('date_time', row)
 
                 row["complete"]=str(row["complete"])
 
                 matching=filter(lambda th: th['transaction'] == row["id"], toy_historys)
                 if matching:
                     toys=""
-
                     for toy in matching:
-                        toy_url=reverse("toybox:toys",kwargs={'toy_id':toy["toy"]})
-                        toys+="<a href=\""+toy_url+"\">"+toy["toy__code"]+", "+toy["toy__name"]+"</a> <br>"
+                        toys+= '<button title = "Toy details" type = "button" class ="btn btn-link" onclick="getToy(this);" value="{0}" >{1} {2}</button><br>'.format(
+                            toy["toy"], toy["toy__code"], toy["toy__name"])
+                        row.update({"toys":toys})
 
-                    row.update({"toys":toys})
 
             context={"total":total,"rows":rows}
 

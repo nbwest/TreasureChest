@@ -1,10 +1,11 @@
 
 from django import forms
-from django.shortcuts import get_object_or_404
+
 from toybox.models import *
 from django.db.models import Q
 from django.conf import settings
-
+from django.template.loader import render_to_string
+from django.shortcuts import *
 
 
 #################
@@ -125,6 +126,92 @@ def base_data(request):
 
     return context
 
+
+def render_toy_details(request):
+
+    rendered=None
+    context={}
+
+    if request.method=="GET":
+       if "toy_id" in request.GET:
+          toy_id=request.GET["toy_id"]
+          toy=Toy.objects.get(id=toy_id)
+          context.update({"toy":toy})
+          context.update({"MEDIA_URL":settings.MEDIA_URL})
+          rendered=render_to_string('toybox/toy_summary.html', context)
+
+    return rendered
+
+
+
+def render_toy_history(request):
+
+    rendered=None
+    context={}
+
+    if request.method=="GET":
+         if "toy_history_id" in request.GET:
+            toy_id=request.GET["toy_history_id"]
+            context.update({"toy_history":ToyHistory.objects.filter(toy__id=toy_id).order_by('date_time')})
+            toy=Toy.objects.get(id=toy_id)
+            context.update({"toy":toy})
+            rendered=render_to_string('toybox/toy_history.html', context)
+
+    return rendered
+
+
+def render_member_toy_history(request):
+
+    rendered=None
+    context={}
+
+    if request.method=="GET":
+         if "toy_history_member_id" in request.GET:
+            member_id=request.GET["toy_history_member_id"]
+            member_toy_history= ToyHistory.objects.filter(member__id=member_id).order_by('date_time').select_related('toy')
+            member=Member.objects.get(id=member_id)
+            context.update({"member_toy_history":member_toy_history})
+            context.update({"member":member})
+            rendered=render_to_string('toybox/member_toy_history.html', context)
+
+    return rendered
+
+def render_member_summary(request):
+    rendered = None
+    context = {"popup":"true"}
+
+    if request.method == "GET":
+        if "member_id" in request.GET:
+            member_id = request.GET["member_id"]
+            member = Member.objects.get(id=member_id)
+            context.update({"member": member})
+            rendered = render_to_string('toybox/member_summary.html', context)
+
+    return rendered
+
+
+
+def render_ajax_request(request):
+
+
+    if request.method=="GET" and request.is_ajax():
+        #send back rendered toy summary, just data would need to be rendered so it is useless
+
+         if "toy_history_id" in request.GET:
+             rendered=render_toy_history(request)
+         elif "toy_history_member_id" in request.GET:
+             rendered=render_member_toy_history(request)
+         elif "toy_id" in request.GET:
+             rendered=render_toy_details(request)
+         elif "member_id" in request.GET:
+             rendered=render_member_summary(request)
+         else:
+             return None
+
+         return HttpResponse(rendered)
+
+    return None
+
 ##################
 # Shared form classes
 class MemberSearchForm(forms.Form):
@@ -204,3 +291,133 @@ def get_config(key):
             raise NameError('Option key not found: '+key)
             return None
 
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
+
+
+def filter_by_contains(field_name, filters):
+    if field_name in filters:
+        filters.update({field_name+"__icontains": filters[field_name]})
+        filters.pop(field_name)
+
+def filter_by_date(field_name,filters):
+    if field_name in filters:
+        dt = datetime.datetime.strptime(filters[field_name], "%d/%m/%y")
+        filters.update({field_name+"__startswith": dt.date()})
+        filters.pop(field_name)
+
+def filter_by_general(field_name, query, filters):
+    if field_name in filters:
+        filters.update({query: filters[field_name]})
+        filters.pop(field_name)
+
+def filter_by_choice_lookup(field_name, choices, filters):
+    if field_name in filters:
+        for choice in choices:
+            if filters[field_name]==choice[1]:
+               filters.update({field_name:choice[0]})
+
+
+def format_by_choice_lookup(field_name,choice,row):
+    if field_name in row:
+        row[field_name] = choice[row[field_name]][1]
+
+def format_by_list_lookup(field_name, list, row):
+    if row[field_name]:
+        row[field_name] = list[row[field_name]]
+
+def format_by_date(field_name,row):
+    if row[field_name]:
+         row[field_name] = row[field_name].strftime('%d/%m/%y')
+
+def format_by_control(field_name,form,row):
+
+    if field_name in row:
+        render = form.fields["%s_%s" % (field_name,row["id"])].widget.render("%s_%s" % (field_name,row["id"]),row[field_name], {"class": "form-control"})
+        row['%s_edit' % field_name] = render
+
+def format_by_image(field_name,list,row):
+    if row[field_name]:
+        row[field_name] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, list[row[field_name]])
+
+# def format_by_link(field_name,link,row):
+#     if row[field_name]:
+#         link = link.format(row[field_name])
+#         row[field_name] = link
+
+
+def get_filter_data_from_choices(field_name,request,source_query,choice):
+    result = {}
+    if field_name in request.GET["filter_data"]:
+        listed_unique_values = source_query.values_list(field_name, flat=True).distinct()
+
+        # for c in choice:
+        #     if c[0] in listed_unique_values:
+        #         result.update({c[0]:c[1]})
+        for element in listed_unique_values:
+            result.update({str(choice[element][1]): str(choice[element][1])})
+
+    return result
+
+
+def get_filter_data_from_list_lookup(field_name, request, source_query, list):
+    result = {}
+    if field_name in request.GET["filter_data"]:
+        listed_unique_values = source_query.order_by(field_name).distinct().values_list(field_name, flat=True)
+
+        for element in listed_unique_values:
+            result.update({str(list[element]): str(list[element])})
+
+    return result
+def sort_slice_to_rows(request, query, col_filters, Table):
+
+
+    total = query.count()
+
+    sort = request.GET.get('sort', 'id')
+    order = request.GET.get('order', 'asc')
+    limit = int(request.GET.get('limit', total))
+    offset = int(request.GET.get('offset', 0))
+
+    if order == "desc":
+        dir = "-"
+    else:
+        dir = ""
+
+    if col_filters:
+        query = query.filter(**col_filters)
+        total=query.count()
+
+    if sort:
+        sort_field_type = Table._meta.get_field(sort).get_internal_type()
+
+        if sort_field_type == "CharField":
+            query = query.extra(select={sort: 'lower(%s)' % sort}).order_by(dir + sort)
+        elif sort_field_type == "ForeignKey":
+            query = query.order_by(dir + sort + "__name")
+        elif sort_field_type == "IntegerField":
+            table=Table()
+            table_name = table._meta.db_table
+            field=table._meta.get_field_by_name(sort)
+            if field[0]._choices:
+                choices=field[0]._choices
+
+                sorted_choice = sorted(choices, key=lambda x: x[1])
+                db_field_name = '"{0}"."{1}"'.format(table_name,sort)
+
+                i = 0
+                #TODO Warning this is native to sqlite, for postgres look up case!!!
+                CASE_SQL = '(case '
+                for state in sorted_choice:
+                    CASE_SQL+= 'when {2}={1} then {0} '.format(i,state[0],db_field_name)
+                    i += 1
+                CASE_SQL+='end)'
+
+                query = query.extra(select={sort+'_order': CASE_SQL}, order_by=[dir+sort+'_order'])
+        else:
+            query = query.order_by(dir + sort)
+
+    query = query[offset:offset + limit]
+    rows = list(query.values())
+
+    return rows,total
