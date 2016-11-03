@@ -154,18 +154,12 @@ def handleGET(request):
 
 
         if "sort" in request.GET:
-
-
-
             all_transactions = Transaction.objects.all()
 
             col_filters = request.GET.get('filter',None)
 
-
-
             toy_historys=ToyHistory.objects.all().order_by("transaction").exclude(transaction__isnull=True).values("toy","toy__code","toy__name","transaction")
             member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
-
 
             if col_filters:
                 col_filters = ast.literal_eval(col_filters)

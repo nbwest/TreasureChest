@@ -88,6 +88,14 @@ def handle_stocktake(request):
                         toy_history.record_toy_event(toy,request.user,thisDateTime().now())
                         toy.save()
 
+                elif key.startswith("comment"):
+                    id = key.rpartition('_')[2]
+                    toy = Toy.objects.get(pk=id)
+                    toy.comment = value
+                    toy_history = ToyHistory()
+                    toy_history.record_toy_event(toy, request.user, thisDateTime().now())
+                    toy.save()
+
     return(context)
 
 
