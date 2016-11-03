@@ -90,77 +90,8 @@ def handle_stocktake(request):
 
     return(context)
 
-def filter_by_contains(field_name, filters):
-    if field_name in filters:
-        filters.update({field_name+"__icontains": filters[field_name]})
-        filters.pop(field_name)
-
-def filter_by_date(field_name,filters):
-    if field_name in filters:
-        dt = datetime.datetime.strptime(filters[field_name], "%d/%m/%y")
-        filters.update({field_name+"__startswith": dt.date()})
-        filters.pop(field_name)
-
-def filter_by_general(field_name, query, filters):
-    if field_name in filters:
-        filters.update({query: filters[field_name]})
-        filters.pop(field_name)
-
-def filter_by_choice_lookup(field_name, choices, filters):
-    if field_name in filters:
-        for choice in choices:
-            if filters[field_name]==choice[1]:
-               filters.update({field_name:choice[0]})
 
 
-def format_by_choice_lookup(field_name,choice,row):
-    if field_name in row:
-        row[field_name] = choice[row[field_name]][1]
-
-def format_by_list_lookup(field_name, list, row):
-    if row[field_name]:
-        row[field_name] = list[row[field_name]]
-
-def format_by_date(field_name,row):
-    if row[field_name]:
-         row[field_name] = row[field_name].strftime('%d/%m/%y')
-
-def format_by_control(field_name,form,row):
-
-    if field_name in row:
-        render = form.fields["%s_%s" % (field_name,row["id"])].widget.render("%s_%s" % (field_name,row["id"]),row[field_name], {"class": "form-control"})
-        row['%s_edit' % field_name] = render
-
-def format_by_image(field_name,list,row):
-    if row[field_name]:
-        row[field_name] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, list[row[field_name]])
-
-# def format_by_link(field_name,link,row):
-#     if row[field_name]:
-#         link = link.format(row[field_name])
-#         row[field_name] = link
-
-
-def get_filter_data_from_choices(field_name,request,source_query,choice):
-    result = {}
-    if field_name in request.GET["filter_data"]:
-        listed_unique_values = source_query.values_list(field_name, flat=True).distinct()
-
-        for element in listed_unique_values:
-            result.update({choice[element][1]: choice[element][1]})
-
-    return result
-
-
-def get_filter_data_from_list_lookup(field_name, request, source_query, list):
-    result = {}
-    if field_name in request.GET["filter_data"]:
-        listed_unique_values = source_query.values_list(field_name, flat=True).distinct()
-
-        for element in listed_unique_values:
-            result.update({list[element]: list[element]})
-
-    return result
 
 def handleGET(request):
 
@@ -183,19 +114,12 @@ def handleGET(request):
                 return JsonResponse(result)
 
         if "sort" in request.GET:
-            all_records = Toy.objects.all()
-            total = all_records.count()
 
-            sort = request.GET.get('sort', 'id')
-            order = request.GET.get('order', 'asc')
-            limit = int(request.GET.get('limit',total))
-            offset = int(request.GET.get('offset',0))
+
+
             col_filters = request.GET.get('filter',None)
 
-            if order=="desc":
-                dir="-"
-            else:
-                dir=""
+
 
             member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
             toy_image_files=dict(Image.objects.all().order_by("id").values_list("id","file"))
@@ -220,14 +144,12 @@ def handleGET(request):
                 filter_by_general('category_id', 'category__name', col_filters)
                 filter_by_contains('purchased_from_id',col_filters)
 
-                total=all_records.filter(**col_filters).count()
-                results=all_records.filter(**col_filters).order_by(dir + sort)[offset:offset + limit]
-            else:
-                results=all_records.order_by(dir+sort)[offset:offset+limit]
 
-            form = ToyIssueForm(toyList=results, user=request.user)
+            rows,total = sort_slice_to_rows(request, valid_toys,col_filters,Toy)
 
-            rows=list(results.values())
+
+            form = ToyIssueForm(toyList=valid_toys, user=request.user)
+
             for row in rows:
 
                 format_by_control("issue_comment",form,row)
@@ -247,9 +169,6 @@ def handleGET(request):
                     row["member_loaned_id"] = link
 
 
-
-
-
                 format_by_choice_lookup("state",Toy.TOY_STATE_CHOICES,row)
                 format_by_list_lookup("category_id", categories, row)
                 format_by_choice_lookup("issue_type", Toy.ISSUE_TYPE_CHOICES, row)
@@ -260,9 +179,6 @@ def handleGET(request):
                 format_by_date('due_date', row)
                 format_by_date('last_check', row)
                 format_by_image('image_id',toy_image_files,row)
-
-
-
 
 
             context={"total":total,"rows":rows}

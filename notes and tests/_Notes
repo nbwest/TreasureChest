@@ -2,6 +2,7 @@ Toy library Notes
 =================
 
 BUGS:
+Add member says transaction successful
 Check admin permissions and groups - Can't select group in user admin. user permission groups not working, needed superuser for transaction actions
 common reset
     Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini

@@ -39,7 +39,7 @@
                     id="toys_table"
                     data-sort-name="code"
                     data-sort-order="asc"
-                    data-search="true"
+                    data-search="false"
                     data-show-columns="true"
                     data-pagination="true"
                     data-page-size="20"
@@ -57,7 +57,7 @@
 <!--https://github.com/wenzhixin/bootstrap-table-examples/blob/master/issues/177.html-->
                             <th data-field="checked"  data-checkbox="true" data-check-box-header="false" data-align="center" ></th>
                             <th data-field="id" data-sortable="true" data-visible="false" data-filter-control="input" >DB ID</th>
-                            <th data-field="code"   data-filter-control="input">ID</th>
+                            <th data-field="code"   data-sortable="true" data-filter-control="input">ID</th>
                             <th data-field="image_id" data-width="200px" >Image</th>
                             <th data-field="name"   data-sortable="true" data-filter-control="input">Name</th>
                             <th data-field="state"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=state">State</th>

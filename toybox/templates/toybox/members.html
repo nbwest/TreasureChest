@@ -77,7 +77,7 @@
                     <thead>
                         <tr>
                             <th data-field="loans"  data-sortable="true" >Loans</th>
-                        	<th data-field="name"  data-sortable="true" data-filter-control="input">Name</th>
+                        	<th data-field="name"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">Name</th>
                             <th data-field="status"  data-sortable="true" data-filter-control="select">Status</th>
                             <th data-field="phone"  data-sortable="true" data-filter-control="input">Phone</th>
                             <th data-field="email"  data-sortable="true"data-filter-control="input">Email</th>
@@ -251,6 +251,16 @@ $table.bootstrapTable('refreshOptions', {
 });
 });
 
+function aTagSorter(a,b)
+ {
+    var textA = $(a).text();
+    var textB = $(b).text();
+
+    if (textA > textB) return 1;
+    if (textA < textB) return -1;
+    return 0;
+
+ }
 
 
 </script>
