@@ -39,11 +39,14 @@ def borrow(request, member_id):
 
     context.update(base_data(request))
 
+ #TODO check volunteers set borrow fee to zero. include message under borrow fee
+
     #clears templist if there are temp toys in any other name than the current member. Ensures temp toys
     # aren't persistent when leaving borrow page
     # this means only one member can be serviced at a time. optional???
     #if TempBorrowList.objects.exclude(member=member_id).count()>0:
      #   TempBorrowList.objects.filter().delete()
+
 
 
     # handle member search
@@ -200,8 +203,8 @@ def handle_payment_form(request, member_id):
         elif member:
             #check remove toy submit action
             for item in request.POST:
-                if item.startswith("remove_toy_"):
-                    toy_to_remove = item[len("remove_toy_"):]
+                if item=="remove_toy":
+                    toy_to_remove = request.POST["remove_toy"][0]
                     TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                     context.update({"toy_removed":True})
 
@@ -229,7 +232,8 @@ def handle_payment_form(request, member_id):
                             else:
                                 comment=None
 
-                            if fee!=0 or comment!=None:
+#TODO ISSUE borrow fee justification comment isn't being set unless the adjust is clicked. Also adjust original value is zero
+                            if fee!=0 or comment is not None:
                                 transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
 
 
@@ -272,7 +276,7 @@ def handle_payment_form(request, member_id):
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment!=None:
+                            if fee!=0 or comment is not None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBERSHIP_FEE,fee,comment)
 
@@ -292,7 +296,7 @@ def handle_payment_form(request, member_id):
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment!=None:
+                            if fee!=0 or comment is not None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND,fee,comment)
 
@@ -325,10 +329,10 @@ def handle_payment_form(request, member_id):
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment!=None:
+                            if fee!=0 or comment is not None:
                                 transaction=Transaction()
                                 transaction.create_transaction_record(request.user,member,Transaction.MEMBER_BOND,fee,comment)
-                                if fee==0 and comment!=None:
+                                if fee==0 and comment is not None:
                                     member.bond_fee_paid=member.type.bond
                                 else:
                                     member.bond_fee_paid=fee
@@ -347,7 +351,7 @@ def handle_payment_form(request, member_id):
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment!=None:
+                            if fee!=0 or comment is not None:
                                 fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LATE_FEE)
 
                                 for item in fees_records:
@@ -367,7 +371,7 @@ def handle_payment_form(request, member_id):
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment!=None:
+                            if fee!=0 or comment is not None:
                                 fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
 
                                 for item in fees_records:
@@ -484,12 +488,28 @@ def handle_payment_form(request, member_id):
             member_bond=member.type.bond
 
     new_borrow_list=TempBorrowList.objects.filter(member__id=member_id)
-    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date})
+
+
+
+
+    payment_initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date}
+
+    if member_id:
+        try:
+            Shift.objects.get(volunteer=member_id, shift_date=thisDateTime().date())
+            context.update({"volunteering":"true"})
+            payment_initial.update({"volunteering":"true"})
+        except:
+            pass
+
+
+
+    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial=payment_initial)
 
     # if form charfield has an amount in it make it visible.
     for field in payment_form:
         if field.html_name in payment_form.initial and field.field.__class__.__name__=="CharField":
-            if float(payment_form.initial[field.html_name]) != 0:
+            if payment_form.initial[field.html_name]:
                     field.field.widget.attrs.update({'enabled':'True'})
 
 
@@ -510,11 +530,22 @@ class PaymentForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         toyList=kwargs.pop("temp_toy_list", 0)
+
+
         super(PaymentForm, self).__init__(*args, **kwargs)
 
         if toyList:
             for toy in toyList:
                 self.fields['repair_checkbox_%s' % toy.toy.id]=forms.BooleanField(required=False)
+
+        if "initial" in kwargs:
+            if "volunteering" in kwargs["initial"]:
+                self.fields['borrow_fee'].widget.attrs.update({"message":"Volunteering today - Borrow fees will be ignored"})
+                self.fields['borrow_fee'].widget.attrs.pop("total_me",0)
+                self.fields['borrow_fee'].widget.attrs.pop("adjust_button", 0)
+                self.fields['borrow_fee_adjust_justification'].widget.attrs.update({"rawValue":"VOLUNTEER"})
+
+
 
     numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
 
@@ -558,14 +589,14 @@ class PaymentForm(forms.Form):
     late_fee = forms.CharField(required=False, label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
     late_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
 
-    issue_fee = forms.CharField(required=False, label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
-    issue_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
-
 
     membership = forms.CharField(required=False, label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
     membership_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
     #TODO enable donation
     # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','enabled':'True'}))
+
+    issue_fee = forms.CharField(required=False, label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
+    issue_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
 
     total_fee = forms.CharField(label="Total Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly'}))
 

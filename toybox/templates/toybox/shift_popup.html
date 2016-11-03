@@ -1,0 +1,83 @@
+{% load widget_tweaks %}
+
+<span id="set_shift_volunteers">
+
+  <div class="modal" id="setShiftModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <form  action="{{ request.get_full_path }}"  method='post'>
+        {% csrf_token %}
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel">Set Shift Volunteers</h3>
+                </div>
+
+                <br>
+
+                {%if shift_form %}
+                <div class="form-group">
+                    <div class="row">
+                        <div   class="col-xs-1 col-sm-1 "></div>
+                        <div   class="col-xs-9 col-sm-9 selectContainer">
+                            {% render_field shift_form.member class+="form-control"%}
+
+                            <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                                {% for error in shift_form.member.errors  %}
+                                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div   class="col-xs-1" >
+                            <button title="Add Volunteer" type="submit" class="btn btn-success" aria-label="Left Align">
+                                <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+                {%endif%}
+
+                <br>
+
+                 {% if shift %}
+
+                       <ul class="list-group">
+
+                            {% for volunteer in shift %}
+                                <div class="list-group-item">
+
+                                    <button name="remove_volunteer" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn btn-danger remove-button"  >
+                                        <span class="glyphicon glyphicon-trash " aria-hidden="true" ></span>
+                                    </button>
+                                    &nbsp{{volunteer.volunteer.name}}
+                                </div>
+                            {% endfor %}
+                         </ul>
+
+                    {% endif %}
+
+
+
+                <div class="modal-footer">
+                    <button name="done" type="submit" class="btn btn-primary" data-dismiss="modal">Done</button>
+                </div>
+
+            </div>
+        </div>
+
+      </form>
+    </div>
+
+     <script type="text/javascript">
+
+       // $( document ).ready(function()
+       // {
+        //    $(window).load(function(){
+        //        $('#setShiftModal').modal('hide');
+        //    });
+      //  });
+
+    </script>
+
+</span>

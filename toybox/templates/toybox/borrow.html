@@ -13,6 +13,8 @@
 
 
 
+
+
 <h1  id="page_table" class="page-header">{{title}}</h1>
 
 <div id="member" class="row" >
@@ -117,7 +119,7 @@
                         </td>
 
                         <td>
-                            <button title="Remove this toy from list" name="remove_toy_{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
+                            <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
                                 <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
                             </button>
                         </td>
@@ -253,9 +255,10 @@
 
                     {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
+
                      {% if field.field.widget.attrs.adjust_button %}
                     <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
                     </span>
                     {% endif %}
 
@@ -287,6 +290,9 @@
                      {% for error in field.errors  %}
                         <li><label class="label label-danger">{{ error|striptags }}</label></li>
                      {% endfor %}
+                     {%if field.field.widget.attrs.message %}
+                        <label class="label label-info">{{ field.field.widget.attrs.message }}</label></li>
+                     {% endif %}
                  </ul>
 
              </div>
@@ -302,6 +308,7 @@
 <script type="text/javascript">
 
 var enable_exact_for_repair_only=false;
+var enable_paid_for_volunteer = false;
 
 $( document ).ready(function()
 {
@@ -371,7 +378,7 @@ function UpdateBorrowFee()
            }
    );
 
-   enable_exact_for_repair_only=(total_new_toys==toys_checked) && (total_new_toys>0);
+   enable_exact_for_repair_only=((total_new_toys==toys_checked) && (total_new_toys>0)) ;
 
    $("span[name='new_toy_due']","#toy_table")
    .each(
@@ -392,8 +399,18 @@ function UpdateBorrowFee()
         }
    );
 
-   document.getElementById("id_borrow_fee").value=total.toFixed(2);
+
+
    document.getElementById("id_borrow_fee").defaultValue=total.toFixed(2);
+
+   if ("{{volunteering}}"!=""  && total !=0.0)
+   {
+    total=0.0;
+    enable_paid_for_volunteer=true;
+   }
+
+   document.getElementById("id_borrow_fee").value=total.toFixed(2);
+
 
 }
 
@@ -520,7 +537,9 @@ function CalcTotal()
     if (document.getElementById("id_credit")!=null)
         document.getElementById("id_credit").value=credit.toFixed(2);
 
-     $("#btn_paid").prop('disabled', (isNaN(change)) || (total==0 && fees==0 && original_fees==0) || (!(change>=0) && !enable_exact_for_repair_only));
+
+
+     $("#btn_paid").prop('disabled', ( (isNaN(change)) || (total==0 && fees==0 && original_fees==0) || (!(change>=0) && !enable_exact_for_repair_only)) && !enable_paid_for_volunteer);
 
    if ("{{credit_enable}}" == "True")
         $("#btn_credit").prop('disabled',(isNaN(change)) || (total==0 && fees==0) || !((payment+credit)-total>0) );

@@ -96,6 +96,7 @@ def base_data(request):
 
     context.update(updateDailyBalance())
 
+    context.update(handle_shift(request))
 
     if 'first_login' not in request.session:
         request.session.update({'first_login':True})
@@ -421,3 +422,47 @@ def sort_slice_to_rows(request, query, col_filters, Table):
     rows = list(query.values())
 
     return rows,total
+
+def handle_shift(request):
+
+     context={}
+     form=None
+
+     if request.method=="POST":
+        form=ShiftForm(request.POST)
+        if form.is_valid():
+
+            if "remove_volunteer" in form.data:
+                id=int(form.data["remove_volunteer"])
+                Shift.objects.get(shift_date=thisDateTime().date(),volunteer=id).delete()
+                context.update({"setting_shift":"true"})
+
+            elif "member" in form.data:
+                # add volunteer
+                context.update({"setting_shift":"true"})
+                new_volunteer=form.cleaned_data["member"]
+                if new_volunteer:
+                    in_shift=Shift.objects.filter(shift_date=thisDateTime().date(),volunteer=new_volunteer)
+
+                    if in_shift.count()==0:
+                        shift=Shift(volunteer=new_volunteer,shift_date=thisDateTime().date())
+                        shift.save()
+                    else:
+                        form.add_error("member","volunteer already added")
+                else:
+                    form.add_error("member","volunteer not selected")
+
+     else:
+        form = ShiftForm(request.POST)
+
+     todays_shift=Shift.objects.filter(shift_date=thisDateTime().date()).select_related('volunteer')
+
+     if todays_shift.count()==0:
+         todays_shift=None
+
+     context.update({"shift":todays_shift, "shift_form":form})
+
+     return context
+
+class ShiftForm(forms.Form):
+    member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))
