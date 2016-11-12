@@ -99,7 +99,7 @@ def base_data(request):
     context.update(handle_shift(request))
 
     if 'first_login' not in request.session:
-        request.session.update({'first_login':True})
+        request.session.update({'first_login':True,'setting_shift':True })
     else:
         context.update({"enable_logout_button":"true"})
 
@@ -466,3 +466,4 @@ def handle_shift(request):
 
 class ShiftForm(forms.Form):
     member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))
+    # comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea())

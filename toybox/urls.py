@@ -7,6 +7,7 @@ from views.returns import returns
 from views.transactions import transactions
 from views.toys import toys
 from views.feedback import feedback
+from views.shifts import shifts
 
 
 
@@ -19,6 +20,7 @@ urlpatterns = [
                   url(r'^returns/(?P<member_id>[0-9]+)/$',  returns, name='returns'),
                   url(r'^members/$', members, name='members'),
                   url(r'^members/(?P<member_id>[0-9]+)/$', members, name='members'),
+                  url(r'^shifts/', shifts, name='shifts'),
                   url(r'^transactions/', transactions, name='transactions'),
                   url(r'^toys/$',toys, name='toys'),
                   url(r'^toys/(?P<toy_id>\w{0,50})/$',toys, name='toys'),

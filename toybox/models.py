@@ -684,9 +684,8 @@ class Shift(models.Model):
 
     shift_date = models.DateField()
     volunteer = models.ForeignKey(Member)
+    # comment = models.CharField(default="", max_length=2048)
 
-    def __unicode__(self):
-        return str(self.shift_date)
 
     def __str__(self):
-        return str(self.shift_date)
+        return str(self.shift_date) + ": " + self.volunteer__name# + ", " + self.comment

@@ -1,0 +1,72 @@
+{% extends "toybox/base.html" %}
+
+
+
+{% block content %}
+
+{% include "toybox/member_summary_popup.html"%}
+
+
+
+<div class="row">
+
+    <div class="panel-fluid panel-default col-xs-11">
+        <div class="panel-heading">Toy Library Shifts</div>
+
+            <table
+                    data-show-export="true"
+                    data-export-types="['excel','csv']"
+                    data-toolbar="#toolbar"
+                    data-toggle="table"
+                    data-click-to-select="true"
+                    data-classes="table table-condensed table-no-bordered"
+                    data-id-field="shift_date"
+                    data-filter-control="true"
+                    id="shifts_table"
+                    data-sort-name="shift_date"
+                    data-sort-order="asc"
+                    data-search="false"
+                    data-show-columns="true"
+                    data-pagination="true"
+                    data-page-size="20"
+                    data-page-list='[20, 50, 100, 200, 300, 500]'
+                    data-cookie="true"
+                    data-cookie-id-table="shifts_table"
+                    data-show-pagination-switch="true"
+                    data-escape="false"
+                    data-url="{{ request.get_full_path }}"
+                    data-side-pagination="server">
+
+
+                    <thead>
+                        <tr>
+                            <th data-field="shift_date" data-sortable="true" data-width="150px" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                            <th data-field="volunteer_id" data-filter-control="input">Volunteers</th>
+                            <th data-field="comment" data-filter-control="input">Shift Comment</th>
+                       	</tr>
+                    </thead>
+            </table>
+        </span>
+      </div>
+    </div>
+</form>
+
+<script>
+
+$(document).ready(function()
+{
+    var $table = $('#shifts_table');
+    $table.bootstrapTable('refreshOptions',
+    {
+        exportOptions:
+        {
+            onCellHtmlData: DoOnCellHtmlData
+        }
+    });
+});
+
+
+
+</script>
+
+{% endblock content %}
