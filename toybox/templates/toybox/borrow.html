@@ -36,7 +36,7 @@
       <div class="col-xs-12 col-sm-10 ">
         <br>
            {% if members == None %}
-                {% include "toybox/member_summary.html" with testish="HOLY FUCK" %}
+                {% include "toybox/member_summary.html"  %}
           {% endif %}
         <br>
       </div>
@@ -54,7 +54,7 @@
 </div>
 
 {% if toy %}
-      {% include "toybox/toy_summary.html" %}
+      {% include "toybox/toy_summary.html" with label="search_toy"%}
 {%else%}
      <div class="row" ></div>
 {% endif %}
@@ -131,7 +131,7 @@
                     <tr>
                         <td colspan="8" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
-                                 {% include "toybox/toy_summary.html" %}
+                                 {% include "toybox/toy_summary.html" with label="new_toys" %}
 
                             </div>
                         </td>
@@ -182,7 +182,7 @@
                             <div id="accordion_{{toy.id}}" class="collapse">
 
                                    <!--TODO feed toy into toy_summary-->
-                                {% include "toybox/toy_summary.html" %}
+                                {% include "toybox/toy_summary.html" with label="existing_toys" %}
 
 
                            </div>

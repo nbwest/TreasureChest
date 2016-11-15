@@ -74,6 +74,8 @@ def handle_borrowed_toy_list(request, member_id):
 
     context = {'toy_list': toys}
 
+    context.update({'toy_details_form':handle_toy_details_form(request,toys)})
+
     return context
 
 def thisDateTime():
@@ -132,16 +134,57 @@ def render_toy_details(request):
 
     rendered=None
     context={}
-
+    # primarily used for toy pop up - "no_edit" removes ability to edit from popup
     if request.method=="GET":
        if "toy_id" in request.GET:
           toy_id=request.GET["toy_id"]
           toy=Toy.objects.get(id=toy_id)
-          context.update({"toy":toy})
+          context.update({'toy_details_form': handle_toy_details_form(request, [toy])})
+          context.update({"toy":toy, "no_edit":True})
           context.update({"MEDIA_URL":settings.MEDIA_URL})
           rendered=render_to_string('toybox/toy_summary.html', context)
 
     return rendered
+
+def handle_toy_details_form(request,toys):
+
+    form=None
+
+    if (request.method == "POST" and len(toys)>0):
+
+        if "comment" in request.POST:
+            if "toy_comment_submit" in request.POST:
+                id=request.POST["toy_comment_submit"]
+                form = ToyDetailsForm(request.POST,toyList=toys)
+                if form.is_valid():
+                    toy = Toy.objects.get(pk=id)
+                    toy.comment = request.POST["comment"]
+                    toy.save()
+
+                    for t in toys:
+                        if str(t.id)==id:
+                            t.comment=toy.comment
+                            break
+
+                    form = ToyDetailsForm(request.POST, toyList=toys)
+
+
+    if not form:
+        form = ToyDetailsForm(toyList=toys)
+
+
+
+    return form
+
+
+class ToyDetailsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        toyList = kwargs.pop("toyList", [None])
+        super(ToyDetailsForm, self).__init__(*args, **kwargs)
+
+        for toy in toyList:
+            if toy:
+                self.fields['comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.comment,max_length=Toy._meta.get_field('comment').max_length)
 
 
 
@@ -195,7 +238,7 @@ def render_member_summary(request):
 def render_ajax_request(request):
 
 
-    if request.method=="GET" and request.is_ajax():
+    # if request.method=="GET" and request.is_ajax():
         #send back rendered toy summary, just data would need to be rendered so it is useless
 
          if "toy_history_id" in request.GET:
@@ -211,7 +254,7 @@ def render_ajax_request(request):
 
          return HttpResponse(rendered)
 
-    return None
+    # return None
 
 ##################
 # Shared form classes

@@ -154,7 +154,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
     if member_id:
         form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
 
-    context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy}
+    context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy, }
+
 
     return context
 
@@ -204,7 +205,7 @@ def handle_payment_form(request, member_id):
             #check remove toy submit action
             for item in request.POST:
                 if item=="remove_toy":
-                    toy_to_remove = request.POST["remove_toy"][0]
+                    toy_to_remove = request.POST["remove_toy"]
                     TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
                     context.update({"toy_removed":True})
 
@@ -519,7 +520,7 @@ def handle_payment_form(request, member_id):
         new_borrow_toy_list.append(item.toy)
 
     context.update({'payment_form': payment_form,"new_borrow_toy_list": new_borrow_toy_list})
-
+    context.update({"toy_details_form_new": handle_toy_details_form(request, new_borrow_toy_list)})
 
     return context
 

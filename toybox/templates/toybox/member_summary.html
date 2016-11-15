@@ -7,7 +7,7 @@
         {% else %}
         <button style="margin-left:-13px;" type="button" class="btn btn-link" title="Edit member" onclick="getMemberDetails(this);" value="{{member.id}}" ><strong>{{ member.name }}</strong></button>
         {%endif%}
-        <p>Partner: {{ member.partner }}</p>
+        {% if member.partner %} <p>Alternate Borrower: {{ member.partner }}</p>{%endif%}
         <h4>
 
             {% if member.is_current %}

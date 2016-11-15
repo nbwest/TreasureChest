@@ -103,11 +103,21 @@ def timebetween(d, now=None):
 @register.simple_tag
 def form_field_concat(form, prefix, suffix, *args, **kwargs):
 
+
     field_name=str(prefix)+str(suffix)
-    if field_name not in form.fields:
-        return None
+    if not form or field_name not in form.fields:
+        return ""
+
 
     field= form.fields[field_name]
+
+    kwargs.update({"id": field_name})
+
+    if "name" in kwargs:
+        field_name=kwargs["name"]
+        kwargs.pop("name")
+
+
     return field.widget.render(field_name,field.initial,attrs=kwargs)
 
 

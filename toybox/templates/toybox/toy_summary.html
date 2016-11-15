@@ -1,3 +1,6 @@
+{% load widget_tweaks %}
+{% load templatetags %}
+
 <span id="toy_summary">
 
     {% if toy %}
@@ -26,9 +29,27 @@
                           </td>
                       </tr>
 
-                      <tr>
-                        <td>Comment</td>
-                        <td>{% if toy.comment %}<strong>{{toy.comment}}</strong>{%endif%}</td>
+                      <tr >
+                            <td style="vertical-align: middle;">Comment</td>
+                            {{no_edit}}
+                            {% if no_edit %}
+                                  <td>{{toy.comment}}</td>
+                            {%else%}
+                                  <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                                      {% csrf_token %}
+
+                                      <td>
+                                          <div class="input-group">
+                                              {% form_field_concat toy_details_form "comment_" toy.id class="form-control" placeholder="Comment" name="comment"%}
+                                              {% form_field_concat toy_details_form_new "comment_" toy.id class="form-control" placeholder="Comment" name="comment"%}
+                                              <span class="input-group-btn">
+                                                 <button class="btn btn-default" id="btn_comment_submit" value="{{toy.id}}" name="toy_comment_submit" type="submit" >Submit</button>
+                                              </span>
+                                          </div>
+                                      </td>
+
+                                  </form>
+                            {%endif%}
                       </tr>
 
                       <tr>
