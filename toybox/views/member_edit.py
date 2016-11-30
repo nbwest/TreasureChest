@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from shared import get_config
 from django.template.loader import render_to_string
 from django.shortcuts import HttpResponse
+from django.template import RequestContext
 
 def handle_member_edit(request, member_id):
     context = {"title":"Members"}
@@ -29,8 +30,11 @@ def handle_member_edit(request, member_id):
         form = MemberDetailsForm(request.POST)
 
         if form.is_valid():
-            form.save(member_id)
-            context.update({"success":"true"})
+            member_id=request.POST.get('member_id',None)
+            if form.save(member_id):
+                context.update({"success":"true"})
+            else:
+                context.update({"failure": "true"})
         else:
             context.update({"failure":"true"})
 
@@ -74,12 +78,16 @@ class MemberDetailsForm(forms.Form):
 
     if credit_enable=="true":
         balance = forms.DecimalField(required=False, label='Balance',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    membership_receipt_reference = forms.CharField(required=False,label="Membership Reciept Reference",max_length=Member._meta.get_field('membership_receipt_reference').max_length)
     comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea())
 
     join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     bond_fee_paid = forms.DecimalField(required=False, label='Bond',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     def save(self,member_id):
+        if not member_id:
+            return None
+
         self.cleaned_data.pop("membership_end_date")
         if "balance" in self.cleaned_data:
             self.cleaned_data.pop("balance")
@@ -100,7 +108,7 @@ class MemberDetailsForm(forms.Form):
                 self.cleaned_data.pop(key)
 
 
-        print self.cleaned_data["type"]
+        # print self.cleaned_data["type"]
 
         result=Member.objects.update_or_create(pk=member_id, defaults=self.cleaned_data)
 
@@ -113,6 +121,7 @@ class MemberDetailsForm(forms.Form):
         for dob in children.values():
             Child.objects.create(parent=member, date_of_birth=dob)
 
+        return result
 
 
 
@@ -143,7 +152,9 @@ def render_member_edit(request):
     if request.method=="GET":
          if "member_edit_id" in request.GET:
             member_id=request.GET["member_edit_id"]
+            context.update({"member_edit_id":member_id})
             context.update(handle_member_edit(request,member_id))
+            context=RequestContext(request,context)
             rendered=render_to_string('toybox/member_edit.html', context)
 
     return rendered

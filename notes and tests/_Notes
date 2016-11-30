@@ -7,6 +7,8 @@ control-c on backup script didn't work to cancel
 volunteer borrow doesn't set to zero properly - i think
 member add on borrow page doesn't open pop up
 set shift doesn't come up when logging in - not implemented
+member page:add new member button not working
+need refresh after updating member details
 
 common reset
     Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
@@ -26,7 +28,26 @@ Check admin for fields that should be readonly and permissions
 
 
 TASKS:
-Allow toy comment edit in toy summary
+
+export all of the toy data into a spreadsheet that looks similar to the one that Helen sent you to upload into the database?
+- toy page, with setting all columns (check all are represented) and no pagination (button to do all of this?)
+
+upload all of this at once or is the best way to manually update each toy as we stocktake the toy?
+- normal import - can't be done by you - could cause big issues
+
+search on the due date of the toy?
+
+Can you add "retrospectively borrow toys" to your list of priorities. Sometimes toys don't get borrowed on the system.
+- can do this already
+
+It is possible to sort by toy state in the toy admin? If not, can you add this feature to your list?
+- not hard - can do in normal toy page
+
+Do you happen to have a mouse for the computers? - buy yourself!
+If we were to buy newer computers next year, can you recommend a good laptop? - No
+
+
+
 Member bond Receipt reference number required as field
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
 Test for unique member name when adding/updating
@@ -74,6 +95,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Allow toy comment edit in toy summary
 add images to toy list
 Include member full details in summary - make a drop down.
 Add comment text field for Till adjust on transaction page

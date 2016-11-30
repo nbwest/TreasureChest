@@ -1,12 +1,9 @@
 
 {% load widget_tweaks %}
-<span id="member_edit">
-    {{cat}}
-    <div class="panel-heading">{{member.name}}</div>
+<span id="member_edit" member_id="{{member_edit_id}}">
 
-
-        <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post' onsubmit="postMember(this);">
-            {% csrf_token %}
+        <!--<form role="form" action="{{ request.get_full_path }}"  class="form-group" id="memberForm" method='post' onsubmit="postMember(this);">-->
+            <!--{% csrf_token %}-->
 
 
 
@@ -53,7 +50,7 @@
 
             </div>
 
-    </form>
+    <!--</form>-->
 
 </span>
 

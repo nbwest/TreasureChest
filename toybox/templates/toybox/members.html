@@ -87,6 +87,7 @@
                             <th data-field="volunteer"   data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
                             <th data-field="committee"   data-visible="false" data-sortable="true" data-filter-control="select">Committee<br>Member</th>
                             <th data-field="bond"  data-visible="false" data-sortable="true">Bond</th>
+                            <th data-field="membership_receipt_reference"  data-visible="false" data-sortable="true" data-filter-control="input">Membership Receipt #</th>
                        	</tr>
                     </thead>
 
@@ -207,6 +208,7 @@
                         <td class="text-center">
                             ${{m.bond_fee_paid|floatformat:2}}
                         </td>
+                        <td>{%if m.membership_receipt_reference %}{{m.membership_receipt_reference}}{%endif%}</td>
                        </tr>
                     {% endfor %}
             </table>
