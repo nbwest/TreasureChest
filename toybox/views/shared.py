@@ -74,7 +74,7 @@ def handle_borrowed_toy_list(request, member_id):
 
     context = {'toy_list': toys}
 
-    context.update({'toy_details_form':handle_toy_details_form(request,toys)})
+    # context.update({'toy_details_form':handle_toy_details_form(request,toys)})
 
     return context
 
@@ -152,27 +152,28 @@ def handle_toy_details_form(request,toys):
 
     if (request.method == "POST" and len(toys)>0):
 
-        if "comment" in request.POST:
+        if any(k in ("comment", "issue_type", "issue_comment") for k in request.POST):
             if "toy_comment_submit" in request.POST:
                 id=request.POST["toy_comment_submit"]
                 form = ToyDetailsForm(request.POST,toyList=toys)
                 if form.is_valid():
                     toy = Toy.objects.get(pk=id)
                     toy.comment = request.POST["comment"]
+                    toy.issue_type = int(request.POST["issue_type"])
+                    toy.issue_comment = request.POST["issue_comment"]
                     toy.save()
 
                     for t in toys:
                         if str(t.id)==id:
                             t.comment=toy.comment
+                            t.issue_type=toy.issue_type
+                            t.issue_comment=toy.issue_comment
                             break
 
                     form = ToyDetailsForm(request.POST, toyList=toys)
 
-
     if not form:
         form = ToyDetailsForm(toyList=toys)
-
-
 
     return form
 
@@ -185,6 +186,12 @@ class ToyDetailsForm(forms.Form):
         for toy in toyList:
             if toy:
                 self.fields['comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.comment,max_length=Toy._meta.get_field('comment').max_length)
+                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False, initial=toy.issue_type,
+                                                                          choices=Toy.ISSUE_TYPE_CHOICES[
+                                                                                  :Toy.RETIRE_VERIFIED])
+                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.issue_comment,
+                                                                           max_length=Toy._meta.get_field(
+                                                                               'comment').max_length)
 
 
 

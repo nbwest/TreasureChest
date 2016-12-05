@@ -168,7 +168,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                  <tr>
                         <td colspan="9" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
-                                 {% include "toybox/toy_summary.html" %}
+                                 {% include "toybox/toy_summary.html" with no_edit="True" %}
 
                             </div>
                         </td>

@@ -131,7 +131,7 @@
                     <tr>
                         <td colspan="8" style="border-top: none !important;">
                             <div id="accordion_{{toy.id}}" class="collapse">
-                                 {% include "toybox/toy_summary.html" with label="new_toys" %}
+                                 {% include "toybox/toy_summary.html" %}
 
                             </div>
                         </td>
@@ -182,7 +182,7 @@
                             <div id="accordion_{{toy.id}}" class="collapse">
 
                                    <!--TODO feed toy into toy_summary-->
-                                {% include "toybox/toy_summary.html" with label="existing_toys" %}
+                                {% include "toybox/toy_summary.html" with no_edit="True" %}
 
 
                            </div>

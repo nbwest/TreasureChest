@@ -520,7 +520,8 @@ def handle_payment_form(request, member_id):
         new_borrow_toy_list.append(item.toy)
 
     context.update({'payment_form': payment_form,"new_borrow_toy_list": new_borrow_toy_list})
-    context.update({"toy_details_form_new": handle_toy_details_form(request, new_borrow_toy_list)})
+    # context.update({"toy_details_form_new": handle_toy_details_form(request, new_borrow_toy_list)})
+    context.update({"toy_details_form": handle_toy_details_form(request, new_borrow_toy_list)})
 
     return context
 
