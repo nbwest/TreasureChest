@@ -32,23 +32,13 @@ TASKS:
 export all of the toy data into a spreadsheet that looks similar to the one that Helen sent you to upload into the database?
 - toy page, with setting all columns (check all are represented) and no pagination (button to do all of this?)
 
-upload all of this at once or is the best way to manually update each toy as we stocktake the toy?
-- normal import - can't be done by you - could cause big issues
-
-search on the due date of the toy?
-
-Can you add "retrospectively borrow toys" to your list of priorities. Sometimes toys don't get borrowed on the system.
-- can do this already
-
-It is possible to sort by toy state in the toy admin? If not, can you add this feature to your list?
-- not hard - can do in normal toy page
-
-Do you happen to have a mouse for the computers? - buy yourself!
-If we were to buy newer computers next year, can you recommend a good laptop? - No
 
 
 
-Member bond Receipt reference number required as field
+
+
+
+
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
 Test for unique member name when adding/updating
 Allow transaction delete, toy borrow undo? link transactions to first transaction in the day? Need some thought
@@ -95,6 +85,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Member bond Receipt reference number required as field
 Allow toy comment edit in toy summary
 add images to toy list
 Include member full details in summary - make a drop down.
