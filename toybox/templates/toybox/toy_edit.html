@@ -1,0 +1,118 @@
+
+
+{% load widget_tweaks %}
+<span id="toy_edit" toy_id="{{toy_edit_id}}">
+
+
+
+
+            <div class="fieldWrapper" >
+
+
+                <div class="row">
+
+                    <div class="col-xs-6" >
+
+
+                        {% for field in toy_edit_form %}
+                         {% if not 'col2' in field.field.widget.attrs %}
+                        {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
+
+                {% if 'datepicker' in field.field.widget.attrs %}
+                    <div class="input-group" >
+                        {% render_field field id=field.auto_id  class+="form-control"%}
+                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"  ></span></span>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function () {
+                                $('#{{field.auto_id}}').datepicker({
+                                format: "dd/mm/yyyy",
+                                endDate: "{{field.value|date:"d/m/Y"}}",
+                                todayBtn: true,
+                                todayHighlight: true
+                            });
+                        });
+                    </script>
+
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {%endif%}
+
+                {% if field.errors %}
+                    <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                        {% for error in field.errors  %}
+                            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                        {%endif%}
+                        {%endfor%}
+
+
+                    </div>
+
+                    <div class="col-xs-6" >
+                        {% for field in toy_edit_form %}
+                        {% if 'col2' in field.field.widget.attrs %}
+                        {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
+
+                {% if 'datepicker' in field.field.widget.attrs %}
+                    <div class="input-group" >
+                        {% render_field field id=field.auto_id  class+="form-control"%}
+                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"  ></span></span>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function () {
+                                $('#{{field.auto_id}}').datepicker({
+                                format: "dd/mm/yyyy",
+                                endDate: "{{field.value|date:"d/m/Y"}}",
+                                todayBtn: true,
+                                todayHighlight: true
+                            });
+                        });
+                    </script>
+
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {%endif%}
+
+                {% if field.errors %}
+                    <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                        {% for error in field.errors  %}
+                            <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                        {% endif %}
+                        {%endfor%}
+
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+
+    <!--</form>-->
+
+</span>
+
+<script>
+
+
+
+
+
+
+
+
+</script>

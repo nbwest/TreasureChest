@@ -23,7 +23,7 @@
                     {%endif%}
                 {%endfor%}
 
-                {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
+                {{ field.label_tag }}{% if field.field.required %} <span class="label  label-as-badge badge-outline-default">Required</span>{%endif%}
 
                 {% if 'datepicker' in field.field.widget.attrs %}
                     <div class="input-group input-append date" >

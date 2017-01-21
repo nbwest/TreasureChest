@@ -8,20 +8,7 @@
 {% include "toybox/member_toy_history_popup.html" %}
 {% include "toybox/member_edit_popup.html" %}
 
-<style>
-.glyphicon.glyphicon-ok, .glyphicon.glyphicon-remove, .glyphicon.glyphicon-ban-circle
-{
-    font-size: 22px;
-}
 
-.badge-outline-default {
-    color: black;
-    border: 1px solid #999;
-    border-color: black;
-    background-color: transparent;
-}
-
-</style>
 
 {%if success%}
     {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction sucessful" %}

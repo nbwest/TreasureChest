@@ -326,7 +326,7 @@ class Toy(models.Model):
     purchase_date = models.DateField(blank=True, null=True)
     purchase_cost = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
     purchased_from = models.ForeignKey(ToyVendor, null=True)
-    num_pieces = models.IntegerField('Number of Pieces', default=1)
+    num_pieces = models.IntegerField('Number of Pieces', blank=True, null=True, default=1)
     parts_list = models.CharField(blank=True, null=True, max_length=1024)
     storage_location = models.CharField(blank=True, null=True, max_length=50)
 
@@ -341,10 +341,10 @@ class Toy(models.Model):
 
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
-    borrow_counter = models.IntegerField(default=0)
+    borrow_counter = models.IntegerField(blank=True, null=True,default=0)
     
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
-    loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
+    loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0,blank=True, null=True)
 
 
     @property

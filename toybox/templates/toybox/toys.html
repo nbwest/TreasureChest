@@ -5,13 +5,13 @@
 
 
 {% block content %}
-
 {% include "toybox/toy_summary_popup.html" %}
 {% include "toybox/toy_history_popup.html" %}
 {% include "toybox/member_summary_popup.html"%}
+{% include "toybox/toy_edit_popup.html"%}
 
 
-
+<h1  class="page-header">{{title}}</h1>
 
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
@@ -25,6 +25,11 @@
         <div id="toolbar">
             <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
             <button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected toys only</button>
+
+
+            <button title="Add New Toy" type="button" class="btn btn-success" aria-label="Left Align" onclick="getEditToyForm(this);" value="add">
+            <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-train " aria-hidden="true"></span> Add new toy</button>
+
         </div>
             <table
                     data-show-export="true"

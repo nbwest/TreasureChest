@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^toybox/', include('toybox.urls', namespace="toybox")),
     url(r'^admin/', include(admin.site.urls)),
     url('^', include('django.contrib.auth.urls')),
-    url(r'^report_builder/', include('report_builder.urls'))
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

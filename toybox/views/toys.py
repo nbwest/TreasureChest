@@ -6,7 +6,8 @@ import ast
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-
+import toy_edit
+import json
 # Provide estimate of borrow cost based on purchase cost
 # Calculates 1% of purchase cost rounded up to nearest $0.50
 def estimate_borrow_cost(purchase_cost):
@@ -15,10 +16,14 @@ def estimate_borrow_cost(purchase_cost):
 
 
 @login_required()
-def toys(request):
-
+def toys(request,toy_id=None):
+    context = {"title": "Toys"}
 
     rendered=render_ajax_request(request)
+    if rendered != None:
+        return rendered
+
+    rendered = toy_edit.render_ajax_request(request)
     if rendered != None:
         return rendered
 
@@ -26,7 +31,18 @@ def toys(request):
     if rendered != None:
         return rendered
 
-    context = {"title":"Toys"}
+
+
+    if request.method=="POST" and request.is_ajax():
+        context.update(toy_edit.handle_toy_edit(request,toy_id))
+        rendered = render_to_string('toybox/toy_edit.html', context)
+
+        context.update({"toy_edit_form":rendered})
+        return HttpResponse(json.dumps(context))
+
+
+
+
 
     loan_bond_enable= get_config("loan_bond_enable")
     context.update({"loan_bond_enable":loan_bond_enable})
@@ -168,7 +184,13 @@ def handleGET(request):
                 link = '<button title = "Toy History" type = "button" class="btn btn-link" onclick="getToyHistory(this);" value="{0}">'.format(row["id"])
                 link +='<span class ="glyphicon glyphicon-time " aria-hidden="true"></span>'
                 link +='</button>'
+
+                link += '<button title = "Edit toy" type = "button" class="btn btn-link" onclick="getEditToyForm(this);" value="{0}">'.format(row["id"])
+                link += '<span class ="glyphicon glyphicon-pencil" aria-hidden="true"></span>'
+                link += '</button>'
+
                 link += '<button title = "Toy details" type = "button" class ="btn btn-link" onclick="getToy(this);" value="{0}" >{1}</button>'.format(row["id"], row["code"])
+
                 row["code"] = link
 
 

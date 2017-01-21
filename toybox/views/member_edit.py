@@ -10,39 +10,28 @@ from django.template import RequestContext
 def handle_member_edit(request, member_id):
     context = {"title":"Members"}
     form = None
-    # context.update(handle_member_search(request))
-
-    # context.update({"members": get_all_members_ordered_by_name()})
-    # context.update({"member_toy_history":handle_member_toy_history(request,member_id)})
 
     if (request.method == "GET"):
-        if (member_id):
-            context.update({"member_detail_submit_button_label": "Update"})
-            form = MemberDetailsForm(member_id=member_id, label_suffix="")
-        else:
-            context.update({"member_detail_submit_button_label": "Add"})
+        if (member_id=="add"):
             form = MemberDetailsForm(label_suffix="")
+        else:
+            form = MemberDetailsForm(member_id=member_id, label_suffix="")
+
 
         context.update({'member_edit_form': form})
 
     # add or update member details
     if (request.method == "POST"):
         form = MemberDetailsForm(request.POST)
-
+        context.update({"member_edit_form_ok": False})
         if form.is_valid():
             member_id=request.POST.get('member_id',None)
             if form.save(member_id):
-                context.update({"success":"true"})
-            else:
-                context.update({"failure": "true"})
+                context.update({"member_edit_form_ok": True})
         else:
-            context.update({"failure":"true"})
-
-        context.update({'member_edit_form': form})
+            context.update({'member_edit_form': form})
 
 
-
-    # "members":Member.objects.all().order_by('membership_end_date'),
     return context
 
 
@@ -79,25 +68,25 @@ class MemberDetailsForm(forms.Form):
     if credit_enable=="true":
         balance = forms.DecimalField(required=False, label='Balance',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     membership_receipt_reference = forms.CharField(required=False,label="Membership Reciept Reference",max_length=Member._meta.get_field('membership_receipt_reference').max_length)
-    comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea())
+    comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea(attrs={"rows":"1"}))
 
     join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
     bond_fee_paid = forms.DecimalField(required=False, label='Bond',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
+
     def save(self,member_id):
         if not member_id:
             return None
+
+        if member_id == "add":
+            member_id = None
 
         self.cleaned_data.pop("membership_end_date")
         if "balance" in self.cleaned_data:
             self.cleaned_data.pop("balance")
         self.cleaned_data.pop("join_date")
         self.cleaned_data.pop("bond_fee_paid")
-        #
-        # type=self.cleaned_data.pop("type")
-        #
-        # self.cleaned_data.update({"type":type.pk})
-
 
 
         children = {}
@@ -108,7 +97,7 @@ class MemberDetailsForm(forms.Form):
                 self.cleaned_data.pop(key)
 
 
-        # print self.cleaned_data["type"]
+
 
         result=Member.objects.update_or_create(pk=member_id, defaults=self.cleaned_data)
 

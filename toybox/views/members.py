@@ -3,6 +3,7 @@ from django.db.models import Count
 from shared import *
 from django.contrib.auth.decorators import login_required
 import member_edit
+import json
 
 
 # POST - Guide: Use POST all the time except when you want the ability to bookmark a page, then use GET
@@ -20,7 +21,7 @@ import member_edit
 
 @login_required
 def members(request, member_id=None):
-    context = {}
+    context = {"title": "Members"}
 
     rendered=render_ajax_request(request)
     if rendered != None:
@@ -31,8 +32,11 @@ def members(request, member_id=None):
     if rendered != None:
         return rendered
 
-    if request.method=="POST":
-        member_edit.handle_member_edit(request,member_id)
+    if request.method=="POST" and request.is_ajax():
+        context.update(member_edit.handle_member_edit(request,member_id))
+        rendered = render_to_string('toybox/member_edit.html', context)
+        context.update({"member_edit_form":rendered})
+        return HttpResponse(json.dumps(context))
 
     context.update(base_data(request))
 

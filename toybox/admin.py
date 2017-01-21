@@ -47,9 +47,9 @@ class ToyForm(forms.ModelForm):
 
 class ToyAdmin(admin.ModelAdmin):
     form=ToyForm
-    list_display = ('code', 'name', 'state','admin_image','image')
+    list_display = ('code', 'name','category', 'state','admin_image','image')
     search_fields = ('code','name' )
-    list_filter = ('state',)
+    list_filter = ('state','category')
 
 
     #readonly_fields = ('member_loaned','due_date','borrow_date','state')
