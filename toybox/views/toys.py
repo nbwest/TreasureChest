@@ -8,6 +8,8 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 import toy_edit
 import json
+import ntpath
+
 # Provide estimate of borrow cost based on purchase cost
 # Calculates 1% of purchase cost rounded up to nearest $0.50
 def estimate_borrow_cost(purchase_cost):
@@ -138,12 +140,7 @@ def handleGET(request):
                 return JsonResponse(result)
 
         if "sort" in request.GET:
-
-
-
             col_filters = request.GET.get('filter',None)
-
-
 
             member_names=dict(Member.objects.all().order_by("id").values_list("id","name"))
             toy_image_files=dict(Image.objects.all().order_by("id").values_list("id","file"))
@@ -167,9 +164,15 @@ def handleGET(request):
                 filter_by_choice_lookup('issue_type', Toy.ISSUE_TYPE_CHOICES, col_filters)
                 filter_by_general('category_id', 'category__name', col_filters)
                 filter_by_contains('purchased_from_id',col_filters)
+                filter_by_general('image_id', 'image__file__icontains', col_filters)
 
 
-            rows,total = sort_slice_to_rows(request, valid_toys,col_filters,Toy)
+            foreignkey_sort = "__name"
+            sort_field = request.GET.get('sort', None)
+            if sort_field == 'image_id':
+                foreignkey_sort = "__file"
+
+            rows,total = sort_slice_to_rows(request, valid_toys,col_filters,Toy,foreignkey_sort)
 
 
             form = ToyIssueForm(toyList=valid_toys, user=request.user)
@@ -202,13 +205,24 @@ def handleGET(request):
                 format_by_choice_lookup("state",Toy.TOY_STATE_CHOICES,row)
                 format_by_list_lookup("category_id", categories, row)
                 format_by_choice_lookup("issue_type", Toy.ISSUE_TYPE_CHOICES, row)
-                # format_by_list_lookup("member_loaned_id", member_names, row)
                 format_by_date('borrow_date', row)
                 format_by_date('purchase_date', row)
                 format_by_date('last_stock_take', row)
                 format_by_date('due_date', row)
                 format_by_date('last_check', row)
-                format_by_image('image_id',toy_image_files,row)
+
+
+                image_filename=None
+                if row["image_id"]:
+                    import ntpath
+                    image_filename=ntpath.basename(toy_image_files[row["image_id"]])
+
+
+                format_by_image('image_id',toy_image_files,row,image_filename)
+
+
+
+
 
 
             context={"total":total,"rows":rows}

@@ -362,6 +362,7 @@ def filter_by_general(field_name, query, filters):
         filters.update({query: filters[field_name]})
         filters.pop(field_name)
 
+
 def filter_by_choice_lookup(field_name, choices, filters):
     if field_name in filters:
         for choice in choices:
@@ -387,10 +388,12 @@ def format_by_control(field_name,form,row):
         render = form.fields["%s_%s" % (field_name,row["id"])].widget.render("%s_%s" % (field_name,row["id"]),row[field_name], {"class": "form-control"})
         row['%s_edit' % field_name] = render
 
-def format_by_image(field_name,list,row):
+def format_by_image(field_name,list,row,caption=None):
     if row[field_name]:
         row[field_name] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, list[row[field_name]])
 
+    if caption:
+        row[field_name] +='<p>'+caption+'</p>'
 # def format_by_link(field_name,link,row):
 #     if row[field_name]:
 #         link = link.format(row[field_name])
@@ -420,7 +423,7 @@ def get_filter_data_from_list_lookup(field_name, request, source_query, list):
             result.update({str(list[element]): str(list[element])})
 
     return result
-def sort_slice_to_rows(request, query, col_filters, Table):
+def sort_slice_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
 
 
     total = query.count()
@@ -445,7 +448,7 @@ def sort_slice_to_rows(request, query, col_filters, Table):
         if sort_field_type == "CharField":
             query = query.extra(select={sort: 'lower(%s)' % sort}).order_by(dir + sort)
         elif sort_field_type == "ForeignKey":
-            query = query.order_by(dir + sort + "__name")
+            query = query.order_by(dir + sort + foreignkey_sort)
         elif sort_field_type == "IntegerField":
             table=Table()
             table_name = table._meta.db_table
