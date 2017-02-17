@@ -9,6 +9,7 @@ from django.http import JsonResponse
 import toy_edit
 import json
 import ntpath
+from sorl.thumbnail import get_thumbnail
 
 # Provide estimate of borrow cost based on purchase cost
 # Calculates 1% of purchase cost rounded up to nearest $0.50
@@ -29,7 +30,9 @@ def toys(request,toy_id=None):
     if rendered != None:
         return rendered
 
+
     rendered=handleGET(request)
+
     if rendered != None:
         return rendered
 
@@ -126,7 +129,9 @@ def handleGET(request):
         categories = dict(ToyCategory.objects.all().values_list("id", "name"))
         valid_toys = Toy.objects.all().exclude(state=Toy.RETIRED)
 
+
         if "filter_data" in request.GET:
+
             result=get_filter_data_from_choices("state",request,valid_toys,Toy.TOY_STATE_CHOICES)
             if result:
                 return JsonResponse(result)
@@ -172,11 +177,13 @@ def handleGET(request):
             if sort_field == 'image_id':
                 foreignkey_sort = "__file"
 
+
             rows,total = sort_slice_to_rows(request, valid_toys,col_filters,Toy,foreignkey_sort)
 
 
             form = ToyIssueForm(toyList=valid_toys, user=request.user)
 
+            a = datetime.datetime.now()
             for row in rows:
 
                 format_by_control("issue_comment",form,row)
@@ -216,15 +223,20 @@ def handleGET(request):
                 if row["image_id"]:
                     import ntpath
                     image_filename=ntpath.basename(toy_image_files[row["image_id"]])
+                    im = get_thumbnail(toy_image_files[row["image_id"]], '200', crop='center', quality=80)
 
 
-                format_by_image('image_id',toy_image_files,row,image_filename)
-
-
-
+                    row["image_id"] = '<a href = "{1}{2}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}" ></a>'.format(im.url,settings.MEDIA_URL,toy_image_files[row["image_id"]])
 
 
 
+                    row["image_id"] += '<p>' + image_filename + '</p>'
+
+
+
+                # format_by_image('image_id',toy_image_files,row,image_filename)
+
+            print "FORMATTING " + str(datetime.datetime.now() - a)
             context={"total":total,"rows":rows}
 
             return JsonResponse(context)

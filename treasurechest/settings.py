@@ -61,6 +61,7 @@ INSTALLED_APPS = (
     # 'report_builder',
     'toybox',
     'widget_tweaks',
+    'sorl.thumbnail',
 )
 
 
