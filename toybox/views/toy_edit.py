@@ -80,8 +80,8 @@ class ToyEditForm(forms.Form):
        if toy_id=="add":
            toy_id=None
 
-       if Toy.objects.filter(code=self.cleaned_data["code"]).exclude(state=Toy.RETIRED).exists():
-           raise ValueError(self.cleaned_data["code"]+" already exists. Retire existing toy before reassignment")
+           if Toy.objects.filter(code=self.cleaned_data["code"]).exclude(state=Toy.RETIRED).exists():
+               raise ValueError(self.cleaned_data["code"]+" already exists. Retire existing toy before reassignment")
 
        result=Toy.objects.update_or_create(pk=toy_id, defaults=self.cleaned_data)
 
