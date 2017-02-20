@@ -19,7 +19,7 @@
 
 <div id="member" class="row" >
 
-    <div   class="col-xs-12 col-sm-10 ">
+    <div   class="col-xs-12 col-sm-10">
            {% include "toybox/member_search.html" with return_page="/toybox/borrow" %}
            {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
     </div>
@@ -196,8 +196,9 @@
         </div>
     </div>
 
-<div class="panel-default col-xs-12 col-sm-10 ">
-    <div class="row" style=" min-height: 80px;margin-left: 0px;" >
+<div class="row" style=" min-height: 80px;margin-left: 0px;" >
+    <div class="panel-default col-xs-12 col-sm-10 ">
+
         <div class="col-md-6">
             <div class="input-group">
 
@@ -242,8 +243,9 @@
             {% render_field field class+="form-control" id=field.auto_id  %}
 
         {%elif field.field.widget.attrs.enabled%}
-            <div class="row">
+        <div class="row">
              <div class="col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+
 
                  {% if field.field.widget.attrs.hr %}
                     <hr>

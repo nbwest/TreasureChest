@@ -1,8 +1,8 @@
 <span id="notification_popup">
 
-    <div class="modal  fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-            <div class="modal-dialog">
-                    <div id="notification_type" class="alert alert-danger">
+    <div class="modal  fade" id="notificationModal" style="z-index:2060; overflow: auto !important;" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" >
+            <div class="modal-dialog" >
+                    <div id="notification_type" class="alert alert-danger" >
                         <strong id="notification_title"></strong> <span id="notification_message"></span>
                     </div>
             </div>
@@ -18,7 +18,7 @@
 
             function hide_modal()
             {
-                console.log('hide_notification');
+                //console.log('hide_notification');
                 $('#notificationModal').modal('hide');
             }
 
@@ -30,7 +30,7 @@
 
             function show_notification(title, message, type, show_time)
             {
-                console.log('show_notification');
+                //console.log('show_notification');
                 $('#notification_title').text(title);
                 $('#notification_message').text(" "+message);
                 $('#notification_type').attr('class','alert alert-'+type);
@@ -108,7 +108,6 @@
         {
             e.preventDefault();
 
-
             $.ajaxSetup({
                             beforeSend: function(xhr, settings)
                             {
@@ -143,6 +142,8 @@
             var formData = new FormData(form[0]);
             formData.append('member_id',$("#member_edit").attr("member_id"));
 
+            console.log($("#member_edit").attr("member_id"));
+
             $.ajax(
             {
                    type: "POST",
@@ -156,17 +157,23 @@
             })
             .done(function(response)
             {
+
                 parsed_response = JSON.parse(response);
 
 
-                if (parsed_response.member_edit_form_ok)
+                if (parsed_response.member_edit_form_error=="")
                 {
                     show_notification("Success!","Member committed successfully","success",1500);
                     window.location.reload(false);
                 }
                 else
                 {
+                    console.log(parsed_response.member_edit_form_error);
+                    show_notification("Error!",parsed_response.member_edit_form_error,"danger",3000);
 
+                    //console.log("==============");
+                    //console.log(parsed_response.member_id);
+                    //console.log($("#member_edit").attr("member_id"));
                     set_and_show_form(parsed_response.member_edit_form);
                 }
 
@@ -186,6 +193,9 @@
             $('#memberEditPopupModal').modal('show');
         }
 
+        $(document).on('hidden.bs.modal', '.modal', function () {
+            $('.modal:visible').length && $(document.body).addClass('modal-open');
+        });
 
         function getMemberDetails(element)
         {

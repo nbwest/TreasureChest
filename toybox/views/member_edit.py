@@ -23,13 +23,19 @@ def handle_member_edit(request, member_id):
     # add or update member details
     if (request.method == "POST"):
         form = MemberDetailsForm(request.POST)
-        context.update({"member_edit_form_ok": False})
+        context.update({"member_edit_form_error": ""})
         if form.is_valid():
             member_id=request.POST.get('member_id',None)
-            if form.save(member_id):
-                context.update({"member_edit_form_ok": True})
+
+            try:
+                form.save(member_id)
+            except ValueError as err:
+                context.update({"member_edit_form_error":err.message })
+                context.update({"member_edit_id": member_id})
         else:
-            context.update({'member_edit_form': form})
+            context.update({"member_edit_form_error": "Missing required field(s)"})
+
+        context.update({'member_edit_form': form})
 
 
     return context
@@ -76,8 +82,10 @@ class MemberDetailsForm(forms.Form):
 
 
     def save(self,member_id):
+
+        # member ID is None on submission of duplicate name
         if not member_id:
-            return None
+            raise Exception("Member ID missing")
 
         if member_id == "add":
             member_id = None
@@ -97,7 +105,8 @@ class MemberDetailsForm(forms.Form):
                 self.cleaned_data.pop(key)
 
 
-
+        if Member.objects.filter(name=self.cleaned_data["name"]).exists():
+            raise ValueError(self.cleaned_data["name"]+" already exists")
 
         result=Member.objects.update_or_create(pk=member_id, defaults=self.cleaned_data)
 
