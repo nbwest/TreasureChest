@@ -17,22 +17,23 @@ def handle_toy_edit(request, toy_id):
             form = ToyEditForm(toy_id=toy_id, label_suffix="")
         context.update({'toy_edit_form': form})
 
+
     # add or update member details
     if (request.method == "POST"):
         form = ToyEditForm(request.POST)
-        context.update({"toy_edit_form_ok": False})
+        context.update({"toy_edit_form_error": ""})
         if form.is_valid():
             toy_id=request.POST.get('toy_edit_id',None)
-            if form.save(toy_id):
-                context.update({"toy_edit_form_ok": True})
+
+            try:
+                form.save(toy_id)
+            except ValueError as err:
+                context.update({"toy_edit_form_error": err.message})
+                context.update({"toy_edit_id": toy_id})
         else:
-            context.update({'toy_edit_form': form})
+            context.update({"toy_edit_form_error": "Missing required field(s)"})
 
-
-
-
-
-
+        context.update({'toy_edit_form': form})
 
 
     return context
@@ -74,10 +75,13 @@ class ToyEditForm(forms.Form):
 
     def save(self,toy_id):
        if not toy_id:
-            return None
+          raise Exception("Toy ID missing")
 
        if toy_id=="add":
            toy_id=None
+
+       if Toy.objects.filter(code=self.cleaned_data["code"]).exclude(state=Toy.RETIRED).exists():
+           raise ValueError(self.cleaned_data["code"]+" already exists. Retire existing toy before reassignment")
 
        result=Toy.objects.update_or_create(pk=toy_id, defaults=self.cleaned_data)
 

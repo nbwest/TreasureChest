@@ -142,8 +142,6 @@
             var formData = new FormData(form[0]);
             formData.append('member_id',$("#member_edit").attr("member_id"));
 
-            console.log($("#member_edit").attr("member_id"));
-
             $.ajax(
             {
                    type: "POST",
@@ -171,9 +169,7 @@
                     console.log(parsed_response.member_edit_form_error);
                     show_notification("Error!",parsed_response.member_edit_form_error,"danger",3000);
 
-                    //console.log("==============");
-                    //console.log(parsed_response.member_id);
-                    //console.log($("#member_edit").attr("member_id"));
+
                     set_and_show_form(parsed_response.member_edit_form);
                 }
 
