@@ -30,8 +30,6 @@ class ToyForm(forms.ModelForm):
         model = Toy
         fields = '__all__'
 
-
-
     def __init__(self, *args, **kwargs):
         super(ToyForm, self).__init__(*args, **kwargs)
         self.fields['image'].queryset = Image.objects.order_by('file')
@@ -47,14 +45,12 @@ class ToyForm(forms.ModelForm):
 
 class ToyAdmin(admin.ModelAdmin):
     form=ToyForm
+    list_per_page = 25
     list_display = ('code', 'name','category', 'state','admin_image','image')
     search_fields = ('code','name' )
     list_filter = ('state','category')
 
-
     #readonly_fields = ('member_loaned','due_date','borrow_date','state')
-
-
 
 
 class ToyHistoryAdmin(admin.ModelAdmin):

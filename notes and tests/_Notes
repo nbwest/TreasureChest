@@ -9,6 +9,14 @@ member add on borrow page doesn't open pop up
 set shift doesn't come up when logging in - not implemented
 member page:add new member button not working
 need refresh after updating member details
+Transaction Bug - Need transaction record and bad transaction days to fix mismatch
+Calendar in toy edit not working - ensure it has today button
+Check adding new member
+
+Limitations
+Question - no adding of other table records...yet.
+toy pictures can't be seen when choosing
+
 
 common reset
     Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
@@ -29,18 +37,22 @@ Check admin for fields that should be readonly and permissions
 
 TASKS:
 
+Admin toy images limit number of records per page - 25
+Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
+Permission for add toy
+The toys page on the site keeps coming up with no matching records found after making changes
+Add Receipts number field for new member, make it default
+New toy add - check for duplicate non retired toy code
+-suggested fee - improve calculation - needs to be a lot lower
+
+
 export all of the toy data into a spreadsheet that looks similar to the one that Helen sent you to upload into the database?
 - toy page, with setting all columns (check all are represented) and no pagination (button to do all of this?)
 
-
-
-
-
-
-
+-add ability to add foreign items when editing toy???
 
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
-Test for unique member name when adding/updating
+
 Allow transaction delete, toy borrow undo? link transactions to first transaction in the day? Need some thought
 Comment when toy is retired
 
@@ -63,7 +75,7 @@ Auto focus member search after clear form on borrow page
 Auto focus member search on returns page
 
 BIGGER ITEMS:
-migrate to production database - postgres. Migrate when web hosted
+migrate to production database - mysql/postgres? Migrate when web hosted
 Backup - use other laptops for backup? Currently USB drive, cloud when get internet
 email support
     send out late reminders
@@ -85,6 +97,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Test for unique member name when adding/updating
 Member bond Receipt reference number required as field
 Allow toy comment edit in toy summary
 add images to toy list
