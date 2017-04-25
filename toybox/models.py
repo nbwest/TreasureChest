@@ -114,7 +114,7 @@ class Member(models.Model):
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
     comment = models.CharField(max_length=1024, blank=True)
-    membership_receipt_reference = models.CharField(blank=True, null=True, max_length=64)
+    membership_receipt_reference = models.CharField(max_length=64)
     #TODO
     # roster days - bitfield
     # member notes/characteristics?
