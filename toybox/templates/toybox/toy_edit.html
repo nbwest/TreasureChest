@@ -1,4 +1,8 @@
 {% load widget_tweaks %}
+
+
+
+
 <span id="toy_edit" toy_id="{{toy_edit_id}}">
     <div class="fieldWrapper" >
         <div class="row">
@@ -9,10 +13,15 @@
                         {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
 
                         {% if 'datepicker' in field.field.widget.attrs %}
-                            {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                            <div class="input-group date" >
+                                {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                                <span class="input-group-addon datebtn" onclick="{{field.auto_id}}.focus();"><span class="glyphicon-calendar glyphicon" ></span></span>
+                            </div>
                         {% else %}
                             {% render_field field class+="form-control" %}
                         {%endif%}
+
+
 
                         {% if field.errors %}
                             <ul  style="list-style-type:none;list-style:none;padding-left:0;">
@@ -33,7 +42,10 @@
                         {{ field.label_tag }}{% if field.field.required %} <div class="label  label-as-badge badge-outline-default">Required</div>{%endif%}
 
                         {% if 'datepicker' in field.field.widget.attrs %}
-                            {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                            <div class="input-group date" >
+                                {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                                <span class="input-group-addon datebtn" onclick="{{field.auto_id}}.focus();"><span class="glyphicon-calendar glyphicon" ></span></span>
+                            </div>
                         {% else %}
                             {% render_field field class+="form-control" %}
                         {%endif%}
