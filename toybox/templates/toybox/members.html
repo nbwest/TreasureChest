@@ -123,9 +123,13 @@
 
                             <td class="text-center">
                                 {% if m.is_current %}
-                                <span class="label label-success label-as-badge">Valid</span>
+                                    {%if m.member_warning %}
+                                        <span class="label label-warning label-as-badge">Upcoming</span>
+                                    {% else %}
+                                        <span class="label label-success label-as-badge">Valid</span>
+                                    {% endif %}
                                 {% else %}
-                                <span class="label label-danger label-as-badge">Not Current</span>
+                                    <span class="label label-danger label-as-badge">Due</span>
                                 {% endif %}
                             </td>
 

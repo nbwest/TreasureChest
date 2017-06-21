@@ -145,6 +145,14 @@ class Member(models.Model):
         self.membership_end_date = thisDateTime().now().date()+timedelta(days=self.type.membership_period)
         self.save()
 
+
+    def member_warning(self):
+        from views.shared import get_config
+        warning_duration = get_config("membership_warning_duration")
+        days_until_membershiup_due = (self.membership_end_date - thisDateTime().now().date()).days
+        membership_soon = days_until_membershiup_due > 0 and days_until_membershiup_due <= warning_duration
+        return membership_soon and self.bond_paid()
+
 class Child(models.Model):
 
     date_of_birth = models.DateField()

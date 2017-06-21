@@ -338,6 +338,9 @@ def get_config(key):
         elif key=="minor_issue_multiplier_max":
             return(0.0)
 
+        elif key == "membership_warning_duration":
+            return (14)
+
         else:
             raise NameError('Option key not found: '+key)
             return None
