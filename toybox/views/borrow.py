@@ -315,6 +315,7 @@ def handle_payment_form(request, member_id):
                                     item.amount=fee
                                     item.comment=comment
                                     item.complete=True
+                                    item.complete_date=thisDateTime().now()
                                     item.save()
 
 
@@ -359,6 +360,7 @@ def handle_payment_form(request, member_id):
                                     item.amount=fee
                                     item.comment=comment
                                     item.complete=True
+                                    item.complete_date = thisDateTime().now()
                                     item.save()
 
                     if "issue_fee" in payment_form.cleaned_data:
@@ -379,6 +381,7 @@ def handle_payment_form(request, member_id):
                                     item.amount=fee
                                     item.comment=comment
                                     item.complete=True
+                                    item.complete_date = thisDateTime().now()
                                     item.save()
 
                     if "change" in payment_form.cleaned_data:

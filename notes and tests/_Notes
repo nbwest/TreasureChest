@@ -7,11 +7,11 @@ control-c on backup script didn't work to cancel
 volunteer borrow doesn't set to zero properly - i think
 member add on borrow page doesn't open pop up
 set shift doesn't come up when logging in - not implemented
-
+transaction date wrong format in admin
+transaction type filter in table not working - check all filters
 need refresh after updating member details
 Transaction Bug - Need transaction record and bad transaction days to fix mismatch
-
-
+transaction table member name search not working
 Commit successful not appearing when making toy edit - ok for new toy
 member list is right side truncated in small window
 member list takes a while to load
@@ -27,34 +27,22 @@ excel format can't open in newer excel, old excel says it's the wrong format, lo
 Is null doesn't seem to work	bug
 
 
-TO CHECK:
-Check potential/active -> wed/sat icons ???
-Check member permission - toy retire
-check UI alignments on return and borrow pages
-Check admin for fields that should be readonly and permissions
-    -Delete toy and member shouldn't be allowed
-
-
 TASKS:
 
-
+Allow dates to be pasted for all dates
+Add amber alert for fees due
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Permission for add toy
-Add Receipts number field for new member, make it default
 New toy add - check for duplicate non retired toy code
--suggested fee - improve calculation - needs to be a lot lower
-
-
-export all of the toy data into a spreadsheet that looks similar to the one that Helen sent you to upload into the database?
-- toy page, with setting all columns (check all are represented) and no pagination (button to do all of this?)
-
--add ability to add foreign items when editing toy???
-
+export all of the toy data into a spreadsheet that looks similar to the one that Helen sent you to upload into the database - can export auto set all columns and no pagination
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
-
 Allow transaction delete, toy borrow undo? link transactions to first transaction in the day? Need some thought
 Comment when toy is retired
+add ability to add foreign items when editing toy - Tricky, might need to be in later version
+Shift to popup when logging in
 
+
+LOW PRIORITY
 Dealing with low income earner
 Enable donation - could be done with what we have? to check
 Add on loan >6 months sets toy as retired - include in config table
@@ -84,6 +72,7 @@ email support
 
 
 KNOWN LIMITATIONS:
+Add Receipts number field for new member, make it default
 Question - no adding of other table records...yet.
 toy pictures can't be seen when choosing
 True/false weren't right for transaction table complete field
@@ -98,6 +87,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+improve totals table for date - by member
 Calendar in toy edit not working - ensure it has today button
 Admin toy images limit number of records per page - 25
 Test for unique member name when adding/updating

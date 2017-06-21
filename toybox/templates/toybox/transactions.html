@@ -48,17 +48,14 @@
          {%endif%}
      </div>
 
-    <div class="row col-xs-12" style=" min-height: 20px;"  >
-    </div>
+
+
 
     {% if totals_form %}
     <div class="row panel-default col-xs-12 col-sm-11 ">
 
-            <div class="panel-heading">Totals</div>
+            <div class="panel-heading">Day Totals</div>
             <br>
-            <div class="row panel-default col-xs-12 col-sm-6 ">
-
-
 
                 <div class="input-group">
                     <span class="input-group-addon" id="label_{{totals_form.query_date.auto_id}}">{{totals_form.query_date.label_tag|striptags}}</span>
@@ -78,22 +75,84 @@
 
                 <br>
 
+        </div>
                 {%if totals %}
-                <ul  class="list-group" >
 
-                    {% for key, value in totals.items  %}
-                        <li class="list-group-item">{{key}} <span class="badge">${{value|floatformat:2}}</span></li>
+        <div class="row panel-default col-xs-12 col-sm-5 ">
+                <table class="table table-bordered">
+                    <tr>
+                        <td><B>Till Start</B></td>
+                        <td>
+                            ${{till_start|floatformat:2}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><B>Till End</B></td>
+                        <td>
+                            ${{till_end|floatformat:2}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><B>Till Takings</B></td>
+                        <td>
+                            ${{total_takings|floatformat:2}}
+                        </td>
+                    </tr>
+
+                </table>
+
+        </div>
+
+
+        <div class="row panel-default col-xs-12 col-sm-11 ">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        {%for item in headings%}
+                            <th>{{item}}</th>
+                        {%endfor%}
+                    </tr>
+                    <tr>
+                        <th>Daily Total</th>
+                        {%for item in totals%}
+                            <th>${{item}}</th>
+                        {%endfor%}
+                    </tr>
+                    </thead>
+
+                    {% for row in fees %}
+                    <tr>
+
+                        {%for item in row%}
+                        <td>
+                            {% if item != None %}
+                                {%if item|floatformat:2 = ""%}
+                                    {{item}}
+                                {%else%}
+                                    ${{item|floatformat:2}}
+                                {%endif%}
+                            {%else%}
+                            -
+                            {%endif%}
+
+                        </td>
+                        {% endfor%}
+
+                    </tr>
                     {% endfor %}
-                    <li class="list-group-item"></li>
-                     <li class="list-group-item">Till Start<span class="badge">${{till_start|floatformat:2}}</span></li>
-                     <li class="list-group-item">Till End<span class="badge">${{till_end|floatformat:2}}</span></li>
-                    <li class="list-group-item">Total Takings<span class="badge">${{total_takings|floatformat:2}}</span></li>
-                </ul>
+
+
+                </table>
+
+
                 {%endif%}
+        </div>
 
-            </div>
 
-    </div>
+
+
+
+
     {%endif%}
 
 </form>

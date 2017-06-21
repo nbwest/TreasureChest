@@ -10,6 +10,7 @@ from django.contrib.auth.models import Permission, User
 import os.path
 
 
+
 def thisDateTime():
     return timezone.make_aware(datetime.datetime.now(),timezone.get_default_timezone())
 
@@ -114,7 +115,7 @@ class Member(models.Model):
     volunteer_capacity_wed = models.BooleanField(default=False)
     volunteer_capacity_sat = models.BooleanField(default=False)
     comment = models.CharField(max_length=1024, blank=True)
-    membership_receipt_reference = models.CharField(max_length=64)
+    membership_receipt_reference = models.CharField(max_length=64, default=None, null=True)
     #TODO
     # roster days - bitfield
     # member notes/characteristics?
@@ -143,9 +144,6 @@ class Member(models.Model):
     def update_membership_date(self):
         self.membership_end_date = thisDateTime().now().date()+timedelta(days=self.type.membership_period)
         self.save()
-
-
-
 
 class Child(models.Model):
 
@@ -559,6 +557,7 @@ class Transaction(models.Model):
     balance = models.DecimalField(decimal_places=2, max_digits=6, default=0)
     comment = models.CharField(blank=True, null=True, max_length=1024)
     complete = models.BooleanField(default=False)
+    complete_date = models.DateTimeField('Transaction Completion date and time', null=True, blank=True)
 
     def __unicode__(self):
         return self.get_transaction_type_display()  # ????

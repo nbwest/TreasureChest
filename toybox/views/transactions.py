@@ -106,27 +106,59 @@ def handleTotalsForm(request):
 
                 # utc_dt = date_string_to_utc(request.POST["query_date"], "%d/%m/%Y")
 
-                tr=Transaction.objects.filter(date_time__startswith=d, complete=True)
+                tr=Transaction.objects.filter((Q(date_time__startswith=d)| Q(complete_date__startswith=d)), complete=True).select_related('member')
 
-                results={}
-                if tr.count()!=0:
-                    till_end=tr.last().balance
-                    till_start=tr.first().balance
+                if tr.count() != 0:
+
+                    members = tr.values('member', 'member__name').distinct()
+                    tr_types= tr.values('transaction_type').distinct()
+
+
+
+                    headings=[]
+                    headings.append("Name")
+                    totals = list([0])
+                    for tr_type in tr_types:
+                        headings.append(Transaction.TRANSACTION_TYPE_CHOICES[tr_type["transaction_type"]][1])
+                        totals.append(0)
+                    headings.append("Total")
+
+                    results=[]
+
+                    for member in members:
+                        member_tr=tr.filter(member=member["member"])
+                        member_fees=[]
+                        member_fees.append(member["member__name"])
+
+                        for tr_type in tr_types:
+                            member_fees.append(member_tr.filter(transaction_type=tr_type["transaction_type"]).aggregate(Sum("amount"))["amount__sum"])
+
+                        member_fees.append(member_tr.exclude(transaction_type=Transaction.PAYMENT).exclude(transaction_type=Transaction.CHANGE).aggregate(Sum("amount"))["amount__sum"])
+
+                        for index,item in enumerate(totals):
+                            if member_fees[index+1]:
+                                totals[index]=Decimal(item)+Decimal(member_fees[index+1])
+
+                        results.append(member_fees)
+
+                    tr=tr.filter(date_time__startswith=d)
+                    till_end=tr.latest("date_time").balance
+                    till_start=tr.earliest("date_time").balance
 
                     context.update({"total_takings":till_end-till_start})
                     context.update({"till_start": till_start})
                     context.update({"till_end": till_end})
 
+                #
+                #
+                #     for choice in Transaction.TRANSACTION_TYPE_CHOICES:
+                #
+                #        # if choice[0] not in [Transaction.CHANGE]:
+                #            total=tr.filter(transaction_type=choice[0]).aggregate(Sum('amount'))["amount__sum"]
+                #            if total:
+                #                results.update({choice[1]:total})
 
-
-                    for choice in Transaction.TRANSACTION_TYPE_CHOICES:
-
-                       # if choice[0] not in [Transaction.CHANGE]:
-                           total=tr.filter(transaction_type=choice[0]).aggregate(Sum('amount'))["amount__sum"]
-                           if total:
-                               results.update({choice[1]:total})
-
-                context.update({"totals":results, "query_date":d})
+                context.update({"headings":headings,"totals":totals,"fees":results, "query_date":d})
 
         context.update({"totals_form":form})
     else:
@@ -294,4 +326,4 @@ class TransactionActionForm(forms.Form):
 
 
 class TransactionTotalsForm(forms.Form):
-    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'button_date_submit':'Get totals','readonly':'readonly','title':'Date to display totals for'}))
+    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'button_date_submit':'Get totals','title':'Date to display totals for'}))
