@@ -13,7 +13,6 @@ need refresh after updating member details
 Transaction Bug - Need transaction record and bad transaction days to fix mismatch
 transaction table member name search not working
 Commit successful not appearing when making toy edit - ok for new toy
-member list is right side truncated in small window
 member list takes a while to load
 toy edit takes a while to load
 filter images for receipt and toys for toy edit
@@ -87,6 +86,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+member list is right side truncated in small window
 improve totals table for date - by member
 Calendar in toy edit not working - ensure it has today button
 Admin toy images limit number of records per page - 25
