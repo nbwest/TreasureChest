@@ -351,26 +351,32 @@ def str2bool(v):
 
 def filter_by_contains(field_name, filters):
     if field_name in filters:
-        filters.update({field_name+"__icontains": filters[field_name]})
+        if filters[field_name] != "":
+            filters.update({field_name+"__icontains": filters[field_name]})
         filters.pop(field_name)
 
 def filter_by_date(field_name,filters):
     if field_name in filters:
-        dt = datetime.datetime.strptime(filters[field_name], "%d/%m/%y")
-        filters.update({field_name+"__startswith": dt.date()})
+        if filters[field_name] != "":
+            dt = datetime.datetime.strptime(filters[field_name], "%d/%m/%y")
+            filters.update({field_name+"__startswith": dt.date()})
         filters.pop(field_name)
 
 def filter_by_general(field_name, query, filters):
     if field_name in filters:
-        filters.update({query: filters[field_name]})
+        if filters[field_name] != "":
+            filters.update({query: filters[field_name]})
         filters.pop(field_name)
 
 
 def filter_by_choice_lookup(field_name, choices, filters):
     if field_name in filters:
-        for choice in choices:
-            if filters[field_name]==choice[1]:
-               filters.update({field_name:choice[0]})
+        if filters[field_name] != "":
+            for choice in choices:
+                if filters[field_name]==choice[1]:
+                   filters.update({field_name:choice[0]})
+                   return
+
 
 
 def format_by_choice_lookup(field_name,choice,row):

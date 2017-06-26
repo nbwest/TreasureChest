@@ -197,6 +197,7 @@ def handleGET(request):
                 col_filters = ast.literal_eval(col_filters)
                 filter_by_choice_lookup('transaction_type', Transaction.TRANSACTION_TYPE_CHOICES, col_filters)
                 filter_by_general('member_id', 'member__name', col_filters)
+                filter_by_contains('member__name', col_filters)
                 filter_by_contains('volunteer_reporting', col_filters)
                 filter_by_contains('comment', col_filters)
                 filter_by_date('date_time', col_filters)
