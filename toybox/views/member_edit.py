@@ -24,8 +24,9 @@ def handle_member_edit(request, member_id):
     if (request.method == "POST"):
         form = MemberDetailsForm(request.POST)
         context.update({"member_edit_form_error": ""})
+        member_id = request.POST.get('member_id', None)
         if form.is_valid():
-            member_id=request.POST.get('member_id',None)
+
 
             try:
                 form.save(member_id)
@@ -34,6 +35,7 @@ def handle_member_edit(request, member_id):
                 context.update({"member_edit_id": member_id})
         else:
             context.update({"member_edit_form_error": "Missing required field(s)"})
+            context.update({"member_edit_id": member_id})
 
         context.update({'member_edit_form': form})
 
@@ -105,7 +107,7 @@ class MemberDetailsForm(forms.Form):
                 self.cleaned_data.pop(key)
 
 
-        if Member.objects.filter(name=self.cleaned_data["name"]).exists():
+        if not member_id and Member.objects.filter(name=self.cleaned_data["name"]).exists():
             raise ValueError(self.cleaned_data["name"]+" already exists")
 
         result=Member.objects.update_or_create(pk=member_id, defaults=self.cleaned_data)
