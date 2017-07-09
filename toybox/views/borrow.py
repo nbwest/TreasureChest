@@ -7,6 +7,7 @@ from datetime import datetime
 import decimal
 from django.contrib.auth.decorators import login_required
 import member_edit
+import json
 
 # work flow
 # member is searched for and once selected displays user stats
@@ -23,6 +24,7 @@ import member_edit
 
 @login_required
 def borrow(request, member_id):
+    context={}
 
     rendered = render_ajax_request(request)
     if rendered != None:
@@ -32,10 +34,17 @@ def borrow(request, member_id):
     if rendered != None:
         return rendered
 
-    if request.method == "POST":
-        member_edit.handle_member_edit(request, member_id)
+    # if request.method == "POST":
+    #    context=member_edit.handle_member_edit(request, member_id)
 
-    context = {"title":"Borrow Toy"}
+    if request.method=="POST" and request.is_ajax():
+        context.update(member_edit.handle_member_edit(request,member_id))
+        rendered = render_to_string('toybox/member_edit.html', context)
+        context.update({"member_edit_form":rendered})
+        return HttpResponse(json.dumps(context))
+
+
+    context.update({"title":"Borrow Toy"})
 
     context.update(base_data(request))
 
