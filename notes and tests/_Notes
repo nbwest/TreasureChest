@@ -2,7 +2,6 @@ Toy library Notes
 =================
 
 BUGS:
-member add on borrow page doesn't open pop up
 Member toy history toy details popup is behind toy history
 member table load is slow
 logging in to transaction page causes jump back to login
@@ -17,7 +16,7 @@ common reset
 
 TASKS:
 filter images for receipt and toys for toy edit
-Export daily totals table
+
 Allow dates to be pasted for all dates
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Permission for add toy
@@ -73,6 +72,8 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Export daily totals table
+member add on borrow page doesn't open pop up
 member edit not working - error in fields even when corrected second commit fails
 Toy page takes too long to load
 use edit icon for member change

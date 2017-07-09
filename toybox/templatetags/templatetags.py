@@ -147,3 +147,7 @@ def form_field_concat_id(form, prefix, suffix, *args, **kwargs):
     output=field.widget.render("",field.initial,attrs=kwargs)
     return output
 
+
+@register.filter
+def replace_spaces(string):
+    return string.replace(' ', '_')

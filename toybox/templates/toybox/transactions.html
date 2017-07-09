@@ -1,6 +1,7 @@
 {% extends "toybox/base.html" %}
 {% load widget_tweaks %}
 {% block content %}
+{% load templatetags %}
 
 {% include "toybox/toy_summary_popup.html" %}
 {% include "toybox/member_summary_popup.html"%}
@@ -78,7 +79,12 @@
         </div>
                 {%if totals %}
 
+
+
+
         <div class="row panel-default col-xs-12 col-sm-5 ">
+
+
                 <table class="table table-bordered">
                     <tr>
                         <td><B>Till Start</B></td>
@@ -105,20 +111,29 @@
 
 
         <div class="row panel-default col-xs-12 col-sm-11 ">
-                <table class="table">
+
+                <table  id="totals_table"
+                    data-show-export="true"
+                    data-export-types="['excel','csv']"
+                    data-classes="table table-condensed table-no-bordered"
+                    class="table table-condensed"
+                    data-toggle="table"
+                    data-show-columns="true">
+
                     <thead>
                     <tr>
                         {%for item in headings%}
-                            <th>{{item}}</th>
-                        {%endfor%}
-                    </tr>
-                    <tr>
-                        <th>Daily Total</th>
-                        {%for item in totals%}
-                            <th>${{item}}</th>
+                            <th data-field="{{item|replace_spaces}}">{{item}}</th>
                         {%endfor%}
                     </tr>
                     </thead>
+                    <tr >
+                        <td><b>Daily Total</b></td>
+                        {%for item in totals%}
+                            <td><b>${{item}}</b></td>
+                        {%endfor%}
+                    </tr>
+
 
                     {% for row in fees %}
                     <tr>
@@ -146,12 +161,8 @@
 
 
                 {%endif%}
+            <br>
         </div>
-
-
-
-
-
 
     {%endif%}
 
@@ -170,7 +181,6 @@
              data-sort-name="id"
              data-sort-order="desc"
              data-show-columns="true"
-             data-pagination="true"
              data-page-size="20"
              data-page-list='[20, 50, 100, 200, 300, 500]'
              data-show-pagination-switch="true"
