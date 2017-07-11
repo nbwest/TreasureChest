@@ -164,8 +164,7 @@ def render_ajax_request(request):
 
     if request.method=="GET" and request.is_ajax():
          if "member_edit_id" in request.GET:
-             rendered=render_member_edit(request)
-
-         return HttpResponse(rendered)
+            rendered=render_member_edit(request)
+            return HttpResponse(rendered)
 
     return None

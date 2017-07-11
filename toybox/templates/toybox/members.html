@@ -58,153 +58,30 @@
                     data-cookie="true"
                     data-cookie-id-table="member_table"
                     data-show-pagination-switch="true"
-                    data-escape="false">
+                    data-escape="false"
+                    data-url="{{ request.get_full_path }}"
+                    data-side-pagination="server">
 
 
                     <thead>
                         <tr>
                             <th data-field="loans"  data-sortable="true" >Loans</th>
                         	<th data-field="name"  data-sorter="aTagSorter" data-sortable="true" data-filter-control="input">Name</th>
-                            <th data-field="status"  data-sortable="true" data-filter-control="select">Status</th>
-                            <th data-field="phone"  data-sortable="true" data-filter-control="input">Phone</th>
-                            <th data-field="email"  data-sortable="true"data-filter-control="input">Email</th>
+                            <th data-field="status"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=status">Status</th>
+                            <th data-field="phone_number1"  data-sortable="true" data-filter-control="input">Phone 1</th>
+                            <th data-field="email_address"  data-sortable="true"data-filter-control="input">Email</th>
                             <th data-field="balance"  data-visible="false" data-sortable="true">Balance</th>
-                            <th data-field="wed"   data-visible="false" data-sortable="true" data-filter-control="select">Wed</th>
-                            <th data-field="sat"   data-visible="false" data-sortable="true" data-filter-control="select">Sat</th>
-                            <th data-field="volunteer"   data-visible="false" data-sortable="true" data-filter-control="select">Active<br>Volunteer</th>
-                            <th data-field="committee"   data-visible="false" data-sortable="true" data-filter-control="select">Committee<br>Member</th>
-                            <th data-field="bond"  data-visible="false" data-sortable="true">Bond</th>
-                            <th data-field="membership_receipt_reference"  data-visible="false" data-sortable="true" data-filter-control="input">Membership Receipt #</th>
+                            <th data-field="join_date" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Join Date</th>
+                            <th data-field="volunteer_capacity_wed"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Wed</th>
+                            <th data-field="volunteer_capacity_sat"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Sat</th>
+                            <th data-field="potential_volunteer"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Potential<br>Volunteer</th>
+                            <th data-field="volunteer"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Active<br>Volunteer</th>
+                            <th data-field="committee_member"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Committee<br>Member</th>
+                            <th data-field="bond_fee_paid"  data-visible="false" data-sortable="true">Bond</th>
+                            <th data-field="membership_receipt_reference"  data-visible="false" data-sortable="true" data-filter-control="input">Membership<br>Receipt #</th>
+                            <th data-field="comment"  data-visible="false" data-filter-control="input" data-sortable="true">Comment</th>
                        	</tr>
                     </thead>
-
-                    {% for m in members %}
-
-                    <tr>
-                         <td class="text-center">
-
-
-                               {% spaceless %}
-                                   {% if m.id not in loan_counts %}
-                                        <a name="0" href="{% url 'toybox:returns' member_id=m.id %}">
-                                            <span class="label label-default label-as-badge" title="No loans">0</span>
-                                        </a>
-                                   {%else%}
-                                        {% for key, value in loan_counts.items %}
-                                            {% if key == m.id %}
-                                                    {% if m.id in loans_overdue %}
-                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
-                                                            <span class="label label-danger label-as-badge" title="Overdue loans - click to go to returns">{{ value }}</span>
-                                                        </a>
-                                                    {%else%}
-                                                        <a name="{{value}}" href="{% url 'toybox:returns' member_id=m.id %}">
-                                                            <span class="label label-success label-as-badge" title="Loans - click to go to returns">{{ value }}</span>
-                                                        </a>
-                                                    {% endif %}
-
-                                            {% endif %}
-                                        {% endfor %}
-                                   {%endif%}
-                               {% endspaceless %}
-
-                             <button title="Toy History" type="button" class="btn btn-link" onclick="getMemberToyHistory(this);" value="{{m.id}}">
-                                    <span class="glyphicon glyphicon-time " aria-hidden="true"></span>
-                                </button>
-
-                               <button title="Edit member details" type="button" class="btn btn-link" onclick="getMemberDetails(this);" value="{{m.id}}">
-                                        <span class ="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                </button>
-                           </td>
-
-                            <td>
-
-                                <button title="Edit member details" type="button" class="btn btn-link" onclick="getMemberDetails(this);" value="{{m.id}}">
-                                        {{ m.name }}
-                                </button>
-
-                            </td>
-
-                            <td class="text-center">
-                                {% if m.is_current %}
-                                    {%if m.member_warning %}
-                                        <span class="label label-warning label-as-badge">Upcoming</span>
-                                    {% else %}
-                                        <span class="label label-success label-as-badge">Valid</span>
-                                    {% endif %}
-                                {% else %}
-                                    <span class="label label-danger label-as-badge">Due</span>
-                                {% endif %}
-                            </td>
-
-
-
-
-
-                        <td>{{m.phone_number1}}</td>
-                        <td>{{m.email_address}}</td>
-
-                        <td class="text-center">
-                            ${{m.balance|floatformat:2}}
-                        </td>
-
-                        <td class="text-center">
-                            {% spaceless %}
-                                {% if m.volunteer %}
-                                    <span class="hidden">{{m.volunteer_capacity_wed}}</span>
-                                    {% if m.volunteer_capacity_wed %}
-                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                                    {% else %}
-                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-                                    {% endif %}
-                                {% else %}
-                                    <span class="hidden">Inactive</span>
-                                    <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" ></span>
-                                {% endif %}
-                            {% endspaceless %}
-                        </td>
-                        <td class="text-center">
-                             {% spaceless %}
-                                {% if m.volunteer %}
-                                    <span class="hidden">{{m.volunteer_capacity_sat}}</span>
-                                    {% if m.volunteer_capacity_sat %}
-                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                                    {% else %}
-                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-                                    {% endif %}
-                                {% else %}
-                                    <span class="hidden">Inactive</span>
-                                    <span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" ></span>
-                                {% endif %}
-                            {% endspaceless %}
-                        </td>
-                        <td class="text-center">
-                             {% spaceless %}
-
-                                    <span class="hidden">{{m.volunteer}}</span>
-                                    {% if m.volunteer %}
-                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                                    {% else %}
-                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-                                    {% endif %}
-
-                            {% endspaceless %}
-                        </td>
-                        <td class="text-center">
-                            {% spaceless %}
-                                    <span class="hidden">{{m.committee_member}}</span>
-                                    {% if m.committee_member %}
-                                        <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                                    {% else %}
-                                        <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>
-                                    {% endif %}
-                            {% endspaceless %}
-                        </td>
-                        <td class="text-center">
-                            ${{m.bond_fee_paid|floatformat:2}}
-                        </td>
-                        <td>{%if m.membership_receipt_reference %}{{m.membership_receipt_reference}}{%endif%}</td>
-                       </tr>
-                    {% endfor %}
             </table>
 
       </div>
@@ -222,6 +99,11 @@
 
 
 <script>
+var booleanValues = {
+    'True': 'True',
+    'False': 'False'
+};
+
 $(document).ready(function() {
 
  $('.date')

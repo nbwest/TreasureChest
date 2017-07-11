@@ -180,7 +180,7 @@ def handleGET(request):
             if result:
                 return JsonResponse(result)
 
-            result = get_filter_data_from_list_lookup("complete", request, Transaction.objects.all(), [True,False])
+            result = get_filter_data_direct("complete", request, {"True":"True","False":"False"})
             if result:
                 return JsonResponse(result)
 

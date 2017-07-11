@@ -432,6 +432,13 @@ def get_filter_data_from_list_lookup(field_name, request, source_query, list):
             result.update({str(list[element]): str(list[element])})
 
     return result
+
+def get_filter_data_direct(field_name, request, dic):
+    result = {}
+    if field_name in request.GET["filter_data"]:
+        result=dic
+    return result
+
 def sort_slice_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
 
 

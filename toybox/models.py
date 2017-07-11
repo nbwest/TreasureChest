@@ -153,6 +153,16 @@ class Member(models.Model):
         membership_soon = days_until_membershiup_due > 0 and days_until_membershiup_due <= warning_duration
         return membership_soon and self.bond_paid()
 
+    def status(self):
+        if self.is_current():
+            if self.member_warning():
+                return "Upcoming"
+            else:
+                return "Valid"
+            return "Due"
+
+
+
 class Child(models.Model):
 
     date_of_birth = models.DateField()
