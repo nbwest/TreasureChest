@@ -46,8 +46,8 @@ def handleGET(request):
                 filter_by_general('volunteer_id', 'volunteer__name__icontains', col_filters)
 
 
-            rows, total = sort_slice_to_rows(request, all_shifts, col_filters, Shift)
-
+            total,query = sort_slice_to_rows(request, all_shifts, col_filters, Shift)
+            rows = list(query.values())
 
 
             newRows=[]

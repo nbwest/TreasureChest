@@ -156,9 +156,10 @@ class Member(models.Model):
     def status(self):
         if self.is_current():
             if self.member_warning():
-                return "Upcoming"
+               return "Upcoming"
             else:
                 return "Valid"
+        else:
             return "Due"
 
 

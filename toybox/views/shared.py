@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.shortcuts import *
+from django.db.models.functions import Lower
 
 
 #################
@@ -441,13 +442,21 @@ def get_filter_data_direct(field_name, request, dic):
 
 def sort_slice_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
 
+    total = query.count()
+    limit = int(request.GET.get('limit', total))
+    offset = int(request.GET.get('offset', 0))
 
+    total,query=sort_to_rows(request, query, col_filters, Table, foreignkey_sort)
+
+    query = query[offset:offset + limit]
+
+    return total,query
+
+def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     total = query.count()
 
     sort = request.GET.get('sort', 'id')
     order = request.GET.get('order', 'asc')
-    limit = int(request.GET.get('limit', total))
-    offset = int(request.GET.get('offset', 0))
 
     if order == "desc":
         dir = "-"
@@ -456,41 +465,51 @@ def sort_slice_to_rows(request, query, col_filters, Table, foreignkey_sort="__na
 
     if col_filters:
         query = query.filter(**col_filters)
-        total=query.count()
+        total = query.count()
 
     if sort:
-        sort_field_type = Table._meta.get_field(sort).get_internal_type()
-
-        if sort_field_type == "CharField":
-            query = query.extra(select={sort: 'lower(%s)' % sort}).order_by(dir + sort)
-        elif sort_field_type == "ForeignKey":
-            query = query.order_by(dir + sort + foreignkey_sort)
-        elif sort_field_type == "IntegerField":
-            table=Table()
-            table_name = table._meta.db_table
-            field=table._meta.get_field_by_name(sort)
-            if field[0]._choices:
-                choices=field[0]._choices
-
-                sorted_choice = sorted(choices, key=lambda x: x[1])
-                db_field_name = '"{0}"."{1}"'.format(table_name,sort)
-
-                i = 0
-                #TODO Warning this is native to sqlite, for postgres look up case!!!
-                CASE_SQL = '(case '
-                for state in sorted_choice:
-                    CASE_SQL+= 'when {2}={1} then {0} '.format(i,state[0],db_field_name)
-                    i += 1
-                CASE_SQL+='end)'
-
-                query = query.extra(select={sort+'_order': CASE_SQL}, order_by=[dir+sort+'_order'])
+        try:
+            sort_field_type = Table._meta.get_field(sort).get_internal_type()
+            print sort_field_type
+        except:
+            try:
+                query = query.order_by(dir + sort)
+            except:
+                print "Invalid field"
         else:
-            query = query.order_by(dir + sort)
+            if sort_field_type == "CharField":
+                # query = query.extra(select={sort: 'lower(%s)' % sort}).order_by(dir + sort)
+                if order=="desc":
+                    query = query.order_by(Lower(sort).desc())
+                else:
+                    query = query.order_by(Lower(sort).asc())
 
-    query = query[offset:offset + limit]
-    rows = list(query.values())
+            elif sort_field_type == "ForeignKey":
+                query = query.order_by(dir + sort + foreignkey_sort)
+            elif sort_field_type == "IntegerField":
+                table = Table()
+                table_name = table._meta.db_table
+                field = table._meta.get_field_by_name(sort)
+                #needed to sort by the alphabetical order of the choices - bootstrap table forces alphabetical order in drop down
+                if field[0]._choices:
+                    choices = field[0]._choices
 
-    return rows,total
+                    sorted_choice = sorted(choices, key=lambda x: x[1])
+                    db_field_name = '"{0}"."{1}"'.format(table_name, sort)
+
+                    i = 0
+                    # TODO Warning this is native to sqlite, for postgres look up case!!!
+                    CASE_SQL = '(case '
+                    for state in sorted_choice:
+                        CASE_SQL += 'when {2}={1} then {0} '.format(i, state[0], db_field_name)
+                        i += 1
+                    CASE_SQL += 'end)'
+
+                    query = query.extra(select={sort + '_order': CASE_SQL}, order_by=[dir + sort + '_order'])
+            else:
+                query = query.order_by(dir + sort)
+    return total,query
+
 
 def handle_shift(request):
 

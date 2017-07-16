@@ -204,8 +204,8 @@ def handleGET(request):
                 filter_by_contains('id', col_filters)
                 filter_by_choice_lookup('complete', ((False,'False'),(True,'True')), col_filters)
 
-            rows, total = sort_slice_to_rows(request, all_transactions, col_filters, Transaction)
-
+            total,query = sort_slice_to_rows(request, all_transactions, col_filters, Transaction)
+            rows = list(query.values())
 
 
             for row in rows:

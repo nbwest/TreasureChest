@@ -6,6 +6,9 @@ import member_edit
 import json
 import ast
 from django.http import JsonResponse
+from django.core.urlresolvers import reverse
+from django.db.models import IntegerField, Case, Value, When
+from django.db.models import Prefetch
 
 
 # POST - Guide: Use POST all the time except when you want the ability to bookmark a page, then use GET
@@ -91,18 +94,15 @@ def members(request, member_id=None):
 
 
 def handleGET(request):
-
+    import time
     if (request.method == "GET" and request.GET):
 
-        valid_members = Member.objects.filter(active=True).order_by('name')
+        if "filter_data" in request.GET:
 
+            result=get_filter_data_direct("status",request,{'Valid':'Valid','Due':'Due','Upcoming':'Upcoming'})
+            if result:
+                return JsonResponse(result)
 
-        # if "filter_data" in request.GET:
-        #
-        #     result=get_filter_data_from_choices("status",request,valid_members,Toy.TOY_STATE_CHOICES)
-        #     if result:
-        #         return JsonResponse(result)
-        #
 
         col_filters = {}
         if "sort" in request.GET:
@@ -126,34 +126,39 @@ def handleGET(request):
 
 
 
-        rows,total = sort_slice_to_rows(request, valid_members,col_filters,Member)#,foreignkey_sort)
+        valid_members = Member.objects.filter(active=True).annotate(
+                loans=Count('toy')).annotate(
+                loans_overdue=Count(Case(
+                    When(toy__due_date__lt=thisDateTime().date(), then=1),
+                    output_field=IntegerField()
+                ))
+            )
 
-        tick='<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>'
-        cross='<span class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span>'
-        NA='<span class="glyphicon glyphicon-ban-circle text-danger" aria-hidden="true" ></span>'
+        total, query = sort_slice_to_rows(request, valid_members, col_filters, Member)
+        rows = list(query.values())
+
+        tick = '<span class="glyphicon glyphicon-ok text-success"></span>'
+        cross = '<span class="glyphicon glyphicon-remove text-danger"></span>'
+        NA = '<span class="glyphicon glyphicon-ban-circle text-danger"></span>'
+
 
         for row in rows:
 
-            # get number of loans for each member
-            #     overdue = Toy.objects.filter(
-            #         due_date__lt=thisDateTime().date())  # .annotate(dcount=Count('member_loaned'))
-            #     loans_overdue = {}
-            #     for toy_due in overdue:
-            #         if toy_due.member_loaned_id in loans_overdue:
-            #             loans_overdue[toy_due.member_loaned_id] += 1
-            #         else:
-            #             loans_overdue.update({toy_due.member_loaned_id: 1})
-            #
-            #     # probably a better way to do this, inserting into dict. better to have it attached to members in member list
-            #     loans = Toy.objects.values('member_loaned').annotate(dcount=Count('member_loaned'))
-            #     loan_counts = {}
-            #     for loan in loans:
-            #         if loan['dcount'] != 0:
-            #             loan_counts.update({loan['member_loaned']: loan['dcount']})
 
-            # row["loans"]=
+            if row["loans"]==0:
+                title='No loans'
+                badge="label-default"
+            else:
+                if row["loans_overdue"]:
+                   title=str(row["loans_overdue"])+" overdue"
+                   badge="label-danger"
+                else:
+                    title = 'Loans - click to go to returns'
+                    badge = "label-success"
 
-            # loans and status to do
+            link = reverse("toybox:returns", kwargs={'member_id': str(row["id"])})
+            row["loans"] ="<a href='" +link+"'><span class='label "+badge+" label-as-badge' title='"+title+"'>" + str(row["loans"]) + "</span></a>"
+
 
             if row["volunteer"]:
                 if row["volunteer_capacity_wed"]:
@@ -187,41 +192,7 @@ def handleGET(request):
             else:
                 row["volunteer"] = cross
 
-
-
             format_by_date('join_date', row)
-
-                # format_by_control("issue_comment",form,row)
-                # format_by_control("issue_type",form, row)
-                # format_by_control("comment", form, row)
-                #
-                #
-                # link = '<button title = "Toy History" type = "button" class="btn btn-link" onclick="getToyHistory(this);" value="{0}">'.format(row["id"])
-                # link +='<span class ="glyphicon glyphicon-time " aria-hidden="true"></span>'
-                # link +='</button>'
-                #
-                # link += '<button title = "Edit toy" type = "button" class="btn btn-link" onclick="getEditToyForm(this);" value="{0}">'.format(row["id"])
-                # link += '<span class ="glyphicon glyphicon-pencil" aria-hidden="true"></span>'
-                # link += '</button>'
-                #
-                # link += '<button title = "Toy details" type = "button" class ="btn btn-link" onclick="getToy(this);" value="{0}" >{1}</button>'.format(row["id"], row["code"])
-                #
-                # row["code"] = link
-                #
-                #
-                # if row["member_loaned_id"]:
-                #     link='<button title = "Member details" type = "button" class ="btn btn-link" onclick="getMemberSummary(this);" value="{0}" >{1}</button>'.format(row["member_loaned_id"],member_names[row["member_loaned_id"]])
-                #     row["member_loaned_id"] = link
-                #
-                #
-                # format_by_choice_lookup("state",Toy.TOY_STATE_CHOICES,row)
-                # format_by_list_lookup("category_id", categories, row)
-                # format_by_choice_lookup("issue_type", Toy.ISSUE_TYPE_CHOICES, row)
-                # format_by_date('borrow_date', row)
-                # format_by_date('purchase_date', row)
-                # format_by_date('last_stock_take', row)
-                # format_by_date('due_date', row)
-                # format_by_date('last_check', row)
 
 
         context={"total":total,"rows":rows}

@@ -178,8 +178,8 @@ def handleGET(request):
                 foreignkey_sort = "__file"
 
 
-            rows,total = sort_slice_to_rows(request, valid_toys,col_filters,Toy,foreignkey_sort)
-
+            total,query = sort_slice_to_rows(request, valid_toys,col_filters,Toy,foreignkey_sort)
+            rows = list(query.values())
 
             form = ToyIssueForm(toyList=valid_toys, user=request.user)
 
