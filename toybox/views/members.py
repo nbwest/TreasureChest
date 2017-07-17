@@ -7,7 +7,8 @@ import json
 import ast
 from django.http import JsonResponse
 from django.core.urlresolvers import reverse
-from django.db.models import IntegerField, Case, Value, When
+from django.db.models import IntegerField,CharField, Case, Value, When
+from django.db.models import F
 from django.db.models import Prefetch
 
 
@@ -49,48 +50,8 @@ def members(request, member_id=None):
     if GETresult:
         return GETresult
 
-    # context.update({"members":Member.objects.filter(active=True).order_by('name')})
-
-     # if no members have been searched for display all members
-    # if context["members"] != None:
-    #
-    #     # get number of loans for each member
-    #     overdue = Toy.objects.filter(
-    #         due_date__lt=thisDateTime().date())  # .annotate(dcount=Count('member_loaned'))
-    #     loans_overdue = {}
-    #     for toy_due in overdue:
-    #         if toy_due.member_loaned_id in loans_overdue:
-    #             loans_overdue[toy_due.member_loaned_id] += 1
-    #         else:
-    #             loans_overdue.update({toy_due.member_loaned_id: 1})
-    #
-    #     # probably a better way to do this, inserting into dict. better to have it attached to members in member list
-    #     loans = Toy.objects.values('member_loaned').annotate(dcount=Count('member_loaned'))
-    #     loan_counts = {}
-    #     for loan in loans:
-    #         if loan['dcount'] != 0:
-    #             loan_counts.update({loan['member_loaned']: loan['dcount']})
-    #
-    #     # print(loans_overdue)
-    #     # print(loan_counts)
-    #
-    #     context.update({"loan_counts": loan_counts, "loans_overdue": loans_overdue})
-
-    # context.update(handle_member_edit(request, member_id))
     return render(request, 'toybox/members.html', context)
 
-
-# def get_all_members_ordered_by_name():
-#     # members=Member.objects.all().order_by('name')
-#     members = Member.objects.filter(active=True).order_by('name')
-#     return members
-
-# def handle_member_toy_history(request, member_id):
-#
-#     return ToyHistory.objects.filter(member__id=member_id).order_by('date_time').select_related('toy')
-#
-
-# Form
 
 
 def handleGET(request):
@@ -124,6 +85,10 @@ def handleGET(request):
                 filter_by_choice_lookup('committee_member', BOOLEAN_CHOICE, col_filters)
                 filter_by_contains('comment', col_filters)
 
+        from shared import get_config
+        warning_duration = get_config("membership_warning_duration")
+        warning_end_date=thisDateTime().date()+timedelta(days=warning_duration)
+
 
 
         valid_members = Member.objects.filter(active=True).annotate(
@@ -131,8 +96,16 @@ def handleGET(request):
                 loans_overdue=Count(Case(
                     When(toy__due_date__lt=thisDateTime().date(), then=1),
                     output_field=IntegerField()
-                ))
+                    ))
+                ).annotate(
+            status=Case(
+                When(Q(bond_fee_paid__gt=0) & Q(membership_end_date__lte=warning_end_date) & Q(membership_end_date__gt=thisDateTime().date()),
+                     then=Value("Upcoming")),
+                When(Q(bond_fee_paid__gt=0) & Q(membership_end_date__gt=thisDateTime().date()),then=Value("Valid")),
+                default=Value("Due"),
+                output_field=CharField()
             )
+        )
 
         total, query = sort_slice_to_rows(request, valid_members, col_filters, Member)
         rows = list(query.values())
@@ -192,7 +165,19 @@ def handleGET(request):
             else:
                 row["volunteer"] = cross
 
+
+            if row["status"]=="Upcoming":
+                badge = "label-warning"
+            elif  row["status"]=="Due":
+                badge = "label-danger"
+            else:
+                badge = "label-success"
+
+            row["status"]="<span class ='label "+badge+" label-as-badge'>"+row["status"]+"<span>"
+
+
             format_by_date('join_date', row)
+            format_by_date('membership_end_date', row)
 
 
         context={"total":total,"rows":rows}

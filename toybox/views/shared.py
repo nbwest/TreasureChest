@@ -463,6 +463,7 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     else:
         dir = ""
 
+    col_filters = {k: v for k, v in col_filters.items() if v}
     if col_filters:
         query = query.filter(**col_filters)
         total = query.count()
@@ -470,7 +471,6 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     if sort:
         try:
             sort_field_type = Table._meta.get_field(sort).get_internal_type()
-            print sort_field_type
         except:
             try:
                 query = query.order_by(dir + sort)
