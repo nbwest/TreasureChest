@@ -114,9 +114,12 @@ def handleGET(request):
         cross = '<span class="glyphicon glyphicon-remove text-danger"></span>'
         NA = '<span class="glyphicon glyphicon-ban-circle text-danger"></span>'
 
+        toy_history = "<button title = 'Toy History' type = 'button' class ='btn btn-link' onclick='getMemberToyHistory(this);' value='{0}'><span class ='glyphicon glyphicon-time' aria-hidden='true'></span></button>"
+        edit_icon = "<button title = 'Edit member details' type = 'button' class ='btn btn-link' onclick='getMemberDetails(this);' value='{0}'><span class ='glyphicon glyphicon-pencil' aria-hidden='true'></span></button>"
+        loans="<a href='{0}'><span class='label {1} label-as-badge' title='{2}'>{3}</span></a>"
+        status="<span class ='label {0} label-as-badge'>{1}<span>"
 
         for row in rows:
-
 
             if row["loans"]==0:
                 title='No loans'
@@ -130,8 +133,8 @@ def handleGET(request):
                     badge = "label-success"
 
             link = reverse("toybox:returns", kwargs={'member_id': str(row["id"])})
-            row["loans"] ="<a href='" +link+"'><span class='label "+badge+" label-as-badge' title='"+title+"'>" + str(row["loans"]) + "</span></a>"
-
+            row["loans"] = loans.format(link,badge,title,str(row["loans"]))
+            row["loans"] += toy_history.format(str(row["id"])) + edit_icon.format(str(row["id"]))
 
             if row["volunteer"]:
                 if row["volunteer_capacity_wed"]:
@@ -173,7 +176,7 @@ def handleGET(request):
             else:
                 badge = "label-success"
 
-            row["status"]="<span class ='label "+badge+" label-as-badge'>"+row["status"]+"<span>"
+            row["status"]=status.format(badge,row["status"])
 
 
             format_by_date('join_date', row)

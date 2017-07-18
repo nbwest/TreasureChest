@@ -463,7 +463,9 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     else:
         dir = ""
 
-    col_filters = {k: v for k, v in col_filters.items() if v}
+    if col_filters:
+        col_filters = {k: v for k, v in col_filters.items() if v}
+
     if col_filters:
         query = query.filter(**col_filters)
         total = query.count()
