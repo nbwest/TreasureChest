@@ -3,7 +3,6 @@ Toy library Notes
 
 BUGS:
 Member toy history toy details popup is behind toy history
-member table load is slow
 logging in to transaction page causes jump back to login
 borrow toy search often has invalid form error - press enter on toy search
 
@@ -72,6 +71,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+member table load is slow
 Export daily totals table
 member add on borrow page doesn't open pop up
 member edit not working - error in fields even when corrected second commit fails
