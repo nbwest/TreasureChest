@@ -2,7 +2,6 @@ Toy library Notes
 =================
 
 BUGS:
-Member toy history toy details popup is behind toy history
 logging in to transaction page causes jump back to login
 borrow toy search often has invalid form error - press enter on toy search
 
@@ -14,14 +13,17 @@ common reset
 
 
 TASKS:
+Allow toy comment edit on return? Already issue comment
+Include warning if leaving borrow page without pressing paid
+add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction.
 filter images for receipt and toys for toy edit
-
-Allow dates to be pasted for all dates
+add member edit pencil to borrow and return page
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Permission for add toy
 New toy add - check for duplicate non retired toy code
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
 Shift to popup when logging in
+Allow dates to be pasted for all dates
 
 BIGGER ITEMS:
 migrate to production database - mysql/postgres? Migrate when web hosted
@@ -71,6 +73,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Member toy history toy details popup is behind toy history
 member table load is slow
 Export daily totals table
 member add on borrow page doesn't open pop up
