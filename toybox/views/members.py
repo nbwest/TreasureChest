@@ -127,6 +127,7 @@ def handleGET(request):
         edit_icon = "<button title = 'Edit member details' type = 'button' class ='btn btn-link' onclick='getMemberDetails(this);' value='{0}'><span class ='glyphicon glyphicon-pencil' aria-hidden='true'></span></button>"
         loans="<a href='{0}'><span class='label {1} label-as-badge' title='{2}'>{3}</span></a>"
         status="<span class ='label {0} label-as-badge'>{1}</span>"
+        member_details='<button title = "Member details" type = "button" class ="btn btn-link" onclick="getMemberSummary(this);" value="{0}" >{1}</button>'
 
         for row in rows:
 
@@ -198,6 +199,8 @@ def handleGET(request):
 
             format_by_date('join_date', row)
             format_by_date('membership_end_date', row)
+
+            row["name"]=member_details.format(row["id"], row["name"])
 
 
         context={"total":total,"rows":rows}
