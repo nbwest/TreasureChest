@@ -13,7 +13,7 @@ common reset
 
 
 TASKS:
-Differentiate between due and missing bond
+
 Allow toy comment edit on return? Already issue comment
 Include warning if leaving borrow page without pressing paid
 add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction.
@@ -74,6 +74,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Differentiate between due and missing bond
 Member toy history toy details popup is behind toy history
 member table load is slow
 Export daily totals table
