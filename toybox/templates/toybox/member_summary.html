@@ -10,14 +10,18 @@
         {% if member.partner %} <p>Alternate Borrower: {{ member.partner }}</p>{%endif%}
         <h4>
 
-            {% if member.is_current %}
-                {%if member.member_warning %}
-                    <span class="label label-warning label-as-badge"> Member Status: UPCOMING</span>
-                {% else %}
+            {% if member.membership_valid %}
+                {%if member.membership_warning %}
+                    <span class="label label-warning label-as-badge"> Membership Status: UPCOMING</span>
+                {% elif member.bond_paid %}
                     <span class="label label-success label-as-badge"> Member Status: VALID</span>
                 {% endif %}
             {% else %}
-            <span class="label label-danger label-as-badge"> Member Status: MEMBERSHIP DUE</span>
+                <span class="label label-danger label-as-badge"> Membership Status: MEMBERSHIP DUE</span>
+            {% endif %}
+
+            {% if not member.bond_paid %}
+                <span class="label label-danger label-as-badge"> Bond Status: UNPAID </span>
             {% endif %}
 
         </h4>

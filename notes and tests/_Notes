@@ -13,6 +13,7 @@ common reset
 
 
 TASKS:
+Differentiate between due and missing bond
 Allow toy comment edit on return? Already issue comment
 Include warning if leaving borrow page without pressing paid
 add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction.

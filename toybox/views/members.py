@@ -64,6 +64,10 @@ def handleGET(request):
             if result:
                 return JsonResponse(result)
 
+            result = get_filter_data_direct("bond_status", request, {'Paid': 'Paid', 'Unpaid': 'Unpaid'})
+            if result:
+                return JsonResponse(result)
+
 
         col_filters = {}
         if "sort" in request.GET:
@@ -99,12 +103,17 @@ def handleGET(request):
                     ))
                 ).annotate(
             status=Case(
-                When(Q(bond_fee_paid__gt=0) & Q(membership_end_date__lte=warning_end_date) & Q(membership_end_date__gt=thisDateTime().date()),
+                When(Q(membership_end_date__lte=warning_end_date) & Q(membership_end_date__gt=thisDateTime().date()),
                      then=Value("Upcoming")),
-                When(Q(bond_fee_paid__gt=0) & Q(membership_end_date__gt=thisDateTime().date()),then=Value("Valid")),
+                When( membership_end_date__gt=thisDateTime().date(),then=Value("Valid")),
                 default=Value("Due"),
                 output_field=CharField()
-            )
+            )).annotate(
+                bond_status = Case(
+                    When(Q(bond_fee_paid__gt=0), then=Value("Paid")),
+                    default=Value("Unpaid"),
+                    output_field=CharField()
+        )
         )
 
         total, query = sort_slice_to_rows(request, valid_members, col_filters, Member)
@@ -117,7 +126,7 @@ def handleGET(request):
         toy_history = "<button title = 'Toy History' type = 'button' class ='btn btn-link' onclick='getMemberToyHistory(this);' value='{0}'><span class ='glyphicon glyphicon-time' aria-hidden='true'></span></button>"
         edit_icon = "<button title = 'Edit member details' type = 'button' class ='btn btn-link' onclick='getMemberDetails(this);' value='{0}'><span class ='glyphicon glyphicon-pencil' aria-hidden='true'></span></button>"
         loans="<a href='{0}'><span class='label {1} label-as-badge' title='{2}'>{3}</span></a>"
-        status="<span class ='label {0} label-as-badge'>{1}<span>"
+        status="<span class ='label {0} label-as-badge'>{1}</span>"
 
         for row in rows:
 
@@ -177,6 +186,14 @@ def handleGET(request):
                 badge = "label-success"
 
             row["status"]=status.format(badge,row["status"])
+
+
+
+            if row["bond_status"]=="Paid":
+                badge = "label-success"
+            else:
+                badge = "label-danger"
+            row["bond_status"] = status.format(badge,row["bond_status"])
 
 
             format_by_date('join_date', row)

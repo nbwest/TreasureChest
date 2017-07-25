@@ -436,7 +436,7 @@ def get_filter_data_from_list_lookup(field_name, request, source_query, list):
 
 def get_filter_data_direct(field_name, request, dic):
     result = {}
-    if field_name in request.GET["filter_data"]:
+    if field_name == request.GET["filter_data"]:
         result=dic
     return result
 
