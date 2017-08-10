@@ -6,6 +6,8 @@ from shared import get_config
 from django.template.loader import render_to_string
 from django.shortcuts import HttpResponse
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 
 def handle_member_edit(request, member_id):
     context = {"title":"Members"}
@@ -29,10 +31,19 @@ def handle_member_edit(request, member_id):
 
 
             try:
-                form.save(member_id)
+                result=form.save(member_id)
+
+                if member_id == "add":
+                    link = reverse("toybox:borrow", kwargs={'member_id': result[0].id})
+                if "commit_action" in request.POST:
+                    if request.POST["commit_action"]=="redirect":
+                        context.update({"redirect":link})
+
+                
             except ValueError as err:
                 context.update({"member_edit_form_error":err.message })
                 context.update({"member_edit_id": member_id})
+
         else:
             context.update({"member_edit_form_error": "Missing required field(s)"})
             context.update({"member_edit_id": member_id})
@@ -64,7 +75,7 @@ class MemberDetailsForm(forms.Form):
     address = forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address = forms.EmailField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type = forms.ModelChoiceField(queryset=MemberType.objects.all(), label="Member Type")
-    membership_receipt_reference = forms.CharField(label="Membership Reciept Reference",max_length=Member._meta.get_field('membership_receipt_reference').max_length)
+    # membership_receipt_reference = forms.CharField(label="Membership Reciept Reference",max_length=Member._meta.get_field('membership_receipt_reference').max_length)
 
 
     committee_member = forms.BooleanField(required=False, label="Committee Member")

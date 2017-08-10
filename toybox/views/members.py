@@ -27,6 +27,12 @@ from django.db.models import Prefetch
 
 @login_required
 def members(request, member_id=None):
+
+    if "redirect" in request.session:
+        link=request.session["redirect"]
+        request.session.pop("redirect")
+        return redirect(link)
+
     context = {"title": "Members"}
 
     rendered=render_ajax_request(request)
@@ -39,7 +45,12 @@ def members(request, member_id=None):
         return rendered
 
     if request.method=="POST" and request.is_ajax():
-        context.update(member_edit.handle_member_edit(request,member_id))
+        result=member_edit.handle_member_edit(request,member_id)
+
+        if "redirect" in result:
+            request.session.update({'redirect': result["redirect"]})
+
+        context.update(result)
         rendered = render_to_string('toybox/member_edit.html', context)
         context.update({"member_edit_form":rendered})
         return HttpResponse(json.dumps(context))

@@ -44,7 +44,7 @@ def borrow(request, member_id):
         return HttpResponse(json.dumps(context))
 
 
-    context.update({"title":"Borrow Toy"})
+    context.update({"title":"Borrow Toy & Payment"})
 
     context.update(base_data(request))
 

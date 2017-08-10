@@ -10,20 +10,24 @@ excel format can't open in newer excel, old excel says it's the wrong format, lo
 Check browser back on toy borrow - can you borrow twice?
 common reset
     Traceback (most recent call last): File "c:\python27\lib\wsgiref\handlers.py", line 86, in run self.finish_response() File "c:\python27\lib\wsgiref\handlers.py", line 127, in finish_response self.write(data) File "c:\python27\lib\wsgiref\handlers.py", line 215, in write self._write(data) File "c:\python27\lib\socket.py", line 324, in write self.flush() File "c:\python27\lib\socket.py", line 303, in flush self._sock.sendall(view[write_offset:write_offset+buffer_size]) error: [Errno 10053] An established connection was aborted by the software in yo ur host machine ---------------------------------------- Exception happened during processing of request from ('127.0.0.1', 53615) Traceback (most recent call last): File "c:\python27\lib\SocketServer.py", line 582, in process_request_thread self.finish_request(request, client_address) File "c:\python27\lib\SocketServer.py", line 323, in finish_request self.RequestHandlerClass(request, client_address, self) File "c:\python27\lib\site-packages\django\core\servers\basehttp.py", line 102 , in __ini
-
+toy error notification on editing toy is too quick
 
 TASKS:
+Include warning if leaving borrow page without pressing paid or auto pay when set to zero
 
-Allow toy comment edit on return? Already issue comment
-Include warning if leaving borrow page without pressing paid
-add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction.
+Allow toy comment edit on borrow? Already done - general issue not editable on return
+add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction. What about bond?
+
+    add popup receipt number for bond or renewal
+
+
 filter images for receipt and toys for toy edit
-add member edit pencil to borrow and return page
+
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Permission for add toy
-New toy add - check for duplicate non retired toy code
-Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
+
 Shift to popup when logging in
+Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
 Allow dates to be pasted for all dates
 
 BIGGER ITEMS:
@@ -74,6 +78,10 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Add link from member to borrow page to pay
+rename receipt to bond receipt
+New toy add - check for duplicate non retired toy code
+add member edit pencil to borrow and return page
 Differentiate between due and missing bond
 Member toy history toy details popup is behind toy history
 member table load is slow

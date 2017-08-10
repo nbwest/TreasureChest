@@ -51,12 +51,15 @@
         <div class="modal-dialog" style="width: 800px;" >
             <div class="modal-content">
 
-                <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post' onsubmit="postMember(this);">
+                <form role="form" action="{{ request.get_full_path }}" class="form-group" id="memberForm" method='post'>
                     {% csrf_token %}
                     <div class="modal-header">
                         <h3 class="modal-title" >Member</h3>
 
-                        <button type="submit" data-dismiss="modal" onclick="postMember(event);" name="commit"  class="btn btn-success" title="Commit changes to the database"><strong>Commit</strong></button>
+                        <button type="submit" data-dismiss="modal" onclick="postMember(event,'normal');" name="commit"  class="btn btn-success" title="Commit changes to the database"><strong>Commit</strong></button>
+
+                        <button name="pay_redirect_button" type="submit" data-dismiss="modal" onclick="postMember(event,'redirect');"  class="btn btn-success" title="Commit changes to the database then go to the borrow page to pay"><strong>Commit and pay now</strong></button>
+
                         <button name="cancel" type="button" data-dismiss="modal" class="btn btn-default" >Dismiss</button>
 
                     </div>
@@ -75,7 +78,10 @@
                     <div class="modal-footer">
 
 
-                        <button type="submit" name="commit" data-dismiss="modal" onclick="postMember(event);" class="btn btn-success" title="Commit changes to the database"><strong>Commit</strong></button>
+                        <button type="submit" name="commit" data-dismiss="modal" onclick="postMember(event,'normal');" class="btn btn-success" title="Commit changes to the database"><strong>Commit</strong></button>
+
+                        <button name="pay_redirect_button" type="submit" data-dismiss="modal" onclick="postMember(event,'redirect');" class="btn btn-success" title="Commit changes to the database then go to the borrow page to pay"><strong>Commit and pay now</strong></button>
+
                         <button name="cancel" type="button" data-dismiss="modal" class="btn btn-default" >Dismiss</button>
 
                     </div>
@@ -104,7 +110,7 @@
 
 
 
-        function postMember(e)
+        function postMember(e,commit_action)
         {
             e.preventDefault();
 
@@ -141,6 +147,7 @@
             var form = $("#memberForm");
             var formData = new FormData(form[0]);
             formData.append('member_id',$("#member_edit").attr("member_id"));
+            formData.append('commit_action',commit_action);
 
             $.ajax(
             {
@@ -155,7 +162,7 @@
             })
             .done(function(response)
             {
-                console.log(response)
+                //console.log(response)
                 parsed_response = JSON.parse(response);
 
 
@@ -201,8 +208,12 @@
                 url: "{{ request.get_full_path }}"+"?member_edit_id="+element.value,
                 success: function(data)
                 {
+                console.log(element.value);
                     document.getElementById("member_edit_container").innerHTML=data;
-                    //document.getElementById("member_edit").innerHTML=data;
+                    if (element.value == "add")
+                        $("[name='pay_redirect_button']").show();
+                      else
+                        $("[name='pay_redirect_button']").hide();
                     $('#memberEditPopupModal').modal('show');
                 }
             });
