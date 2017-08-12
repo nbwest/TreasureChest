@@ -163,7 +163,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
     if member_id:
         form.fields["toy_search_string"].widget.attrs.update({"autofocus":"true"})
 
-    context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'toy':toy, }
+    context = {'toy_search_form': form, 'toy_search_results': toy_search_results, 'new_toy':toy, }
 
 
     return context
@@ -582,7 +582,7 @@ class PaymentForm(forms.Form):
 
     borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today'}))
 
-    loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect())
+    loan_duration = forms.ChoiceField(label="Loan duration (weeks)",choices=loan_choices, widget=forms.RadioSelect())
 
     borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
     borrow_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))

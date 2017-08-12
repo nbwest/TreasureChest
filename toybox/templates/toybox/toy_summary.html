@@ -8,12 +8,16 @@
 {% csrf_token %}
         <div class="row">
 
-            <div class="panel-fluid panel-default col-xs-12 col-sm-6 " style="text-align: left; vertical-align: middle; ">
+            <div class="panel-fluid panel-default col-xs-12 col-md-6 " style="text-align: left; vertical-align: middle; ">
 
                 <div class="panel-default">
-                <div class="panel-heading">Toy Details  ID: {{ toy.code }}</div>
+
                   <table class="table table-condensed">
                     <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>{{toy.code}}</td>
+                      </tr>
                       <tr>
                         <td>Name</td>
                         <td>{{toy.name}}</td>
@@ -163,7 +167,7 @@
 
             </div>
 
-
+             <div class="panel-fluid panel-default col-xs-12 col-md-6 ">
 
                 <p style="float:left;text-align:left;max-width:350px;">
 
@@ -186,6 +190,7 @@
                     {%endif%}
 
                 </p>
+                 </div>
         </div>
 </form>
      {% endif %}
