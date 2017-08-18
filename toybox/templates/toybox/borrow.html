@@ -11,299 +11,339 @@
     {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction successful" %}
 {%endif%}
 
+<style>
 
+span.numcircle {
+  background: #888888;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #ffffff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  margin-right: 5px;
+  text-align: center;
+  width: 1.6em;
+}
 
-
+</style>
 
 <h1  id="page_table" class="page-header">{{title}}</h1>
 
-<div id="member" class="row" >
-
-    <div   class="col-xs-11 col-lg-6">
-           {% include "toybox/member_search.html" with return_page="/toybox/borrow" %}
-           {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
-    </div>
-
-    <div   class="col-xs-1" >
-        <button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align" onclick="getMemberDetails(this);" value="add">
-        <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button>
-    </div>
-
-</div>
-
 <div class="row" >
-        <br>
+    <div  id="leftside" class="col-xs-12 col-lg-6">
 
-    <div   class="col-xs-12 col-lg-7" >
-           {% if members == None %}
-                {% include "toybox/member_summary.html"  %}
-          {% endif %}
-    </div>
-</div>
-<hr>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">1</span>Member</div>
+                <div class="panel-body">
 
+                        <div id="member" class="row">
 
-
-<div id="toy" class="row">
-
-    <div   class="col-xs-12 col-lg-7 " >
-        {% include "toybox/toy_search.html" %}
-        {% include "toybox/toy_search_select.html" with return_page="/toybox/borrow"%}
-    </div>
-</div>
-<br>
-
-
-
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-    {% csrf_token %}
-    <div id="transaction"  class="row">
-        <div class="panel-default col-xs-12  col-lg-7">
-
-              <div class="panel-heading">Borrowed Toys</div>
-
-              <table class="table" id="toy_table">
-
-                    <thead>
-                        <tr>
-                            <th>Details</th>
-                            <th>Toy ID</th>
-                        	<th>Toy Name</th>
-                            <th>Due</th>
-                            <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
-                            {% if loan_bond_enable == True %}
-                            <th style="text-align: center;vertical-align: middle;">Bond</th>
-                            {%endif%}
-                            <th style="text-align: center;vertical-align: middle;">Lend for repair</th>
-                            <th>Remove</th>
-                       	</tr>
-                    </thead>
-
-                  {% for toy in new_borrow_toy_list reversed %}
-                   <tr>
-                       <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
-                       </td>
-
-                        <td>
-                              {{ toy.code }}
-                              <span class="label label-success label-as-badge">New</span>
-                        </td>
-
-                        <td>{{ toy.name }}</td>
-
-                        <td>
-                            <span class="label label-success label-as-badge"><span name="new_toy_due" toy_id="{{toy.id}}">0</span> weeks</span>
-                        </td>
-
-                       <td style="text-align: center;vertical-align: middle;">
-                            <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
-                       </td>
-
-                       {% if loan_bond_enable == True %}
-                        <td style="text-align: center;vertical-align: middle;">
-                            <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
-                       </td>
-                       {% endif %}
-
-                        <td style="text-align: center;vertical-align: middle;">
-                            {%if toy.state == toy.TO_BE_REPAIRED %}
-                                {% form_field_concat_id payment_form "repair_checkbox_" toy.id name="repair_checkbox_^suffix^" class="form-control" onclick="UpdateFee()"%}
-                            {%else%}
-                                N/A
-                            {%endif%}
-                        </td>
-
-                        <td>
-                            <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                            </button>
-                        </td>
-
-                     </tr>
-
-
-
-                    <tr>
-                        <td colspan="8" style="border-top: none !important;">
-                            <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%endif%} >
-                                 {% include "toybox/toy_summary.html" %}
-
+                            <div   class="col-xs-10">
+                                   {% include "toybox/member_search.html" with return_page="/toybox/borrow" %}
+                                   {% include "toybox/member_search_select.html" with return_page="/toybox/borrow"%}
                             </div>
-                        </td>
-                    </tr>
-                   {% endfor %}
+
+                            <div   class="col-xs-2" >
+                                <button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align" onclick="getMemberDetails(this);" value="add">
+                                <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button>
+                            </div>
+
+                        </div>
 
 
-                   {% for toy in toy_list %}
+                        <br>
+                        {% if members == None %}
+                             {% include "toybox/member_summary.html"  %}
+                        {% endif %}
 
-                   <tr>
-                        <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
-                       </td>
-
-                        <td>
-                              {{ toy.code }}
-                        </td>
-
-                        <td>{{ toy.name }}</td>
-
-                        <td>
-                            <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}">{{ toy.due_date|timebetween}}</span>
-                        </td>
-
-                       <td style="text-align: center;vertical-align: middle;">
-                           N/A
-                       </td>
-
-                       <td style="text-align: center;vertical-align: middle;">
-                           N/A
-                       </td>
-                        {% if loan_bond_enable == True %}
-                        <td style="text-align: center;vertical-align: middle;">
-                            N/A
-                        </td>
-                       {%endif%}
-
-                        <td>
-                            <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
-                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                            </button>
-                        </td>
-
-                     </tr>
-
-                    <tr>
-                        <td colspan="8" style="border-top: none !important;">
-                            <div id="accordion_{{toy.id}}" class="collapse">
-
-                                   <!--TODO feed toy into toy_summary-->
-                                {% include "toybox/toy_summary.html" with no_edit="True" %}
-
-
-                           </div>
-
-                        </td>
-                    </tr>
-                     {% endfor %}
-
-              </table>
-
+                </div>
+            </div>
         </div>
+
+
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">2</span>Toys</div>
+                <div class="panel-body">
+                    {% include "toybox/toy_search.html" %}
+                    {% include "toybox/toy_search_select.html" with return_page="/toybox/borrow"%}
+                    <br>
+
+
+                    <div id="transaction"  class="row">
+                        <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                              <table class="table" id="toy_table">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Details</th>
+                                            <th>Toy ID</th>
+                                            <th>Toy Name</th>
+                                            <th>Due</th>
+                                            <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
+                                            {% if loan_bond_enable == True %}
+                                            <th style="text-align: center;vertical-align: middle;">Bond</th>
+                                            {%endif%}
+                                            <th style="text-align: center;vertical-align: middle;">Lend for repair</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thead>
+
+                                  {% for toy in new_borrow_toy_list reversed %}
+                                   <tr>
+                                       <td>
+                                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                                       </td>
+
+                                        <td>
+                                              {{ toy.code }}
+                                              <span class="label label-success label-as-badge">New</span>
+                                        </td>
+
+                                        <td>{{ toy.name }}</td>
+
+                                        <td>
+                                            <span class="label label-success label-as-badge"><span name="new_toy_due" toy_id="{{toy.id}}">0</span> weeks</span>
+                                        </td>
+
+                                       <td style="text-align: center;vertical-align: middle;">
+                                            <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
+                                       </td>
+
+                                       {% if loan_bond_enable == True %}
+                                        <td style="text-align: center;vertical-align: middle;">
+                                            <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
+                                       </td>
+                                       {% endif %}
+
+                                        <td style="text-align: center;vertical-align: middle;">
+                                            {%if toy.state == toy.TO_BE_REPAIRED %}
+                                                {% form_field_concat_id payment_form "repair_checkbox_" toy.id name="repair_checkbox_^suffix^" class="form-control" onclick="UpdateFee()"%}
+                                            {%else%}
+                                                N/A
+                                            {%endif%}
+                                        </td>
+
+                                        <td>
+                                            <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="UpdateFee()" class="btn btn-danger remove-button" aria-label="Left Align">
+                                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+
+                                     </tr>
+
+
+
+                                    <tr>
+                                        <td colspan="8" style="border-top: none !important;">
+                                            <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%endif%} >
+                                                 {% include "toybox/toy_summary.html" %}
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                   {% endfor %}
+
+
+                                   {% for toy in toy_list %}
+
+                                   <tr>
+                                        <td>
+                                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                                       </td>
+
+                                        <td>
+                                              {{ toy.code }}
+                                        </td>
+
+                                        <td>{{ toy.name }}</td>
+
+                                        <td>
+                                            <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}">{{ toy.due_date|timebetween}}</span>
+                                        </td>
+
+                                       <td style="text-align: center;vertical-align: middle;">
+                                           N/A
+                                       </td>
+
+                                       <td style="text-align: center;vertical-align: middle;">
+                                           N/A
+                                       </td>
+                                        {% if loan_bond_enable == True %}
+                                        <td style="text-align: center;vertical-align: middle;">
+                                            N/A
+                                        </td>
+                                       {%endif%}
+
+                                        <td>
+                                            <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
+                                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+
+                                     </tr>
+
+                                    <tr>
+                                        <td colspan="8" style="border-top: none !important;">
+                                            <div id="accordion_{{toy.id}}" class="collapse">
+
+                                                   <!--TODO feed toy into toy_summary-->
+                                                {% include "toybox/toy_summary.html" with no_edit="True" %}
+
+
+                                           </div>
+
+                                        </td>
+                                    </tr>
+                                     {% endfor %}
+
+                              </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
+    <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+    {% csrf_token %}
+       <div  id="rightside" class="col-xs-12 col-lg-6" >
 
-<div class="row" style=" min-height: 80px;margin-left: 0px;" >
-    <div class="col-xs-12 col-lg-7 ">
+         <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">3</span>Loan</div>
+                <div class="panel-body">
 
-        <div class="col-xs-12 col-lg-6">
-            <div class="input-group">
 
-                <span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>
+                <div class="row">
 
-                  <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup">
-                      {% for item in payment_form.loan_duration %}
-                        <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">{{ item }}</label>
-                      {% endfor %}
-                  </div>
+
+                    <div class="col-xs-12 col-lg-7" style=" min-height: 50px;" >
+                        <div class="input-group">
+
+                            <!--<span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>-->
+
+                              <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup">
+                                  {% for item in payment_form.loan_duration %}
+                                    <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">Borrow <b>{{item | removetags:"label"}}</b> week{{ item | striptags | pluralize }}</label>
+                                  {% endfor %}
+                              </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-5 col-xs-4" style ="min-width: 275px;">
+                        <div class="input-group">
+                            <span class="input-group-addon " id="label_{{payment_form.borrow_date.auto_id}}">{{payment_form.borrow_date.label_tag|striptags}}</span>
+                            {% render_field payment_form.borrow_date class+="form-control" id="borrow_date"%}
+                        </div>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function () {
+                                $('#borrow_date').datepicker({
+                                format: "dd/mm/yyyy",
+                                endDate: "{{payment_form.borrow_date.value|date:"d/m/Y"}}",
+                                todayBtn: true,
+                                todayHighlight: true
+                            });
+                        });
+                    </script>
+                </div>
+
+              </div>
             </div>
-        </div>
+         </div>
 
 
-        <div class="col-xs-6 col-lg-6 ">
-            <div class="input-group">
-                <span class="input-group-addon " id="label_{{payment_form.borrow_date.auto_id}}">{{payment_form.borrow_date.label_tag|striptags}}</span>
-                {% render_field payment_form.borrow_date class+="form-control" id="borrow_date"%}
+         <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">4</span>Fees and Payment</div>
+                <div class="panel-body">
+
+                <div  style=" min-height: 50px;" >
+                    {% for field in payment_form %}
+
+                        {%if field.field.widget.attrs.type == "hidden" %}
+                            {% render_field field class+="form-control" id=field.auto_id  %}
+
+                        {%elif not "nolist" in field.field.widget.attrs%}
+
+                             {% if field.field.widget.attrs.hr %}
+                                <hr>
+                             {%endif%}
+
+                             <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}" id="{{field.auto_id}}_group">
+
+
+                                <span class="input-group-addon " id="label_{{field.auto_id}}">{{field.label_tag|striptags}}</span>
+
+                                {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
+
+
+                                 {% if field.field.widget.attrs.adjust_button %}
+                                <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                                </span>
+                                {% endif %}
+
+                                {% if field.field.widget.attrs.change_buttons %}
+                                   <span class="input-group-btn">
+
+                                       <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
+                                       {% if donation_enable == True %}
+                                       <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
+                                       {%endif%}
+
+                                       {% if credit_enable == True %}
+                                       <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
+                                       {%endif%}
+
+                                   </span>
+                                {% endif %}
+
+
+                                {% if field.field.widget.attrs.cancel_button %}
+                                   <span class="input-group-btn">
+                                       <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
+                                   </span>
+                                {% endif %}
+
+                             </div>
+
+                             <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                                 {% for error in field.errors  %}
+                                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                                 {% endfor %}
+                                 {%if field.field.widget.attrs.message %}
+                                    <label class="label label-info">{{ field.field.widget.attrs.message }}</label></li>
+                                 {% endif %}
+                             </ul>
+
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
             </div>
-        </div>
-
-        <script type="text/javascript">
-            $(function () {
-                    $('#borrow_date').datepicker({
-                    format: "dd/mm/yyyy",
-                    endDate: "{{payment_form.borrow_date.value|date:"d/m/Y"}}",
-                    todayBtn: true,
-                    todayHighlight: true
-
-                });
-            });
-        </script>
+          </div>
+       </div>
 
     </div>
+
+    </form>
 </div>
 
-<hr>
-<div class="row">
-             <div class="col-xs-12 col-lg-7 " style=" min-height: 50px;" >
-    {% for field in payment_form %}
-
-        {%if field.field.widget.attrs.type == "hidden" %}
-            {% render_field field class+="form-control" id=field.auto_id  %}
-
-        {%elif not "nolist" in field.field.widget.attrs%}
 
 
 
-                 {% if field.field.widget.attrs.hr %}
-                    <hr>
-                 {%endif%}
-
-                 <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}" id="{{field.auto_id}}_group">
 
 
-                    <span class="input-group-addon " id="label_{{field.auto_id}}">{{field.label_tag|striptags}}</span>
 
-                    {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
-
-
-                     {% if field.field.widget.attrs.adjust_button %}
-                    <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
-                    </span>
-                    {% endif %}
-
-                    {% if field.field.widget.attrs.change_buttons %}
-                       <span class="input-group-btn">
-
-                           <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
-                           {% if donation_enable == True %}
-                           <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
-                           {%endif%}
-
-                           {% if credit_enable == True %}
-                           <button class="btn btn-default"  id="btn_credit" name="add_credit" type="submit" >Credit</button>
-                           {%endif%}
-
-                       </span>
-                    {% endif %}
-
-
-                    {% if field.field.widget.attrs.cancel_button %}
-                       <span class="input-group-btn">
-                           <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" >Cancel</button>
-                       </span>
-                    {% endif %}
-
-                 </div>
-
-                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                     {% for error in field.errors  %}
-                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                     {% endfor %}
-                     {%if field.field.widget.attrs.message %}
-                        <label class="label label-info">{{ field.field.widget.attrs.message }}</label></li>
-                     {% endif %}
-                 </ul>
-
-
-        {% endif %}
-
-    {% endfor %}
-
-</div>
-            </div>
-
-</form>
 
 <script type="text/javascript">
 

@@ -570,6 +570,7 @@ class PaymentForm(forms.Form):
         if toyList:
             for toy in toyList:
                 self.fields['repair_checkbox_%s' % toy.toy.id]=forms.BooleanField(required=False)
+                self.fields['repair_checkbox_%s' % toy.toy.id].widget.attrs.update({'nolist':'True'})
 
         if "initial" in kwargs:
             if "volunteering" in kwargs["initial"]:
