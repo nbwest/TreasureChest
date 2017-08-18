@@ -92,7 +92,7 @@ def handleGET(request):
                 filter_by_date('join_date', col_filters)
                 filter_by_contains('phone_number1',col_filters)
                 filter_by_contains('email_address',col_filters)
-                filter_by_contains('membership_receipt_reference',col_filters)
+                filter_by_contains('bond_receipt_reference',col_filters)
                 filter_by_choice_lookup('volunteer_capacity_wed', BOOLEAN_CHOICE, col_filters)
                 filter_by_choice_lookup('volunteer_capacity_sat', BOOLEAN_CHOICE, col_filters)
                 filter_by_choice_lookup('potential_volunteer', BOOLEAN_CHOICE, col_filters)

@@ -2,6 +2,7 @@ Toy library Notes
 =================
 
 BUGS:
+Check transaction privileges
 logging in to transaction page causes jump back to login
 borrow toy search often has invalid form error - press enter on toy search
 

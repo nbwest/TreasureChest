@@ -189,6 +189,7 @@ def handle_payment_form(request, member_id):
     context = {}
     member=None
     adjustment_found=False
+    payment_form=None
 
 
     if member_id:
@@ -279,12 +280,15 @@ def handle_payment_form(request, member_id):
                         if payment_form.cleaned_data['membership']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['membership'])
 
+                            comment = None
+
+                            if "membership_receipt" in payment_form.cleaned_data:
+                                comment = "Membership Receipt #: " + payment_form.cleaned_data["membership_receipt"]
+
                             if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['membership_adjust_justification']!="":
                                     comment=payment_form.cleaned_data['membership_adjust_justification']
                                     adjustment_found=True
-                                else:
-                                    comment=None
 
                             if fee!=0 or comment is not None:
                                 transaction=Transaction()
@@ -332,13 +336,18 @@ def handle_payment_form(request, member_id):
                     if "member_bond" in payment_form.cleaned_data:
                         if payment_form.cleaned_data['member_bond']!="":
                             fee=decimal.Decimal(payment_form.cleaned_data['member_bond'])
+                            comment = None
+
+                            if "member_bond_receipt" in payment_form.cleaned_data:
+                                member.bond_receipt_reference = payment_form.cleaned_data["member_bond_receipt"]
+                                comment = "Bond Receipt #: "+payment_form.cleaned_data["member_bond_receipt"]
+                            else:
+                                print "ERROR"
 
                             if "member_bond_adjust_justification" in payment_form.cleaned_data:
                                 if payment_form.cleaned_data['member_bond_adjust_justification']!="":
-                                    comment=payment_form.cleaned_data['member_bond_adjust_justification']
+                                    comment+=' '+payment_form.cleaned_data['member_bond_adjust_justification']
                                     adjustment_found=True
-                                else:
-                                    comment=None
 
                             if fee!=0 or comment is not None:
                                 transaction=Transaction()
@@ -464,8 +473,6 @@ def handle_payment_form(request, member_id):
                         #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
                         #     break
 
-            #else:
-                #print("invalid form "+ str(payment_form))
 
 
 
@@ -515,15 +522,27 @@ def handle_payment_form(request, member_id):
         except:
             pass
 
+    if not payment_form or (payment_form and payment_form.is_valid()):
+        payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial=payment_initial)#, check_fields=True)
 
 
-    payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial=payment_initial)
+
 
     # if form charfield has an amount in it make it visible.
-    for field in payment_form:
-        if field.html_name in payment_form.initial and field.field.__class__.__name__=="CharField":
-            if payment_form.initial[field.html_name]:
-                    field.field.widget.attrs.update({'enabled':'True'})
+    # for field in payment_form:
+    #     if field.html_name in payment_initial and field.field.__class__.__name__=="CharField":
+    #         if payment_initial[field.html_name]:
+    #                 field.field.widget.attrs.update({})
+    #
+    #     if 'link' in field.field.widget.attrs and field.field.__class__.__name__=="CharField":
+    #         link=field.field.widget.attrs['link']
+    #         if link in payment_initial and payment_initial[link]:
+    #             field.field.widget.attrs.update({'enabled': 'True'})
+
+
+#TODO ISSUE: required when set in the model doesn't go away when enabled is false.
+
+
 
 
     #make borrow toys query result into a list of toys
@@ -559,6 +578,29 @@ class PaymentForm(forms.Form):
                 self.fields['borrow_fee'].widget.attrs.pop("adjust_button", 0)
                 self.fields['borrow_fee_adjust_justification'].widget.attrs.update({"rawValue":"VOLUNTEER"})
 
+            # if "check_fields" in kwargs:
+            if "member_bond" in kwargs["initial"] and kwargs["initial"]["member_bond"]==0:
+                del self.fields["member_bond"]
+                del self.fields["member_bond_adjust_justification"]
+                del self.fields["member_bond_receipt"]
+
+            if "late_fee" in kwargs["initial"] and kwargs["initial"]["late_fee"]==0:
+                del self.fields["late_fee"]
+                del self.fields["late_fee_adjust_justification"]
+
+            if "membership" in kwargs["initial"] and kwargs["initial"]["membership"]==0:
+                del self.fields["membership"]
+                del self.fields["membership_adjust_justification"]
+                del self.fields["membership_receipt"]
+
+            if "issue_fee" in kwargs["initial"] and kwargs["initial"]["issue_fee"]==0:
+                del self.fields["issue_fee"]
+                del self.fields["issue_fee_adjust_justification"]
+        else:
+            if len(args)>0:
+                for field in self.fields:
+                    if not field in args[0]:
+                            del self.fields[field]
 
 
     numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
@@ -580,45 +622,56 @@ class PaymentForm(forms.Form):
 
     #ensure any input with adjust button also has a justification field with suffix of _adjust_justification with its name
 
-    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today'}))
+    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today','nolist':'True'}))
 
-    loan_duration = forms.ChoiceField(label="Loan duration (weeks)",choices=loan_choices, widget=forms.RadioSelect())
+    loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect(attrs={'nolist':'True'}))
 
-    borrow_fee = forms.CharField(label="Borrow Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
-    borrow_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+    borrow_fee = forms.CharField(label="Borrow Fee $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True',}))
+    borrow_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
 
     #works but needs a server restart
     if loan_bond_enable=='true':
-        loan_bond = forms.CharField(required=False, label="Loan Bond", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True','enabled':'True'}))
-        loan_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+        loan_bond = forms.CharField(required=False, label="Loan Bond $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True',}))
+        loan_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
-        loan_bond_refund = forms.CharField(required=False, label="Loan Bond Refund", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'negative','readonly':'readonly'}))
-        loan_bond_refund_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+        loan_bond_refund = forms.CharField(required=False, label="Loan Bond Refund $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'negative','readonly':'readonly'}))
+        loan_bond_refund_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
-    member_bond = forms.CharField(required=False, label="Member Bond", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
-    member_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+    member_bond = forms.CharField(required=False, label="Member Bond $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
+    member_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
+    member_bond_receipt = forms.CharField(required=True, label="Member Bond Receipt", max_length=20,widget=forms.TextInput(attrs={}))
+
+    late_fee = forms.CharField(required=False, label="Late Fee $", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
+    late_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
 
-    late_fee = forms.CharField(required=False, label="Late Fee", max_length=20, validators=[numeric], widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
-    late_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+    membership = forms.CharField(required=False, label="Membership $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
+    membership_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
+    membership_receipt = forms.CharField(required=True, label="Membership receipt", max_length=20,widget=forms.TextInput(attrs={}))
 
-
-    membership = forms.CharField(required=False, label="Membership", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
-    membership_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
     #TODO enable donation
-    # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','enabled':'True'}))
+    # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive',}))
 
-    issue_fee = forms.CharField(required=False, label="Issue Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
-    issue_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden','enabled':'True'}))
+    issue_fee = forms.CharField(required=False, label="Issue Fee $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly','adjust_button':'True'}))
+    issue_fee_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
-    total_fee = forms.CharField(label="Total Fee", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','enabled':'True','readonly':'readonly'}))
+    total_fee = forms.CharField(label="Total Fee $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True','readonly':'readonly'}))
 
     if credit_enable=='true':
-        credit = forms.CharField(label="Credit Remaining", max_length=50, widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
-        total_to_pay = forms.CharField(label="Total to Pay", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly'}))
+        credit = forms.CharField(label="Credit Remaining $", max_length=50, widget=forms.TextInput(attrs={'readonly':'readonly'}))
+        total_to_pay = forms.CharField(label="Total to Pay $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly'}))
 
-    payment = forms.CharField(label="Payment", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'enabled':'True', 'change_buttons':'True','title':'Enter the amount the member has paid'}))
-    change = forms.CharField(label="Change", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'enabled':'True','readonly':'readonly', 'cancel_button':'True'}))
+    payment = forms.CharField(label="Payment $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'hr':'True', 'change_buttons':'True','title':'Enter the amount the member has paid'}))
+    change = forms.CharField(label="Change $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'readonly':'readonly', 'cancel_button':'True'}))
 
 
+    # def clean(self):
+    #     cleaned_data = super(PaymentForm, self).clean()
+    #     for field in self:
+    #         print field.html_name
+    #         print field.field.widget.attrs
+    #         print field.field.required
+    #         print
+    #
+    #     return cleaned_data

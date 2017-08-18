@@ -240,7 +240,7 @@
         {%if field.field.widget.attrs.type == "hidden" %}
             {% render_field field class+="form-control" id=field.auto_id  %}
 
-        {%elif field.field.widget.attrs.enabled%}
+        {%elif not "nolist" in field.field.widget.attrs%}
 
 
 
@@ -251,7 +251,7 @@
                  <div class="input-group  {% if field.field.widget.attrs.large %} input-group-lg {% endif %}" id="{{field.auto_id}}_group">
 
 
-                    <span class="input-group-addon " id="label_{{field.auto_id}}">{{field.label_tag|striptags}} $</span>
+                    <span class="input-group-addon " id="label_{{field.auto_id}}">{{field.label_tag|striptags}}</span>
 
                     {% render_field field class+="form-control" id=field.auto_id   oninput+=")" oninput+=field.auto_id oninput+="UpdateFee(" %}
 
@@ -556,7 +556,7 @@ function CalcTotal()
         $("#btn_donate").prop('disabled',(isNaN(change)) || (total==0) || !((payment+credit)-total>0) );
 
 
-    if (change >= 0)
+    if (change >= 0 && payment !=0)
     {
         $("#id_payment_group").removeClass('has-error');
         $("#id_payment_group").addClass('has-success');

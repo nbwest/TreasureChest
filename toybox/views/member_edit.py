@@ -75,7 +75,7 @@ class MemberDetailsForm(forms.Form):
     address = forms.CharField(label="Address", max_length=Member._meta.get_field('address').max_length)
     email_address = forms.EmailField(label="Email", max_length=Member._meta.get_field('email_address').max_length)
     type = forms.ModelChoiceField(queryset=MemberType.objects.all(), label="Member Type")
-    # membership_receipt_reference = forms.CharField(label="Membership Reciept Reference",max_length=Member._meta.get_field('membership_receipt_reference').max_length)
+
 
 
     committee_member = forms.BooleanField(required=False, label="Committee Member")
