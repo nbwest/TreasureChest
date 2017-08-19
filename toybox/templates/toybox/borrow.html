@@ -11,28 +11,12 @@
     {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction successful" %}
 {%endif%}
 
-<style>
 
-span.numcircle {
-  background: #888888;
-  border-radius: 0.8em;
-  -moz-border-radius: 0.8em;
-  -webkit-border-radius: 0.8em;
-  color: #ffffff;
-  display: inline-block;
-  font-weight: bold;
-  line-height: 1.6em;
-  margin-right: 5px;
-  text-align: center;
-  width: 1.6em;
-}
-
-</style>
 
 <h1  id="page_table" class="page-header">{{title}}</h1>
 
 <div class="row" >
-    <div  id="leftside" class="col-xs-12 col-lg-6">
+    <div  id="leftside" class="col-xs-12 col-lg-8">
 
         <div class="panel-group">
             <div class="panel panel-default">
@@ -74,7 +58,7 @@ span.numcircle {
                     <br>
 
 
-                    <div id="transaction"  class="row">
+
                         <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
                               <table class="table" id="toy_table">
 
@@ -203,7 +187,7 @@ span.numcircle {
 
                               </table>
                         </form>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -212,32 +196,24 @@ span.numcircle {
 
     <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
-       <div  id="rightside" class="col-xs-12 col-lg-6" >
+       <div  id="rightside" class="col-xs-12 col-lg-4" >
 
          <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading"><span class="numcircle">3</span>Loan</div>
                 <div class="panel-body">
 
-
-                <div class="row">
-
-
-                    <div class="col-xs-12 col-lg-7" style=" min-height: 50px;" >
-                        <div class="input-group">
-
-                            <!--<span type="text" title="Loan duration in weeks for all newly borrowed toys"  class="input-group-addon">{{payment_form.loan_duration.label_tag|striptags}}</span>-->
-
-                              <div class="btn-group " name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup">
+                        <div class="input-group"  >
+                              <div class="btn-group btn-group-justified" name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup" >
                                   {% for item in payment_form.loan_duration %}
-                                    <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}">Borrow <b>{{item | removetags:"label"}}</b> week{{ item | striptags | pluralize }}</label>
+                                    <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}"><b>{{item | removetags:"label"}}</b> week loan</label>
                                   {% endfor %}
                               </div>
                         </div>
-                    </div>
 
+                    <br>
 
-                    <div class="col-lg-5 col-xs-4" style ="min-width: 275px;">
+                    <div style ="min-width: 275px;">
                         <div class="input-group">
                             <span class="input-group-addon " id="label_{{payment_form.borrow_date.auto_id}}">{{payment_form.borrow_date.label_tag|striptags}}</span>
                             {% render_field payment_form.borrow_date class+="form-control" id="borrow_date"%}
@@ -254,7 +230,7 @@ span.numcircle {
                             });
                         });
                     </script>
-                </div>
+
 
               </div>
             </div>

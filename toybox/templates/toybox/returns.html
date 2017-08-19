@@ -23,40 +23,162 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
 {% include "toybox/member_edit_popup.html" %}
 
 
+<style>
+.equal {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+
+.panel {
+  flex:1 0 100%;
+}
+</style>
+
 <h1 class="page-header">{{title}}</h1>
 
-<div class="row">
-    <div class="col-xs-12 col-sm-10 ">
-        {% include "toybox/member_search.html" with return_page="/toybox/returns" %}
-        {% include "toybox/member_search_select.html" with return_page="/toybox/returns" test="test2"%}
-    </div>
-</div>
+<div class="row " >
+    <div  id="leftside" class="col-xs-12 col-lg-8">
+        <div class="panel-group">
+            <div class="panel panel-default" >
+                <div class="panel-heading"><span class="numcircle">1</span>Member</div>
+                <div class="panel-body">
 
-<div class="row" style="margin-left: 10px;">
-    <div class="col-xs-12 col-sm-10 ">
-        <br>
-        {% include "toybox/member_summary.html" %}
-        <br>
-    </div>
+                    {% include "toybox/member_search.html" with return_page="/toybox/returns" %}
+                    {% include "toybox/member_search_select.html" with return_page="/toybox/returns" test="test2"%}
 
-</div>
+                    {% include "toybox/member_summary.html" %}
 
-
-
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-        {% csrf_token %}
-
-    <div class="row" style=" min-height: 50px;">
-    <div class="col-xs-12 col-sm-10">
-            <div class="input-group">
-                <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
-                {% render_field returns_form.return_date class+="form-control" id="return_date"%}
-
+                </div>
             </div>
-    </div>
         </div>
 
-    <script type="text/javascript">
+         <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">2</span>Borrowed Toys</div>
+                <div class="panel-body">
+
+
+                    <table id="toy_table" class="table">
+
+                        <thead>
+                            <tr>
+                                <th>Details</th>
+                                <th>Toy ID</th>
+                                <th>Toy Name</th>
+                                <th>Due</th>
+                                <th style="text-align: center;">Returned</th>
+
+                                {% if loan_bond_enable == True %}
+                                <th style="text-align: center;">Bond</th>
+                                {%endif%}
+
+                                <th style="text-align: center;">Late Fee</th>
+                                <th style="text-align: center;">Issue Fee</th>
+
+                                <th>Report Issue</th>
+
+                            </tr>
+                        </thead>
+
+                        {% for toy in toy_list %}
+                        <tr>
+                            <td>
+                                   <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                            </td>
+
+                            <td>
+                                {{ toy.code }}
+                                <span class="hidden" id="issue_fines_{{toy.id}}" issue_fine_major="{{toy.issue_fine_major}}" issue_fine_minor="{{toy.issue_fine_minor}}" issue_fine_allocation="{{toy.issue_fine_allocation}}"></span>
+
+                            </td>
+
+                            <td>
+                                {{ toy.name }}
+                            </td>
+
+
+                            <td>
+                                <span class="label {% if toy.due_date|timebetween:return_date|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}"> {{toy.due_date|timebetween:return_date }}</span>
+                                 {% if toy.state == toy.BEING_REPAIRED %}
+                                <span class="label label-danger label-as-badge">Being Repaired</span>
+                                {%endif%}
+                            </td>
+
+                             <td style="text-align: center;vertical-align: middle;">
+                                {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();" %}
+                            </td>
+
+                             {% if loan_bond_enable == True %}
+                             <td style="text-align: center;vertical-align: middle;">
+                                 {% if toy.state == toy.BEING_REPAIRED %}
+                                     <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
+                                 {%else%}
+                                    <span name="loan_bond" id="loan_bond_{{toy.id}}" value="{{toy.loan_bond|floatformat:2}}" >${{toy.loan_bond|floatformat:2}}</span>
+                                 {%endif%}
+
+                            </td>
+                            {%endif%}
+
+                            {% if toy.due_date|timebetween|slice:':1' == '-' %}
+                            <td style="text-align: center;vertical-align: middle;" >
+                                <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="{{toy.fine|floatformat:2}}" >${{toy.fine|floatformat:2}}</span>
+                            </td>
+                            {%else%}
+                            <td style="text-align: center;vertical-align: middle;">
+                                 <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="0.00" >$0.00</span>
+                            </td>
+                            {%endif%}
+
+                             <td id="issue_fee_{{toy.id}}" style="text-align: center;vertical-align: middle;">
+                                $0.00
+                            </td>
+
+                            <td>
+                                {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();" %}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="9" style="border-top: none !important;">
+                                 {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" onchange="handleCheckbox();" %}
+
+                            </td>
+                        </tr>
+
+                         <tr>
+                                <td colspan="9" style="border-top: none !important;">
+                                    <div id="accordion_{{toy.id}}" class="collapse">
+                                         {% include "toybox/toy_summary.html" with no_edit="True" %}
+
+                                    </div>
+                                </td>
+                            </tr>
+
+                       {% endfor %}
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div  id="rightside" class="col-xs-12 col-lg-4">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">3</span>Return Date</div>
+                <div class="panel-body">
+
+                    <div class="input-group">
+                        <span class="input-group-addon " id="label_{{returns_form.return_date.auto_id}}">{{returns_form.return_date.label_tag|striptags}}</span>
+                        {% render_field returns_form.return_date class+="form-control" id="return_date" form="return_form"%}
+                    </div>
+
+                    <script type="text/javascript">
         $(function ()
         {
                 $('#return_date').datepicker(
@@ -71,155 +193,57 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                 });
         });
     </script>
-
-    <div class="row">
-        <div class="panel-fluid panel-default col-xs-12 col-sm-10 ">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Borrowed Toys</div>
-
-            <!-- Table -->
-            <table id="toy_table" class="table">
-
-                <thead>
-                <tr>
-                    <th>Details</th>
-                    <th>Toy ID</th>
-                    <th>Toy Name</th>
-                    <th>Due</th>
-                    <th style="text-align: center;">Returned</th>
-
-                    {% if loan_bond_enable == True %}
-                    <th style="text-align: center;">Bond</th>
-                    {%endif%}
-
-                    <th style="text-align: center;">Late Fee</th>
-                    <th style="text-align: center;">Issue Fee</th>
-
-                    <th>Report Issue</th>
-
-                </tr>
-                </thead>
-
-                {% for toy in toy_list %}
-                <tr>
-                    <td>
-                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
-                    </td>
-
-                    <td>
-                        {{ toy.code }}
-                        <span class="hidden" id="issue_fines_{{toy.id}}" issue_fine_major="{{toy.issue_fine_major}}" issue_fine_minor="{{toy.issue_fine_minor}}" issue_fine_allocation="{{toy.issue_fine_allocation}}"></span>
-
-                    </td>
-
-                    <td>
-                        {{ toy.name }}
-                    </td>
-
-
-                    <td>
-                        <span class="label {% if toy.due_date|timebetween:return_date|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}"> {{toy.due_date|timebetween:return_date }}</span>
-                         {% if toy.state == toy.BEING_REPAIRED %}
-                        <span class="label label-danger label-as-badge">Being Repaired</span>
-                        {%endif%}
-                    </td>
-
-                     <td style="text-align: center;vertical-align: middle;">
-                        {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();"%}
-                    </td>
-
-                     {% if loan_bond_enable == True %}
-                     <td style="text-align: center;vertical-align: middle;">
-                         {% if toy.state == toy.BEING_REPAIRED %}
-                             <span name="loan_bond" id="loan_bond_{{toy.id}}" value="0.00" >$0.00</span>
-                         {%else%}
-                            <span name="loan_bond" id="loan_bond_{{toy.id}}" value="{{toy.loan_bond|floatformat:2}}" >${{toy.loan_bond|floatformat:2}}</span>
-                         {%endif%}
-
-                    </td>
-                    {%endif%}
-
-                    {% if toy.due_date|timebetween|slice:':1' == '-' %}
-                    <td style="text-align: center;vertical-align: middle;" >
-                        <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="{{toy.fine|floatformat:2}}" >${{toy.fine|floatformat:2}}</span>
-                    </td>
-                    {%else%}
-                    <td style="text-align: center;vertical-align: middle;">
-                         <span name="toy_fine" id="toy_fine_{{toy.id}}" toy_id="{{toy.id}}" value="0.00" >$0.00</span>
-                    </td>
-                    {%endif%}
-
-                     <td id="issue_fee_{{toy.id}}" style="text-align: center;vertical-align: middle;">
-                        $0.00
-                    </td>
-
-                    <td>
-                        {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();"%}
-
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="9" style="border-top: none !important;">
-                         {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" onchange="handleCheckbox();"%}
-
-                    </td>
-                </tr>
-
-                 <tr>
-                        <td colspan="9" style="border-top: none !important;">
-                            <div id="accordion_{{toy.id}}" class="collapse">
-                                 {% include "toybox/toy_summary.html" with no_edit="True" %}
-
-                            </div>
-                        </td>
-                    </tr>
-
-               {% endfor %}
-            </table>
+                </div>
+            </div>
         </div>
 
-    </div>
 
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="numcircle">4</span>Fees</div>
+                <div class="panel-body">
 
+                    <form id="return_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                        {% csrf_token %}
+                        {% for field in returns_form %}
+                            {%if field.field.widget.attrs.enabled%}
 
-    {% for field in returns_form %}
-        {%if field.field.widget.attrs.enabled%}
-        <div class="row">
-         <div class="col-xs-12 col-sm-10 " style=" min-height: 50px;" >
+                                 {% if field.field.widget.attrs.hr %} <hr> {%endif%}
 
-             {% if field.field.widget.attrs.hr %} <hr> {%endif%}
+                                <div class="input-group">
+                                    <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
+                                    {% render_field field class+="form-control" id=field.auto_id oninput="CalcTotal();" %}
 
-            <div class="input-group">
-                <span class="input-group-addon">{{field.label_tag|striptags}} $</span>
-                {% render_field field class+="form-control" id=field.auto_id oninput="CalcTotal();" %}
+                                     {% if field.field.widget.attrs.adjust_button %}
+                                    <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}");' data-target="#feeChangeModal">Adjust</button>
+                                       </span>
+                                    {% endif %}
 
-                 {% if field.field.widget.attrs.adjust_button %}
-                <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}");' data-target="#feeChangeModal">Adjust</button>
-                   </span>
-                {% endif %}
+                                    {% if field.field.widget.attrs.button %}
+                                       <span class="input-group-btn">
+                                           <button class="btn btn-default" id="btn_{{field.field.widget.attrs.button}}" name="{{field.field.widget.attrs.button}}" type="submit" {% if not member %} disabled="true" {%endif%}>{{field.field.widget.attrs.button}}</button>
+                                       </span>
+                                    {% endif %}
+                                    </div>
 
-                {% if field.field.widget.attrs.button %}
-                   <span class="input-group-btn">
-                       <button class="btn btn-default" id="btn_{{field.field.widget.attrs.button}}" name="{{field.field.widget.attrs.button}}" type="submit" {% if not member %} disabled="true" {%endif%}>{{field.field.widget.attrs.button}}</button>
-                   </span>
-                {% endif %}
+                                     <ul  style="list-style-type:none;list-style:none;padding-left:0;">
+                                    {% for error in field.errors  %}
+                                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                                    {% endfor %}
+                                    </ul>
+
+                            {% endif %}
+                        {% endfor %}
+
+                    </form>
                 </div>
-
-                 <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                {% for error in field.errors  %}
-                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                {% endfor %}
-                </ul>
-             </div>
-           </div>
-        {% endif %}
-
-    {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 
 
-
-</form>
 
 <script>
 

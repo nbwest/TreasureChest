@@ -45,6 +45,24 @@ For page html use the following template tags:
             background-color: transparent;
         }
 
+
+
+        span.numcircle {
+          background: #888888;
+          border-radius: 0.8em;
+          -moz-border-radius: 0.8em;
+          -webkit-border-radius: 0.8em;
+          color: #ffffff;
+          display: inline-block;
+          font-weight: bold;
+          line-height: 1.6em;
+          margin-right: 5px;
+          text-align: center;
+          width: 1.6em;
+        }
+
+
+
     </style>
 </head>
 
@@ -196,8 +214,8 @@ function setshift()
                     <li><a href="{% url 'toybox:returns' %}"><strong>Return</strong></a></li>
                     <li><a href="{% url 'toybox:members' %}"><strong>Members</strong></a></li>
                     <li><a href="{% url 'toybox:toys' %}"><strong>Toys</strong></a></li>
-                    <li><a href="{% url 'toybox:transactions' %}"><strong>Transactions</strong></a></li>
                     <li><a href="{% url 'toybox:shifts' %}"><strong>Shifts</strong></a></li>
+                    <li><a href="{% url 'toybox:transactions' %}"><strong>Transactions</strong></a></li>
                     <!--<li><a href="/report_builder"><strong>Reports</strong></a></li>-->
                     <li><a href="/admin"><strong>Admin</strong></a></li>
                     <li><a href="{% url 'toybox:feedback' %}"><strong>Feedback</strong></a></li>
