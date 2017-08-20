@@ -18,10 +18,12 @@
 <div class="row" >
     <div  id="leftside" class="col-xs-12 col-lg-8">
 
-        <div class="panel-group">
+
             <div class="panel panel-default">
                 <div class="panel-heading"><span class="numcircle">1</span>Member</div>
-                <div class="panel-body">
+
+                <!--Panel body causes misalignment of glyphicon button in member search - fixed by changing padding to 14px instead of default 15px - weird-->
+                <div class="panel-body" style="padding: 14px;">
 
                         <div id="member" class="row">
 
@@ -37,15 +39,14 @@
 
                         </div>
 
-
-                        <br>
-                        {% if members == None %}
+                        {% if member %}
+                            <br>
                              {% include "toybox/member_summary.html"  %}
                         {% endif %}
 
                 </div>
             </div>
-        </div>
+
 
 
 
