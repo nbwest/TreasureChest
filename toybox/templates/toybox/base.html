@@ -177,10 +177,10 @@ function setshift()
             </button>
 
 
-            <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB logo.png"></a>
+            <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB_logo.png" alt="MTB logo"></a>
             <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
 
-            <p class="navbar-text navbar-left">{{version}}</a></p>
+            <p class="navbar-text navbar-left">{{version}}</p>
 
             {% if daily_balance %}
                 <ul class="nav navbar-nav hidden-xs ">
@@ -208,7 +208,7 @@ function setshift()
 
 
                 <!-- these are hidden until used for collapsed menu-->
-                <div id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
+                <span id="menu" class="visible-xs nav navbar-nav " style="margin-left: 0px; ">
 
                     <li><a href="{% url 'toybox:borrow' %}"><strong>Borrow & Payment</strong></a></li>
                     <li><a href="{% url 'toybox:returns' %}"><strong>Return</strong></a></li>
@@ -221,7 +221,7 @@ function setshift()
                     <li><a href="{% url 'toybox:feedback' %}"><strong>Feedback</strong></a></li>
 
 
-                </div>
+                </span>
             </ul>
         </div>
     </div>
@@ -233,7 +233,7 @@ function setshift()
         <!-- side menu -->
         <div class="col-xs-1  nav hidden-xs ">
             <ul class="nav nav-sidebar nav-pills nav-stacked">
-                <div id="duplicate-menu" class="nav nav-sidebar nav-pills nav-stacked"></div>
+                <span id="duplicate-menu" class="nav nav-sidebar nav-pills nav-stacked"></span>
                 <!-- menu duplicated with java script from top menu -->
             </ul>
 

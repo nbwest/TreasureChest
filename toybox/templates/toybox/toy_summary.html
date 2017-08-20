@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 {% load templatetags %}
 
-<span id="toy_summary">
+<div id="toy_summary">
 
     {% if toy %}
 <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
@@ -195,7 +195,7 @@
 </form>
      {% endif %}
 
-</span>
+</div>
 
 <script>
     function getToy(element)
