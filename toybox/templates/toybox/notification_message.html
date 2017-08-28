@@ -1,7 +1,7 @@
 
 <div id="notification_message">
 
-    <div class="modal  fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal  fade" id="notificationModalhtml" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
             <div class="modal-dialog">
                     <div class="alert alert-{{type}}">
                         <strong>{{title}}</strong> {{message}}
@@ -15,11 +15,11 @@
         $( document ).ready(function()
         {
             function hide_modal(){
-                $('#notificationModal').modal('hide');
+                $('#notificationModalhtml').modal('hide');
             }
 
             $(window).load(function(){
-                $('#notificationModal').modal('show');
+                $('#notificationModalhtml').modal('show');
                 window.setTimeout(hide_modal, 1500);
             });
         });

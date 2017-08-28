@@ -84,6 +84,10 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                             </tr>
                         </thead>
 
+                        {% if not toy_list %}
+                         <tr><td>Toy list empty<td></tr>
+                        {%endif%}
+
                         {% for toy in toy_list %}
                         <tr>
                             <td>

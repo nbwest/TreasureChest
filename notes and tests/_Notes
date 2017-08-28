@@ -2,7 +2,7 @@ Toy library Notes
 =================
 
 BUGS:
-Check transaction privileges
+Check transaction privileges - extra form not coming up
 logging in to transaction page causes jump back to login
 borrow toy search often has invalid form error - press enter on toy search
 
@@ -15,19 +15,13 @@ toy error notification on editing toy is too quick
 
 TASKS:
 Include warning if leaving borrow page without pressing paid or auto pay when set to zero
-
-Allow toy comment edit on borrow? Already done - general issue not editable on return
-add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction. What about bond?
-
-    add popup receipt number for bond or renewal
-
-
+Add transaction history for member - clock icon next to member name
 filter images for receipt and toys for toy edit
 
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Permission for add toy
 
-Shift to popup when logging in
+Shift to popup when logging in - modal on each page may use too much time to render
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
 Allow dates to be pasted for all dates
 
@@ -79,6 +73,9 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+add abiliity to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction. What about bond?
+    add popup receipt number for bond or renewal
+Allow toy comment edit on borrow? Already done - general issue not editable on return
 Add link from member to borrow page to pay
 rename receipt to bond receipt
 New toy add - check for duplicate non retired toy code

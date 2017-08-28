@@ -47,7 +47,7 @@
                                         Already Borrowed
                                     </span>
                                 {%else%}
-                                    <span class="label {% if toy.state != toy.AVAILABLE%} label-danger {%else%} label-success {%endif%} label-as-badge">
+                                    <span class="label {% if toy.state == toy.AVAILABLE%} label-success {%elif toy.state == toy.TO_BE_REPAIRED %}label-warning {%else %} label-danger{%endif%} label-as-badge">
                                         {{toy.get_state_display}}
                                     </span>
                                 {%endif%}

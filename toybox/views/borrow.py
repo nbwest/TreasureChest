@@ -190,11 +190,18 @@ def handle_payment_form(request, member_id):
     member=None
     adjustment_found=False
     payment_form=None
+    volunteer = False
 
 
     if member_id:
         member = get_object_or_404(Member, pk=member_id)
 
+    if member_id:
+        try:
+            Shift.objects.get(volunteer=member_id, shift_date=thisDateTime().date())
+            volunteer=True
+        except:
+            pass
 
     credit_enable = get_config("credit_enable")
     repair_loan_duration = get_config("repair_loan_duration")
@@ -514,33 +521,12 @@ def handle_payment_form(request, member_id):
 
     payment_initial={'loan_duration':default_loan_duration, 'late_fee':late_fee, 'membership':membership_fee, 'issue_fee':issue_fee, 'member_bond':member_bond, 'credit':balance,'loan_bond_refund':loan_bond_refund,'borrow_date':borrow_date}
 
-    if member_id:
-        try:
-            Shift.objects.get(volunteer=member_id, shift_date=thisDateTime().date())
-            context.update({"volunteering":"true"})
-            payment_initial.update({"volunteering":"true"})
-        except:
-            pass
+    if volunteer:
+        context.update({"volunteering": "true"})
+        payment_initial.update({"volunteering": "true"})
 
     if not payment_form or (payment_form and payment_form.is_valid()):
         payment_form = PaymentForm(temp_toy_list=new_borrow_list,initial=payment_initial)#, check_fields=True)
-
-
-
-
-    # if form charfield has an amount in it make it visible.
-    # for field in payment_form:
-    #     if field.html_name in payment_initial and field.field.__class__.__name__=="CharField":
-    #         if payment_initial[field.html_name]:
-    #                 field.field.widget.attrs.update({})
-    #
-    #     if 'link' in field.field.widget.attrs and field.field.__class__.__name__=="CharField":
-    #         link=field.field.widget.attrs['link']
-    #         if link in payment_initial and payment_initial[link]:
-    #             field.field.widget.attrs.update({'enabled': 'True'})
-
-
-#TODO ISSUE: required when set in the model doesn't go away when enabled is false.
 
 
 
