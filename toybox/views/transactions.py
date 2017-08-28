@@ -34,17 +34,15 @@ def transactions(request):
 
 def handlePOST(context, request):
 
-    if (request.method == "POST"):
-        user = User.objects.get(username=request.user.username)
+    user = User.objects.get(username=request.user.username)
 
-        if user.has_perm("toybox.transaction_actions"):
-             context.update(handleTransactionActionForm(request, context['daily_balance']))
+    if user.has_perm("toybox.transaction_actions"):
+         context.update(handleTransactionActionForm(request, context['daily_balance']))
 
-        context.update(handleTotalsForm(request))
+    context.update(handleTotalsForm(request))
 
-        return context
-    else:
-        return {}
+    return context
+
 
 def handleTransactionActionForm(request, till):
     context={}
