@@ -70,7 +70,7 @@ For page html use the following template tags:
 
 
 
-{% include "toybox/shift_popup.html" %}
+
 {% include "toybox/till_popup.html" %}
 
 
@@ -126,20 +126,9 @@ function logout()
     $('#setTillModal').modal('show');
 }
 
-function setshift()
-{
-    $('#setShiftModal').modal('show');
-}
 
-{%if setting_shift %}
-    $( document ).ready(function()
-    {
-        $(window).load(function(){
-            setshift();
-        });
 
-    });
-{%endif%}
+
 
 {%if request.session.first_login == True %}
 
@@ -201,7 +190,6 @@ function setshift()
                 <li>
                     <p class="navbar-btn" style="margin-right: 10px; margin-left: 10px; ">
                         <a onclick="logout();"  class="btn btn-default">Logout</a>
-                        <a onclick="setshift();" class="btn btn-default">Set Shift</a>
                     </p>
                 </li>
                 {%endif%}
