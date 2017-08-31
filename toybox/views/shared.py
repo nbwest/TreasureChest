@@ -36,6 +36,7 @@ def handle_member_search(request):
     # Search pressed.  Validate form and get list of matching members
     if (request.method == "GET"):
         form = MemberSearchForm(request.GET)
+        request.session.pop("page_leave_check", None)
         if form.is_valid():
             name_fragment=form.cleaned_data['member_name_fragment'].strip()
             if name_fragment!="":

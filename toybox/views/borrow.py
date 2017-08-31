@@ -38,6 +38,10 @@ def borrow(request, member_id):
     #    context=member_edit.handle_member_edit(request, member_id)
 
     if request.method=="POST" and request.is_ajax():
+        # if "page_leave_check" in request.session:
+        #     context.update({"leave_check":True})
+        # else
+        # request.session.pop("page_leave_check", None)
         context.update(member_edit.handle_member_edit(request,member_id))
         rendered = render_to_string('toybox/member_edit.html', context)
         context.update({"member_edit_form":rendered})
@@ -82,6 +86,16 @@ def borrow(request, member_id):
         context.pop("toy_search_results",None)
         context.pop("toy",None)
         context.pop("new_borrow_toy_list",None)
+
+        if "payment_form" in context and "payment" in context["payment_form"].errors:
+            context["payment_form"].errors.pop('payment')
+
+        # pf.errors['payment'] = pf.error_class()
+
+
+        # context.update({"payment_form": pf})
+        request.session.pop("page_leave_check",None)
+
 
     return render(request, 'toybox/borrow.html', context)
 
@@ -145,6 +159,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
                             member = get_object_or_404(Member, pk=member_id)
                             tempBorrowList = TempBorrowList()
                             tempBorrowList.store(member, toy)
+
+                            request.session.update({"page_leave_check":True})
                         else:
                             error = "Toy already borrowed"
 
@@ -217,6 +233,7 @@ def handle_payment_form(request, member_id):
 
         if "cancel" in request.POST:
             context.update({"clear_form":True})
+            TempBorrowList.objects.all().delete()
 
         elif member:
             #check remove toy submit action
