@@ -10,6 +10,7 @@
 
                 <div class="modal-header">
                     <h3 class="modal-title">Set Shift Volunteers</h3>
+                    {% now "l, N j Y" %}
                 </div>
 
                 <br>
@@ -17,10 +18,10 @@
                 <div class="modal-body">
                 {%if shift_form %}
                 <div class="form-group">
-                    <div class="row">
-                        <!--<div   class="col-xs-1 col-sm-1 "></div>-->
-                        <div   class="col-xs-9 col-sm-9 selectContainer">
-                            {% render_field shift_form.member class+="form-control"%}
+
+
+
+                            {% render_field shift_form.member class+="form-control" onchange="this.form.submit()"%}
 
 
                             <ul  style="list-style-type:none;list-style:none;padding-left:0;">
@@ -28,15 +29,11 @@
                                     <li><label class="label label-danger">{{ error|striptags }}</label></li>
                                 {% endfor %}
                             </ul>
-                        </div>
-                        <div   class="col-xs-1" >
-                            <button title="Add Volunteer" type="submit" class="btn btn-success" aria-label="Left Align">
-                                <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span>
-                            </button>
-                        </div>
 
 
-                    </div>
+
+
+
                 </div>
                 {%endif%}
 

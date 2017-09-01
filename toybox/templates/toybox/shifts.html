@@ -12,8 +12,12 @@
 
 <div class="row">
 
+
     <div class="panel-fluid panel-default col-xs-11">
-     <a onclick="setshift();" class="btn btn-default">Set Shift</a>
+     <h3>
+        <a onclick="setshift();" class="btn btn-default">Set Shift Members</a>
+         <span class="label label-warning label-as-badge"> <span class="glyphicon glyphicon-arrow-left"></span> Please set shift members at the start of each shift</span>
+     </h3>
 
             <table
                     data-show-export="true"
@@ -26,7 +30,7 @@
                     data-filter-control="true"
                     id="shifts_table"
                     data-sort-name="shift_date"
-                    data-sort-order="asc"
+                    data-sort-order="desc"
                     data-search="false"
                     data-show-columns="true"
                     data-pagination="true"
@@ -42,7 +46,7 @@
 
                     <thead>
                         <tr>
-                            <th data-field="shift_date" data-sortable="true" data-width="150px" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                            <th data-field="shift_date"  data-sortable="true" data-width="150px" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
                             <th data-field="volunteer_id" data-filter-control="input">Volunteers</th>
                        	</tr>
                     </thead>
