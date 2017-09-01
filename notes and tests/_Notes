@@ -14,9 +14,9 @@ common reset
 toy error notification on editing toy is too quick
 
 TASKS:
-Shift to popup when logging in - modal on each page may use too much time to render
 
-Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
+
+
 Permission for add toy
 filter images for receipt and toys for toy edit
 Issue or late fines details can't be determined when paying for them in borrow. add more details in borrow. Include in transactions table for fine
@@ -70,6 +70,8 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
+Shift to popup when logging in - modal on each page may use too much time to render
 Include warning if leaving borrow page without pressing paid or auto pay when set to zero
 Check transaction privileges - extra form not coming up
 add ability to pay for and get receipt number for membership renewal separately? renewal comes up in borrow page total currently - need receipt number attached to transaction. What about bond?

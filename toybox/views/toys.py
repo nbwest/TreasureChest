@@ -30,13 +30,10 @@ def toys(request,toy_id=None):
     if rendered != None:
         return rendered
 
-
     rendered=handleGET(request)
 
     if rendered != None:
         return rendered
-
-
 
     if request.method=="POST" and request.is_ajax():
         context.update(toy_edit.handle_toy_edit(request,toy_id))
@@ -44,10 +41,6 @@ def toys(request,toy_id=None):
 
         context.update({"toy_edit_form":rendered})
         return HttpResponse(json.dumps(context))
-
-
-
-
 
     loan_bond_enable= get_config("loan_bond_enable")
     context.update({"loan_bond_enable":loan_bond_enable})
@@ -89,7 +82,6 @@ def handle_stocktake(request):
                       toy.save()
 
                 elif key.startswith("issue_type"):
-
                     id=key.rpartition('_')[2]
                     toy=Toy.objects.get(pk=id)
                     toy.issue_type=int(value)
@@ -127,7 +119,12 @@ def handleGET(request):
     if (request.method == "GET" and request.GET):
 
         categories = dict(ToyCategory.objects.all().values_list("id", "name"))
-        valid_toys = Toy.objects.all().exclude(state=Toy.RETIRED)
+
+        current_user = User.objects.get(username=request.user.username)
+        if current_user.has_perm("toybox.retire_toy"):
+            valid_toys = Toy.objects.all()
+        else:
+            valid_toys = Toy.objects.all().exclude(state=Toy.RETIRED)
 
 
         if "filter_data" in request.GET:
