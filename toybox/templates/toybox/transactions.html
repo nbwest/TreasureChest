@@ -6,16 +6,17 @@
 {% include "toybox/toy_summary_popup.html" %}
 {% include "toybox/member_summary_popup.html"%}
 
-<div id="transactions">
+<div id="transactions" class="container-fluid">
+
 
     <h1  class="page-header">{{title}}</h1>
 
 
-    <div id="transaction_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+    <form id="transaction_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
         {% csrf_token %}
 
          <div class="row">
-         <div class="panel-default col-xs-12 col-sm-11 ">
+            <div class="panel-default col-xs-12 col-sm-11 ">
 
              {%if transaction_form %}
              <div class="panel-group">
@@ -51,13 +52,12 @@
                             {% endfor %}
                             </ul>
                         {% endfor %}
-                     {%endif%}
+                     </div>
+                   </div>
                  </div>
-              </div>
-         </div>
+               </div>
              </div>
-    </div>
-
+          {%endif%}
 
 
         {% if totals_form %}
@@ -179,53 +179,53 @@
 
         {%endif%}
        </div>
-    </div>
+
     </form>
 
 
 
-<div class="row">
-    <div class="col-xs-12 col-sm-11 " style=" min-height: 40px;"  >
-        <div class="panel-default">
-             <div class="panel-heading">Transaction History</div>
-             <table  data-classes="table table-condensed table-no-bordered"
-                     data-toggle="table"
-                     data-filter-control="true"
-                     id="transaction_table"
-                     data-sort-name="id"
-                     data-sort-order="desc"
-                     data-show-columns="true"
-                     data-page-size="20"
-                     data-page-list='[20, 50, 100, 200, 300, 500]'
-                     data-show-pagination-switch="true"
-                     data-show-export="true"
-                     data-export-types="['excel','csv']"
-                     data-escape="false"
-                     data-cookie="true"
-                     data-cookie-id-table="transaction_table"
-                     data-url="{{ request.get_full_path }}"
-                     data-pagination="true"
-                     data-side-pagination="server">
+    <div class="row">
+
+            <div class="panel-default col-xs-12 col-sm-11" >
+                 <div class="panel-heading">Transaction History</div>
+                 <table  data-classes="table table-condensed table-no-bordered"
+                         data-toggle="table"
+                         data-filter-control="true"
+                         id="transaction_table"
+                         data-sort-name="id"
+                         data-sort-order="desc"
+                         data-show-columns="true"
+                         data-page-size="20"
+                         data-page-list='[20, 50, 100, 200, 300, 500]'
+                         data-show-pagination-switch="true"
+                         data-show-export="true"
+                         data-export-types="['excel','csv']"
+                         data-escape="false"
+                         data-cookie="true"
+                         data-cookie-id-table="transaction_table"
+                         data-url="{{ request.get_full_path }}"
+                         data-pagination="true"
+                         data-side-pagination="server">
 
 
-                     <thead>
-                        <tr>
-                            <th data-field="id" data-filter-control="input" data-sortable="true">ID</th>
-                            <th data-field="date_time" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
-                            <th data-field="transaction_type"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=transaction_type">Type</th>
-                            <th data-field="member_id"  data-sortable="true" data-filter-control="input">Member</th>
-                            <th data-field="toys" >Toys</th>
-                            <th data-field="volunteer_reporting"  data-sortable="true" data-filter-control="input">Volunteer</th>
-                            <th data-field="amount" data-sortable="true"  >Amount</th>
-                            <th data-field="balance" data-sortable="true">Balance</th>
-                            <th data-field="comment"  data-filter-control="input" data-sortable="true">Comment</th>
-                            <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true" data-filter-data="url:{{ request.get_full_path }}?filter_data=complete">Complete</th>
-                        </tr>
-                    </thead>
-                </table>
+                         <thead>
+                            <tr>
+                                <th data-field="id" data-filter-control="input" data-sortable="true">ID</th>
+                                <th data-field="date_time" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Date</th>
+                                <th data-field="transaction_type"  data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=transaction_type">Type</th>
+                                <th data-field="member_id"  data-sortable="true" data-filter-control="input">Member</th>
+                                <th data-field="toys" >Toys</th>
+                                <th data-field="volunteer_reporting"  data-sortable="true" data-filter-control="input">Volunteer</th>
+                                <th data-field="amount" data-sortable="true"  >Amount</th>
+                                <th data-field="balance" data-sortable="true">Balance</th>
+                                <th data-field="comment"  data-filter-control="input" data-sortable="true">Comment</th>
+                                <th data-field="complete" data-visible="false"  data-filter-control="select" data-sortable="true" data-filter-data="url:{{ request.get_full_path }}?filter_data=complete">Complete</th>
+                            </tr>
+                        </thead>
+                    </table>
+            </div>
         </div>
-    </div>
-</div>
+
 </div>
 
 <script>
