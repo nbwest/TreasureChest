@@ -27,9 +27,11 @@
             <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
             <button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected toys only</button>
 
-
+            {% if perms.toybox.add_toy %}
             <button title="Add New Toy" type="button" class="btn btn-success" aria-label="Left Align" onclick="getEditToyForm(this);" value="add">
-            <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-train " aria-hidden="true"></span> Add new toy</button>
+                <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-train " aria-hidden="true"></span> Add new toy
+            </button>
+            {% endif %}
 
         </div>
             <table
