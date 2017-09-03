@@ -192,9 +192,10 @@ def handleGET(request):
                 link +='<span class ="glyphicon glyphicon-time " aria-hidden="true"></span>'
                 link +='</button>'
 
-                link += '<button title = "Edit toy" type = "button" class="btn btn-link" onclick="getEditToyForm(this);" value="{0}">'.format(row["id"])
-                link += '<span class ="glyphicon glyphicon-pencil" aria-hidden="true"></span>'
-                link += '</button>'
+                if current_user.has_perm("toybox.change_toy"):
+                    link += '<button title = "Edit toy" type = "button" class="btn btn-link" onclick="getEditToyForm(this);" value="{0}">'.format(row["id"])
+                    link += '<span class ="glyphicon glyphicon-pencil" aria-hidden="true"></span>'
+                    link += '</button>'
 
                 link += '<button title = "Toy details" type = "button" class ="btn btn-link" onclick="getToy(this);" value="{0}" >{1}</button>'.format(row["id"], row["code"])
 
