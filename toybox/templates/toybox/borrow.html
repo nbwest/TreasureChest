@@ -17,14 +17,14 @@
 <h1  id="page_table" class="page-header">{{title}}</h1>
 
 <div class="row" >
-    <div  id="leftside" class="col-xs-12 col-lg-8">
+    <div  id="leftside" class="col-xs-12 col-lg-8 " style="min-width: 350px;">
 
 
-            <div class="panel panel-default">
+            <div class="panel panel-default ">
                 <div class="panel-heading"><span class="numcircle">1</span>Member</div>
 
                 <!--Panel body causes misalignment of glyphicon button in member search - fixed by changing padding to 14px instead of default 15px - weird-->
-                <div class="panel-body" style="padding: 14px;">
+                <div class="panel-body " style="padding: 14px;">
 
                         <div id="member" class="row">
 
@@ -34,7 +34,7 @@
                             </div>
 
                             <div   class="col-xs-2" >
-                                <button title="Add New Member" type="button" class="btn btn-success" aria-label="Left Align" onclick="getMemberDetails(this);" value="add">
+                                <button title="Add New Member" type="button" class="btn btn-success btn-block" aria-label="Left Align" onclick="getMemberDetails(this);" value="add">
                                 <span class="glyphicon glyphicon-plus " aria-hidden="true"></span><span class="glyphicon glyphicon-user " aria-hidden="true"></span></button>
                             </div>
 
@@ -62,6 +62,7 @@
 
 
                         <form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                            <div class="table-responsive">
                               <table class="table" id="toy_table">
 
                                     <thead>
@@ -194,6 +195,7 @@
                                      {% endfor %}
 
                               </table>
+                            </div>
                         </form>
 
                 </div>
@@ -204,7 +206,7 @@
 
     <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
     {% csrf_token %}
-       <div  id="rightside" class="col-xs-12 col-lg-4" >
+       <div  id="rightside" class="col-xs-12 col-lg-4" style="min-width: 350px;">
 
          <div class="panel-group">
             <div class="panel panel-default">
