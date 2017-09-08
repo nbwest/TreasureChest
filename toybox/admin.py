@@ -41,6 +41,7 @@ class ToyForm(forms.ModelForm):
         self.fields['packaging'].queryset = ToyPackaging.objects.order_by('name')
         self.fields['category'].queryset = ToyCategory.objects.order_by('name')
 
+        self.fields['parts_list'].widget = forms.forms.Textarea()
 
 
 class ToyAdmin(admin.ModelAdmin):

@@ -67,6 +67,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Changed toy admin edit field to memo
 Permission for add toy
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default
 Shift to popup when logging in - modal on each page may use too much time to render
