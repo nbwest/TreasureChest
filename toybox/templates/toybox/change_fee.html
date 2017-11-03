@@ -37,6 +37,7 @@
             document.getElementById("new_fee").value=document.getElementById(elementID).value;
             document.getElementById("new_fee").setAttribute("source",elementID);
 
+
             document.getElementById("justification").value= document.getElementById(elementID+"_adjust_justification").getAttribute("rawValue");
             document.getElementById("new_fee_error").innerHTML="";
             document.getElementById("justification_error").innerHTML="";
@@ -65,6 +66,12 @@
             var sourceElementID = document.getElementById("new_fee").getAttribute("source");
             var sourceElement = document.getElementById(sourceElementID);
             var sourceElementValue=sourceElement.getAttribute('value');
+
+            if (sourceElement.getAttribute('minimum_value')==null)
+                sourceElementMinValue=0.0;
+            else
+                var sourceElementMinValue=parseFloat(sourceElement.getAttribute('minimum_value'));
+
             var sourceElementJustification = document.getElementById(sourceElementID+"_adjust_justification");
             var newValue = document.getElementById("new_fee").value;
             var justification = document.getElementById("justification").value;
@@ -92,9 +99,9 @@
                     document.getElementById("new_fee_error").innerHTML="New value must be different to original value: "+sourceElement.defaultValue;
                     error=true;
                 }
-                else if(Number(newValue)<0)
+                else if(Number(newValue)<sourceElementMinValue)
                 {
-                    document.getElementById("new_fee_error").innerHTML="New value can't be negative";
+                    document.getElementById("new_fee_error").innerHTML="New value can't less than "+sourceElementMinValue;
                     error=true;
                 }
 

@@ -16,7 +16,7 @@ toy error notification on editing toy is too quick
 
 
 TASKS:
-borrow page: trigger leave popup when entering a payment without searching for toy
+
 
 Member bond can't be zero but can be less than $30.
 
@@ -72,6 +72,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+borrow page: trigger leave popup when entering a payment without searching for toy
 Changed toy admin edit field to memo
 Permission for add toy
 Toy list - retired and to be retired in state drop down - this would be permission based - look into retired as special case not listed by default

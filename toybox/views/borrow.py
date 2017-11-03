@@ -614,6 +614,7 @@ class PaymentForm(forms.Form):
     loan_durations = str(get_config("loan_durations"))
     loan_bond_enable= get_config("loan_bond_enable")
     credit_enable=get_config("credit_enable")
+    minimum_member_bond=get_config("minimum_member_bond")
 
     loan_choices = []
     # so choices can be easily stored in settings
@@ -643,7 +644,7 @@ class PaymentForm(forms.Form):
         loan_bond_refund = forms.CharField(required=False, label="Loan Bond Refund $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'negative','readonly':'readonly'}))
         loan_bond_refund_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
 
-    member_bond = forms.CharField(required=False, label="Member Bond $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
+    member_bond = forms.CharField(required=False, label="Member Bond $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True', 'minimum_value':minimum_member_bond}))
     member_bond_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
     member_bond_receipt = forms.CharField(required=True, label="Member Bond Receipt", max_length=20,widget=forms.TextInput(attrs={}))
 

@@ -343,6 +343,8 @@ def get_config(key):
         elif key == "membership_warning_duration":
             return (14)
 
+        elif key == "minimum_member_bond":
+            return (5.0)
         else:
             raise NameError('Option key not found: '+key)
             return None
