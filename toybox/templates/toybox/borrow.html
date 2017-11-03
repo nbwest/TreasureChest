@@ -281,7 +281,7 @@
                                 {% if field.field.widget.attrs.change_buttons %}
                                    <span class="input-group-btn">
 
-                                       <button class="btn btn-default" id="btn_paid" name="paid" type="submit" >Paid</button>
+                                       <button class="btn btn-default" id="btn_paid" name="paid" type="submit" onclick="ok_to_leave=true;">Paid</button>
                                        {% if donation_enable == True %}
                                        <button class="btn btn-default" id="btn_donate" name="donate" type="submit" >Donate</button>
                                        {%endif%}
@@ -303,9 +303,12 @@
                              </div>
 
                              <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                                 {% for error in field.errors  %}
-                                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                                 {% endfor %}
+                                 {% if not field.field.widget.attrs.readonly %}
+                                     {% for error in field.errors  %}
+                                        <li><label class="label label-danger">{{ error|striptags }}</label></li>
+                                     {% endfor %}
+                                 {%endif%}
+
                                  {%if field.field.widget.attrs.message %}
                                     <label class="label label-info">{{ field.field.widget.attrs.message }}</label></li>
                                  {% endif %}
@@ -332,6 +335,25 @@
 
 
 <script type="text/javascript">
+
+var ok_to_leave=false;
+
+window.onbeforeunload = function (e) {
+//how to check which button was pressed.
+if ("{{request.session.page_leave_check}}"=="True" && !ok_to_leave)
+{
+  var message = "Are you sure you want to cancel the previous transaction?\nPress OK to continue with new transaction",
+  e = e || window.event;
+
+  if (e)
+  {
+    e.returnValue = message;
+  }
+
+  // For Safari
+  return message;
+  }
+};
 
 var enable_exact_for_repair_only=false;
 var enable_paid_for_volunteer = false;
@@ -477,6 +499,7 @@ function UpdateLoanBond()
 
 function CalcTotal()
 {
+
     var elements_to_total;
     var total=0.0, fees=0.0, change=0.0, payment=0.0,original_fees=0.0;
     elements_to_total=document.querySelectorAll("[total_me=positive],[total_me=negative]");
@@ -589,6 +612,7 @@ function CalcTotal()
 
     if ((enough_money || volunteering || repair) && valid_sum && (blank_page && !volunteering || !repair))
     {
+
         $("#id_payment_group").removeClass('has-error');
         $("#id_payment_group").addClass('has-success');
         $("#btn_paid").addClass('btn-success');
@@ -598,6 +622,7 @@ function CalcTotal()
     }
     else
     {
+
         $("#id_payment_group").addClass('has-error');
         $("#id_payment_group").removeClass('has-success');
         $("#btn_paid").removeClass('btn-success');

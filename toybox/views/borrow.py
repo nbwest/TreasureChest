@@ -77,6 +77,7 @@ def borrow(request, member_id):
     if (member_id):
         context.update(handle_member_summary(request, member_id))
         context.update(handle_borrowed_toy_list(request, member_id))
+        request.session.update({"page_leave_check": True})
     else:
         context["member_search_form"].fields["member_name_fragment"].widget.attrs.update({"autofocus":"true"})
 
@@ -160,7 +161,7 @@ def handle_toy_borrow(request, member_id, ignore_error):
                             tempBorrowList = TempBorrowList()
                             tempBorrowList.store(member, toy)
 
-                            request.session.update({"page_leave_check":True})
+                            # request.session.update({"page_leave_check":True})
                         else:
                             error = "Toy already borrowed"
 

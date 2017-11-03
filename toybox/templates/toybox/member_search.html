@@ -31,31 +31,9 @@
 
 <script>
 
-$('#member_search_form').submit(
-function()
-{
-    if ("{{request.session.page_leave_check}}"=="True")
-        return confirm("Are you sure you want to cancel the previous transaction?\nPress OK to continue with new transaction");
-    else
-        return true;
-});
 
-window.onbeforeunload = function (e) {
 
-if ("{{request.session.page_leave_check}}"=="True")
-{
-  var message = "Are you sure you want to cancel the previous transaction?\nPress OK to continue with new transaction",
-  e = e || window.event;
 
-  if (e)
-  {
-    e.returnValue = message;
-  }
-
-  // For Safari
-  return message;
-  }
-};
 
 
 </script>
