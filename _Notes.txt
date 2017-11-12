@@ -18,7 +18,7 @@ toy error notification on editing toy is too quick
 TASKS:
 
 
-Member bond can't be zero but can be less than $30.
+
 
 
 BIGGER ITEMS:
@@ -72,6 +72,7 @@ Not locale aware - currency and date format is fixed for aust
 Not timezone aware - people in different timezones to the server will be incorrect
 
 COMPLETE:
+Member bond can't be zero but can be less than $30.
 borrow page: trigger leave popup when entering a payment without searching for toy
 Changed toy admin edit field to memo
 Permission for add toy

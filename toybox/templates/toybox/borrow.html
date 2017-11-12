@@ -6,12 +6,11 @@
 {% include "toybox/change_fee.html" %}
 {% include "toybox/member_edit_popup.html" %}
 
-
-{%if success%}
-
-    {% include "toybox/notification_message.html" with type="success" title="Success!" message="Transaction successful" only %}
-{%endif%}
-
+{% if messages %}
+        {% for message in messages %}
+            {% include "toybox/notification_message.html" with type="success" title="Success!" message=message only %}
+        {% endfor %}
+{% endif %}
 
 
 <h1  id="page_table" class="page-header">{{title}}</h1>

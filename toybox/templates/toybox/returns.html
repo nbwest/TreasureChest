@@ -113,7 +113,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                             </td>
 
                              <td style="text-align: center;vertical-align: middle;">
-                                {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();" %}
+                                {% form_field_concat_id returns_form "returned_checkbox_" toy.id name="returned_checkbox_^suffix^" class="form-control" onclick="handleCheckbox();" form="return_form" %}
                             </td>
 
                              {% if loan_bond_enable == True %}
@@ -142,13 +142,13 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                             </td>
 
                             <td>
-                                {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();" %}
+                                {% form_field_concat_id returns_form "issue_type_" toy.id name="issue_type_^suffix^"   class="form-control" onchange="handleCheckbox();" form="return_form" %}
 
                             </td>
                         </tr>
                         <tr>
                             <td colspan="9" style="border-top: none !important;">
-                                 {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" onchange="handleCheckbox();" %}
+                                 {% form_field_concat returns_form "issue_comment_" toy.id class="form-control" placeholder="Issue comments" onchange="handleCheckbox();" form="return_form" %}
 
                             </td>
                         </tr>

@@ -101,15 +101,15 @@ def timebetween(d, now=None):
 
 #allows concatination for form fields names plus exta argument, returns rendered output
 @register.simple_tag
-def form_field_concat(form, prefix, suffix, *args, **kwargs):
+def form_field_concat(form_data, prefix, suffix, *args, **kwargs):
 
 
     field_name=str(prefix)+str(suffix)
-    if not form or field_name not in form.fields:
+    if not form_data or field_name not in form_data.fields:
         return ""
 
 
-    field= form.fields[field_name]
+    field= form_data.fields[field_name]
 
     kwargs.update({"id": field_name})
 
@@ -124,13 +124,13 @@ def form_field_concat(form, prefix, suffix, *args, **kwargs):
 #allows concatination for form fields id plus exta argument, returns rendered output
 #if ^suffix^ found in any kwrags replaces  with suffix
 @register.simple_tag
-def form_field_concat_id(form, prefix, suffix, *args, **kwargs):
+def form_field_concat_id(form_data, prefix, suffix, *args, **kwargs):
 
     field_id=str(prefix)+str(suffix)
-    if field_id not in form.fields:
+    if field_id not in form_data.fields:
         return None
 
-    field= form.fields[field_id]
+    field= form_data.fields[field_id]
     kwargs.update({"id":field_id})
 
     for key,value in kwargs.iteritems():

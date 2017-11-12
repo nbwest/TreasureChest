@@ -234,7 +234,7 @@ def handleGET(request):
 
                 # format_by_image('image_id',toy_image_files,row,image_filename)
 
-            print "FORMATTING " + str(datetime.datetime.now() - a)
+            #print "FORMATTING " + str(datetime.datetime.now() - a)
             context={"total":total,"rows":rows}
 
             return JsonResponse(context)

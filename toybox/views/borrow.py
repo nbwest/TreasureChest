@@ -3,11 +3,15 @@ from shared import *
 from django.db.models import *
 from django.core.validators import *
 from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 import decimal
 from django.contrib.auth.decorators import login_required
 import member_edit
 import json
+
 
 # work flow
 # member is searched for and once selected displays user stats
@@ -82,20 +86,26 @@ def borrow(request, member_id):
         context["member_search_form"].fields["member_name_fragment"].widget.attrs.update({"autofocus":"true"})
 
     if "clear_form" in context:
-        context.pop("toy_list",None)
-        context.pop("member",None)
-        context.pop("toy_search_results",None)
-        context.pop("toy",None)
-        context.pop("new_borrow_toy_list",None)
+        # context.pop("toy_list",None)
+        # context.pop("member",None)
+        # context.pop("toy_search_results",None)
+        # context.pop("toy",None)
+        # context.pop("new_borrow_toy_list",None)
+        #
+        # if "payment_form" in context and "payment" in context["payment_form"].errors:
+        #     context["payment_form"].errors.pop('payment')
+        #
+        # # pf.errors['payment'] = pf.error_class()
+        #
+        #
+        # # context.update({"payment_form": pf})
+        # request.path_info=u'/toybox/borrow/'
+        # request.path=request.path_info
+        # request.session.pop("page_leave_check",None)
+        if "success" in context:
+            messages.add_message(request, messages.SUCCESS, "Transaction Successful")
+        return redirect(reverse("toybox:borrow"))
 
-        if "payment_form" in context and "payment" in context["payment_form"].errors:
-            context["payment_form"].errors.pop('payment')
-
-        # pf.errors['payment'] = pf.error_class()
-
-
-        # context.update({"payment_form": pf})
-        request.session.pop("page_leave_check",None)
 
 
     return render(request, 'toybox/borrow.html', context)
