@@ -62,7 +62,7 @@ def handle_stocktake(request):
     context={}
 
     if request.method=="POST":
-        if "btn_stocktake_checked" in request.POST or "btn_check" in request.POST:
+        if "btn_stocktake_checked" in request.POST or "btn_checked" in request.POST:
             for key,value in request.POST.iteritems():
 
                 if key=="stocktake" in request.POST:
