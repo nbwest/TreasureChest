@@ -107,6 +107,13 @@ def borrow(request, member_id):
         return redirect(reverse("toybox:borrow"))
 
 
+        # save any changes to toy fields
+        # remove toy - removes all new toys
+        # new_borrow_toy_list = []
+        # for item in tempBorrowList:
+        #     new_borrow_toy_list.append(item.toy)
+        # handle_toy_details_form(request, new_borrow_toy_list)
+
 
     return render(request, 'toybox/borrow.html', context)
 
@@ -127,6 +134,9 @@ def handle_toy_borrow(request, member_id, ignore_error):
             if "search_toy" in request.POST:
                 toy_search_string = form.cleaned_data['toy_search_string'].strip()
                 if toy_search_string != "":
+
+
+
 
                     toy_search_results=Toy.objects.filter(Q(code__iexact=toy_search_string)|Q(name__icontains=toy_search_string)).order_by("state")
 
@@ -171,7 +181,6 @@ def handle_toy_borrow(request, member_id, ignore_error):
                             tempBorrowList = TempBorrowList()
                             tempBorrowList.store(member, toy)
 
-                            # request.session.update({"page_leave_check":True})
                         else:
                             error = "Toy already borrowed"
 
@@ -236,277 +245,275 @@ def handle_payment_form(request, member_id):
     donation_enable=get_config("donation_enable")
 
     context.update({"repair_loan_duration":repair_loan_duration,"credit_enable":credit_enable,"loan_bond_enable":loan_bond_enable,"donation_enable":donation_enable})
+    new_borrow_list = TempBorrowList.objects.filter(member__id=member_id)
 
     if (request.method == "POST"):
 
-        new_borrow_list = TempBorrowList.objects.filter(member__id=member_id)
-        payment_form = PaymentForm(request.POST,temp_toy_list=new_borrow_list)
+#not saving on adding new toy after previus toy comments changed
 
-        if "cancel" in request.POST:
-            context.update({"clear_form":True})
-            TempBorrowList.objects.all().delete()
+            if "cancel" in request.POST:
+                context.update({"clear_form":True})
+                TempBorrowList.objects.all().delete()
 
-        elif member:
-            #check remove toy submit action
-            for item in request.POST:
-                if item=="remove_toy":
-                    toy_to_remove = request.POST["remove_toy"]
-                    TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
-                    context.update({"toy_removed":True})
+            elif member and "remove_toy" in request.POST:
+                #check remove toy submit action
+                toy_to_remove = request.POST["remove_toy"]
+                TempBorrowList.objects.filter(toy__id=toy_to_remove, member__id=member_id).delete()
+                context.update({"toy_removed":True})
+                new_borrow_list = TempBorrowList.objects.filter(member__id=member_id)
 
+            elif member:
+                payment_form = PaymentForm(request.POST, temp_toy_list=new_borrow_list)
+                if payment_form.is_valid():
 
-
-
-            if payment_form.is_valid():
-
-                #check for submit action
-                # if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
-                if any(k in ("paid","add_credit","donate","return") for k in request.POST):
+                    #check for submit action
+                    # if any(k in ("exact","add_credit","donate","return","use_credit") for k in request.POST):
+                    if any(k in ("paid","add_credit","donate","return") for k in request.POST):
 
 
 
 
-                    transaction=Transaction()
-                    #borrow fee transaction
-                    if "borrow_fee" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['borrow_fee']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
+                        transaction=Transaction()
+                        #borrow fee transaction
+                        if "borrow_fee" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['borrow_fee']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['borrow_fee'])
 
-                            if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
-                                comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
-                                adjustment_found=True
-                            else:
-                                comment=None
-
-#TODO ISSUE borrow fee justification comment isn't being set unless the adjust is clicked. Also adjust original value is zero
-                            if fee!=0 or comment is not None:
-                                transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
-
-
-                    #Assign borrowed toys to member if any
-                    for new_toy in new_borrow_list:
-                        loan_duration = payment_form.cleaned_data['loan_duration']
-
-                        # if payment_form.cleaned_data['loan_duration']
-                       # print("LOAN_DURATION: "+loan_duration)
-                        toy = get_object_or_404(Toy, id=new_toy.toy.id)
-
-                        loaned_for_repair=False
-
-                        if "repair_checkbox_"+str(toy.id) in payment_form.cleaned_data:
-                            if payment_form.cleaned_data["repair_checkbox_"+str(toy.id)]:
-                                loaned_for_repair=True
-                                loan_duration=repair_loan_duration
-
-                        # print(toy)
-                        borrow_datetime_from_form=payment_form.cleaned_data['borrow_date']
-
-                        if borrow_datetime_from_form==thisDateTime().date():
-                            borrow_datetime = thisDateTime()
-                        else:
-                            borrow_datetime = datetime(borrow_datetime_from_form.year,borrow_datetime_from_form.month,borrow_datetime_from_form.day,0,0,0)
-
-                        toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction, borrow_datetime)
-                        remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
-                        remove_toys_temp.delete()
-
-                    #membership fee transaction
-                    if "membership" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['membership']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['membership'])
-
-                            comment = None
-
-                            if "membership_receipt" in payment_form.cleaned_data:
-                                comment = "Membership Receipt #: " + payment_form.cleaned_data["membership_receipt"]
-
-                            if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
-                                if payment_form.cleaned_data['membership_adjust_justification']!="":
-                                    comment=payment_form.cleaned_data['membership_adjust_justification']
-                                    adjustment_found=True
-
-                            if fee!=0 or comment is not None:
-                                transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.MEMBERSHIP_FEE,fee,comment)
-
-                                member.update_membership_date()
-
-
-
-                    #toy bond transaction
-                    if "loan_bond" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['loan_bond']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['loan_bond'])
-
-                            if "loan_bond_adjust_justification" in payment_form.cleaned_data:
-                                if payment_form.cleaned_data['loan_bond_adjust_justification']!="":
-                                    comment=payment_form.cleaned_data['loan_bond_adjust_justification']
+                                if payment_form.cleaned_data['borrow_fee_adjust_justification']!="":
+                                    comment=payment_form.cleaned_data['borrow_fee_adjust_justification']
                                     adjustment_found=True
                                 else:
                                     comment=None
 
-                            if fee!=0 or comment is not None:
-                                transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND,fee,comment)
+    #TODO ISSUE borrow fee justification comment isn't being set unless the adjust is clicked. Also adjust original value is zero
+                                if fee!=0 or comment is not None:
+                                    transaction.create_transaction_record(request.user,member,Transaction.BORROW_FEE,fee,comment)
 
 
-                    if "loan_bond_refund" in payment_form.cleaned_data:
-                         if payment_form.cleaned_data['loan_bond_refund']!="":
-                                fee=decimal.Decimal(payment_form.cleaned_data['loan_bond_refund'])
-                                if fee!=0:
+                        #Assign borrowed toys to member if any
+                        for new_toy in new_borrow_list:
+                            loan_duration = payment_form.cleaned_data['loan_duration']
+
+                            # if payment_form.cleaned_data['loan_duration']
+                           # print("LOAN_DURATION: "+loan_duration)
+                            toy = get_object_or_404(Toy, id=new_toy.toy.id)
+
+                            loaned_for_repair=False
+
+                            if "repair_checkbox_"+str(toy.id) in payment_form.cleaned_data:
+                                if payment_form.cleaned_data["repair_checkbox_"+str(toy.id)]:
+                                    loaned_for_repair=True
+                                    loan_duration=repair_loan_duration
+
+                            # print(toy)
+                            borrow_datetime_from_form=payment_form.cleaned_data['borrow_date']
+
+                            if borrow_datetime_from_form==thisDateTime().date():
+                                borrow_datetime = thisDateTime()
+                            else:
+                                borrow_datetime = datetime(borrow_datetime_from_form.year,borrow_datetime_from_form.month,borrow_datetime_from_form.day,0,0,0)
+
+                            toy.borrow_toy(member, int(loan_duration),request.user, loaned_for_repair, transaction, borrow_datetime)
+                            remove_toys_temp=TempBorrowList.objects.filter(toy__id=new_toy.toy.id, member__id=member_id)
+                            remove_toys_temp.delete()
+
+                        #membership fee transaction
+                        if "membership" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['membership']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['membership'])
+
+                                comment = None
+
+                                if "membership_receipt" in payment_form.cleaned_data:
+                                    comment = "Membership Receipt #: " + payment_form.cleaned_data["membership_receipt"]
+
+                                if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['membership_adjust_justification']!="":
+                                        comment=payment_form.cleaned_data['membership_adjust_justification']
+                                        adjustment_found=True
+
+                                if fee!=0 or comment is not None:
                                     transaction=Transaction()
-                                    comment=None
-                                    transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND_REFUND,fee,comment)
+                                    transaction.create_transaction_record(request.user,member,Transaction.MEMBERSHIP_FEE,fee,comment)
 
-                                fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LOAN_BOND_REFUND)
-                                for item in fees_records:
-                                    item.amount=fee
-                                    item.comment=comment
-                                    item.complete=True
-                                    item.complete_date=thisDateTime().now()
-                                    item.save()
+                                    member.update_membership_date()
 
 
-                    #Member bond fee transaction
-                    if "member_bond" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['member_bond']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['member_bond'])
-                            comment = None
 
-                            if "member_bond_receipt" in payment_form.cleaned_data:
-                                member.bond_receipt_reference = payment_form.cleaned_data["member_bond_receipt"]
-                                comment = "Bond Receipt #: "+payment_form.cleaned_data["member_bond_receipt"]
-                            else:
-                                print "ERROR"
+                        #toy bond transaction
+                        if "loan_bond" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['loan_bond']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['loan_bond'])
 
-                            if "member_bond_adjust_justification" in payment_form.cleaned_data:
-                                if payment_form.cleaned_data['member_bond_adjust_justification']!="":
-                                    comment+=' '+payment_form.cleaned_data['member_bond_adjust_justification']
-                                    adjustment_found=True
+                                if "loan_bond_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['loan_bond_adjust_justification']!="":
+                                        comment=payment_form.cleaned_data['loan_bond_adjust_justification']
+                                        adjustment_found=True
+                                    else:
+                                        comment=None
 
-                            if fee!=0 or comment is not None:
-                                transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_BOND,fee,comment)
-                                if fee==0 and comment is not None:
-                                    member.bond_fee_paid=member.type.bond
+                                if fee!=0 or comment is not None:
+                                    transaction=Transaction()
+                                    transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND,fee,comment)
+
+
+                        if "loan_bond_refund" in payment_form.cleaned_data:
+                             if payment_form.cleaned_data['loan_bond_refund']!="":
+                                    fee=decimal.Decimal(payment_form.cleaned_data['loan_bond_refund'])
+                                    if fee!=0:
+                                        transaction=Transaction()
+                                        comment=None
+                                        transaction.create_transaction_record(request.user,member,Transaction.LOAN_BOND_REFUND,fee,comment)
+
+                                    fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LOAN_BOND_REFUND)
+                                    for item in fees_records:
+                                        item.amount=fee
+                                        item.comment=comment
+                                        item.complete=True
+                                        item.complete_date=thisDateTime().now()
+                                        item.save()
+
+
+                        #Member bond fee transaction
+                        if "member_bond" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['member_bond']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['member_bond'])
+                                comment = None
+
+                                if "member_bond_receipt" in payment_form.cleaned_data:
+                                    member.bond_receipt_reference = payment_form.cleaned_data["member_bond_receipt"]
+                                    comment = "Bond Receipt #: "+payment_form.cleaned_data["member_bond_receipt"]
                                 else:
-                                    member.bond_fee_paid=fee
-                                member.save()
+                                    print "ERROR"
+
+                                if "member_bond_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['member_bond_adjust_justification']!="":
+                                        comment+=' '+payment_form.cleaned_data['member_bond_adjust_justification']
+                                        adjustment_found=True
+
+                                if fee!=0 or comment is not None:
+                                    transaction=Transaction()
+                                    transaction.create_transaction_record(request.user,member,Transaction.MEMBER_BOND,fee,comment)
+                                    if fee==0 and comment is not None:
+                                        member.bond_fee_paid=member.type.bond
+                                    else:
+                                        member.bond_fee_paid=fee
+                                    member.save()
 
 
-                    #overdue fee transaction completion
-                    if "late_fee" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['late_fee']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['late_fee'])
+                        #overdue fee transaction completion
+                        if "late_fee" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['late_fee']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['late_fee'])
 
-                            if "late_fee_adjust_justification" in payment_form.cleaned_data:
-                                if payment_form.cleaned_data['late_fee_adjust_justification']!="":
-                                    comment=payment_form.cleaned_data['late_fee_adjust_justification']
-                                    adjustment_found=True
+                                if "late_fee_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['late_fee_adjust_justification']!="":
+                                        comment=payment_form.cleaned_data['late_fee_adjust_justification']
+                                        adjustment_found=True
+                                    else:
+                                        comment=None
+
+                                if fee!=0 or comment is not None:
+                                    fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LATE_FEE)
+
+                                    for item in fees_records:
+                                        item.amount=fee
+                                        item.comment=comment
+                                        item.complete=True
+                                        item.complete_date = thisDateTime().now()
+                                        item.save()
+
+                        if "issue_fee" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['issue_fee']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['issue_fee'])
+
+                                if "issue_fee_adjust_justification" in payment_form.cleaned_data:
+                                    if payment_form.cleaned_data['issue_fee_adjust_justification']!="":
+                                        comment=payment_form.cleaned_data['issue_fee_adjust_justification']
+                                        adjustment_found=True
+                                    else:
+                                        comment=None
+
+                                if fee!=0 or comment is not None:
+                                    fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
+
+                                    for item in fees_records:
+                                        item.amount=fee
+                                        item.comment=comment
+                                        item.complete=True
+                                        item.complete_date = thisDateTime().now()
+                                        item.save()
+
+                        if "change" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['change']!="":
+                                change=decimal.Decimal(payment_form.cleaned_data['change'])
+
+                        if "payment" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['payment']!="":
+                                fee=decimal.Decimal(payment_form.cleaned_data['payment'])
+                                fee_paid=fee
+                                if fee!=0 or adjustment_found:
+                                    transaction=Transaction()
+                                    transaction.create_transaction_record(request.user,member,Transaction.PAYMENT,fee)
+
+                        #TODO enable donation
+                        # if "donation" in payment_form.cleaned_data:
+                        #     if payment_form.cleaned_data['donation']!="":
+                        #         fee=decimal.Decimal(payment_form.cleaned_data['donation'])
+                        #         if fee!=0:
+                        #             transaction=Transaction()
+                        #             transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee)
+
+                        #issue fee transation completion
+
+
+                        context.update({"clear_form":True,"success":True})
+                        #context.update({"success":True})
+
+
+
+                        if "total_fee" in payment_form.cleaned_data:
+                            if payment_form.cleaned_data['total_fee']!="":
+                                fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
+
+                        #look at submit actions
+
+                        #TODO need to get total fees before changed to total to pay.
+                        for item in request.POST:
+
+                            if item=="add_credit":
+
+                                if change>0: #add credit
+                                    member.balance = member.balance - fee_due + fee_paid
+                                    #print(member.balance)
+                                    member.save()
+                                    transaction=Transaction()
+                                    transaction.create_transaction_record(request.user,member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,balance_change=fee_paid)
+                                    break
                                 else:
-                                    comment=None
+                                    member.balance = member.balance - fee_due
+                                    member.save()
+                                    transaction=Transaction()
+                                    transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DEBIT,fee_due)
+                                    break
 
-                            if fee!=0 or comment is not None:
-                                fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.LATE_FEE)
 
-                                for item in fees_records:
-                                    item.amount=fee
-                                    item.comment=comment
-                                    item.complete=True
-                                    item.complete_date = thisDateTime().now()
-                                    item.save()
 
-                    if "issue_fee" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['issue_fee']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['issue_fee'])
-
-                            if "issue_fee_adjust_justification" in payment_form.cleaned_data:
-                                if payment_form.cleaned_data['issue_fee_adjust_justification']!="":
-                                    comment=payment_form.cleaned_data['issue_fee_adjust_justification']
-                                    adjustment_found=True
-                                else:
-                                    comment=None
-
-                            if fee!=0 or comment is not None:
-                                fees_records=Transaction.objects.filter(complete=False, member__id=member_id, transaction_type=Transaction.ISSUE_FEE)
-
-                                for item in fees_records:
-                                    item.amount=fee
-                                    item.comment=comment
-                                    item.complete=True
-                                    item.complete_date = thisDateTime().now()
-                                    item.save()
-
-                    if "change" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['change']!="":
-                            change=decimal.Decimal(payment_form.cleaned_data['change'])
-
-                    if "payment" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['payment']!="":
-                            fee=decimal.Decimal(payment_form.cleaned_data['payment'])
-                            fee_paid=fee
-                            if fee!=0 or adjustment_found:
+                            elif item=="donate":
                                 transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.PAYMENT,fee)
-
-                    #TODO enable donation
-                    # if "donation" in payment_form.cleaned_data:
-                    #     if payment_form.cleaned_data['donation']!="":
-                    #         fee=decimal.Decimal(payment_form.cleaned_data['donation'])
-                    #         if fee!=0:
-                    #             transaction=Transaction()
-                    #             transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee)
-
-                    #issue fee transation completion
-
-
-                    context.update({"clear_form":True,"success":True})
-                    #context.update({"success":True})
-
-
-
-                    if "total_fee" in payment_form.cleaned_data:
-                        if payment_form.cleaned_data['total_fee']!="":
-                            fee_due = decimal.Decimal(payment_form.cleaned_data['total_fee'])
-
-                    #look at submit actions
-
-                    #TODO need to get total fees before changed to total to pay.
-                    for item in request.POST:
-
-                        if item=="add_credit":
-
-                            if change>0: #add credit
-                                member.balance = member.balance - fee_due + fee_paid
-                                #print(member.balance)
-                                member.save()
-                                transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_CREDIT,fee_paid-fee_due,balance_change=fee_paid)
+                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee_paid-fee_due,balance_change=fee_paid)
                                 break
-                            else:
-                                member.balance = member.balance - fee_due
-                                member.save()
+
+                            # elif item=="return":
+                            elif item=="paid":
                                 transaction=Transaction()
-                                transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DEBIT,fee_due)
+                                transaction.create_transaction_record(request.user,member,Transaction.CHANGE,fee_paid-fee_due,balance_change=fee_due)
                                 break
 
-
-
-                        elif item=="donate":
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user,member,Transaction.MEMBER_DONATION,fee_paid-fee_due,balance_change=fee_paid)
-                            break
-
-                        # elif item=="return":
-                        elif item=="paid":
-                            transaction=Transaction()
-                            transaction.create_transaction_record(request.user,member,Transaction.CHANGE,fee_paid-fee_due,balance_change=fee_due)
-                            break
-
-                        # elif item=="exact":
-                        #     transaction=Transaction()
-                        #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
-                        #     break
+                            # elif item=="exact":
+                            #     transaction=Transaction()
+                            #     transaction.create_transaction_record(request.user,member,Transaction.CHANGE,0,balance_change=fee_due)
+                            #     break
 
 
 
@@ -542,7 +549,7 @@ def handle_payment_form(request, member_id):
         if not member.bond_paid():
             member_bond=member.type.bond
 
-    new_borrow_list=TempBorrowList.objects.filter(member__id=member_id)
+    # new_borrow_list=TempBorrowList.objects.filter(member__id=member_id)
 
 
 
@@ -566,7 +573,7 @@ def handle_payment_form(request, member_id):
 
     context.update({'payment_form': payment_form,"new_borrow_toy_list": new_borrow_toy_list})
     # context.update({"toy_details_form_new": handle_toy_details_form(request, new_borrow_toy_list)})
-    context.update({"toy_details_form": handle_toy_details_form(request, new_borrow_toy_list)})
+    context.update({"toy_details_form": handle_toy_details_form(request, new_borrow_toy_list, member_id)})
 
     return context
 

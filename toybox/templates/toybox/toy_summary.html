@@ -4,8 +4,8 @@
 <div id="toy_summary">
 
     {% if toy %}
-<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-{% csrf_token %}
+<!--<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' autocomplete='on'>-->
+<!--{% csrf_token %}-->
         <div class="row">
 
             <div class="panel-fluid panel-default col-xs-12 col-md-6 " style="text-align: left; vertical-align: middle; ">
@@ -43,7 +43,7 @@
 
                               <td>
                                   <!--{% form_field_concat toy_details_form_new "comment_" toy.id class="form-control" placeholder="Comment" name="comment"%}-->
-                                  {% form_field_concat toy_details_form "comment_" toy.id class="form-control" placeholder="Comment" name="comment" title="comment/reminder about the toy, e.g. Don't forget to include the bag of cars!" %}
+                                  {% form_field_concat toy_details_form "comment_" toy.id class="form-control" placeholder="Comment"  form=include_form title="comment/reminder about the toy, e.g. Don't forget to include the bag of cars!" %}
                               </td>
 
 
@@ -64,7 +64,7 @@
                           {%else%}
                            <td>
                                <!--{% form_field_concat toy_details_form_new "issue_type_" toy.id class="form-control" placeholder="Issue Type" name="issue_type"%}-->
-                               {% form_field_concat toy_details_form "issue_type_" toy.id class="form-control" placeholder="Issue Type" name="issue_type "%}
+                               {% form_field_concat toy_details_form "issue_type_" toy.id class="form-control" form=include_form placeholder="Issue Type"  %}
                            </td>
                           {%endif%}
                       </tr>
@@ -75,14 +75,14 @@
                         <td><strong>{{toy.issue_comment}}</strong></td>
                           {%else%}
                            <td>
-                                  <div class="input-group">
+                                  <!--<div class="input-group">-->
                                       <!--{% form_field_concat toy_details_form_new "comment_" toy.id class="form-control" placeholder="Issue Comment" name="issue_comment"%}-->
-                                      {% form_field_concat toy_details_form "issue_comment_" toy.id class="form-control" placeholder="Issue Comment" name="issue_comment" title="Details about the toy issue, e.g. Back wheel broken off"%}
+                                      {% form_field_concat toy_details_form "issue_comment_" toy.id class="form-control" form=include_form placeholder="Issue Comment"  title="Details about the toy issue, e.g. Back wheel broken off"%}
 
-                                      <span class="input-group-btn">
-                                         <button class="btn btn-default" id="btn_comment_submit" value="{{toy.id}}" name="toy_comment_submit" type="submit" >Submit</button>
-                                      </span>
-                                  </div>
+                                      <!--<span class="input-group-btn">-->
+                                         <!--<button class="btn btn-default" id="btn_comment_submit" value="{{toy.id}}" onclick="ok_to_leave=true;" name="toy_comment_submit" type="submit" >Submit</button>-->
+                                      <!--</span>-->
+                                  <!--</div>-->
                               </td>
                           {%endif%}
                       </tr>
@@ -171,20 +171,20 @@
 
                 <p style="float:left;text-align:left;max-width:350px;">
 
-                   <a  href="{{ MEDIA_URL }}{{ toy.image.file }}">
+                   <a  href="{{ MEDIA_URL }}{{ toy.image.file }}" onclick="ok_to_leave=true;">
                       <img class="img-thumbnail"  style="margin-bottom: 20px; margin-left:20px;image-orientation:from-image; " src="{{ MEDIA_URL }}{{ toy.image.file }}">
                    </a>
 
                    <br>
                     {% if toy.image_receipt.file %}
-                        <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt.file }}">Receipt Image</a>
+                        <a  style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_receipt.file }}" onclick="ok_to_leave=true;">Receipt Image</a>
                     {%else%}
                          <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Receipt Image
                     {%endif%}
                    <br>
                    <br>
                     {% if toy.image_instructions.file %}
-                        <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions.file }}">Instructions Image</a>
+                        <a style="margin-left:20px;" href="{{ MEDIA_URL }}{{ toy.image_instructions.file }}" onclick="ok_to_leave=true;">Instructions Image</a>
                     {%else%}
                          <span style="margin-left:20px;" class="glyphicon glyphicon-remove text-danger" aria-hidden="true" ></span> Instructions Image
                     {%endif%}
@@ -192,7 +192,7 @@
                 </p>
                  </div>
         </div>
-</form>
+<!--</form>-->
      {% endif %}
 
 </div>

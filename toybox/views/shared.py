@@ -148,31 +148,45 @@ def render_toy_details(request):
 
     return rendered
 
-def handle_toy_details_form(request,toys):
+def handle_toy_details_form(request,toys, member_id=None):
 
     form=None
 
     if (request.method == "POST" and len(toys)>0):
+        form = ToyDetailsForm(request.POST, toyList=toys)
+        if form.is_valid():
 
-        if any(k in ("comment", "issue_type", "issue_comment") for k in request.POST):
-            if "toy_comment_submit" in request.POST:
-                id=request.POST["toy_comment_submit"]
-                form = ToyDetailsForm(request.POST,toyList=toys)
-                if form.is_valid():
+            for key, value in request.POST.iteritems():
+
+
+                if key.startswith("issue_type"):
+                    id = key.rpartition('_')[2]
                     toy = Toy.objects.get(pk=id)
-                    toy.comment = request.POST["comment"]
-                    toy.issue_type = int(request.POST["issue_type"])
-                    toy.issue_comment = request.POST["issue_comment"]
+
+                    toy.issue_type = int(value)
+
+                    if "issue_comment_" + id in request.POST:
+                        toy.issue_comment = request.POST["issue_comment_" + id]
+
+                    if "comment_" + id in request.POST:
+                        toy.comment = request.POST["comment_" + id]
+
+                    new_toy_state = toy.issue_type_to_state(toy.issue_type)
+
+                    if new_toy_state != toy.state:
+                        toy.state=new_toy_state
+                        toy_history = ToyHistory()
+                        toy_history.record_toy_event(toy, request.user, thisDateTime().now())
+
                     toy.save()
 
-                    for t in toys:
-                        if str(t.id)==id:
-                            t.comment=toy.comment
-                            t.issue_type=toy.issue_type
-                            t.issue_comment=toy.issue_comment
-                            break
+            if member_id!=None:
+                new_borrow_list = TempBorrowList.objects.filter(member__id=member_id)
+                toys = []
+                for item in new_borrow_list:
+                    toys.append(item.toy)
 
-                    form = ToyDetailsForm(request.POST, toyList=toys)
+            form = ToyDetailsForm(request.POST, toyList=toys)
 
     if not form:
         form = ToyDetailsForm(toyList=toys)

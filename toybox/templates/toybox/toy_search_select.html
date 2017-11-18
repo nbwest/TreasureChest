@@ -38,7 +38,7 @@
                         <ul class="list-group">
                             {% for toy in toy_search_results %}
 
-                            <button type="submit"  name="select_toy" value="{{toy.id}}" class="list-group-item" >
+                            <button type="submit"  name="select_toy" value="{{toy.id}}" onclick="ok_to_leave=true;" class="list-group-item" >
                                 <img class=" img-thumbnail"  style=" max-height:70px;image-orientation:from-image;"  src="{{ MEDIA_URL }}{{ toy.image.file }}">
                                 {{toy.code}}, {{ toy.name }}&nbsp
 
@@ -62,7 +62,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ok_to_leave=true;">Dismiss</button>
                 </div>
             </div>
         </div>

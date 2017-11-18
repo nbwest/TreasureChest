@@ -2,7 +2,7 @@
 
 <div id="toy_search">
 
-    <form role="search" action="{{ request.get_full_path }}" method='post'>
+    <!--<form role="search" action="{{ request.get_full_path }}" method='post'>-->
         {% csrf_token %}
 
         <div class="input-group ">
@@ -14,7 +14,7 @@
             {%endif%}
 
             <div class="input-group-btn">
-                <button class="btn btn-default" name="search_toy" type="submit" onclick="ok_to_leave=true;"><i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-search"></i></button>
+                <button class="btn btn-default" name="search_toy" type="submit"  onclick="ok_to_leave=true;"><i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-search"></i></button>
                 <!--<button type="button" class="btn btn-default" name="search_toy" ><i class="glyphicon glyphicon-search"></i></button>-->
 
             </div>
@@ -28,7 +28,7 @@
              </ul>
 
 
-    </form>
+    <!--</form>-->
 
 
 
