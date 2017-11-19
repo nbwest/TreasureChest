@@ -52,7 +52,7 @@
                     data-pagination="true"
                     data-page-size="20"
                     data-page-list='[20, 50, 100, 200, 300, 500]'
-                    data-cookie="true"
+                    data-cookie="false"
                     data-cookie-id-table="toys_table"
                     data-show-pagination-switch="true"
                     data-escape="false"
@@ -81,7 +81,7 @@
                             <th data-field="loan_bond" data-sortable="true" data-visible="false">Bond</th>
                             <th data-field="purchase_cost"   data-visible="false" data-sortable="true" >Purchase<br>Cost</th>
                             <th data-field="purchase_date"   data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Purchase<br>Date</th>
-                            <th data-field="last_check"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yyyy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Check</th>
+                            <th data-field="last_check"  data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Check</th>
                             <th data-field="last_stock_take"   data-visible="false" data-sortable="true" data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Last<br>Stocktake</th>
                             <th data-field="issue_type"  data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="url:{{ request.get_full_path }}?filter_data=issue_type">Issue Type</th>
                             <th data-field="issue_comment" data-visible="false" data-sortable="true" data-width="300px" >Issue Comment</th>

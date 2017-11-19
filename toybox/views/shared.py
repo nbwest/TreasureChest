@@ -480,8 +480,6 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     else:
         dir = ""
 
-    if col_filters:
-        col_filters = {k: v for k, v in col_filters.items() if v}
 
     if col_filters:
         query = query.filter(**col_filters)
@@ -525,6 +523,8 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
                     CASE_SQL += 'end)'
 
                     query = query.extra(select={sort + '_order': CASE_SQL}, order_by=[dir + sort + '_order'])
+                else:
+                    query = query.order_by(dir + sort)
             else:
                 query = query.order_by(dir + sort)
     return total,query

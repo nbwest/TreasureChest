@@ -161,7 +161,7 @@ def handleGET(request):
                 filter_by_date('due_date',col_filters)
                 filter_by_contains('num_pieces',col_filters)
                 filter_by_date('last_check',col_filters)
-                filter_by_general('member_loaned_id', 'member_loaned__name__contains', col_filters)
+                filter_by_general('member_loaned_id', 'member_loaned__name__icontains', col_filters)
                 filter_by_contains('name',col_filters)
                 filter_by_choice_lookup('issue_type', Toy.ISSUE_TYPE_CHOICES, col_filters)
                 filter_by_general('category_id', 'category__name', col_filters)
