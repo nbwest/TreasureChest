@@ -25,14 +25,17 @@
 
                 {{ field.label_tag }}{% if field.field.required %} <span class="label  label-as-badge badge-outline-default">Required</span>{%endif%}
 
-                {% if 'datepicker' in field.field.widget.attrs %}
-                    <div class="input-group input-append date" >
-                        {% render_field field class+="form-control" %}
-                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
-                    </div>
-                {% else %}
-                    {% render_field field class+="form-control" %}
-                {%endif%}
+                 {% if 'datepicker' in field.field.widget.attrs %}
+                            <div class="input-group date" >
+                                {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                                <span class="input-group-addon datebtn" onclick="{{field.auto_id}}.focus();"><span class="glyphicon-calendar glyphicon" ></span></span>
+                            </div>
+                        {% else %}
+                            {% render_field field class+="form-control" %}
+                        {%endif%}
+
+
+
 
                 {% if field.errors %}
                     <ul  style="list-style-type:none;list-style:none;padding-left:0;">
