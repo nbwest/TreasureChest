@@ -87,15 +87,16 @@ def handleGET(request):
             if col_filters:
                 col_filters=ast.literal_eval(col_filters)
                 BOOLEAN_CHOICE=((True, 'True'),(False,'False'))
+                BOOLEAN_NA_CHOICE = ((True, 'True'), (False, 'False'),('N/A','NA'))
 
                 filter_by_contains('name',col_filters)
                 filter_by_date('join_date', col_filters)
                 filter_by_contains('phone_number1',col_filters)
                 filter_by_contains('email_address',col_filters)
                 filter_by_contains('bond_receipt_reference',col_filters)
-                filter_by_choice_lookup('volunteer_capacity_wed', BOOLEAN_CHOICE, col_filters)
-                filter_by_choice_lookup('volunteer_capacity_sat', BOOLEAN_CHOICE, col_filters)
-                filter_by_choice_lookup('potential_volunteer', BOOLEAN_CHOICE, col_filters)
+                filter_by_choice_lookup('volunteer_capacity_wed', BOOLEAN_NA_CHOICE, col_filters)
+                filter_by_choice_lookup('volunteer_capacity_sat', BOOLEAN_NA_CHOICE, col_filters)
+                filter_by_choice_lookup('potential_volunteer', BOOLEAN_NA_CHOICE, col_filters)
                 filter_by_choice_lookup('volunteer', BOOLEAN_CHOICE, col_filters)
                 filter_by_choice_lookup('committee_member', BOOLEAN_CHOICE, col_filters)
                 filter_by_contains('comment', col_filters)
@@ -160,26 +161,26 @@ def handleGET(request):
             row["loans"] = loans.format(link_returns,badge,title,str(row["loans"]))
             row["loans"] += toy_history.format(str(row["id"])) + edit_icon.format(str(row["id"]))
 
-            if row["volunteer"]:
-                if row["volunteer_capacity_wed"]:
-                    row["volunteer_capacity_wed"] = tick
-                else:
-                    row["volunteer_capacity_wed"] = cross
-
-                if row["volunteer_capacity_sat"]:
-                    row["volunteer_capacity_sat"] = tick
-                else:
-                    row["volunteer_capacity_sat"] = cross
-
-
-                row["potential_volunteer"] = NA
+            # if row["volunteer"]:
+            if row["volunteer_capacity_wed"]:
+                row["volunteer_capacity_wed"] = tick
             else:
-                row["volunteer_capacity_wed"] = NA
-                row["volunteer_capacity_sat"] = NA
-                if row["potential_volunteer"]:
-                    row["potential_volunteer"] = tick
-                else:
-                    row["potential_volunteer"] = cross
+                row["volunteer_capacity_wed"] = cross
+
+            if row["volunteer_capacity_sat"]:
+                row["volunteer_capacity_sat"] = tick
+            else:
+                row["volunteer_capacity_sat"] = cross
+
+
+            # row["potential_volunteer"] = NA
+        # else:
+            # row["volunteer_capacity_wed"] = NA
+            # row["volunteer_capacity_sat"] = NA
+            if row["potential_volunteer"]:
+                row["potential_volunteer"] = tick
+            else:
+                row["potential_volunteer"] = cross
 
 
             if row["committee_member"]:

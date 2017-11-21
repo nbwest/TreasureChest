@@ -107,8 +107,9 @@ var booleanValues = {
 
 
 
-$(document).ready(function() {
 
+$(document).ready(function() {
+console.log(booleanValues);
  $('.date')
         .datepicker({
             format: 'dd/mm/yyyy',
@@ -123,13 +124,19 @@ $(document).ready(function() {
 });
 
 
-$(document).ready(function() {
+$(document).ready(function()
+{
 var $table = $('#member_table');
-$table.bootstrapTable('refreshOptions', {
-    exportOptions: {
+
+$table.bootstrapTable('refreshOptions',
+{
+    exportOptions:
+    {
         onCellHtmlData: DoOnCellHtmlData
     }
-});
+}
+
+);
 });
 
 function aTagSorter(a,b)
