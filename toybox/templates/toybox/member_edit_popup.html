@@ -173,7 +173,7 @@
                 }
                 else
                 {
-                    console.log(parsed_response.member_edit_form_error);
+                    //console.log(parsed_response.member_edit_form_error);
                     show_notification("Error!",parsed_response.member_edit_form_error,"danger",3000);
 
 
@@ -208,7 +208,7 @@
                 url: "{{ request.get_full_path }}"+"?member_edit_id="+element.value,
                 success: function(data)
                 {
-                console.log(element.value);
+                //console.log(element.value);
                     document.getElementById("member_edit_container").innerHTML=data;
                     if (element.value == "add")
                         $("[name='pay_redirect_button']").show();

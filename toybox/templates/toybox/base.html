@@ -88,7 +88,7 @@ For page html use the following template tags:
 
 
 //to deal with exporting the table with select filters - stops the choices being the column header for the exported data
-//also deal with combo boxes, inpt text boxes and...
+//also deal with combo boxes, input text boxes and...
 function DoOnCellHtmlData(cell, row, col, data)
 {
     var result = "";
@@ -97,11 +97,16 @@ function DoOnCellHtmlData(cell, row, col, data)
     {
         var html = $.parseHTML(data);
 
-       // console.log(data);
+        //console.log("IN: "+data);
         $.each(html, function ()
         {
+
+
            if ($(this).prop("tagName")=="SELECT")
                 result+=$(this).find(":selected").text();
+
+           else if ($(this).prop("tagName")=="BUTTON")
+                result+=$(this).text();
 
            else if ($(this).prop("tagName")=="INPUT")
                 result+=$(this).val();
@@ -115,7 +120,7 @@ function DoOnCellHtmlData(cell, row, col, data)
                result += $(this).html();
         });
     }
-    //console.log(result);
+    //console.log("OUT: "+result);
     //console.log("------------------------------------");
     return result;
 }
