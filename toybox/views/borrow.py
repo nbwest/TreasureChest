@@ -227,6 +227,7 @@ def handle_payment_form(request, member_id):
     adjustment_found=False
     payment_form=None
     volunteer = False
+    comment=None
 
 
     if member_id:

@@ -36,8 +36,12 @@
 
         $( document ).ready(function()
         {
-            $(window).load(function(){
-                $('#setTillModal').modal('hide');
+            $(window).load(function()
+            {
+                if ("{{till_value_error}}"=="")
+                    $('#setTillModal').modal('hide');
+                else
+                    $('#setTillModal').modal('show');
             });
         });
 
