@@ -134,7 +134,7 @@
 
                                     <tr>
                                         <td colspan="8" style="border-top: none !important;">
-                                            <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%endif%} >
+                                            <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%else%} class="collapse in" {%endif%} >
                                                  {% include "toybox/toy_summary.html" with include_form="payment_form" %}
 
                                             </div>
