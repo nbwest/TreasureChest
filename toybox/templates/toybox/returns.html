@@ -191,7 +191,9 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                     endDate: "{{todays_date|date:"d/m/Y"}}",
                     todayBtn: true,
                     todayHighlight: true,
-                    autoclose:'true'
+                    autoclose:'true',
+                    assumeNearbyYear: true,
+                    forceParse: false
                 }).on('changeDate',function(event)
                 {
                      $(this).closest("form").submit();

@@ -71,8 +71,8 @@
                             <th data-field="phone_number1"  data-sortable="true" data-filter-control="input">Phone 1</th>
                             <th data-field="email_address"  data-sortable="true"data-filter-control="input">Email</th>
                             <th data-field="balance"  data-visible="false" data-sortable="true">Balance</th>
-                            <th data-field="join_date" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Join Date</th>
-                            <th data-field="membership_end_date" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto"}'>Due Date</th>
+                            <th data-field="join_date" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto", "assumeNearbyYear":true}'>Join Date</th>
+                            <th data-field="membership_end_date" data-sortable="true"  data-filter-control="datepicker" data-filter-datepicker-options='{"format":"dd/mm/yy", "autoclose":true, "clearBtn": true, "todayHighlight": true, "todayBtn": "linked",  "orientation": "bottom auto", "assumeNearbyYear":true}'>Due Date</th>
                             <th data-field="volunteer_capacity_wed"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Wed</th>
                             <th data-field="volunteer_capacity_sat"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Sat</th>
                             <th data-field="potential_volunteer"   data-visible="false" data-sortable="true" data-filter-control="select" data-filter-data="var:booleanValues">Potential<br>Volunteer</th>
@@ -117,8 +117,8 @@ $(document).ready(function() {
             clearBtn:'true',
             todayHighlight:'true',
             todayBtn: 'linked',
-            orientation: 'auto'
-
+            orientation: 'auto',
+            assumeNearbyYear: 'true'
         })
 
 });
