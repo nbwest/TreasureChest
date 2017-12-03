@@ -187,13 +187,13 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
         {
                 $('#return_date').datepicker(
                 {
-                    format: "dd/mm/yyyy",
+                    format: "dd/mm/yy",
                     endDate: "{{todays_date|date:"d/m/Y"}}",
                     todayBtn: true,
                     todayHighlight: true,
                     autoclose:'true',
-                    assumeNearbyYear: true,
-                    forceParse: false
+                    assumeNearbyYear: true
+
                 }).on('changeDate',function(event)
                 {
                      $(this).closest("form").submit();

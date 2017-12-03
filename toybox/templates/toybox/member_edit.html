@@ -27,7 +27,7 @@
 
                  {% if 'datepicker' in field.field.widget.attrs %}
                             <div class="input-group date" >
-                                {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yyyy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
+                                {% render_field field id=field.auto_id  class+="form-control" data-date-format="dd/mm/yy" data-date-today-highlight="true" data-date-today-btn="linked" data-date-autoclose="true" data-provide="datepicker"%}
                                 <span class="input-group-addon datebtn" onclick="{{field.auto_id}}.focus();"><span class="glyphicon-calendar glyphicon" ></span></span>
                             </div>
                         {% else %}

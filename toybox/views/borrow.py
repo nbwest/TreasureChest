@@ -646,7 +646,7 @@ class PaymentForm(forms.Form):
 
     #ensure any input with adjust button also has a justification field with suffix of _adjust_justification with its name
 
-    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today','nolist':'True'}))
+    borrow_date = forms.DateField(label="Borrow Date", input_formats=['%d/%m/%Y','%d/%m/%y'], widget=forms.DateInput(format='%d/%m/%y',attrs={'readonly':'readonly','title':'Date the toy(s) has been borrowed, defaults to today','nolist':'True'}))
 
     loan_duration = forms.ChoiceField(label="Loan duration in weeks",choices=loan_choices, widget=forms.RadioSelect(attrs={'nolist':'True'}))
 

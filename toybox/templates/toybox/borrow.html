@@ -234,13 +234,13 @@
                     <script type="text/javascript">
                         $(function () {
                                 $('#borrow_date').datepicker({
-                                format: "dd/mm/yyyy",
+                                format: "dd/mm/yy",
                                 endDate: "{{payment_form.borrow_date.value|date:"d/m/Y"}}",
                                 todayBtn: true,
                                 todayHighlight: true,
                                 autoclose: true,
-                                assumeNearbyYear: true,
-                                forceParse: false
+                                assumeNearbyYear: true
+
                             });
                         });
                     </script>

@@ -232,17 +232,18 @@
 
 $(function () {
         $('#query_date').datepicker({
-        format: "dd/mm/yyyy",
+        format: "dd/mm/yy",
         endDate: "{{totals_form.query_date.value|date:"d/m/Y"}}",
         todayBtn: true,
         todayHighlight: true,
         autoclose:true,
         clearBtn:true,
-        assumeNearbyYear: true,
-        forceParse: false
+        assumeNearbyYear: true
+
     });
 });
 
+//$( ".datepicker" ).
 
 $(document).ready(function()
 {

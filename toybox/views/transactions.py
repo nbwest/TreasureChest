@@ -97,13 +97,16 @@ def handleTransactionActionForm(request, till):
 
 def handleTotalsForm(request):
     context = {}
+    headings = []
+    totals = list([0])
+    results = []
     form=None
     if request.method == "POST" and "query_date" in request.POST and request.POST["query_date"]:
         form = TransactionTotalsForm(request.POST)
         if form.is_valid():
             # if "button_date_submit" in request.POST:
 
-                d = datetime.datetime.strptime(request.POST["query_date"], "%d/%m/%Y").date()
+                d = form.cleaned_data['query_date']#'.datetime.strptime(request.POST["query_date"], "%d/%m/%Y").date()
 
                 # utc_dt = date_string_to_utc(request.POST["query_date"], "%d/%m/%Y")
 
@@ -116,15 +119,15 @@ def handleTotalsForm(request):
 
 
 
-                    headings=[]
+
                     headings.append("Name")
-                    totals = list([0])
+
                     for tr_type in tr_types:
                         headings.append(Transaction.TRANSACTION_TYPE_CHOICES[tr_type["transaction_type"]][1])
                         totals.append(0)
                     headings.append("Total")
 
-                    results=[]
+
 
                     for member in members:
                         member_tr=tr.filter(member=member["member"])
@@ -159,7 +162,9 @@ def handleTotalsForm(request):
                 #            if total:
                 #                results.update({choice[1]:total})
 
-                context.update({"headings":headings,"totals":totals,"fees":results, "query_date":d})
+                    context.update({"headings":headings,"totals":totals,"fees":results, "query_date":d})
+                else:
+                    form.add_error('query_date','No transactions found')
 
         context.update({"totals_form":form})
     else:
@@ -328,4 +333,4 @@ class TransactionActionForm(forms.Form):
 
 
 class TransactionTotalsForm(forms.Form):
-    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y'], widget=forms.DateInput(format='%d/%m/%Y',attrs={'button_date_submit':'Get totals','title':'Date to display totals for'}))
+    query_date = forms.DateField(label="Date", input_formats=['%d/%m/%Y','%d/%m/%y'], widget=forms.DateInput(format='%d/%m/%y',attrs={'button_date_submit':'Get totals','title':'Date to display totals for'}))

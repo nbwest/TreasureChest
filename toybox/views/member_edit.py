@@ -63,12 +63,12 @@ class MemberDetailsForm(forms.Form):
     partner = forms.CharField(required=False, label="Alternate Borrower Name",
                               max_length=Member._meta.get_field('partner').max_length)
     # TODO all the number of max children to change
-    child1 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 1 Birthday",widget=forms.DateInput(format='%d/%m/%Y',attrs={"datepicker": "True", 'group': 'Children'}))
-    child2 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 2 Birthday",widget=forms.DateInput(format='%d/%m/%Y', attrs={"datepicker": "True"}))
-    child3 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 3 Birthday",widget=forms.DateInput(format='%d/%m/%Y', attrs={"datepicker": "True"}))
-    child4 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 4 Birthday",widget=forms.DateInput(format='%d/%m/%Y', attrs={"datepicker": "True"}))
-    child5 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 5 Birthday",widget=forms.DateInput(format='%d/%m/%Y', attrs={"datepicker": "True"}))
-    child6 = forms.DateField(required=False, input_formats=['%d/%m/%Y'], label="Child 6 Birthday",widget=forms.DateInput(format='%d/%m/%Y',attrs={"datepicker": "True", 'endgroup': 'Children'}))
+    child1 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 1 Birthday",widget=forms.DateInput(format='%d/%m/%y',attrs={"datepicker": "True", 'group': 'Children'}))
+    child2 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 2 Birthday",widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
+    child3 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 3 Birthday",widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
+    child4 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 4 Birthday",widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
+    child5 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 5 Birthday",widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
+    child6 = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], label="Child 6 Birthday",widget=forms.DateInput(format='%d/%m/%y',attrs={"datepicker": "True", 'endgroup': 'Children'}))
 
     phone_number1 = forms.CharField(label="Primary Phone",max_length=Member._meta.get_field('phone_number1').max_length)
     phone_number2 = forms.CharField(required=False, label="Secondary Phone",max_length=Member._meta.get_field('phone_number2').max_length)
@@ -89,8 +89,8 @@ class MemberDetailsForm(forms.Form):
 
     comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea(attrs={"rows":"1"}))
 
-    join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
-    membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y'],widget=forms.DateInput(format='%d/%m/%Y', attrs={'readonly': 'readonly'}))
+    join_date = forms.DateField(required=False, label='Join Date', input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={'readonly': 'readonly'}))
+    membership_end_date = forms.DateField(required=False, label='Membership due', input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={'readonly': 'readonly'}))
     bond_fee_paid = forms.DecimalField(required=False, label='Bond',widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
 
