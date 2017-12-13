@@ -382,7 +382,7 @@ class Toy(models.Model):
         fine=(issue_fine_major_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
-            fine=issue_fine_major_min * self.loan_cost
+            fine=issue_fine_major_min * self.purchase_cost
 
         fine=round(fine,0)
 
@@ -398,7 +398,7 @@ class Toy(models.Model):
         fine=(issue_fine_minor_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
-            fine=issue_fine_minor_min * self.loan_cost
+            fine=issue_fine_minor_min * self.purchase_cost
 
         fine=round(fine,0)
 

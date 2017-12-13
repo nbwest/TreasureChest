@@ -613,8 +613,19 @@ function CalcTotal()
     var valid_sum=!isNaN(change);
     var blank_page=(total==0 && fees==0 && original_fees==0);
 
+    var adjusts = document.querySelectorAll('[id$=adjust_justification]');
 
-    if ((enough_money || volunteering || repair) && valid_sum && (blank_page && !volunteering || !repair))
+    var adjust_to_zero=false;
+    adjusts.forEach(function(entry)
+    {
+        if (entry.value != "" && total== 0) adjust_to_zero = true;
+    });
+
+
+
+
+
+    if (adjust_to_zero ||((enough_money || volunteering || repair) && valid_sum && (blank_page && !volunteering || !repair)))
     {
 
         $("#id_payment_group").removeClass('has-error');

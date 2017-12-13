@@ -286,15 +286,15 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
             var fine=0.0;
             var issue_fee=document.getElementById("issue_fee_"+toy_id);
 
-            //console.log("-----------------");
-            //console.log("CB: "+returned_checkbox.checked);
+            console.log("-----------------");
+            console.log("CB: "+returned_checkbox.checked);
             //console.log("BOND: "+bond_return);
-            //console.log("ID: "+toy_id);
-            //console.log("Issue #: "+issue_type.value);
-            //console.log("minor: "+issue_fines.getAttribute("issue_fine_minor"));
-            //console.log("major: "+issue_fines.getAttribute("issue_fine_major"));
-            //console.log("allocation: "+issue_fines.getAttribute("issue_fine_allocation"));
-           // console.log("result: "+issue_fines.getAttribute("issue_fine_allocation")[issue_type.value]);
+            console.log("ID: "+toy_id);
+            console.log("Issue #: "+issue_type.value);
+            console.log("minor: "+issue_fines.getAttribute("issue_fine_minor"));
+            console.log("major: "+issue_fines.getAttribute("issue_fine_major"));
+            console.log("allocation: "+issue_fines.getAttribute("issue_fine_allocation"));
+            console.log("result: "+issue_fines.getAttribute("issue_fine_allocation")[issue_type.value]);
 
 
             if (returned_checkbox!=null)
@@ -306,7 +306,7 @@ toys_borrowed - Tuples of Dict: "ID":string, "name":string, "due_in":integer, "i
                   found_returned_toy=true;
                }
 
-               //console.log("fine: "+this.getAttribute("value"));
+               console.log("fine: "+this.getAttribute("value"));
 
                {% if bond_enable %}
                if (total_bond_return!=null)
