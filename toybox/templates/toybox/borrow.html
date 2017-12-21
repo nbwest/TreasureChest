@@ -215,7 +215,7 @@
                 <div class="panel-body">
 
                         <div class="input-group"  >
-                              <div class="btn-group btn-group-justified" name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup" >
+                              <div class="btn-group btn-group-justified" title="Number of weeks to borrow newly listed toys" name="loanDuration" data-toggle="buttons"  onchange="UpdateFee()" id="loanDurationRadioGroup" >
                                   {% for item in payment_form.loan_duration %}
                                     <label class="btn btn-default{% if 'checked' in item.render %} active {% endif %}"><b>{{item | removetags:"label"}}</b> week loan</label>
                                   {% endfor %}
@@ -278,14 +278,14 @@
 
                                  {% if field.field.widget.attrs.adjust_button %}
                                 <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
+                                        <button title="Adjust this amount with justification" type="button" class="btn btn-default" name="{{field.auto_id}}_adjust" value="{{field.auto_id}}" data-toggle="modal" onclick='changeFee("{{field.auto_id}}")' data-target="#feeChangeModal">Adjust</button>
                                 </span>
                                 {% endif %}
 
                                 {% if field.field.widget.attrs.change_buttons %}
                                    <span class="input-group-btn">
 
-                                       <button class="btn btn-default" id="btn_paid" name="paid" type="submit" onclick="ok_to_leave=true;">Paid</button>
+                                       <button title="Complete the transaction" class="btn btn-default" id="btn_paid" name="paid" type="submit" onclick="ok_to_leave=true;">Paid</button>
                                        {% if donation_enable == True %}
                                        <button class="btn btn-default" id="btn_donate" name="donate" type="submit" onclick="ok_to_leave=true;">Donate</button>
                                        {%endif%}
@@ -300,7 +300,7 @@
 
                                 {% if field.field.widget.attrs.cancel_button %}
                                    <span class="input-group-btn">
-                                       <button class="btn btn-default" id="btn_cancel" name="cancel" type="submit" onclick="ok_to_leave=true;" >Cancel</button>
+                                       <button title="Cancel the transaction and reset the page" class="btn btn-default" id="btn_cancel" name="cancel" type="submit" onclick="ok_to_leave=true;" >Cancel</button>
                                    </span>
                                 {% endif %}
 

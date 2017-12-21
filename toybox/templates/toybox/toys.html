@@ -24,8 +24,8 @@
     <div class="panel-fluid panel-default col-xs-11">
 
         <div id="toolbar">
-            <button class="btn btn-default" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
-            <button class="btn btn-default" id="btn_checked" name="btn_checked" type="submit" >Update selected toys only</button>
+            <button class="btn btn-default" title="Selected toys will be updated and marked as stock taken" id="btn_stocktake_checked" name="btn_stocktake_checked" type="submit" >Stocktake and update selected toys</button>
+            <button class="btn btn-default" title="Selected toys will be updated" id="btn_checked" name="btn_checked" type="submit" >Update selected toys only</button>
 
             {% if perms.toybox.add_toy %}
             <button title="Add New Toy" type="button" class="btn btn-success" aria-label="Left Align" onclick="getEditToyForm(this);" value="add">
