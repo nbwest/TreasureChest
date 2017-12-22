@@ -672,7 +672,7 @@ class PaymentForm(forms.Form):
 
     membership = forms.CharField(required=False, label="Membership $", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive','readonly':'readonly', 'adjust_button':'True'}))
     membership_adjust_justification = forms.CharField(required=False, max_length=100,widget=forms.HiddenInput(attrs={'type':'hidden'}))
-    membership_receipt = forms.CharField(required=True, label="Membership receipt", max_length=20,widget=forms.TextInput(attrs={}))
+    membership_receipt = forms.CharField(required=True, label="Membership Receipt", max_length=20,widget=forms.TextInput(attrs={}))
 
     #TODO enable donation
     # donation = forms.CharField(required=False, label="Donation", max_length=20, validators=[numeric],widget=forms.TextInput(attrs={'total_me':'positive',}))

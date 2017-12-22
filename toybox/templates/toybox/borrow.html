@@ -608,10 +608,10 @@ function CalcTotal()
 
 
     var repair= (change==0 && enable_exact_for_repair_only);
-    var enough_money=(change >= 0 && payment !=0);
+    var enough_money=(change >= 0 && payment !=0 && !isNaN(payment));
     var volunteering=(enable_paid_for_volunteer && fees==0);
     var valid_sum=!isNaN(change);
-    var blank_page=(total==0 && fees==0 && original_fees==0);
+    var blank_page=(document.getElementById("id_member_name_fragment").value=="");
 
     var adjusts = document.querySelectorAll('[id$=adjust_justification]');
 
@@ -621,13 +621,32 @@ function CalcTotal()
         if (entry.value != "" && total== 0) adjust_to_zero = true;
     });
 
-
-
-
-
-    if (adjust_to_zero ||((enough_money || volunteering || repair) && valid_sum && (blank_page && !volunteering || !repair)))
+    var member_receipt=true;
+    if (document.getElementById("id_membership_receipt")!=null && document.getElementById("id_membership_receipt").value =="")
     {
+        member_receipt=false;
+    }
 
+    var bond_receipt=true;
+    if (document.getElementById("id_member_bond_receipt")!=null && document.getElementById("id_member_bond_receipt").value =="")
+    {
+        bond_receipt=false;
+    }
+
+    //console.log("-----------------------");
+    //console.log("member_receipt: "+member_receipt);
+    //console.log("enough_money : "+enough_money );
+    //console.log("volunteering : "+volunteering );
+    //console.log("repair : "+repair );
+    //console.log("adjust_to_zero : "+adjust_to_zero  );
+    //console.log("!blank_page : "+!blank_page );
+    //console.log("valid_sum : "+valid_sum );
+    //console.log("member_receipt: "+member_receipt);
+    //console.log("bond_receipt: "+bond_receipt);
+
+    if ((enough_money || volunteering || repair || adjust_to_zero || !blank_page) && valid_sum && member_receipt && bond_receipt)
+    {
+        //console.log("ENABLE");
         $("#id_payment_group").removeClass('has-error');
         $("#id_payment_group").addClass('has-success');
         $("#btn_paid").addClass('btn-success');
@@ -637,7 +656,7 @@ function CalcTotal()
     }
     else
     {
-
+        //console.log("DISABLE");
         $("#id_payment_group").addClass('has-error');
         $("#id_payment_group").removeClass('has-success');
         $("#btn_paid").removeClass('btn-success');
