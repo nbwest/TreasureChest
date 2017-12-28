@@ -62,19 +62,21 @@ For page html use the following template tags:
         }
 
 
-
     </style>
 </head>
 
 <body>
 
-
+<div class="device-xs visible-xs"></div>
 
 
 {% include "toybox/till_popup.html" %}
 
 
 <script type="text/javascript">
+
+
+
     //used to duplicate the side menu from the top menu (top menu hidden until collapsed)
       $(document).ready(function()
       {
@@ -225,8 +227,10 @@ function logout()
 <div style="padding-top:70px;" class="container-fluid">
     <div class="row-fluid">
 
-        <!-- side menu -->
-        <div class="col-xs-1  nav hidden-xs ">
+
+
+          <!-- side menu -->
+        <div class="col-xs-2  nav hidden-xs ">
             <ul class="nav nav-sidebar nav-pills nav-stacked">
                 <span id="duplicate-menu" class="nav nav-sidebar nav-pills nav-stacked"></span>
                 <!-- menu duplicated with java script from top menu -->
@@ -234,13 +238,15 @@ function logout()
 
         </div>
 
-        <div class="col-xs-12 col-sm-11 main ">
+        <div class="col-xs-12 col-sm-10 main ">
             <div class="container-fluid">
             <!-- Page specific code -->
             {% block content %}{% endblock content %}
             <!-- Page specific code end -->
             </div>
         </div>
+
+
 
     </div>
 </div>
