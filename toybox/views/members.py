@@ -102,7 +102,7 @@ def handleGET(request):
                 filter_by_contains('comment', col_filters)
 
         from shared import get_config
-        warning_duration = get_config("membership_warning_duration")
+        warning_duration = int(get_config("membership_warning_duration"))
         warning_end_date=thisDateTime().date()+timedelta(days=warning_duration)
 
 
@@ -133,7 +133,7 @@ def handleGET(request):
 
         tick = '<span class="glyphicon glyphicon-ok text-success"></span>'
         cross = '<span class="glyphicon glyphicon-remove text-danger"></span>'
-        NA = '<span class="glyphicon glyphicon-ban-circle text-danger"></span>'
+        #NA = '<span class="glyphicon glyphicon-ban-circle text-danger"></span>'
 
         toy_history = "<button title = 'Toy History' type = 'button' class ='btn btn-link' onclick='getMemberToyHistory(this);' value='{0}'><span class ='glyphicon glyphicon-time' aria-hidden='true'></span></button>"
         edit_icon = "<button title = 'Edit member details' type = 'button' class ='btn btn-link' onclick='getMemberDetails(this);' value='{0}'><span class ='glyphicon glyphicon-pencil' aria-hidden='true'></span></button>"
