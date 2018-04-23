@@ -323,14 +323,14 @@ def handle_payment_form(request, member_id):
                             if payment_form.cleaned_data['membership']!="":
                                 fee=decimal.Decimal(payment_form.cleaned_data['membership'])
 
-                                comment = None
+                                comment = ""
 
                                 if "membership_receipt" in payment_form.cleaned_data:
-                                    comment = "Membership Receipt #: " + payment_form.cleaned_data["membership_receipt"]
+                                    comment +="Membership Receipt #: " + payment_form.cleaned_data["membership_receipt"]+" "
 
                                 if "borrow_fee_adjust_justification" in payment_form.cleaned_data:
                                     if payment_form.cleaned_data['membership_adjust_justification']!="":
-                                        comment=payment_form.cleaned_data['membership_adjust_justification']
+                                        comment += payment_form.cleaned_data['membership_adjust_justification']
                                         adjustment_found=True
 
                                 if fee!=0 or comment is not None:
