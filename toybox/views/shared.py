@@ -71,6 +71,8 @@ def handle_member_summary(request, member_id):
 
 def handle_borrowed_toy_list(request, member_id):
     context = {}
+    toys=None
+
     if (member_id):
         toys=Toy.objects.filter(member_loaned=member_id)
 
@@ -301,7 +303,7 @@ def get_config(key):
                 return Decimal(value)
             except:
                 raise NameError("Value: "+value+" is not type: "+Config.CONFIG_TYPES[value_type][1])
-                return None
+
 
         elif value_type == Config.BOOLEAN:
             if value in set(["0","no","n","false"]):
@@ -310,7 +312,7 @@ def get_config(key):
                 return True
             else:
                 raise NameError("Value: "+value+" is not type: "+Config.CONFIG_TYPES[value_type][1])
-                return None
+
 
         elif value_type == Config.STRING:
             return value
@@ -334,7 +336,7 @@ def get_config(key):
             return(2)
 
         elif key=="max_toys":
-            return(4)
+            return(10)
 
         elif key=="loan_durations":
             return(12)
@@ -355,13 +357,13 @@ def get_config(key):
             return(0.0)
 
         elif key == "membership_warning_duration":
-            return (14)
+            return (60)
 
         elif key == "minimum_member_bond":
             return (5.0)
         else:
             raise NameError('Option key not found: '+key)
-            return None
+
 
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")

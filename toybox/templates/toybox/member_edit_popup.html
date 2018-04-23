@@ -202,13 +202,17 @@
 
         function getMemberDetails(element)
         {
+            var URL="{{ request.get_full_path }}";
+            //remove all other URL parameters and add in member_edit_id
+            URL=URL.split('?')[0]+"?member_edit_id="+element.value;
+            console.log(URL);
+
             $.ajax(
             {
                 type: "GET",
-                url: "{{ request.get_full_path }}"+"?member_edit_id="+element.value,
+                url: URL,
                 success: function(data)
                 {
-                //console.log(element.value);
                     document.getElementById("member_edit_container").innerHTML=data;
                     if (element.value == "add")
                         $("[name='pay_redirect_button']").show();
