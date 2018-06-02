@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False # https://www.kennethreitz.org/essays/introducing-dj-static
 
 VERSION="V1.7.2"
 CONTACT='For assistance with this software contact Jess Benning [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
@@ -145,7 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'toybox/static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
