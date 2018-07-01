@@ -221,16 +221,14 @@ def handleGET(request):
                 if row["image_id"]:
                     import ntpath
                     image_filename=ntpath.basename(toy_image_files[row["image_id"]])
-                    im = get_thumbnail(toy_image_files[row["image_id"]], '200', crop='center', quality=80)
 
+                    #Issue here with some toys getting thumbnails using apache B11, G3 - duplicates?
+                    #disabled thumbnails for now
+                    #im = get_thumbnail(toy_image_files[row["image_id"]], '200', crop='center', quality=80)
+                    #row["image_id"] = '<a href = "{1}{2}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}" ></a>'.format(im.url,settings.MEDIA_URL,toy_image_files[row["image_id"]])
 
-                    row["image_id"] = '<a href = "{1}{2}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}" ></a>'.format(im.url,settings.MEDIA_URL,toy_image_files[row["image_id"]])
-
-
-
+                    row["image_id"] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, toy_image_files[row["image_id"]])
                     row["image_id"] += '<p>' + image_filename + '</p>'
-
-
 
                 # format_by_image('image_id',toy_image_files,row,image_filename)
 

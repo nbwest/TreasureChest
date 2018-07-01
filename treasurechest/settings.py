@@ -25,7 +25,7 @@ SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False # https://www.kennethreitz.org/essays/introducing-dj-static
 
-VERSION="V1.7.2"
+VERSION="V1.7.3"
 CONTACT='For assistance with this software contact Jess Benning [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 
 ALLOWED_HOSTS = ['*']
