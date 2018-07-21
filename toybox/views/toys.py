@@ -9,7 +9,8 @@ from django.http import JsonResponse
 import toy_edit
 import json
 import ntpath
-from sorl.thumbnail import get_thumbnail
+#from sorl.thumbnail import get_thumbnail
+import easy_thumbnails
 
 # Provide estimate of borrow cost based on purchase cost
 # Calculates 1% of purchase cost rounded up to nearest $0.50
@@ -227,7 +228,14 @@ def handleGET(request):
                     #im = get_thumbnail(toy_image_files[row["image_id"]], '200', crop='center', quality=80)
                     #row["image_id"] = '<a href = "{1}{2}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}" ></a>'.format(im.url,settings.MEDIA_URL,toy_image_files[row["image_id"]])
 
-                    row["image_id"] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, toy_image_files[row["image_id"]])
+                    from easy_thumbnails.alias import aliases
+                    if not aliases.get('toys'):
+                        aliases.set('toys', {'size': (200, 200), 'crop': False})
+
+                    im_url=easy_thumbnails.templatetags.thumbnail.thumbnail_url(toy_image_files[row["image_id"]], 'toys')
+                    row["image_id"] = '<a href = "{1}{2}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}" ></a>'.format(im_url,settings.MEDIA_URL,toy_image_files[row["image_id"]])
+
+                    #row["image_id"] = '<a href = "{0}{1}" ><img class ="img-thumbnail"  style="image-orientation:from-image; " src="{0}{1}" ></a>'.format(settings.MEDIA_URL, toy_image_files[row["image_id"]])
                     row["image_id"] += '<p>' + image_filename + '</p>'
 
                 # format_by_image('image_id',toy_image_files,row,image_filename)
