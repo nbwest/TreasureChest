@@ -161,11 +161,11 @@ function logout()
 
 
 <!-- top nav bar -->
-<nav class="navbar navbar-inverse navbar-fixed-top  ">
+<nav class="navbar navbar-inverse navbar-fixed-top  "  {% if sandbox == True %} style="background-color:yellow"{%endif%}>
 
     <div class="container-fluid">
 
-        <div class="navbar-header">
+        <div class="navbar-header" >
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                     aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -176,7 +176,7 @@ function logout()
 
 
             <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB_logo.png" alt="MTB logo"></a>
-            <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library</a>
+            <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library{% if sandbox == True %} SANDBOX{%endif%}</a>
 
             <p class="navbar-text navbar-left">{{version}}</p>
 

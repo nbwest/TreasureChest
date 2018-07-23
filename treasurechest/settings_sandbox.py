@@ -27,34 +27,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG=True
-
-SANDBOX=False
-
-VERSION="V1.7.4"
+DEBUG=False
+SANDBOX=True
+#VERSION="V1.7.4 SANDBOX"
 
 CONTACT='For assistance with this software contact Jess Benning Ph 0423 164 900 [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 
 ALLOWED_HOSTS = ['*']
 
-# Application definition
-
-# DEBUG_TOOLBAR_PANELS = [
-#     'debug_toolbar.panels.versions.VersionsPanel',
-#     'debug_toolbar.panels.timer.TimerPanel',
-#     'debug_toolbar.panels.settings.SettingsPanel',
-#     'debug_toolbar.panels.headers.HeadersPanel',
-#     'debug_toolbar.panels.request.RequestPanel',
-#     'debug_toolbar.panels.sql.SQLPanel',
-#     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-#     'debug_toolbar.panels.templates.TemplatesPanel',
-#     'debug_toolbar.panels.cache.CachePanel',
-#     'debug_toolbar.panels.signals.SignalsPanel',
-#     'debug_toolbar.panels.logging.LoggingPanel',
-#     'debug_toolbar.panels.redirects.RedirectsPanel',
-#     'template_timings_panel.panels.TemplateTimings.TemplateTimings',
-#
-# ]
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -63,8 +43,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'debug_toolbar',
-    # 'template_timings_panel',
     'toybox',
     'widget_tweaks',
     'easy_thumbnails',
@@ -119,7 +97,7 @@ DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'toybox',
-        'USER': 'toyboxuser',
+        'USER': 'toyboxuser_sandbox',
         'PASSWORD': 'sspokess',
         'HOST': 'localhost',
         'PORT': '5432',
@@ -154,5 +132,4 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
-
 
