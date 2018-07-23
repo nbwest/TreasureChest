@@ -97,8 +97,8 @@ WSGI_APPLICATION = 'treasurechest.wsgi.application'
 DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'toybox',
-        'USER': 'toyboxuser_sandbox',
+        'NAME': 'toybox_sandbox',
+        'USER': 'toyboxuser',
         'PASSWORD': 'sspokess',
         'HOST': 'localhost',
         'PORT': '5432',
