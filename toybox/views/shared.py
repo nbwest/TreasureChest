@@ -97,7 +97,7 @@ def updateDailyBalance():
 def base_data(request):
 
 
-    context={"version":settings.VERSION, "sandbox":settings.SANDBOX}
+    context={"version":settings.VERSION, "sandbox":settings.SANDBOX, "development":settings.DEVELOPMENT}
 
 
     context.update(updateDailyBalance())

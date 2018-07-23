@@ -176,7 +176,7 @@ function logout()
 
 
             <a href="{% url 'toybox:home' %}"><img class="pull-left" style="max-width:60px" src="/static/toybox/MTB_logo.png" alt="MTB logo"></a>
-            <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library{% if sandbox == True %} SANDBOX{%endif%}</a>
+            <a class="navbar-brand" href="{% url 'toybox:home' %}"  style="margin-left: 5px; ">Toy Library{% if development == True %} DEVELOPMENT{%endif%}{% if sandbox == True %} SANDBOX{%endif%}</a>
 
             <p class="navbar-text navbar-left">{{version}}</p>
 

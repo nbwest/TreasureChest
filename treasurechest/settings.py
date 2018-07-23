@@ -31,6 +31,7 @@ SECRET_KEY = 'vqi^mpa&)_#^c0fa!b+z_nac$)ot^rh($d-+!afvc#p+lq3)*z'
 DEBUG=True
 
 SANDBOX=False
+DEVELOPMENT=True
 
 VERSION="V1.7.4"
 
