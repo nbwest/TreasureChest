@@ -1,5 +1,5 @@
 """
-Development WSGI config for treasurechest project.
+WSGI config for treasurechest project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -15,9 +15,8 @@ from django.core.wsgi import get_wsgi_application
 
 sys.path.append('/usr/local/lib/python2.7/site-packages')
 
-
 sys.path.append('/var/www/TreasureChest')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "treasurechest.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "treasurechest.settings_production")
 
 try:
     application = get_wsgi_application()
