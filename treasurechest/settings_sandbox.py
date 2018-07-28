@@ -10,11 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
-
-import os
-from settings import *
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG=False
 SANDBOX=True
@@ -23,8 +18,6 @@ DEVELOPMENT=True
 
 
 # Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

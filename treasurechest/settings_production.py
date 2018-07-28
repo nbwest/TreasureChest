@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 
-import os
-from settings import *
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!

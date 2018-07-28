@@ -158,3 +158,4 @@ LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 
 
+THUMBNAIL_BASEDIR = 'thumbnails'
