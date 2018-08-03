@@ -17,7 +17,7 @@ DEBUG=True
 SANDBOX=True
 DEVELOPMENT=True
 
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','67.209.127.188']
 
 # Database
 DATABASES = {

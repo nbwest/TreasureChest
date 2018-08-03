@@ -18,3 +18,5 @@ from settings import *
 DEBUG=False
 SANDBOX=False
 DEVELOPMENT=False
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','67.209.127.188']

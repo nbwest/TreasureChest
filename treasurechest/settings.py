@@ -33,11 +33,14 @@ DEBUG=True
 SANDBOX=False
 DEVELOPMENT=True
 
-VERSION="V1.7.4"
+VERSION="V1.8.4"
 
 CONTACT='For assistance with this software contact Jess Benning Ph 0423 164 900 [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 
 ALLOWED_HOSTS = ['*']
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 6 * 60 * 60#
 
 # Application definition
 
