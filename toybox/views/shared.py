@@ -549,7 +549,8 @@ def handle_shift(request):
             elif "member" in form.data:
                 # add volunteer
                 context.update({"setting_shift":"true"})
-                new_volunteer=form.cleaned_data["member"]
+                new_volunteer_id=form.cleaned_data["member"]
+                new_volunteer=Member.objects.get(pk=new_volunteer_id)
                 if new_volunteer:
                     in_shift=Shift.objects.filter(shift_date=thisDateTime().date(),volunteer=new_volunteer)
 
@@ -574,5 +575,22 @@ def handle_shift(request):
      return context
 
 class ShiftForm(forms.Form):
-    member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))
-    # comment= forms.CharField(required=False, label="Comment", max_length=Member._meta.get_field('comment').max_length,widget=forms.Textarea())
+    #member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))
+
+
+    members_list=list(Member.objects.all().values_list("id", "name"))
+    partner_members_list=list(Member.objects.exclude(partner ="").values_list("id", "partner", "name"))
+
+    partner_list=[]
+    for item in partner_members_list:
+        partner_list.append(tuple([item[0],item[1]+" ("+item[2]+")"]))
+
+
+    from itertools import chain
+    full_list = sorted(list(members_list + partner_list), key=lambda tup: tup[1])
+    #full_list = list(chain(members_list, partner_list))
+
+
+
+    member = forms.ChoiceField(full_list,required=False )
+    #queryset=Member.objects.all().order_by("name").values("id","name","partner")
