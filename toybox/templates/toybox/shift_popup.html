@@ -1,5 +1,6 @@
 {% load widget_tweaks %}
 
+
 <div id="set_shift_volunteers">
 
   <div class="modal" id="setShiftModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -16,37 +17,39 @@
                 <br>
 
                 <div class="modal-body">
-                {%if shift_form %}
-                <div class="form-group">
+
+                     {%if error%} <span class="label label-danger">{{error}}</span>
+                    <br>
+                    <br>
+                    {%endif%}
+                   <input class="form-control" type="text" id="addVolunteerInput" onkeyup="myFunction()" placeholder="Search for new shift members..." title="Type in a name">
+
+                    <br>
+                    <div class="panel panel-default" >
+                   <div class="panel-footer" style="overflow-y: auto; height: 200px" >
 
 
 
-                            {% render_field shift_form.member class+="form-control" onchange="this.form.submit()"%}
+                    <ul class="list-group" id="myUL">
+
+                        {% for member in members %}
+                             <button name="add_vol" value="{{member.0}}" type="submit" class="list-group-item list-group-item-action">{{ member.1 }} {% if member.2 != ""%} ({{member.2}}) {%endif%}</button>
+                        {% endfor %}
+                    </ul>
+
+                       </div>
+                        </div>
 
 
-                            <ul  style="list-style-type:none;list-style:none;padding-left:0;">
-                                {% for error in shift_form.member.errors  %}
-                                    <li><label class="label label-danger">{{ error|striptags }}</label></li>
-                                {% endfor %}
-                            </ul>
-
-
-
-
-
-                </div>
-                {%endif%}
-
-                <br>
 
                  {% if shift %}
 
                        <ul class="list-group">
-
+                            {%if shift %} <h4>Shift members</h4> {%endif%}
                             {% for volunteer in shift %}
                                 <div class="list-group-item">
 
-                                    <button name="remove_volunteer" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn btn-danger remove-button"><span class="glyphicon glyphicon-trash " aria-hidden="true" ></span></button>
+                                    <button name="remove_vol" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn btn-danger remove-button"><span class="glyphicon glyphicon-trash " aria-hidden="true" ></span></button>
                                     &nbsp{{volunteer.volunteer.name}}
                                 </div>
                             {% endfor %}
@@ -58,6 +61,7 @@
                 </div>
 
                 <div class="modal-footer">
+
                     <button name="done" type="submit" class="btn btn-primary" data-dismiss="modal">Done</button>
                 </div>
 
@@ -69,13 +73,25 @@
 
      <script type="text/javascript">
 
-       // $( document ).ready(function()
-       // {
-        //    $(window).load(function(){
-        //        $('#setShiftModal').modal('hide');
-        //    });
-      //  });
 
+function myFunction() {
+    var input, filter, ul, items, i;
+    input = document.getElementById("addVolunteerInput");
+    filter = input.value.toUpperCase();
+
+    items = document.getElementsByName("add_vol");
+    for (i = 0; i < items.length; i++)
+    {
+        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1)
+        {
+            items[i].style.display = "";
+        }
+        else
+        {
+            items[i].style.display = "none";
+        }
+    }
+}
     </script>
 
 </div>

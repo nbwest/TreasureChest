@@ -39,8 +39,7 @@ CONTACT='For assistance with this software contact Jess Benning Ph 0423 164 900 
 
 ALLOWED_HOSTS = ['*']
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 6 * 60 * 60#
+
 
 # Application definition
 

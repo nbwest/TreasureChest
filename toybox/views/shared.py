@@ -102,7 +102,7 @@ def base_data(request):
 
     context.update(updateDailyBalance())
 
-    context.update(handle_shift(request))
+
 
     if 'first_login' not in request.session:
         request.session.update({'first_login':True,'setting_shift':True })
@@ -532,65 +532,6 @@ def sort_to_rows(request, query, col_filters, Table, foreignkey_sort="__name"):
     return total,query
 
 
-def handle_shift(request):
-
-     context={}
-     form=None
-
-     if request.method=="POST":
-        form=ShiftForm(request.POST)
-        if form.is_valid():
-
-            if "remove_volunteer" in form.data:
-                id=int(form.data["remove_volunteer"])
-                Shift.objects.get(shift_date=thisDateTime().date(),volunteer=id).delete()
-                context.update({"setting_shift":"true"})
-
-            elif "member" in form.data:
-                # add volunteer
-                context.update({"setting_shift":"true"})
-                new_volunteer_id=form.cleaned_data["member"]
-                new_volunteer=Member.objects.get(pk=new_volunteer_id)
-                if new_volunteer:
-                    in_shift=Shift.objects.filter(shift_date=thisDateTime().date(),volunteer=new_volunteer)
-
-                    if in_shift.count()==0:
-                        shift=Shift(volunteer=new_volunteer,shift_date=thisDateTime().date())
-                        shift.save()
-                    else:
-                        form.add_error("member","volunteer already added")
-                else:
-                    form.add_error("member","volunteer not selected")
-
-     else:
-        form = ShiftForm(request.POST)
-
-     todays_shift=Shift.objects.filter(shift_date=thisDateTime().date()).select_related('volunteer')
-
-     if todays_shift.count()==0:
-         todays_shift=None
-
-     context.update({"shift":todays_shift, "shift_form":form})
-
-     return context
-
-class ShiftForm(forms.Form):
-    #member = forms.ModelChoiceField(required=False, queryset=Member.objects.all().order_by("name"))
-
-
-    members_list=list(Member.objects.all().values_list("id", "name"))
-    partner_members_list=list(Member.objects.exclude(partner ="").values_list("id", "partner", "name"))
-
-    partner_list=[]
-    for item in partner_members_list:
-        partner_list.append(tuple([item[0],item[1]+" ("+item[2]+")"]))
-
-
-    from itertools import chain
-    full_list = sorted(list(members_list + partner_list), key=lambda tup: tup[1])
-    #full_list = list(chain(members_list, partner_list))
 
 
 
-    member = forms.ChoiceField(full_list,required=False )
-    #queryset=Member.objects.all().order_by("name").values("id","name","partner")

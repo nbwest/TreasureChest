@@ -13,6 +13,7 @@ def shifts(request):
 
     context = {"title":"Shifts"}
     context.update(base_data(request))
+    context.update(handle_shift(request))
 
     context.update(handlePOST(context,request))
 
@@ -75,3 +76,40 @@ def handleGET(request):
     else:
         return None
 
+
+def handle_shift(request):
+    context = {}
+
+    if request.method == "POST":
+
+        if "remove_vol" in request.POST:
+            id = int(request.POST["remove_vol"])
+            Shift.objects.get(shift_date=thisDateTime().date(), volunteer=id).delete()
+            context.update({"setting_shift": "true"})
+
+        elif "add_vol" in request.POST:
+            # add volunteer
+            context.update({"setting_shift": "true"})
+            new_volunteer_id = int(request.POST["add_vol"])
+            new_volunteer = Member.objects.get(pk=new_volunteer_id)
+            if new_volunteer:
+                in_shift = Shift.objects.filter(shift_date=thisDateTime().date(), volunteer=new_volunteer)
+
+                if in_shift.count() == 0:
+                    shift = Shift(volunteer=new_volunteer, shift_date=thisDateTime().date())
+                    shift.save()
+                else:
+                    context.update({"error": "volunteer already added"})
+            else:
+                context.update({"error": "volunteer not selected"})
+#filter out ones in shift already???
+    todays_shift = Shift.objects.filter(shift_date=thisDateTime().date()).select_related('volunteer')
+
+    if todays_shift.count() == 0:
+        todays_shift = None
+
+    members_list = Member.objects.all().values_list("id", "name", "partner")
+
+    context.update({"shift": todays_shift, "members": members_list})
+
+    return context

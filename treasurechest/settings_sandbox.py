@@ -19,6 +19,8 @@ DEVELOPMENT=True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','67.209.127.188']
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 6 * 60 * 60#
 # Database
 DATABASES = {
 'default': {
