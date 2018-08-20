@@ -33,7 +33,7 @@ DEBUG=True
 SANDBOX=False
 DEVELOPMENT=True
 
-VERSION="V1.8.4"
+VERSION="V1.8.0"
 
 CONTACT='For assistance with this software contact Jess Benning Ph 0423 164 900 [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 

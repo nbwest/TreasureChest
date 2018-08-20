@@ -25,7 +25,7 @@
                     {%endif%}
 
 
-                    <input class="form-control" type="text" id="addVolunteerInput" onkeyup="filterMembers()" placeholder="Search for new shift members..." title="Type in a name">
+                    <input class="form-control" type="text" id="addVolunteerInput" onkeyup="filterMembers(event)" placeholder="Search for new shift members..." title="Type in a name">
 
                     <br>
                     <div class="panel panel-default" >
@@ -76,10 +76,19 @@
 $('#setShiftModal').on('shown.bs.modal', function ()
 {
     $('#addVolunteerInput').text="";
+    $('#addVolunteerInput').value="";
     $('#addVolunteerInput').focus();
 
     filterMembers();
+
+    $('#addVolunteerInput').bind('keypress', function(evt) {
+    if(evt.keyCode == 13) {
+        evt.preventDefault();
+    }
 })
+})
+
+
 
 function addToShift(element,id,name,partner)
 {
@@ -150,7 +159,7 @@ function postData()
     return true;
 }
 
-function filterMembers()
+function filterMembers(event = null)
 {
 
     var input, filter, ul, items, i, last;
@@ -166,6 +175,7 @@ function filterMembers()
         selected_set.push(selected_items[i].value);
     }
 
+    var filtered_items=new Array();
     for (i = 0; i < items.length; i++)
     {
         if ((items[i].innerHTML.toUpperCase().indexOf(filter) > -1)
@@ -173,13 +183,19 @@ function filterMembers()
         && !(selected_set.includes(items[i].getAttribute("id").slice(3))))
         {
             items[i].style.display = "";
+            filtered_items.push(items[i]);
         }
         else
         {
             items[i].style.display = "none";
         }
     }
-
+    if (filtered_items.length==1 && event!=null && event.keyCode==13)
+    {
+        filtered_items[0].click();
+        input.value="";
+        input.focus();
+    }
 
 }
 </script>
