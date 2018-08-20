@@ -82,27 +82,54 @@ def handle_shift(request):
 
     if request.method == "POST":
 
-        if "remove_vol" in request.POST:
-            id = int(request.POST["remove_vol"])
-            Shift.objects.get(shift_date=thisDateTime().date(), volunteer=id).delete()
-            context.update({"setting_shift": "true"})
 
-        elif "add_vol" in request.POST:
-            # add volunteer
-            context.update({"setting_shift": "true"})
-            new_volunteer_id = int(request.POST["add_vol"])
-            new_volunteer = Member.objects.get(pk=new_volunteer_id)
-            if new_volunteer:
-                in_shift = Shift.objects.filter(shift_date=thisDateTime().date(), volunteer=new_volunteer)
+        if "selected_list" in request.POST:
+            selected_ids = request.POST["selected_list"].split(" ")
+            selected_ids = list(map(int, selected_ids))
 
-                if in_shift.count() == 0:
+            Shift.objects.filter(shift_date=thisDateTime().date()).delete()
+
+                #clear current list ing db and add new ones from dialog.
+
+            for id in selected_ids:
+                new_volunteer = Member.objects.get(pk=id)
+                if new_volunteer:
                     shift = Shift(volunteer=new_volunteer, shift_date=thisDateTime().date())
                     shift.save()
+
                 else:
-                    context.update({"error": "volunteer already added"})
-            else:
-                context.update({"error": "volunteer not selected"})
+                    context.update({"error": "volunteer not selected"})
+
+
+
+
+        # if "remove_vol" in request.POST:
+        #
+        #
+        #     # for id in ids:
+        #     Shift.objects.get(shift_date=thisDateTime().date(), volunteer=id).delete()
+        #
+        #     context.update({"setting_shift": "true"})
+
+        # elif "add_vol" in request.POST:
+        #     # add volunteer
+        #     context.update({"setting_shift": "true"})
+        #     new_volunteer_id = int(request.POST["add_vol"])
+        #     new_volunteer = Member.objects.get(pk=new_volunteer_id)
+        #     if new_volunteer:
+        #         in_shift = Shift.objects.filter(shift_date=thisDateTime().date(), volunteer=new_volunteer)
+        #
+        #         if in_shift.count() == 0:
+        #             shift = Shift(volunteer=new_volunteer, shift_date=thisDateTime().date())
+        #             shift.save()
+        #         else:
+        #             context.update({"error": "volunteer already added"})
+        #     else:
+        #         context.update({"error": "volunteer not selected"})
+#error wrong when nothing entered
+#volunteer already added coming up whe it shouldn't
 #filter out ones in shift already???
+            #can it be made without refreshing the page?
     todays_shift = Shift.objects.filter(shift_date=thisDateTime().date()).select_related('volunteer')
 
     if todays_shift.count() == 0:

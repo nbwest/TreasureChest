@@ -4,7 +4,7 @@
 <div id="set_shift_volunteers">
 
   <div class="modal" id="setShiftModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-      <form  action="{{ request.get_full_path }}"  method='post'>
+      <form  action="{{ request.get_full_path }}"  onsubmit="return postData()" method="post">
         {% csrf_token %}
         <div class="modal-dialog">
             <div class="modal-content">
@@ -18,52 +18,51 @@
 
                 <div class="modal-body">
 
-                     {%if error%} <span class="label label-danger">{{error}}</span>
-                    <br>
-                    <br>
+                    {%if error%}
+                        <span class="label label-danger">{{error}}</span>
+                        <br>
+                        <br>
                     {%endif%}
-                   <input class="form-control" type="text" id="addVolunteerInput" onkeyup="myFunction()" placeholder="Search for new shift members..." title="Type in a name">
+
+
+                    <input class="form-control" type="text" id="addVolunteerInput" onkeyup="filterMembers()" placeholder="Search for new shift members..." title="Type in a name">
 
                     <br>
                     <div class="panel panel-default" >
-                   <div class="panel-footer" style="overflow-y: auto; height: 200px" >
+                       <div class="panel-footer" style="overflow-y: auto; height: 200px" >
 
+                            <ul class="list-group">
+                                {% for member in members %} <button type="button" name="add_vol" id="mem{{member.0}}" onclick="addToShift(this,{{member.0}},'{{member.1}}','{{member.2}}');" class="list-group-item list-group-item-action">{{ member.1 }} {% if member.2 != ""%} ({{member.2}}) {%endif%}</button>{% endfor %}
+                            </ul>
 
-
-                    <ul class="list-group" id="myUL">
-
-                        {% for member in members %}
-                             <button name="add_vol" value="{{member.0}}" type="submit" class="list-group-item list-group-item-action">{{ member.1 }} {% if member.2 != ""%} ({{member.2}}) {%endif%}</button>
-                        {% endfor %}
-                    </ul>
-
-                       </div>
                         </div>
+                    </div>
 
 
+                       <ul class="list-group" id="shift_list">
+                             <h4>Shift members</h4>
 
-                 {% if shift %}
-
-                       <ul class="list-group">
-                            {%if shift %} <h4>Shift members</h4> {%endif%}
+                           {% if shift %}
                             {% for volunteer in shift %}
-                                <div class="list-group-item">
 
-                                    <button name="remove_vol" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="submit" class="btn btn-danger remove-button"><span class="glyphicon glyphicon-trash " aria-hidden="true" ></span></button>
-                                    &nbsp{{volunteer.volunteer.name}}
-                                </div>
+                                    <button name="remove_vol" onclick="delFromShift(this);" value="{{volunteer.volunteer.id}}" title="Remove this volunteer from this shift" type="button" class="btn list-group-item"><span class="badge alert-danger"><span class="glyphicon glyphicon-trash " aria-hidden="true" ></span></span>{{volunteer.volunteer.name}}</button>
+
+
                             {% endfor %}
-                         </ul>
+                           {% endif %}
 
-                    {% endif %}
 
+                       </ul>
 
                 </div>
+
 
                 <div class="modal-footer">
 
-                    <button name="done" type="submit" class="btn btn-primary" data-dismiss="modal">Done</button>
+                    <button name="done" type="submit"  class="btn btn-primary" >Done</button>
+                    <input id="selected_list" name="selected_list" type="hidden">
                 </div>
+
 
             </div>
         </div>
@@ -71,18 +70,107 @@
       </form>
     </div>
 
-     <script type="text/javascript">
+<script type="text/javascript">
 
 
-function myFunction() {
-    var input, filter, ul, items, i;
-    input = document.getElementById("addVolunteerInput");
-    filter = input.value.toUpperCase();
+$('#setShiftModal').on('shown.bs.modal', function ()
+{
+    $('#addVolunteerInput').text="";
+    $('#addVolunteerInput').focus();
 
-    items = document.getElementsByName("add_vol");
+    filterMembers();
+})
+
+function addToShift(element,id,name,partner)
+{
+    var textnode;
+
+    var node = document.createElement("button");
+    node.setAttribute("class","btn list-group-item");
+    node.setAttribute("value",id);
+    node.setAttribute("type","button");
+    node.setAttribute("onclick","delFromShift(this);");
+    node.setAttribute("name","remove_vol");
+    node.setAttribute("title","Remove this volunteer from this shift");
+
+
+    var spanBinNode=document.createElement("span");
+    spanBinNode.setAttribute("class","glyphicon glyphicon-trash");
+
+
+    var spanBadgeNode=document.createElement("span");
+    spanBadgeNode.setAttribute("class","badge alert-danger");
+    spanBadgeNode.appendChild(spanBinNode);
+    node.appendChild(spanBadgeNode);
+
+    if (partner !="")
+        textnode = document.createTextNode(name + " ("+partner+")");
+    else
+        textnode = document.createTextNode(name);
+
+    node.appendChild(textnode);
+
+    document.getElementById("shift_list").appendChild(node);
+
+    element.setAttribute("value","selected");
+
+    filterMembers();
+}
+
+function delFromShift(element)
+{
+    console.log("del");
+    console.log(element);
+    element.getAttribute("value");
+    var source_id=element.getAttribute("value");
+    console.log(source_id);
+    document.getElementById("mem"+source_id).setAttribute("value","");
+
+    element.parentNode.removeChild(element);
+    filterMembers();
+
+}
+
+function postData()
+{
+    var items;
+
+
+    items = document.getElementsByName("remove_vol");
+
+    var output_str="";
     for (i = 0; i < items.length; i++)
     {
-        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1)
+        output_str+=items[i].value+" ";
+    }
+    if (items.length!=0)
+        output_str=output_str.slice(0,-1);
+    document.getElementById("selected_list").value=output_str;
+   $('#setShiftModal').modal('toggle');
+    return true;
+}
+
+function filterMembers()
+{
+
+    var input, filter, ul, items, i, last;
+    input = document.getElementById("addVolunteerInput");
+    filter = input.value.toUpperCase();
+    items = document.getElementsByName("add_vol");
+
+    var selected_items = document.getElementsByName("remove_vol");
+    var selected_set=new Array();
+
+    for (i = 0; i < selected_items.length; i++)
+    {
+        selected_set.push(selected_items[i].value);
+    }
+
+    for (i = 0; i < items.length; i++)
+    {
+        if ((items[i].innerHTML.toUpperCase().indexOf(filter) > -1)
+        && (items[i].getAttribute("value")!="selected")
+        && !(selected_set.includes(items[i].getAttribute("id").slice(3))))
         {
             items[i].style.display = "";
         }
@@ -91,7 +179,9 @@ function myFunction() {
             items[i].style.display = "none";
         }
     }
+
+
 }
-    </script>
+</script>
 
 </div>
