@@ -85,20 +85,21 @@ def handle_shift(request):
 
         if "selected_list" in request.POST:
             selected_ids = request.POST["selected_list"].split(" ")
-            selected_ids = list(map(int, selected_ids))
-
             Shift.objects.filter(shift_date=thisDateTime().date()).delete()
+            if len(selected_ids) >= 1:
+                if selected_ids[0] != "":
+                    selected_ids = list(map(int, selected_ids))
 
-                #clear current list ing db and add new ones from dialog.
+                        #clear current list ing db and add new ones from dialog.
 
-            for id in selected_ids:
-                new_volunteer = Member.objects.get(pk=id)
-                if new_volunteer:
-                    shift = Shift(volunteer=new_volunteer, shift_date=thisDateTime().date())
-                    shift.save()
+                    for id in selected_ids:
+                        new_volunteer = Member.objects.get(pk=id)
+                        if new_volunteer:
+                            shift = Shift(volunteer=new_volunteer, shift_date=thisDateTime().date())
+                            shift.save()
 
-                else:
-                    context.update({"error": "volunteer not selected"})
+                        else:
+                            context.update({"error": "volunteer not selected"})
 
 
 
