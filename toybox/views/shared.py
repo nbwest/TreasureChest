@@ -175,7 +175,7 @@ def handle_toy_details_form(request,toys, member_id=None):
 
                     new_toy_state = toy.issue_type_to_state(toy.issue_type)
 
-                    if new_toy_state != toy.state:
+                    if new_toy_state != toy.AVAILABLE:
                         toy.state=new_toy_state
                         toy_history = ToyHistory()
                         toy_history.record_toy_event(toy, request.user, thisDateTime().now())
