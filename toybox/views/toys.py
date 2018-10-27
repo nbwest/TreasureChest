@@ -86,7 +86,9 @@ def handle_stocktake(request):
                     id=key.rpartition('_')[2]
                     toy=Toy.objects.get(pk=id)
                     toy.issue_type=int(value)
-                    toy.state=toy.issue_type_to_state(toy.issue_type)
+                    new_toy_state=toy.issue_type_to_state(toy.issue_type)
+                    if new_toy_state != None:
+                        toy.state = new_toy_state
                     toy_history=ToyHistory()
                     toy_history.record_toy_event(toy,request.user,thisDateTime().now())
                     if "issue_comment_"+id in request.POST:

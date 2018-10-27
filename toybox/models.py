@@ -446,10 +446,11 @@ class Toy(models.Model):
 
 
     def issue_type_to_state(self, issue_type):
-        
-        if issue_type == self.ISSUE_NONE:
-            state = self.AVAILABLE
-        elif issue_type == self.BROKEN_REPAIRABLE:
+        state=None
+
+        # if issue_type == self.ISSUE_NONE:
+        #     state = self.AVAILABLE
+        if issue_type == self.BROKEN_REPAIRABLE:
             state = self.TO_BE_REPAIRED
         elif issue_type == self.BROKEN_NOT_REPAIRABLE:
             state = self.TO_BE_RETIRED
@@ -462,7 +463,20 @@ class Toy(models.Model):
         elif issue_type == self.RETIRE_VERIFIED:
             state = self.RETIRED
             
-        return state    
+        return state
+
+    def toy_state_to_issue_type(self, state):
+
+        issue_type=None
+
+        if state == self.TO_BE_REPAIRED:
+            issue_type= self.BROKEN_REPAIRABLE
+        elif state == self.BEING_REPAIRED:
+            issue_type= self.BROKEN_REPAIRABLE
+        elif state == self.MISSING:
+            issue_type = self.WHOLE_TOY_MISSING
+
+        return issue_type
 
     def return_toy(self, issue, comment, user, return_datetime):
 

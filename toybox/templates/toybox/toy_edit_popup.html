@@ -93,6 +93,7 @@
             $(window).load(function()
             {
                 $('#toyEditPopupModal').modal('hide');
+
             });
 
 
@@ -178,6 +179,8 @@
         {
             document.getElementById("toy_edit_container").innerHTML=html;
             $('#toyEditPopupModal').modal('show');
+            document.getElementById("id_state").onchange=check_state;
+            document.getElementById("id_issue_type").onchange=check_issue_type;
         }
 
         $(document).on('hidden.bs.modal', '.modal', function () {

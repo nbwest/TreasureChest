@@ -74,8 +74,28 @@ class ToyEditForm(forms.Form):
     packaging = forms.ModelChoiceField(required=False,queryset=ToyPackaging.objects.all(),widget=forms.Select(attrs={"col2":"true"}))
 
     def save(self,toy_id):
+
+        #Store current issue type and toy state
+        #check validity of toy state change to issues type - add function to define this
+        #check validity of issue type change to toy state - issue_type_to_state()
+        #
+
+
        if not toy_id:
           raise Exception("Toy ID missing")
+
+
+
+       # current_toy_state = self.cleaned_data["state"]
+       # current_issue_type = self.cleaned_data["issue_type"]
+       #
+       # new_toy_state = Toy.issue_type_to_state(current_issue_type)
+       # if new_toy_state != None:
+       #     self.cleaned_data["state"] = new_toy_state
+       #
+       # new_issue_type = Toy.toy_state_to_issue_type(current_toy_state)
+       # if new_issue_type != None:
+       #     self.cleaned_data["issue_type"] = new_issue_type
 
        if toy_id=="add":
            toy_id=None

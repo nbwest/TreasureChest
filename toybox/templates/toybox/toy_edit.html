@@ -64,3 +64,85 @@
    </div>
 </div>
 
+
+<script>
+
+
+    var AVAILABLE = 0;
+    var ON_LOAN = 1;
+    var STOCKTAKE = 2;
+    var TO_BE_REPAIRED = 3;
+    var BEING_REPAIRED = 4;
+    var RETIRED = 5;
+    var TO_BE_RETIRED = 6;
+    var MISSING = 7;
+    var TO_BE_CATALOGED = 8;
+
+    var ISSUE_NONE = 0;
+    var BROKEN_REPAIRABLE = 1;
+    var BROKEN_NOT_REPAIRABLE = 2;
+    var MINOR_MISSING_PIECE = 3;
+    var MAJOR_MISSING_PIECE = 4;
+    var WHOLE_TOY_MISSING = 5;
+    var RETIRE_VERIFIED =6;
+
+
+    function issue_type_to_state(issue_type)
+    {
+        state=null;
+
+       switch(issue_type)
+       {
+        case BROKEN_REPAIRABLE:state = TO_BE_REPAIRED; break;
+        case BROKEN_NOT_REPAIRABLE:state = TO_BE_RETIRED; break;
+        case MINOR_MISSING_PIECE: state = AVAILABLE; break;
+        case MAJOR_MISSING_PIECE: state = TO_BE_REPAIRED; break;
+        case WHOLE_TOY_MISSING: state = MISSING; break;
+        case RETIRE_VERIFIED: state = RETIRED; break;
+       }
+        return state;
+    }
+
+
+
+    function toy_state_to_issue_type(state)
+    {
+
+        issue_type=null;
+
+        switch(state)
+        {
+         case TO_BE_REPAIRED: issue_type= BROKEN_REPAIRABLE; break;
+         case BEING_REPAIRED: issue_type= BROKEN_REPAIRABLE; break;
+         case MISSING: issue_type = WHOLE_TOY_MISSING; break;
+        }
+
+        return issue_type;
+    }
+
+    function check_state()
+    {
+       state_control=document.getElementById("id_state");
+        issue_type_control=document.getElementById("id_issue_type");
+
+       current_toy_state = parseInt(state_control.value);
+
+       new_issue_type = toy_state_to_issue_type(current_toy_state)
+       if (new_issue_type != null)
+           issue_type_control.value = new_issue_type
+    }
+
+    function check_issue_type()
+    {
+        state_control=document.getElementById("id_state");
+       issue_type_control=document.getElementById("id_issue_type");
+
+       current_issue_type = parseInt(issue_type_control.value);
+
+       new_toy_state = issue_type_to_state(current_issue_type);
+       if (new_toy_state != null)
+           state_control.value= new_toy_state;
+    }
+
+
+</script>

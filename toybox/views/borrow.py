@@ -170,7 +170,13 @@ def handle_toy_borrow(request, member_id, ignore_error):
                     elif toy.state == Toy.STOCKTAKE:
                         error = "Toy needs stocktaking and can't be borrowed"
                     elif toy.state == Toy.RETIRED:
-                        error = "ERROR - Toy is retired!"
+                        error = "Toy is retired"
+                    elif toy.state == Toy.MISSING:
+                        error = "Toy is missing"
+                    elif toy.state == Toy.TO_BE_REPAIRED:
+                        error = "Toy is broken and needs repair"
+                    elif toy.state == Toy.TO_BE_CATALOGED:
+                        error = "Toy is not ready to be lent out - To be cataloged"
                     elif toy.state == Toy.AVAILABLE or toy.state == Toy.TO_BE_REPAIRED:
                         #available, check it hasn't alredy been borrowed already
                         in_temp_list = TempBorrowList.objects.filter(toy=toy,member__id=member_id)
