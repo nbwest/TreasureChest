@@ -482,7 +482,8 @@ class Toy(models.Model):
 
         self.issue_type = int(issue)
 
-        self.state=self.issue_type_to_state(self.issue_type)
+        if self.issue_type_to_state(self.issue_type) != None:
+            self.state = self.issue_type_to_state(self.issue_type)
 
         self.issue_comment = comment
 
