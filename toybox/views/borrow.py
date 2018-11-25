@@ -65,6 +65,7 @@ def borrow(request, member_id):
      #   TempBorrowList.objects.filter().delete()
 
 
+    handle_quarantine(request, member_id)
 
     # handle member search
     context.update(handle_member_search(request))
@@ -116,6 +117,25 @@ def borrow(request, member_id):
 
 
     return render(request, 'toybox/borrow.html', context)
+
+def handle_quarantine(request,member_id):
+    if (request.method == "POST"):
+        if "quarantine_toy" in request.POST:
+            toy_id=request.POST["quarantine_toy"]
+            if toy_id != None:
+
+                temp_list = TempBorrowList.objects.filter(toy__id=toy_id,member__id=member_id)
+
+                new_borrow_toy_list = []
+                for item in temp_list:
+                    new_borrow_toy_list.append(item.toy)
+
+                handle_toy_details_form(request, new_borrow_toy_list)
+
+
+                TempBorrowList.objects.filter(toy__id=toy_id, member__id=member_id).delete()
+
+    return None
 
 
 # also adds toy to temp list in DB via POST

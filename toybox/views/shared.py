@@ -158,20 +158,20 @@ def handle_toy_details_form(request,toys, member_id=None):
         form = ToyDetailsForm(request.POST, toyList=toys)
         if form.is_valid():
 
-            for key, value in request.POST.iteritems():
+            for key, value in form.cleaned_data.iteritems():
 
 
-                if key.startswith("issue_type"):
+                if key.startswith("issue_type") and value !="":
                     id = key.rpartition('_')[2]
                     toy = Toy.objects.get(pk=id)
 
                     toy.issue_type = int(value)
 
-                    if "issue_comment_" + id in request.POST:
-                        toy.issue_comment = request.POST["issue_comment_" + id]
+                    if "issue_comment_" + id in form.cleaned_data:
+                        toy.issue_comment = form.cleaned_data["issue_comment_" + id]
 
-                    if "comment_" + id in request.POST:
-                        toy.comment = request.POST["comment_" + id]
+                    if "comment_" + id in form.cleaned_data:
+                        toy.comment = form.cleaned_data["comment_" + id]
 
                     new_toy_state = toy.issue_type_to_state(toy.issue_type)
 
@@ -204,12 +204,9 @@ class ToyDetailsForm(forms.Form):
         for toy in toyList:
             if toy:
                 self.fields['comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.comment,max_length=Toy._meta.get_field('comment').max_length)
-                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False, initial=toy.issue_type,
-                                                                          choices=Toy.ISSUE_TYPE_CHOICES[
-                                                                                  :Toy.RETIRE_VERIFIED])
-                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.issue_comment,
-                                                                           max_length=Toy._meta.get_field(
-                                                                               'comment').max_length)
+                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False, initial=toy.issue_type,choices=Toy.ISSUE_TYPE_CHOICES[:Toy.WHOLE_TOY_MISSING])
+                self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False, initial=toy.issue_comment,max_length=Toy._meta.get_field('comment').max_length)
+
 
 
 

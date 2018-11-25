@@ -4,8 +4,7 @@
 <div id="toy_summary">
 
     {% if toy %}
-<!--<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' autocomplete='on'>-->
-<!--{% csrf_token %}-->
+
         <div class="row">
 
             <div class="panel-fluid panel-default col-xs-12 col-md-6 " style="text-align: left; vertical-align: middle; ">
@@ -42,13 +41,24 @@
                             {%else%}
 
                               <td>
-                                  <!--{% form_field_concat toy_details_form_new "comment_" toy.id class="form-control" placeholder="Comment" name="comment"%}-->
+
                                   {% form_field_concat toy_details_form "comment_" toy.id class="form-control" placeholder="Comment"  form=include_form title="comment/reminder about the toy, e.g. Don't forget to include the bag of cars!" %}
                               </td>
 
 
                             {%endif%}
                       </tr>
+                    <tr>
+                        <td>Issue Comment</td>
+                          {% if no_edit %}
+                        <td><strong>{{toy.issue_comment}}</strong></td>
+                          {%else%}
+                            <td>
+                                 {% form_field_concat toy_details_form "issue_comment_" toy.id class="form-control" form=include_form placeholder="Issue Comment"  title="Details about the toy issue, e.g. Back wheel broken off"%}
+                            </td>
+                          {%endif%}
+                      </tr>
+
 
                       <tr>
                         <td>Issue</td>
@@ -63,29 +73,11 @@
                           </td>
                           {%else%}
                            <td>
-                               <!--{% form_field_concat toy_details_form_new "issue_type_" toy.id class="form-control" placeholder="Issue Type" name="issue_type"%}-->
-                               {% form_field_concat toy_details_form "issue_type_" toy.id class="form-control" form=include_form placeholder="Issue Type"  %}
+                               {% form_field_concat_id toy_details_form "issue_type_" toy.id class="form-control" name='issue_type_^suffix^' form=include_form placeholder="Issue Type" onchange="check_issue(this,'^suffix^');" %}
                            </td>
                           {%endif%}
                       </tr>
 
-                      <tr>
-                        <td>Issue Comment</td>
-                          {% if no_edit %}
-                        <td><strong>{{toy.issue_comment}}</strong></td>
-                          {%else%}
-                           <td>
-                                  <!--<div class="input-group">-->
-                                      <!--{% form_field_concat toy_details_form_new "comment_" toy.id class="form-control" placeholder="Issue Comment" name="issue_comment"%}-->
-                                      {% form_field_concat toy_details_form "issue_comment_" toy.id class="form-control" form=include_form placeholder="Issue Comment"  title="Details about the toy issue, e.g. Back wheel broken off"%}
-
-                                      <!--<span class="input-group-btn">-->
-                                         <!--<button class="btn btn-default" id="btn_comment_submit" value="{{toy.id}}" onclick="ok_to_leave=true;" name="toy_comment_submit" type="submit" >Submit</button>-->
-                                      <!--</span>-->
-                                  <!--</div>-->
-                              </td>
-                          {%endif%}
-                      </tr>
 
                       <tr>
                         <td>Borrowed By</td>
@@ -192,7 +184,7 @@
                 </p>
                  </div>
         </div>
-<!--</form>-->
+
      {% endif %}
 
 </div>
@@ -211,4 +203,6 @@
         }
     });
  }
+
+
 </script>

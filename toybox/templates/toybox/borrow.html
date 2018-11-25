@@ -6,6 +6,10 @@
 {% include "toybox/change_fee.html" %}
 {% include "toybox/member_edit_popup.html" %}
 
+
+
+
+
 {% if messages %}
         {% for message in messages %}
             {% include "toybox/notification_message.html" with type="success" title="Success!" message=message only %}
@@ -48,166 +52,170 @@
             </div>
 
 
-{% include "toybox/toy_search_select.html" with return_page="/toybox/borrow"%}
- <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
-    {% csrf_token %}
- <!--<form role="form" action="{{ request.get_full_path }}" class="form-group" method='post' autocomplete='on'>-->
-
-        <div class="panel-group">
-            <div class="panel panel-default" style="min-height:358px !important">
-                <div class="panel-heading"><span class="numcircle">2</span>Toys</div>
-                <div class="panel-body">
-                    {% include "toybox/toy_search.html" %}
-
-                    <br>
+            {% include "toybox/toy_search_select.html" with return_page="/toybox/borrow"%}
+             <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                {% csrf_token %}
 
 
 
-                            <div class="table-responsive">
-                              <table class="table" id="toy_table">
 
-                                    <thead>
+            <div class="panel-group">
+                <div class="panel panel-default" style="min-height:358px !important">
+                    <div class="panel-heading"><span class="numcircle">2</span>Toys</div>
+                    <div class="panel-body">
+                        {% include "toybox/toy_search.html" %}
+                        {% include "toybox/toy_issue_popup.html" %}
+
+                        <br>
+
+
+
+                                <div class="table-responsive">
+                                  <table class="table" id="toy_table">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Details</th>
+                                                <th>Toy ID</th>
+                                                <th>Toy Name</th>
+                                                <th>Due</th>
+                                                <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
+                                                {% if loan_bond_enable == True %}
+                                                <th style="text-align: center;vertical-align: middle;">Bond</th>
+                                                {%endif%}
+                                                <th style="text-align: center;vertical-align: middle;"> <span title="Toy must be in TO BE REPAIRED state to borrow for repair">Lend for repair</span></th>
+                                                <th>Remove</th>
+                                            </tr>
+                                        </thead>
+
+
+
+                                      {% if  not new_borrow_toy_list and not toy_list %}
+                                        <tr><td>Toy list empty<td></tr>
+                                      {%endif%}
+
+                                      {% for toy in new_borrow_toy_list reversed %}
+                                       <tr>
+                                           <td>
+                                               <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                                           </td>
+
+                                            <td>
+                                                  {{ toy.code }}
+                                                  <span class="label label-success label-as-badge">New</span>
+                                            </td>
+
+                                            <td>{{ toy.name }}</td>
+
+                                            <td>
+                                                <span class="label label-success label-as-badge"><span name="new_toy_due" toy_id="{{toy.id}}">0</span> weeks</span>
+                                            </td>
+
+                                           <td style="text-align: center;vertical-align: middle;">
+                                                <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
+                                           </td>
+
+                                           {% if loan_bond_enable == True %}
+                                            <td style="text-align: center;vertical-align: middle;">
+                                                <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
+                                           </td>
+                                           {% endif %}
+
+                                            <td style="text-align: center;vertical-align: middle;">
+                                                {%if toy.state == toy.TO_BE_REPAIRED %}
+                                                    {% form_field_concat_id payment_form "repair_checkbox_" toy.id name="repair_checkbox_^suffix^" class="form-control" onclick="UpdateFee()"%}
+                                                {%else%}
+                                                    <span title="Toy must be in TO BE REPAIRED state to borrow for repair">N/A</span>
+                                                {%endif%}
+                                            </td>
+
+                                            <td>
+                                                <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="ok_to_leave=true; UpdateFee();" class="btn btn-danger remove-button" aria-label="Left Align">
+                                                    <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
+                                                </button>
+                                            </td>
+
+                                         </tr>
+
+
+
                                         <tr>
-                                            <th>Details</th>
-                                            <th>Toy ID</th>
-                                            <th>Toy Name</th>
-                                            <th>Due</th>
-                                            <th style="text-align: center;vertical-align: middle;">Borrow Fee</th>
-                                            {% if loan_bond_enable == True %}
-                                            <th style="text-align: center;vertical-align: middle;">Bond</th>
-                                            {%endif%}
-                                            <th style="text-align: center;vertical-align: middle;"> <span title="Toy must be in TO BE REPAIRED state to borrow for repair">Lend for repair</span></th>
-                                            <th>Remove</th>
+                                            <td colspan="8" style="border-top: none !important;">
+                                                <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%else%} class="collapse in" {%endif%} >
+                                                     {% include "toybox/toy_summary.html" with include_form="payment_form" %}
+
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
+                                       {% endfor %}
 
 
+                                       {% for toy in toy_list %}
 
-                                  {% if  not new_borrow_toy_list and not toy_list %}
-                                    <tr><td>Toy list empty<td></tr>
-                                  {%endif%}
+                                       <tr>
+                                            <td>
+                                               <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+                                           </td>
 
-                                  {% for toy in new_borrow_toy_list reversed %}
-                                   <tr>
-                                       <td>
-                                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
-                                       </td>
+                                            <td>
+                                                  {{ toy.code }}
+                                            </td>
 
-                                        <td>
-                                              {{ toy.code }}
-                                              <span class="label label-success label-as-badge">New</span>
-                                        </td>
+                                            <td>{{ toy.name }}</td>
 
-                                        <td>{{ toy.name }}</td>
+                                            <td>
+                                                <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}">{{ toy.due_date|timebetween}}</span>
+                                            </td>
 
-                                        <td>
-                                            <span class="label label-success label-as-badge"><span name="new_toy_due" toy_id="{{toy.id}}">0</span> weeks</span>
-                                        </td>
+                                           <td style="text-align: center;vertical-align: middle;">
+                                               N/A
+                                           </td>
 
-                                       <td style="text-align: center;vertical-align: middle;">
-                                            <span id="fee_{{toy.id}}" toy_id="{{toy.id}}" name="fee" value="{{toy.loan_cost}}">{{ toy.loan_cost|floatformat:2}}</span>
-                                       </td>
+                                           <td style="text-align: center;vertical-align: middle;">
+                                               N/A
+                                           </td>
+                                            {% if loan_bond_enable == True %}
+                                            <td style="text-align: center;vertical-align: middle;">
+                                                N/A
+                                            </td>
+                                           {%endif%}
 
-                                       {% if loan_bond_enable == True %}
-                                        <td style="text-align: center;vertical-align: middle;">
-                                            <span id="loan_bond_{{toy.id}}" toy_id="{{toy.id}}" name="loan_bond" value="{{toy.loan_bond}}">{{ toy.loan_bond|floatformat:2}}</span>
-                                       </td>
-                                       {% endif %}
+                                            <td>
+                                                <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
+                                                    <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
+                                                </button>
+                                            </td>
 
-                                        <td style="text-align: center;vertical-align: middle;">
-                                            {%if toy.state == toy.TO_BE_REPAIRED %}
-                                                {% form_field_concat_id payment_form "repair_checkbox_" toy.id name="repair_checkbox_^suffix^" class="form-control" onclick="UpdateFee()"%}
-                                            {%else%}
-                                                <span title="Toy must be in TO BE REPAIRED state to borrow for repair">N/A</span>
-                                            {%endif%}
-                                        </td>
+                                         </tr>
 
-                                        <td>
-                                            <button title="Remove this toy from list" name="remove_toy" value="{{toy.id}}" type="submit" onclick="ok_to_leave=true; UpdateFee();" class="btn btn-danger remove-button" aria-label="Left Align">
-                                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                                            </button>
-                                        </td>
+                                        <tr>
+                                            <td colspan="8" style="border-top: none !important;">
+                                                <div id="accordion_{{toy.id}}" class="collapse">
 
-                                     </tr>
+                                                       <!--TODO feed toy into toy_summary-->
+                                                    {% include "toybox/toy_summary.html" with no_edit="True" %}
 
 
+                                               </div>
 
-                                    <tr>
-                                        <td colspan="8" style="border-top: none !important;">
-                                            <div id="accordion_{{toy.id}}" {% if new_toy.id != toy.id %} class="collapse" {%else%} class="collapse in" {%endif%} >
-                                                 {% include "toybox/toy_summary.html" with include_form="payment_form" %}
+                                            </td>
+                                        </tr>
+                                         {% endfor %}
 
-                                            </div>
-                                        </td>
-                                    </tr>
-                                   {% endfor %}
+                                  </table>
+                                </div>
+                            <!--</form>-->
 
-
-                                   {% for toy in toy_list %}
-
-                                   <tr>
-                                        <td>
-                                           <button type="button" class="btn" data-toggle="collapse" data-target="#accordion_{{toy.id}}" ><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
-                                       </td>
-
-                                        <td>
-                                              {{ toy.code }}
-                                        </td>
-
-                                        <td>{{ toy.name }}</td>
-
-                                        <td>
-                                            <span class="label {% if toy.due_date|timebetween|slice:':1' == '-' %} label-danger {%else%} label-success {%endif%} label-as-badge" title="{{toy.due_date}}">{{ toy.due_date|timebetween}}</span>
-                                        </td>
-
-                                       <td style="text-align: center;vertical-align: middle;">
-                                           N/A
-                                       </td>
-
-                                       <td style="text-align: center;vertical-align: middle;">
-                                           N/A
-                                       </td>
-                                        {% if loan_bond_enable == True %}
-                                        <td style="text-align: center;vertical-align: middle;">
-                                            N/A
-                                        </td>
-                                       {%endif%}
-
-                                        <td>
-                                            <button title="Remove this toy from list" type="button" class="btn " aria-label="Left Align" disabled>
-                                                <span class="glyphicon glyphicon-trash " aria-hidden="true"></span>
-                                            </button>
-                                        </td>
-
-                                     </tr>
-
-                                    <tr>
-                                        <td colspan="8" style="border-top: none !important;">
-                                            <div id="accordion_{{toy.id}}" class="collapse">
-
-                                                   <!--TODO feed toy into toy_summary-->
-                                                {% include "toybox/toy_summary.html" with no_edit="True" %}
-
-
-                                           </div>
-
-                                        </td>
-                                    </tr>
-                                     {% endfor %}
-
-                              </table>
-                            </div>
-                        <!--</form>-->
-
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </form>
     </div>
 
-    <!--<form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>-->
-    <!--{% csrf_token %}-->
+
        <div  id="rightside" class="col-xs-12 col-lg-4" style="min-width: 350px;">
+           <form id="payment_form" role="form" action="{{ request.get_full_path }}" class="form-group" method='post'>
+                {% csrf_token %}
 
          <div class="panel-group">
             <div class="panel panel-default">
@@ -325,10 +333,10 @@
             </div>
           </div>
        </div>
+           </form>
+       </div>
 
-    </div>
 
-    </form>
 </div>
 
 
@@ -341,6 +349,21 @@
 <script type="text/javascript">
 
 var ok_to_leave=false;
+
+
+function check_issue(control, toy_id)
+{
+ issue_array=['Broken repairable','Broken not repairable','Major missing piece'];
+
+    if (issue_array.indexOf(control.options[control.value].text) > -1)
+    {
+
+        $('#toyIssueModal').modal('show');
+        quarantine_btn=document.getElementById("issue_type_quarantine");
+        quarantine_btn.value=toy_id;
+
+    }
+}
 
 window.onbeforeunload = function (e) {
 //how to check which button was pressed.

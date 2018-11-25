@@ -1,0 +1,53 @@
+ <div id="toy_issue_popup">
+
+
+
+  <div class="modal" id="toyIssueModal" tabindex="-1" style="z-index:2060; overflow: auto !important;" role="dialog" aria-labelledby="basicModal" aria-hidden="true" data-backdrop="static">
+
+        <div class="modal-dialog" style="width: 800px;" >
+            <div class="modal-content">
+
+
+
+                    <div class="modal-header">
+                        <h3 class="modal-title">Toy Issue Reported</h3>
+                    </div>
+
+                    <div class="modal-body">
+                        Setting this toy issue type will render it unable to be borrowed.
+                        If you accept, the toy will be marked for assessment and removed from the current borrow list.
+                        <br><br>
+                        <strong>Please put the toy into the corner quarantine cupboard for assessment.</strong>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+
+                        <button name="issue_type_cancel" type="button" data-dismiss="modal" class="btn btn-default" >Cancel</button>
+
+                        <!--this is causing issue with default button when searching for toys-->
+                        <button  id="issue_type_quarantine" type="submit" name="quarantine_toy" class="btn btn-danger" onclick="ok_to_leave=true; UpdateFee(); this.attributes['type']='submit';">Quarantine toy</button>
+
+                    </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+     <script type="text/javascript">
+
+        $( document ).ready(function()
+        {
+            $(window).load(function()
+            {
+                $('#toyIssueModal_{{toy.id}}').modal('hide');
+            });
+        });
+    </script>
+
+</div>
