@@ -191,6 +191,8 @@ def handle_toy_borrow(request, member_id, ignore_error):
                         error = "Toy needs stocktaking and can't be borrowed"
                     elif toy.state == Toy.RETIRED:
                         error = "Toy is retired"
+                    elif toy.state == Toy.TO_BE_RETIRED:
+                        error = "Toy is awaiting inspection for retirement"
                     elif toy.state == Toy.MISSING:
                         error = "Toy is missing"
                     elif toy.state == Toy.TO_BE_REPAIRED:
