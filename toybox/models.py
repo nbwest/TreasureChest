@@ -283,7 +283,7 @@ class Toy(models.Model):
     MINOR_MISSING_PIECE = 3
     MAJOR_MISSING_PIECE = 4
     WHOLE_TOY_MISSING = 5
-    RETIRE_VERIFIED =6
+    #RETIRE_VERIFIED =6
     # not an issue, how would these been entered? - Not a "return" but noted in toy history?
     # RETURNED_MISSING_PIECE = 6
     # RETURNED_MISSING_TOY = 7
@@ -299,7 +299,7 @@ class Toy(models.Model):
         (MINOR_MISSING_PIECE, 'Minor missing piece'),  # -> to shelf
         (MAJOR_MISSING_PIECE, 'Major missing piece'),  # -> to admin cupboard
         (WHOLE_TOY_MISSING, 'Whole toy missing'),  # -> to be retired
-        (RETIRE_VERIFIED, 'Verified to retire'),
+        #(RETIRE_VERIFIED, 'Verified to retire'),
         # who can retire a toy?
         # (RETURNED_MISSING_PIECE, 'Returned missing piece'),
         # (RETURNED_MISSING_TOY, 'Returned missing toy'),
@@ -325,7 +325,7 @@ class Toy(models.Model):
         (MINOR_MISSING_PIECE, ISSUE_FINE_MINOR),
         (MAJOR_MISSING_PIECE, ISSUE_FINE_MAJOR),
         (WHOLE_TOY_MISSING, ISSUE_FINE_MAJOR),
-        (RETIRE_VERIFIED, ISSUE_FINE_NONE),
+       # (RETIRE_VERIFIED, ISSUE_FINE_NONE),
     )
 
 
@@ -460,8 +460,8 @@ class Toy(models.Model):
             state = self.TO_BE_REPAIRED
         elif issue_type == self.WHOLE_TOY_MISSING:
             state = self.TO_BE_RETIRED
-        elif issue_type == self.RETIRE_VERIFIED:
-            state = self.RETIRED
+       # elif issue_type == self.RETIRE_VERIFIED:
+        #    state = self.RETIRED
             
         return state
 
@@ -484,6 +484,11 @@ class Toy(models.Model):
 
         if self.issue_type_to_state(self.issue_type) != None:
             self.state = self.issue_type_to_state(self.issue_type)
+
+        if self.state == self.ON_LOAN:
+            self.state = self.AVAILABLE
+
+
 
         self.issue_comment = comment
 

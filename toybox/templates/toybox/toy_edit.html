@@ -84,7 +84,7 @@
     var MINOR_MISSING_PIECE = 3;
     var MAJOR_MISSING_PIECE = 4;
     var WHOLE_TOY_MISSING = 5;
-    var RETIRE_VERIFIED =6;
+    //var RETIRE_VERIFIED =6;
 
 
     function issue_type_to_state(issue_type)
@@ -98,7 +98,7 @@
         case MINOR_MISSING_PIECE: state = AVAILABLE; break;
         case MAJOR_MISSING_PIECE: state = TO_BE_REPAIRED; break;
         case WHOLE_TOY_MISSING: state = MISSING; break;
-        case RETIRE_VERIFIED: state = RETIRED; break;
+        //case RETIRE_VERIFIED: state = RETIRED; break;
        }
         return state;
     }

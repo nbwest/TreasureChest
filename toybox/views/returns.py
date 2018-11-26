@@ -168,7 +168,7 @@ class ReturnsForm(forms.Form):
             for toy in toyList:
                 self.fields['returned_checkbox_%s' % toy.id]=forms.BooleanField(required=False)
                 self.fields['issue_comment_%s' % toy.id] = forms.CharField(required=False,initial=toy.issue_comment, max_length=ToyHistory._meta.get_field('issue_comment').max_length)
-                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES[:Toy.RETIRE_VERIFIED])
+                self.fields['issue_type_%s' % toy.id] = forms.ChoiceField(required=False,initial=toy.issue_type, choices=Toy.ISSUE_TYPE_CHOICES)#[:Toy.RETIRE_VERIFIED])
 
     return_date = forms.DateField(label="Return Date", input_formats=['%d/%m/%Y','%d/%m/%y'], widget=forms.DateInput(format='%d/%m/%y',attrs={'readonly':'readonly','title':'Date the toy(s) have been returned, defaults to today','button':'Refresh fees'}))
 
