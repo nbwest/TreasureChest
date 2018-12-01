@@ -21,5 +21,16 @@ DEVELOPMENT=False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','67.209.127.188','library.megstoybox.org']
 
+DATABASES = {
+'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'toybox',
+        'USER': 'toyboxuser',
+        'PASSWORD': 'sspokess',
+        'HOST': 'library.megstoybox.org',
+        'PORT': '5432',
+    }
+}
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 6 * 60 * 60#
