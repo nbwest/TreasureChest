@@ -17,6 +17,14 @@
                     {% if till_value_error %}
                         <label class="label label-danger">{{till_value_error}}</label>
                     {%endif%}
+
+                    <br>
+
+                    <label for="till_adj_comment">Till adjustment justification</label>
+                    <input type="text" id="till_adj_comment" class="form-control" name="till_adj_comment">
+                    {% if till_comment_error %}
+                        <label class="label label-danger">{{till_comment_error}}</label>
+                    {%endif%}
                 </div>
 
 
@@ -38,7 +46,7 @@
         {
             $(window).load(function()
             {
-                if ("{{till_value_error}}"=="")
+                if ("{{till_value_error}}"=="" && "{{till_comment_error}}"=="")
                     $('#setTillModal').modal('hide');
                 else
                     $('#setTillModal').modal('show');

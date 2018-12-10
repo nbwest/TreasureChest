@@ -114,9 +114,14 @@ def base_data(request):
         if "till_value" in request.POST:
 
             if "till_set" in request.POST:
+
+                if request.POST['till_adj_comment'] == "":
+                    context.update({"till_comment_error": "Justification is required"})
+                    return context
+
                 from toybox.views.transactions import setTill
                 try:
-                    setTill(request.POST['till_value'],context['daily_balance'],request,"Logon, Logoff")
+                    setTill(request.POST['till_value'],context['daily_balance'],request,"(Logon, Logoff) "+request.POST['till_adj_comment'])
                 except ValueError as e:
                     context.update({"till_value_error":e.message})
                     return context

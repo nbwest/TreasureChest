@@ -272,7 +272,7 @@ class Toy(models.Model):
         (TO_BE_REPAIRED, 'To Be Repaired'),
         (BEING_REPAIRED, 'Being Repaired'),
         (RETIRED, 'Retired'),
-        (TO_BE_RETIRED, 'To Be Retired'),
+        (TO_BE_RETIRED, 'To Be Assessed'),
         (MISSING, 'Missing'),
         (TO_BE_CATALOGED, 'To Be Cataloged'),
     )

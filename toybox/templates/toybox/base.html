@@ -85,7 +85,9 @@ For page html use the following template tags:
         $("#duplicate-menu").html($("#menu").html());
 
         {% if request.session.logout == True %}
-                window.location.href = {%url 'logout' %}
+
+                window.location.href = {%url 'logout' %};
+                console.log(window.location.href);
         {%endif%}
 
       });
@@ -139,7 +141,7 @@ function logout()
 
 
 
-{%if request.session.first_login == True %}
+{%if request.session.first_login == True or till_value_error or till_comment_error %}
 
         $( document ).ready(function()
         {
