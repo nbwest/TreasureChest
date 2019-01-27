@@ -6,6 +6,7 @@ from shared import get_config
 from django.template.loader import render_to_string
 from django.shortcuts import HttpResponse
 from django.template import RequestContext
+from django.core.validators import *
 
 def handle_toy_edit(request, toy_id):
     context = {}
@@ -41,6 +42,8 @@ def handle_toy_edit(request, toy_id):
 
 
 class ToyEditForm(forms.Form):
+    numeric = RegexValidator(r'^[0-9.-]*$', 'Only numeric characters are allowed.')
+
     code = forms.CharField(label="ID Code", max_length=Toy._meta.get_field('code').max_length)
     name = forms.CharField(max_length=Toy._meta.get_field('name').max_length)
     # needs record in history logic
@@ -52,17 +55,17 @@ class ToyEditForm(forms.Form):
     borrow_date = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
     due_date = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
     borrow_counter = forms.IntegerField(required=False)
-    loan_cost = forms.DecimalField(min_value=0, decimal_places=2)
-    loan_bond = forms.DecimalField(required=False,min_value=0, decimal_places=2)
+    rent_tally = forms.DecimalField(required=False, validators=[numeric], min_value=0, decimal_places=2)
+    loan_cost = forms.DecimalField(min_value=0,validators=[numeric], decimal_places=2)
+    loan_bond = forms.DecimalField(required=False,validators=[numeric],min_value=0, decimal_places=2)
     last_check = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
-    last_stock_take = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True"}))
 
-
+    last_stock_take = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'],widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True","col2":"true"}))
     image = forms.ModelChoiceField(queryset=Image.objects.all(), widget=forms.Select(attrs={"col2":"true"}))
     category = forms.ModelChoiceField(queryset=ToyCategory.objects.all(),widget=forms.Select(attrs={"col2":"true"}))
     min_age = forms.IntegerField(required=False,widget=forms.NumberInput(attrs={"col2":"true"}))
     purchase_date = forms.DateField(required=False, input_formats=['%d/%m/%Y','%d/%m/%y'], widget=forms.DateInput(format='%d/%m/%y', attrs={"datepicker": "True","col2":"true"}))
-    purchase_cost = forms.DecimalField(required=False,min_value=0, decimal_places=2,widget=forms.NumberInput(attrs={"col2":"true"}))
+    purchase_cost = forms.DecimalField(required=False,min_value=0,validators=[numeric], decimal_places=2,widget=forms.NumberInput(attrs={"col2":"true"}))
     num_pieces = forms.IntegerField(required=False,widget=forms.NumberInput(attrs={"col2":"true"}))
     parts_list = forms.CharField(required=False, max_length=Toy._meta.get_field('parts_list').max_length,widget=forms.Textarea(attrs={"rows":"1","col2":"true"}))
     storage_location = forms.CharField(required=False,max_length=Toy._meta.get_field('storage_location').max_length,widget=forms.TextInput(attrs={"col2":"true"}))

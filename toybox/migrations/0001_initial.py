@@ -72,6 +72,7 @@ class Migration(migrations.Migration):
                 ('volunteer_capacity_wed', models.BooleanField(default=False)),
                 ('volunteer_capacity_sat', models.BooleanField(default=False)),
                 ('comment', models.CharField(max_length=1024, blank=True)),
+                ('bond_receipt_reference', models.CharField(default=None, max_length=64, null=True)),
             ],
         ),
         migrations.CreateModel(
@@ -92,6 +93,14 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Shift',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('shift_date', models.DateField()),
+                ('volunteer', models.ForeignKey(to='toybox.Member')),
+            ],
+        ),
+        migrations.CreateModel(
             name='TempBorrowList',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -103,7 +112,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('code', models.CharField(max_length=10)),
-                ('state', models.IntegerField(default=0, choices=[(0, b'Available'), (1, b'On Loan'), (2, b'Stocktake'), (3, b'To Be Repaired'), (4, b'Being Repaired'), (5, b'Retired'), (6, b'To Be Retired'), (7, b'Missing'), (8, b'To Be Cataloged')])),
+                ('state', models.IntegerField(default=0, choices=[(0, b'Available'), (1, b'On Loan'), (2, b'Stocktake'), (3, b'To Be Repaired'), (4, b'Being Repaired'), (5, b'Retired'), (6, b'To Be Assessed'), (7, b'Missing'), (8, b'To Be Cataloged')])),
                 ('name', models.CharField(max_length=200)),
                 ('last_check', models.DateField(null=True, verbose_name=b'Date last checked', blank=True)),
                 ('last_stock_take', models.DateField(null=True, blank=True)),
@@ -112,15 +121,16 @@ class Migration(migrations.Migration):
                 ('min_age', models.IntegerField(null=True, blank=True)),
                 ('purchase_date', models.DateField(null=True, blank=True)),
                 ('purchase_cost', models.DecimalField(null=True, max_digits=5, decimal_places=2, blank=True)),
-                ('num_pieces', models.IntegerField(default=1, verbose_name=b'Number of Pieces')),
+                ('num_pieces', models.IntegerField(default=1, null=True, verbose_name=b'Number of Pieces', blank=True)),
                 ('parts_list', models.CharField(max_length=1024, null=True, blank=True)),
                 ('storage_location', models.CharField(max_length=50, null=True, blank=True)),
                 ('comment', models.CharField(max_length=1024, null=True, blank=True)),
-                ('issue_type', models.IntegerField(default=0, choices=[(0, b'No Issue'), (1, b'Broken repairable'), (2, b'Broken not repairable'), (3, b'Minor missing piece'), (4, b'Major missing piece'), (5, b'Whole toy missing'), (6, b'Verified to retire')])),
+                ('issue_type', models.IntegerField(default=0, choices=[(0, b'No Issue'), (1, b'Broken repairable'), (2, b'Broken not repairable'), (3, b'Minor missing piece'), (4, b'Major missing piece'), (5, b'Whole toy missing')])),
                 ('issue_comment', models.CharField(max_length=200, null=True, blank=True)),
-                ('borrow_counter', models.IntegerField(default=0)),
+                ('borrow_counter', models.IntegerField(default=0, null=True, blank=True)),
+                ('loan_cost_tally', models.DecimalField(default=0, max_digits=5, decimal_places=2)),
                 ('loan_cost', models.DecimalField(default=0.5, max_digits=5, decimal_places=2)),
-                ('loan_bond', models.DecimalField(default=0.0, max_digits=5, decimal_places=2)),
+                ('loan_bond', models.DecimalField(default=0.0, null=True, max_digits=5, decimal_places=2, blank=True)),
             ],
             options={
                 'permissions': (('retire_toy', 'Can retire toys'),),
@@ -147,8 +157,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date_time', models.DateTimeField(verbose_name=b'Event date and time')),
-                ('event_type', models.IntegerField(null=True, choices=[(0, b'Available'), (1, b'On Loan'), (2, b'Stocktake'), (3, b'To Be Repaired'), (4, b'Being Repaired'), (5, b'Retired'), (6, b'To Be Retired'), (7, b'Missing'), (8, b'To Be Cataloged')])),
-                ('issue_type', models.IntegerField(default=0, choices=[(0, b'No Issue'), (1, b'Broken repairable'), (2, b'Broken not repairable'), (3, b'Minor missing piece'), (4, b'Major missing piece'), (5, b'Whole toy missing'), (6, b'Verified to retire')])),
+                ('event_type', models.IntegerField(null=True, choices=[(0, b'Available'), (1, b'On Loan'), (2, b'Stocktake'), (3, b'To Be Repaired'), (4, b'Being Repaired'), (5, b'Retired'), (6, b'To Be Assessed'), (7, b'Missing'), (8, b'To Be Cataloged')])),
+                ('issue_type', models.IntegerField(default=0, choices=[(0, b'No Issue'), (1, b'Broken repairable'), (2, b'Broken not repairable'), (3, b'Minor missing piece'), (4, b'Major missing piece'), (5, b'Whole toy missing')])),
                 ('issue_comment', models.CharField(max_length=200, null=True, blank=True)),
                 ('volunteer_reporting', models.CharField(max_length=60, null=True, blank=True)),
                 ('member', models.ForeignKey(blank=True, to='toybox.Member', null=True)),
@@ -180,6 +190,7 @@ class Migration(migrations.Migration):
                 ('balance', models.DecimalField(default=0, max_digits=6, decimal_places=2)),
                 ('comment', models.CharField(max_length=1024, null=True, blank=True)),
                 ('complete', models.BooleanField(default=False)),
+                ('complete_date', models.DateTimeField(null=True, verbose_name=b'Transaction Completion date and time', blank=True)),
                 ('member', models.ForeignKey(related_name='member_involved', to='toybox.Member', null=True)),
             ],
             options={

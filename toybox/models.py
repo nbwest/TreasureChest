@@ -359,18 +359,21 @@ class Toy(models.Model):
     issue_type = models.IntegerField(choices=ISSUE_TYPE_CHOICES, default=ISSUE_NONE)
     issue_comment = models.CharField(blank=True, null=True, max_length=200)
     borrow_counter = models.IntegerField(blank=True, null=True,default=0)
-    
+
+
     loan_cost = models.DecimalField(decimal_places=2, max_digits=5, default=0.5)
     loan_bond = models.DecimalField(decimal_places=2, max_digits=5, default=0.0,blank=True, null=True)
-
+    rent_tally = models.DecimalField(decimal_places=2, max_digits=5, default=0)
 
     @property
     def earned_back_cost(self):
-        return (self.loan_cost * self.borrow_counter) >= self.purchase_cost
+        # return (self.loan_cost * self.borrow_counter) >= self.purchase_cost
+        return (self.rent_tally >= self.purchase_cost)
 
     @property
     def earned(self):
-        return (self.loan_cost * self.borrow_counter)
+        # return (self.loan_cost * self.borrow_counter)
+        return self.rent_tally
 
     @property
     def issue_fine_major(self):
@@ -379,7 +382,7 @@ class Toy(models.Model):
         issue_fine_major_max=Decimal(get_config("major_issue_multiplier_max"))
         issue_fine_major_min=Decimal(get_config("major_issue_multiplier_min"))
 
-        fine=(issue_fine_major_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+        fine=(issue_fine_major_max * self.purchase_cost)-self.rent_tally#(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
             fine=issue_fine_major_min * self.purchase_cost
@@ -395,7 +398,7 @@ class Toy(models.Model):
         issue_fine_minor_max=Decimal(get_config("minor_issue_multiplier_max"))
         issue_fine_minor_min=Decimal(get_config("minor_issue_multiplier_min"))
 
-        fine=(issue_fine_minor_max * self.purchase_cost)-(self.loan_cost * self.borrow_counter)
+        fine=(issue_fine_minor_max * self.purchase_cost)-self.rent_tally#(self.loan_cost * self.borrow_counter)
 
         if fine<=0:
             fine=issue_fine_minor_min * self.purchase_cost
@@ -496,8 +499,15 @@ class Toy(models.Model):
         toy_history.record_toy_event(self,user, return_datetime)
 
         self.member_loaned = None
+
+
         time_borrowed = return_datetime.date() - self.borrow_date
         self.borrow_counter += int(time_borrowed.days / 7)
+
+
+        # add to tally: toy loan cost x number of weeks borrowed including overdue time
+        self.rent_tally += int(time_borrowed.days / 7) * self.loan_cost
+
         self.last_check = return_datetime
 
         self.save()

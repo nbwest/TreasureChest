@@ -33,7 +33,7 @@ DEBUG=True
 SANDBOX=False
 DEVELOPMENT=True
 
-VERSION="V1.11.0"
+VERSION="V1.12.0"
 
 CONTACT='For assistance with this software contact Jess Benning Ph 0423 164 900 [<a href="mailto:jessbenning@yahoo.com">jessbenning@yahoo.com</a>]'
 
@@ -122,10 +122,12 @@ WSGI_APPLICATION = 'treasurechest.wsgi.application'
 DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'toybox_sandbox',
+        'NAME': 'toybox',
+        #'NAME': 'toybox_sandbox',
         'USER': 'toyboxuser',
         'PASSWORD': 'sspokess',
-        'HOST': 'library.megstoybox.org',
+        #'HOST': 'library.megstoybox.org',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
